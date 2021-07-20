@@ -1036,6 +1036,15 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                   })),
               fields: getEntityInitFields(),
             }),
+            viewGroups: (dataSourceRef.current.viewGroups || []).map((g) => {
+              if ((g.refDiagrams || []).includes(tabKey.split(separator)[0])) {
+                return {
+                  ...g,
+                  refEntities: (g.refEntities || []).concat(cell.data.defKey),
+                };
+              }
+              return g;
+            }),
           };
           updateDataSource && updateDataSource(newDataSource);
         }
