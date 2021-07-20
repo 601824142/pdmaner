@@ -34,7 +34,7 @@ import { getMenu, getMenus, dealMenuClick } from '../../lib/contextMenuUtil';
 import {
   validateKey,
   updateAllData,
-  allType, pdman2sino,
+  allType, pdman2sino, getFullColumns,
 } from '../../lib/datasource_util';
 import { setDataByTabId } from '../../lib/cache';
 import { Save } from '../../lib/event_tool';
@@ -330,6 +330,11 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const injectDataSource = (dataSource, selectData, domains, modal) => {
     const allEntityKey = selectData.map(d => d.defKey);
     const currentDomains = dataSource.domains || [];
+    const headers = getFullColumns()
+      .map(h => ({
+        refKey: h.newCode,
+        hideInGraph: h.relationNoShow,
+      }));
     restProps?.update({
       ...dataSource,
       domains: currentDomains.concat(domains.filter(((d) => {
@@ -337,7 +342,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       }))),
       entities: (dataSource.entities || [])
           .filter(e => !allEntityKey.includes(e.defKey))
-          .concat(selectData.map(d => _.omit(d, ['group']))),
+          .concat(selectData.map(d => ({
+            ..._.omit(d, ['group']),
+            headers: d.headers || headers,
+          }))),
       viewGroups: (dataSource.viewGroups || []).map((g) => {
         const currentGroupData = selectData.filter(d => d.group === g.defKey)
             .map(d => d.defKey);
