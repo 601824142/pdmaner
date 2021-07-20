@@ -672,7 +672,7 @@ export const getColumnWidth = () => {
     type: 100,
     len: 70,
     scale: 100,
-    remark: 300,
+    comment: 300,
     defaultValue: 200,
     isStandard: 100,
     intro: 200,
@@ -706,7 +706,7 @@ export const getFullColumns = () => {
     {code: 'dataType', value: FormatMessage.string({id: 'tableHeaders.dbType'}), newCode: 'type', com: 'Text', relationNoShow: false},
     {code: 'len', value: FormatMessage.string({id: 'tableHeaders.len'}), newCode: 'len', com: 'Input', relationNoShow: false},
     {code: 'scale', value: FormatMessage.string({id: 'tableHeaders.scale'}), newCode: 'scale', com: 'Input', relationNoShow: false},
-    {code: 'remark', value: FormatMessage.string({id: 'tableHeaders.remark'}), newCode: 'remark', com: 'Input', relationNoShow: true},
+    {code: 'remark', value: FormatMessage.string({id: 'tableHeaders.remark'}), newCode: 'comment', com: 'Input', relationNoShow: true},
     {code: 'refDict', value: FormatMessage.string({id: 'tableHeaders.refDict'}), newCode: 'refDict', com: 'SearchSelect', relationNoShow: true},
     {code: 'defaultValue', value: FormatMessage.string({id: 'tableHeaders.defaultValue'}), newCode: 'defaultValue', com: 'Input', relationNoShow: true},
     {code: 'isStandard', value: FormatMessage.string({id: 'standardFields.isStandard'}), newCode: 'isStandard',com: 'label', relationNoShow: false}

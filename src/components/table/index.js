@@ -73,11 +73,15 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   const standardGroupRef = useRef(null);
   const tempHeaders = useMemo(() => {
     return headers.map((h) => {
-      const column = allColumns.filter(c => c.newCode === (h.refKey || h.newCode))[0] || {};
+      let refKey = h.refKey || h.newCode;
+      if (refKey === 'remark') {
+        refKey = 'comment';
+      }
+      const column = allColumns.filter(c => c.newCode === refKey)[0] || {};
       return {
         ...h,
         ...column,
-        refKey: h.refKey || h.newCode,
+        refKey,
       };
     });
   }, [headers, allColumns]);

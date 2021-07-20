@@ -185,7 +185,7 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
       onClick={() => onChange({target: { value: !f[name]}})}/>;
   } else if (numberComponents.includes(name)) {
     return <Component.NumberInput value={f[name]} onChange={onChange}/>;
-  } else if (name === 'remark' || name === 'intro' || name === 'comment') {
+  } else if (name === 'intro' || name === 'comment') {
     return <Component.Input
       onKeyDown={onKeyDown}
       ref={cell}
