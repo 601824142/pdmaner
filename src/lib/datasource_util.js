@@ -1067,9 +1067,16 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
   }, 0) + 16; // 内容宽度加上左侧边距
   // 高度除了字段还包含表名 所以需要字段 +1 同时需要加上上边距
   const height = (fields.length + 1) * 23 + 8;
+  // 去除重复的字段
+  const filterFields = (data) => {
+    const repeat = [...data];
+    return data.filter(d => {
+      return repeat.filter(r => r.defKey === d.defKey).length === 0;
+    });
+  };
   const ports = groups ? {
     groups,
-    items: fields
+    items: filterFields(fields)
         .reduce((a, b, i) => {
       return a.concat([{
         group: 'in',

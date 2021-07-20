@@ -377,7 +377,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           const tempDiagrams = (dataSourceRef.current?.diagrams || []);
           const tempDiagramKeys = tempDiagrams.map(d => d.defKey);
           const calcDefKey = (defKey) => {
-            if (tempDiagramKeys.findIndex(d => d.defKey === defKey) > -1) {
+            if (tempDiagramKeys.findIndex(d => d === defKey) > -1) {
               return calcDefKey(`${defKey}1`);
             }
             return defKey;

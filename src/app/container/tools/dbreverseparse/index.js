@@ -49,45 +49,51 @@ export default React.memo(({prefix, dataSource, dataChange, onClose, onOk}) => {
     updateStatus('loading');
     const selectedTable = dealDataRef.current.getData()
         .reduce((a, b) => a.concat(b.fields.map(f => ({...f, group: b.defKey}))), []);
-    const properties = (dbConn.filter(d => d.defKey === dbData.defKey)[0] || {})?.properties || {};
-    connectDB(dataSource, {
-      ...properties,
-      tables: selectedTable.map(t => t.originDefKey).join(','),
-    }, 'DBReverseGetTableDDL', (data) => {
-      if (data.status === 'FAILED') {
-        const termReady = (term) => {
-          term.write(data.body);
-        };
-        Modal.error({
-          bodyStyle: {width: '80%'},
-          contentStyle: {width: '100%', height: '100%'},
-          title: FormatMessage.string({id: 'dbReverseParse.parseDbError'}),
-          message: <Terminal termReady={termReady}/>,
-        });
-      } else {
-        let tempData = data.body.map((d) => {
-          const group = selectedTable.filter(t => t.originDefKey === d.defKey)[0]?.group;
-          if (dbData.flag === 'LOWCASE') {
-            return {
-              ...d,
-              group,
-              defKey: d.defKey.toLocaleLowerCase(),
-            };
-          } else if (dbData.flag === 'UPPERCASE') {
-            return {
-              ...d,
-              group,
-              defKey: d.defKey.toLocaleUpperCase(),
-            };
-          }
-          return {
-            ...d,
-            group,
+    if (selectedTable.length > 0) {
+      const properties = (dbConn.filter(d => d.defKey === dbData.defKey)[0] || {})?.properties
+        || {};
+      connectDB(dataSource, {
+        ...properties,
+        tables: selectedTable.map(t => t.originDefKey).join(','),
+      }, 'DBReverseGetTableDDL', (data) => {
+        updateStatus('normal');
+        if (data.status === 'FAILED') {
+          const termReady = (term) => {
+            term.write(data.body);
           };
-        });
-        onOk(tempData);
-      }
-    });
+          Modal.error({
+            bodyStyle: {width: '80%'},
+            contentStyle: {width: '100%', height: '100%'},
+            title: FormatMessage.string({id: 'dbReverseParse.parseDbError'}),
+            message: <Terminal termReady={termReady}/>,
+          });
+        } else {
+          let tempData = data.body.map((d) => {
+            const group = selectedTable.filter(t => t.originDefKey === d.defKey)[0]?.group;
+            if (dbData.flag === 'LOWCASE') {
+              return {
+                ...d,
+                group,
+                defKey: d.defKey.toLocaleLowerCase(),
+              };
+            } else if (dbData.flag === 'UPPERCASE') {
+              return {
+                ...d,
+                group,
+                defKey: d.defKey.toLocaleUpperCase(),
+              };
+            }
+            return {
+              ...d,
+              group,
+            };
+          });
+          onOk(tempData);
+        }
+      });
+    } else {
+      onOk([]);
+    }
   };
 
   const currentPrefix = getPrefix(prefix);
