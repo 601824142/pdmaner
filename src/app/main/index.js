@@ -423,10 +423,17 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           const finalViewGroups = preViewGroups.concat(newViewGroups
               .filter(g => !injectViewsGroups.includes(g.defKey)));
           const finalDiagrams = tempDiagrams.concat(newViewDiagrams);
+          const currentMappings = (dataSourceRef.current?.dataTypeMapping?.mappings || []);
           const newDataSource = {
             ...dataSourceRef.current,
             viewGroups: finalViewGroups,
             diagrams: finalDiagrams,
+            dataTypeMapping: {
+              ...dataSourceRef.current.dataTypeMapping,
+              mappings: currentMappings
+                .concat(_.get(newData, 'dataTypeMapping.mappings', [])
+                  .filter(m => currentMappings.findIndex(c => c.defKey === m.defKey) < 0)),
+            },
           };
           injectDataSource(newDataSource, allEntities, newData.domains || [], modal);
         };

@@ -808,7 +808,8 @@ export const pdman2sino = (data, projectName) => {
       const applyArray = Object.keys(apply);
       const javaIndex = applyArray.findIndex(p => p.toLocaleLowerCase() === 'java');
       // 取java的mapping或者第一个
-      const applyFor = (apply[applyArray[javaIndex]] || apply[applyArray[0]] || {})?.type.toLocaleLowerCase();
+      const applyFor = (apply[applyArray[javaIndex]]
+        || apply[applyArray[0]] || {})?.type.toLocaleLowerCase()?.replace(/\(\d+,*\d*\)/g, '');
       if (!applyFor) {
         // 不存在任何的domain 无效的dataType
         return null;
@@ -820,7 +821,7 @@ export const pdman2sino = (data, projectName) => {
           defKey: applyFor,
           defName: `${d.name || ''}_${applyFor}`,
           ...(applyArray.reduce((a, b) => {
-            a[b] = apply[b]?.type || '';
+            a[b] = (apply[b]?.type || '').replace(/\(\d+,*\d*\)/g, '');
             return a;
           }, {}))
         });

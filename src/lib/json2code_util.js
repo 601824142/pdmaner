@@ -35,7 +35,7 @@ const getFieldType = (datatype, domains, field, code, currentCode) => {
       if (field.type !== type[currentCode]) {
         return field.type;
       } else {
-        return type[code];
+        return type[code] || field.type;
       }
     }
     return field.type;
