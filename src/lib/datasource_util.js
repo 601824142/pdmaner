@@ -1027,7 +1027,7 @@ export  const getTextWidth = (text, font) => {
   }
   dom.style.fontSize = `${font}px`;
   dom.innerText = text;
-  const width =  dom.clientWidth;
+  const width =  dom.getBoundingClientRect().width;
   document.body.removeChild(dom);
   return width;
 };
