@@ -930,7 +930,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       dataSource={restProps.dataSource}
       updateDataSource={restProps.update}
     />;
-  }, [restProps.dataSource?.standardFields, activeKey]);
+  }, [restProps.dataSource, activeKey]);
   const dropDownMenus = useMemo(() => ([
     {key: 'closeCurrent', name: FormatMessage.string({id: 'closeCurrent'})},
     {key: 'closeOthers', name: FormatMessage.string({id: 'closeOthers'})},
