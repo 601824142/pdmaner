@@ -1063,7 +1063,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graph.history.on('undo', (args) => {
       console.log(args);
     });
-    graph.bindKey('backspace', () => {
+    graph.bindKey(['backspace', 'delete'], () => {
       const cells = graph.getSelectedCells();
       if (cells.length) {
         graph.removeCells(cells.filter(c => !((c.shape === 'edit-node'
