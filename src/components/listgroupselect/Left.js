@@ -38,8 +38,9 @@ export default React.memo(({prefix, newData, checkBoxChange,
       <table>
         <tbody>
           {
-          newData.filter(d => !!d.defKey &&
-              (d.defKey.includes(searchValue) || d.defName.includes(searchValue))).map((d, i) => {
+          newData.filter(d => (!!d.defKey)
+            && (`${d.defKey || ''}`.includes(searchValue)
+              || `${d.defName || ''}`.includes(searchValue))).map((d, i) => {
             return <Item
               defaultSelected={defaultSelected}
               i={i}
