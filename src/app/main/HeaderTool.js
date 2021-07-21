@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import {FormatMessage, GroupIcon, Icon, SearchSuggest, Slider, NumberInput} from 'components';
+import {FormatMessage, GroupIcon, Icon, SearchSuggest, Slider, NumberInput, Modal} from 'components';
 import { SketchPicker } from 'react-color';
 import numeral from 'numeral';
 
@@ -29,11 +29,20 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
     });
     colorChange && colorChange(key, value);
   };
+  const _close = () => {
+    Modal.confirm({
+      title: FormatMessage.string({id: 'closeConfirmTitle'}),
+      message: FormatMessage.string({id: 'closeConfirm'}),
+      onOk:() => {
+        close();
+      },
+    });
+  };
   return <div className={`${currentPrefix}-head`}>
     <div className={`${currentPrefix}-head-logo`}>
       <div className={`${currentPrefix}-head-logo-opt`}>
         <span>
-          <Icon type='fa-angle-left' onClick={close}/>
+          <Icon type='fa-angle-left' onClick={_close}/>
         </span>
         <span>{dataSource.name}</span>
       </div>

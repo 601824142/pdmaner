@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Icon } from 'components';
+import { Icon, Modal, FormatMessage } from 'components';
 // eslint-disable-next-line import/named
 import { platform } from '../../lib/middle';
 import { minimize, close, resizable, maximize, maximizeChange } from '../../lib/electron-window-opt';
@@ -10,6 +10,15 @@ import {getPrefix} from '../../lib/prefixUtil';
 export default React.memo(({prefix, title, resizeable, info}) => {
   const iconRef = useRef(null);
   const currentPrefix = getPrefix(prefix);
+  const _close = () => {
+    Modal.confirm({
+      title: FormatMessage.string({id: 'exitConfirmTitle'}),
+      message: FormatMessage.string({id: 'exitConfirm'}),
+      onOk:() => {
+        close();
+      },
+    });
+  };
   useEffect(() => {
     // 如果是可以调整大小 则需要开启electron的大小调整功能
     if (resizeable) {
@@ -49,7 +58,7 @@ export default React.memo(({prefix, title, resizeable, info}) => {
         {
           resizeable ? <Icon type='fa-window-maximize' onClick={fullScreenClick} ref={iconRef}/> : ''
         }
-        <Icon type='fa-window-close-o' onClick={close}/>
+        <Icon type='fa-window-close-o' onClick={_close}/>
       </span>
     </div>;
   }
