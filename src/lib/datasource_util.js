@@ -1072,7 +1072,7 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
   const filterFields = (data) => {
     const repeat = [...data];
     return data.filter(d => {
-      return repeat.filter(r => r.defKey === d.defKey).length === 0;
+      return repeat.filter(r => r.defKey === d.defKey).length === 1;
     });
   };
   const ports = groups ? {
