@@ -8,7 +8,7 @@ import DictBase from '../../app/container/dict/DictBase';
 export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, currentPrefix,
                              onChange, onBlur, checkboxComponents, reading, cellRef,
                              getDataSource, updateDataSource, openDict, defaultGroups}) => {
-  const [dict, setDict] = useState(dataSource?.dicts);
+  const [dict, setDict] = useState(dataSource?.dicts || []);
   const tooltipRef = useRef(null);
   const columnWidth = getColumnWidth();
   const cell = useRef(null);

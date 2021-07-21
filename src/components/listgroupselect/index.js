@@ -106,7 +106,7 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
       <Right
         defaultSelected={defaultSelected}
         currentGroup={currentGroup}
-        newData={checked.reverse().map((c) => {
+        newData={[...new Set(checked.reverse())].map((c) => {
           return newData.filter(d => d.defKey === c)[0];
         }).filter(d => !!d)}
         prefix={currentPrefix}
