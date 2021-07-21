@@ -846,22 +846,12 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     if (name === 'config'){
       Com = Config;
       title = FormatMessage.string({id: 'config.title'});
-    } else if (name === 'dbreverse') {
-      Com = DbReverseParse;
-      title = FormatMessage.string({id: 'dbReverseParse.title'});
     } else {
       Com = DbConnect;
       title = FormatMessage.string({id: 'dbConnect.title'});
     }
     const dataChange = (value, fieldName) => {
-      if (name === 'dbreverse') {
-        tempData.dbreverse = {
-          value,
-          realData: fieldName,
-        };
-      } else {
-        tempData[fieldName] = value;
-      }
+      tempData[fieldName] = value;
     };
     modal = openModal(<Com
       lang={config.lang}

@@ -60,9 +60,9 @@ export default React.memo(({prefix, defaultValue, title,
     value={newValue}
     onChange={valueOnChange}
     suffix={
-      <span className={`${currentPrefix}-upload-input`}>
+      <span onClick={selectFile} className={`${currentPrefix}-upload-input`}>
         <input type='file' onChange={_onChange} ref={fileInput} readOnly accept={accept}/>
-        <Icon type='fa-ellipsis-h' onClick={selectFile} title={title}/>
+        <Icon type='fa-ellipsis-h' title={title}/>
       </span>}
   />;
 });

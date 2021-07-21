@@ -191,7 +191,7 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
       ref={cell}
       onChange={onChange}
       value={f[name]}
-      suffix={<span style={{padding: '0 5px'}} onClick={openRemark}>
+      suffix={<span style={{padding: '0 5px', display: 'inline-block', height: '100%'}} onClick={openRemark}>
         <Component.Icon type='fa-ellipsis-h'/>
       </span>}
     />;

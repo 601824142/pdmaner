@@ -31,8 +31,8 @@ export default React.memo(({prefix, defaultValue, title, placeholder, onChange, 
     value={newValue}
     onChange={valueOnChange}
     suffix={
-      <span className={`${currentPrefix}-path-select-input`}>
-        <Icon type='fa-ellipsis-h' onClick={selectPath} title={title}/>
+      <span onClick={selectPath} className={`${currentPrefix}-path-select-input`}>
+        <Icon type='fa-ellipsis-h' title={title}/>
       </span>}
   />;
 });
