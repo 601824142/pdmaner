@@ -177,7 +177,7 @@ export const updateAllData = (dataSource, tabs) => {
       clearAllTabData();
       return {
         dataSource: {
-          ...updateAllEntity(updateAllViewFiledRefEntity(updateAllDiagrams(tempData, needReplace), needReplace)),
+          ...updateAllEntity(updateAllViewFiledRefEntity(updateAllDiagrams(tempData, needReplace), needReplace), needReplace),
           viewGroups: updateAllGroups(viewGroups, needReplace),
         },
         replace: needReplace,
@@ -193,7 +193,7 @@ export const updateAllData = (dataSource, tabs) => {
   return { result }
 };
 
-const updateAllEntity = (dataSource) => {
+const updateAllEntity = (dataSource, needReplace) => {
   const calcCorrelations = () => {
     return (dataSource.diagrams || []).reduce((a, b) => {
       const cells = b.canvasData?.cells || [];
@@ -225,6 +225,7 @@ const updateAllEntity = (dataSource) => {
     }, []);
   };
   const correlations = calcCorrelations();
+  const dictChange = needReplace.filter(n => n.type === 'dict');
   return {
     ...dataSource,
     entities: (dataSource.entities || []).map(e => {
@@ -233,6 +234,19 @@ const updateAllEntity = (dataSource) => {
           .map(c => _.omit(c, 'myEntity'));
       return {
         ...e,
+        fields: (e.fields || []).map(f => {
+          if (f.refDict) {
+            const newDict = dictChange.filter(d => d.old === f.refDict)[0];
+            if (newDict) {
+              return {
+                ...f,
+                refDict: newDict.new,
+              };
+            }
+            return f;
+          }
+          return f;
+        }),
         correlations: current,
       }
     })

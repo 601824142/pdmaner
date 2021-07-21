@@ -519,7 +519,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       });
       console.log(data);
     }, (file) => {
-      const result = file.name.endsWith('.pdm');
+      const result = file.name.endsWith('.pdm') || file.name.endsWith('.PDM');
       if (!result) {
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),
