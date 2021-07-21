@@ -617,11 +617,11 @@ export const getEntityOrViewByName = (dataSource, name) => {
   return entity;
 };
 
-export const getProjectName = (path = '') => {
+export const getProjectName = (path = '', separator) => {
   // 1.不同的操作系统文件名的分隔符不同 此处需要统一转化为'\'
   const realPath = path.replace('/', '\\');
   const paths = realPath.split('\\');
-  return paths[paths.length - 1].split('.pdman.json')[0];
+  return paths[paths.length - 1].split(separator)[0];
 };
 
 const fieldsTransform = (f, domains, mapping, db) => {
@@ -898,7 +898,7 @@ export const pdman2sino = (data, projectName) => {
   const defaultDbType = database[0]?.code || 'MYSQL'; // 如果未设置默认的数据类型 则默认为第一个
   const relations = _.get(data, 'modules', []).reduce((a, b) => a.concat(b?.associations || []), []); // 所有的关联关系
   const dataTypeSupports = database.map(d => d.code);
-  const name = getProjectName(projectName);
+  const name = getProjectName(projectName, '.pdman.json');
   return {
     name: name || '',
     describe: name || '',

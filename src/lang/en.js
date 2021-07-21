@@ -44,6 +44,7 @@ export default {
     renameProject: 'updateProject...',
     deleteProject: 'deleteProject...',
     invalidProjectFile: 'Invalid project file',
+    invalidProjectData: 'Invalid chnr file, please create a new project before importing!Do not modify the project suffix directly',
     invalidPdmFile: 'Invalid pdm file',
     invalidPDManFile: 'Invalid PDMan file',
     createProjectExists: 'Project already exists',

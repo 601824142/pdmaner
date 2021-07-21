@@ -44,6 +44,7 @@ export default {
     renameProject: '修改项目信息...',
     deleteProject: '删除项目...',
     invalidProjectFile: '无效的项目文件',
+    invalidProjectData: '无效的chnr文件，请先新建项目再执行导入操作！请勿直接修改项目后缀！',
     invalidPdmFile: '无效的pdm文件',
     invalidPDManFile: '无效的PDMan文件',
     createProjectExists: '项目已经存在',

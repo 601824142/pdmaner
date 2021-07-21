@@ -192,7 +192,13 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
     dispatch(openLoading(title)); // 开启全局loading
     readJsonPromise(path)
       .then((data) => {
-        if (!ignoreConfig) {
+        if (!data.version) {
+          // 无效的项目
+          const config = getState()?.config?.data[0];
+          const err = new Error(allLangData[config.lang].invalidProjectData);
+          dispatch(readProjectFail(err));
+          dispatch(closeLoading(STATUS[2], err));
+        } else if (!ignoreConfig) {
           // 将打开的项目记录存储到用户信息中
           addHistory({
             describe: data.describe || '',
