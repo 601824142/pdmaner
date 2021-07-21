@@ -115,7 +115,7 @@ export default {
     optEnd: '操作结束',
     uniqueKeyError: '该字段不可重复，请修改',
     entityUniqueKeyError: '数据表中包含重复字段，请修改',
-    entityHideInGraphSizeError: '关系图显示字段请选择能够代表本表业务含义的典型属性字段，限制为[{size}]个,如需修改，请通过："设置->系统参数->关系图最大展示字段数"进行修改',
+    entityHideInGraphSizeError: '关系图显示字段请选择能够代表本表业务含义的典型属性字段，限制为[{size}]个,超限数据表有[{entities}]，如需修改，请通过："设置->系统参数->关系图最大展示字段数"进行修改',
     formValidateMessage: '带星号为必输项，不能为空！',
     entityAndViewUniquenessCheck: '必输项不能重复！',
     showGroup: '分组模式',

@@ -49,6 +49,7 @@ export const updateAllData = (dataSource, tabs) => {
   let flag = false;
   // 需要校验数据表是否有重复字段
   // 需要校验数据表展示在关系图上的字段是否超过限制
+  let sizeError = [];
   tabs.map(t => {
     return {
       type: t.type,
@@ -65,8 +66,12 @@ export const updateAllData = (dataSource, tabs) => {
         const size = _.get(dataSource, 'profile.relationFieldSize', 15);
         result.status = t.data.fields.filter(f => !f.hideInGraph).length <= size;
         if(!result.status) {
+          sizeError.push(t.data.defKey);
           result.message = FormatMessage
-              .string({id: 'entityHideInGraphSizeError', data: {size}});
+              .string({id: 'entityHideInGraphSizeError', data: {
+                size,
+                entities: sizeError.join(','),
+              }});
         }
       } else {
         result.message = FormatMessage.string({id: 'entityUniqueKeyError'});

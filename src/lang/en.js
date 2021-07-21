@@ -115,7 +115,7 @@ export default {
     optEnd: 'operation end',
     uniqueKeyError: 'This field is not repeatable, please modify',
     entityUniqueKeyError: 'The data table contains duplicate fields, please modify',
-    entityHideInGraphSizeError: 'Please select the typical attribute fields that can represent the business meaning of this table, and limit them to [{size}], If you need to modify it, please modify it through "Settings > SystemParameter > relation show field size"',
+    entityHideInGraphSizeError: 'Please select the typical attribute fields that can represent the business meaning of this table, and limit them to [{size}], The overrun data entity has[{entities}],If you need to modify it, please modify it through "Settings > SystemParameter > relation show field size"',
     formValidateMessage: 'Asterisk is required, cannot be empty!',
     entityAndViewUniquenessCheck: 'required cannot be duplicate!',
     showGroup: 'GROUP',
