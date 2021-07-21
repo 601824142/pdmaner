@@ -59,7 +59,7 @@ export default React.memo(({prefix, dataSource, dataChange, onClose, onOk}) => {
         updateStatus('normal');
         if (data.status === 'FAILED') {
           const termReady = (term) => {
-            term.write(data.body);
+            term.write(data.body || '');
           };
           Modal.error({
             bodyStyle: {width: '80%'},
