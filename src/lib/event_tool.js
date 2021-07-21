@@ -34,8 +34,8 @@ export const Paste = (cb) => {
 
 // 全局保存方法ctrl+s
 export const Save = (cb) => {
-  window.onkeypress = (e) => {
-    if ((e.ctrlKey || e.metaKey) && (e.keyCode === 19)) {
+  window.onkeydown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && (e.keyCode === 83)) {
       cb && cb();
     }
   };
