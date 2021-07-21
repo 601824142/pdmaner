@@ -2,11 +2,12 @@ import React from 'react';
 import { Table } from 'components';
 import {getPrefix} from '../../../lib/prefixUtil';
 
-export default React.memo(({ prefix, dataSource, dataChange }) => {
+export default React.memo(({ prefix, dataSource, dataChange, updateDataSource }) => {
   const data = dataSource?.profile?.default?.entityInitFields || [];
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-setting-entity-init-fields`}>
     <Table
+      updateDataSource={updateDataSource}
       disableHeaderSort
       disableHeaderReset
       data={{fields: data}}

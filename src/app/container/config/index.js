@@ -12,7 +12,7 @@ const Components = {
   SystemParameter,
   //DbConnect,
 };
-export default React.memo(({prefix, dataSource, dataChange}) => {
+export default React.memo(({prefix, dataSource, dataChange, updateDataSource}) => {
   const configTab = ['EntityInitFields', 'SystemParameter']
   const currentPrefix = getPrefix(prefix);
   return <SimpleTab
@@ -22,7 +22,7 @@ export default React.memo(({prefix, dataSource, dataChange}) => {
         return {
           key: d,
           title: FormatMessage.string({id: `config.${d}`}) || d,
-          content: <Com dataSource={dataSource} prefix={currentPrefix} dataChange={dataChange}/>,
+          content: <Com updateDataSource={updateDataSource} dataSource={dataSource} prefix={currentPrefix} dataChange={dataChange}/>,
         };
       })}
   />;

@@ -858,6 +858,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       dataChange={dataChange}
       prefix={prefix}
       dataSource={restProps?.dataSource}
+      updateDataSource={restProps.update}
     />, {
       bodyStyle: { width: '80%' },
       title,
