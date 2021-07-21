@@ -492,6 +492,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             title: FormatMessage.string({id: 'optFail'}),
             message: <Terminal termReady={termReady}/>,
           });
+          restProps.closeLoading();
         } else {
           restProps.closeLoading();
           let modal;

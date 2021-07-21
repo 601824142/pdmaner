@@ -100,7 +100,7 @@ const Welcome = React.memo(({ prefix, getUserData, config, ...restProps }) => {
           <Progressbar title={title} percent={percent} className={`${currentPrefix}-welcome-progressbar`} showPercent/>
         </div>
         <div className={`${currentPrefix}-welcome-body-right-copy`}>
-          Sino(Chinese)Pupular&nbsp;entity&nbsp;relation&nbsp;graph&nbsp;soft
+          The most popular database table design tool in China
         </div>
       </div>
     </div>
