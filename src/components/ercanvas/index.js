@@ -1178,7 +1178,10 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     }
   }, [data, dataSource]);
   useEffect(() => {
-    graphRef.current.resize(restProps.width, restProps.height);
+    const dom = document.getElementById(id);
+    if (dom.clientWidth > 0) {
+      graphRef.current.resize(restProps.width, restProps.height);
+    }
   }, [restProps.width, restProps.height]);
   useEffect(() => {
     if (activeKey === tabKey && needRender.current) {
