@@ -959,44 +959,13 @@ const getDataSourceProfile = (data) => {
   const dataSource = packageDataSource(data);
   const datatype = _.get(dataSource, 'dataTypeMapping.mappings', []);
   const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
-  const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
+  const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';') || ';';
   return {
     dataSource,
     datatype,
     allTemplate,
     sqlSeparator
   };
-};
-// 获取所有数据表的全量脚本
-export const getAllDataSQL = (data, code) => {
-  const { dataSource, datatype, allTemplate, sqlSeparator } = getDataSourceProfile(data);
-  const domains = _.get(dataSource, 'domains', []);
-  const currentCode = _.get(dataSource, 'profile.default.db', '');
-  const getTemplate = (templateShow) => {
-    return allTemplate.filter(t => t.applyFor === code)[0]?.[templateShow] || '';
-  };
-  let sqlString = '';
-  // 1.获取所有的表
-  const tempEntities = mapDataSourceEntities(dataSource, datatype, domains, code, currentCode);
-  sqlString += tempEntities.map(e => {
-    // 1.1.删除表
-    // 1.2.新建表
-    // 1.3.新建索引
-    const templateData = {
-      entity: e,
-      separator: sqlSeparator
-    };
-    // 循环创建该表下所有的索引
-    let indexData = (e.indexes || []).map(i => {
-      return `${getTemplateString(getTemplate('createIndex'), {
-        ...templateData,
-        index: i,
-      })}`;
-    }).join('\n');
-    return `${getTemplateString(getTemplate('dropTable'), templateData)}\n
-    ${getTemplateString(getTemplate('createTable'), templateData)}${indexData}`
-  }).join('\n');
-  return sqlString.endsWith(separator) ? sqlString : sqlString + separator;
 };
 // 获取所有数据表的全量脚本（filter）
 export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) => {
@@ -1040,12 +1009,7 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
             .map(g => _.omit(g, ['defKey', 'defName'])),
         separator: sqlSeparator
       };
-      allData.createIndex = (e.indexes || []).map(i => {
-        return `${getTemplateString(getTemplate('createIndex'), {
-          ...templateData,
-          index: i,
-        })}`;
-      }).join('\n');
+      allData.createIndex = `${getTemplateString(getTemplate('createIndex'), templateData)}`;
       allData.createTable = `${getTemplateString(getTemplate('createTable'), templateData)}`;
       allData.content = `${getTemplateString(getTemplate('content'), templateData)}`;
       filterTemplate.forEach(f => {
