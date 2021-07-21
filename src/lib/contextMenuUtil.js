@@ -499,7 +499,8 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
             ..._.get(dataSource, 'profile', {}),
             default: {
               ..._.get(dataSource, 'profile.default', {}),
-              db: (data.defaultDb !== oldData.defaultDb) ? data[keyName] : oldData.defaultDb,
+              db: ((data.defaultDb !== oldData.defaultDb) && (data.type === 'dbDDL'))
+                ? data[keyName] : oldData.defaultDb,
             },
             dataTypeSupports: _.get(dataSource, 'profile.dataTypeSupports', []).map((d) => {
               if (d === oldData[keyName]) {

@@ -158,28 +158,30 @@ export default React.memo(({prefix, data, dataChange}) => {
         </span>
       </span>
     </div>
-    <div className={`${currentPrefix}-form-item`}>
-      <span
-        className={`${currentPrefix}-form-item-label`}
-        title={FormatMessage.string({id: 'database.defaultDb'})}
+    {
+      !allTemplate?.includes('content') && <div className={`${currentPrefix}-form-item`}>
+        <span
+          className={`${currentPrefix}-form-item-label`}
+          title={FormatMessage.string({id: 'database.defaultDb'})}
       >
-        <span>
-          <FormatMessage id='database.defaultDb'/>
-        </span>
-      </span>
-      <span className={`${currentPrefix}-form-item-component`}>
-        <Checkbox
-          defaultChecked={defaultDb === templateData.applyFor}
-          onChange={e => onChange(e, 'defaultDb')}
-        >
-          <span
-            className={`${currentPrefix}-database-container-defaultdb-message`}
-          >
-            <FormatMessage id='database.defaultDbMessage'/>
+          <span>
+            <FormatMessage id='database.defaultDb'/>
           </span>
-        </Checkbox>
-      </span>
-    </div>
+        </span>
+        <span className={`${currentPrefix}-form-item-component`}>
+          <Checkbox
+            defaultChecked={defaultDb === templateData.applyFor}
+            onChange={e => onChange(e, 'defaultDb')}
+        >
+            <span
+              className={`${currentPrefix}-database-container-defaultdb-message`}
+          >
+              <FormatMessage id='database.defaultDbMessage'/>
+            </span>
+          </Checkbox>
+        </span>
+      </div>
+    }
     <div className={`${currentPrefix}-form-item`}>
       <span
         className={`${currentPrefix}-form-item-label`}
