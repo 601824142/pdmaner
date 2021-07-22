@@ -33,7 +33,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
     };
   }, []);
   const onChange = (e, name) => {
-    dataChange && dataChange(e.target && e.target.value || e, name);
+    dataChange && dataChange(e.target ? e.target.value : e, name);
   };
   const getGroups = () => {
     return (dataSource?.viewGroups || [])
