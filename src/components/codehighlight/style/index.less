@@ -8,6 +8,7 @@
   user-select: text;
   text-align: left;
   pre {
+    height: 100%;
     user-select: text;
     transition: opacity 0.5s;
   }
@@ -19,5 +20,53 @@
     position: absolute;
     color: @background-color;
     transition: opacity 0.5s;
+  }
+  &-search {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: none;
+    flex-direction: row;
+    background: @background-color;
+    line-height: 25px;
+    &-input {
+      display: flex;
+      flex-direction: row;
+      input {
+        font-size: 11px;
+        padding-left: 8px;
+        border: 1px solid transparent;
+        &:hover {
+          border: 1px solid transparent;
+        }
+        &:focus {
+          border: 1px solid transparent;
+          box-shadow: 0 0 0 2px transparent;
+        }
+        &::placeholder {
+          color: @second-font-color;
+        }
+        background: transparent;
+        outline: none;
+        color: @font-color;
+      }
+      & > span:last-child {
+        margin-right: 5px;
+      }
+    }
+    align-items: center;
+    & > i {
+      cursor: pointer;
+    }
+    & > i:last-child {
+      margin-right: 5px;
+    }
+    & > i + i {
+      margin-left: 5px;
+    }
+    &-value {
+      background: @warring-color-under !important;
+      //color: @font-color !important;
+    }
   }
 }
