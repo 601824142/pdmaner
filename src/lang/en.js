@@ -610,9 +610,6 @@ components: {
     },
     listSelect: {
         result: 'a total of {size} standard fields have been parsed, of which {repeat} already exists',
-        all: 'all',
-        reversed: 'reversed',
-        clear: 'clear',
         remove: 'remove',
         repeatMessage: 'Selecting this data table will override the existing data table in the system',
         search: 'code/name',

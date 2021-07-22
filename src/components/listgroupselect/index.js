@@ -1,6 +1,5 @@
 import React, {useState, useMemo, forwardRef, useImperativeHandle, useRef, useEffect} from 'react';
 import _ from 'lodash/object';
-import {FormatMessage, IconTitle} from 'components';
 
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
@@ -51,16 +50,11 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
   }, []);
   const _iconClick = (type) => {
     if (type === 'all') {
-      setChecked(importDataRef.current.map(d => d.defKey));
-    } else if (type === 'reversed') {
-      setChecked((pre) => {
-        return [...new Set(importDataRef.current
-            .filter(d => !pre.includes(d.defKey))
-            .map(d => d.defKey)
-            .concat([...defaultSelected || []]))];
-      });
-    } else {
       setChecked([...defaultSelected || []]);
+    } else {
+      setChecked(() => {
+        return [...new Set(importDataRef.current.map(d => d.defKey))];
+      });
     }
   };
   const _onGroupChange = (e, defKey) => {
@@ -87,11 +81,21 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
       return pre.concat(defKey);
     });
   };
+  const calcType = () => {
+    // normal all ind
+    if (checked.length === newDataKeys.length) {
+      return 'all';
+    } else if (checked.length === 0) {
+      return 'normal';
+    }
+    return 'ind';
+  };
+  const type = calcType();
   return <div className={`${currentPrefix}-listselect`}>
     <div className={`${currentPrefix}-listselect-opt`}>
-      <IconTitle type='fa-check-square-o' title={FormatMessage.string({id: 'components.listSelect.all'})} onClick={() => _iconClick('all')}/>
-      <IconTitle type='fa-minus-square-o' title={FormatMessage.string({id: 'components.listSelect.reversed'})} onClick={() => _iconClick('reversed')}/>
-      <IconTitle type='fa-circle-o' title={FormatMessage.string({id: 'components.listSelect.clear'})} onClick={() => _iconClick('clear')}/>
+      <span className={`${currentPrefix}-listselect-opt-${type}`} onClick={() => _iconClick(type)}>
+        {}
+      </span>
       <span>{formatResult && formatResult(newData, repeatData)}</span>
     </div>
     <div className={`${currentPrefix}-listselect-container`}>

@@ -608,9 +608,6 @@ export default {
         },
         listSelect: {
             result: '一共解析到{size}个标准字段，其中{repeat}个已经存在',
-            all: '全选',
-            reversed: '反选',
-            clear: '空选',
             remove: '移除',
             repeatMessage: '选择该数据表将会覆盖系统中原有数据表',
             search: '代码/显示名称',
