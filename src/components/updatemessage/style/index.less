@@ -4,18 +4,28 @@
   padding: 5px;
   max-height: 400px;
   overflow: auto;
-  width: 520px;
+  width: 100%;
   &-info {
     &-item {
-      text-align: center;
+      & > span:first-child {
+        font-weight: bold;
+      }
       & > span + span {
         margin-left: 3px;
       }
     }
   }
   &-lease {
+    & > div:first-child {
+      font-weight: bold;
+    }
     &-item {
 
+    }
+  }
+  &-url {
+    & > div:first-child {
+      font-weight: bold;
     }
   }
 }

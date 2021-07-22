@@ -47,6 +47,7 @@ const Welcome = React.memo(({ prefix, getUserData, config, ...restProps }) => {
               message: <UpdateMessage data={res}/>,
               closeable: !res.forceUpdate,
               bodyStyle: {width: 'auto'},
+              contentStyle: {width: '800px'},
             });
           }
         }).finally(() => {
