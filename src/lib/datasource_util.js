@@ -1193,3 +1193,35 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
       });
   return (groupNodes || []).concat(nodes || []).concat(edges || []).concat(remarks || []);
 };
+
+
+export const transformationData = (oldDataSource) => {
+  // 某些场景下需要对原始项目进行兼容 统一在此处进行转换操作
+  // 1.处理remark
+  if (oldDataSource.version === '3.0.0') {
+    return {
+      ...oldDataSource,
+      entities: (oldDataSource.entities || []).map(e => {
+        return {
+          ...e,
+          headers: (e.headers || []).map(h => {
+            if (h.refKey === 'remark') {
+              return {
+                ...h,
+                refKey: 'comment',
+              };
+            }
+            return h;
+          }),
+          fields: (e.fields || []).map(f => {
+            return {
+              ..._.omit(f, ['remark']),
+              comment: f.remark || '',
+            };
+          }),
+        };
+      }),
+    };
+  }
+  return oldDataSource;
+};

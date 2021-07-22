@@ -13,6 +13,8 @@ import { removeHistory, addHistory, updateHistory } from '../config';
 import allLangData from '../../lang';
 import { projectSuffix } from '../../../profile';
 import emptyProject from '../../lib/emptyProjectTemplate';
+import { version } from '../../../package';
+import {transformationData} from '../../lib/datasource_util';
 
 /*
 * 核心的action 负责整个项目的保存和删除
@@ -199,15 +201,16 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
           dispatch(readProjectFail(err));
           dispatch(closeLoading(STATUS[2], err));
         } else if (!ignoreConfig) {
+          const newData = transformationData(data);
           // 将打开的项目记录存储到用户信息中
           addHistory({
-            describe: data.describe || '',
-            name: data.name || '',
-            avatar: data.avatar || '',
+            describe: newData.describe || '',
+            name: newData.name || '',
+            avatar: newData.avatar || '',
             path,
           }, (err) => {
             if (!err) {
-              dispatch(readProjectSuccess(data, [], path));
+              dispatch(readProjectSuccess(newData, [], path));
               dispatch(closeLoading(STATUS[1], null, '', type));
             } else {
               dispatch(readProjectFail(err));
@@ -215,7 +218,7 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
             }
           })(dispatch, getState);
         } else {
-          dispatch(readProjectSuccess(data, [], path, ignoreConfig));
+          dispatch(readProjectSuccess(newData, [], path, ignoreConfig));
           dispatch(closeLoading(STATUS[1], null, '', type));
         }
       })
@@ -275,6 +278,7 @@ export const createProject = (data, path, title, type) => {
         const newData = {
           ...emptyProject,
           ...data,
+          version,
           createdTime: time,
           updatedTime: time,
         };
