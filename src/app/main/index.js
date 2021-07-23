@@ -837,7 +837,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                 }));
           });
         }
-        restProps?.save(tempDataSource); // 配置项内容在关闭弹窗后自动保存
+        restProps?.save(tempDataSource, FormatMessage.string({id: 'saveProject'}), !projectInfoRef.current); // 配置项内容在关闭弹窗后自动保存
       }
       modal && modal.close();
     };

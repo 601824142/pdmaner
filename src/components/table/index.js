@@ -640,7 +640,6 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     });
   }, []);
   const finalTempHeaders = tempHeaders.filter(h => !hiddenFields.includes(h.refKey));
-  console.log(finalTempHeaders);
   const cellRef = (ref, row, cell) => {
     if(!inputRef.current[row]) {
       inputRef.current[row] = {};

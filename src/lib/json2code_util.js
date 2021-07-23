@@ -437,7 +437,8 @@ export const getDemoTemplateData = (templateShow) => {
       "defName": "学生",
       "comment": "学生信息表",
       "properties": {
-        "partitionBy": ""
+        "property1": "自定义属性1",
+        "property2": "自定义属性2"
       },
       "fields": [
         {

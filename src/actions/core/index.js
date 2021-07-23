@@ -15,6 +15,7 @@ import { projectSuffix } from '../../../profile';
 import emptyProject from '../../lib/emptyProjectTemplate';
 import { version } from '../../../package';
 import {transformationData} from '../../lib/datasource_util';
+import {setMemoryCache} from '../../lib/cache';
 
 /*
 * 核心的action 负责整个项目的保存和删除
@@ -154,6 +155,7 @@ export const saveProject = (data, saveAs) => {
           path,
         }, (err) => {
           if (!err) {
+            setMemoryCache('data', tempData);
             dispatch(saveProjectSuccess(tempData));
             dispatch(updateProjectInfo(path));
           } else {
@@ -167,6 +169,7 @@ export const saveProject = (data, saveAs) => {
     } else {
       saveJsonPromise(info, tempData)
         .then(() => {
+          setMemoryCache('data', tempData);
           dispatch(saveProjectSuccess(tempData));
         })
         .catch((err) => {
@@ -210,6 +213,7 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
             path,
           }, (err) => {
             if (!err) {
+              setMemoryCache('data', newData);
               dispatch(readProjectSuccess(newData, [], path));
               dispatch(closeLoading(STATUS[1], null, '', type));
             } else {
@@ -218,6 +222,8 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
             }
           })(dispatch, getState);
         } else {
+          const newData = transformationData(data);
+          setMemoryCache('data', newData);
           dispatch(readProjectSuccess(newData, [], path, ignoreConfig));
           dispatch(closeLoading(STATUS[1], null, '', type));
         }
@@ -232,6 +238,7 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
 export const openDemoProject = (h, title, type) => {
   return (dispatch) => {
     dispatch(openLoading(title));
+    setMemoryCache('data', h);
     dispatch(readProjectSuccess(h, [], '', true));
     dispatch(closeLoading(STATUS[1], null, '', type));
   };

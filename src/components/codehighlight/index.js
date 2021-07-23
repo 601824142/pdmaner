@@ -49,8 +49,17 @@ export default React.memo(({data, style, prefix, title}) => {
     return m.key === 'copyAll';
   };
   const _onKeyDown = (e) => {
-    if ((e.ctrlKey || e.metaKey) && (e.keyCode === 70)) {
-      searchRef.current.style.display = 'flex';
+    if (e.ctrlKey || e.metaKey) {
+      if (e.keyCode === 70) {
+        searchRef.current.style.display = 'flex';
+      } else if (e.keyCode === 65) {
+        window.getSelection().removeAllRanges();
+        let selection = window.getSelection();
+        let range = document.createRange();
+        range.selectNode(ref.current);
+        selection.addRange(range);
+        e.preventDefault();
+      }
     }
   };
   const clear = () => {

@@ -77,8 +77,8 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
   }
   const upSearchValue = searchValue.toLocaleUpperCase();
   const options = [].concat(children)
-      .filter(c => c.props.value?.toLocaleUpperCase()?.includes(upSearchValue)
-          || c.props.children?.toLocaleUpperCase()?.includes(upSearchValue));
+      .filter(c => c.props?.value?.toLocaleUpperCase()?.includes(upSearchValue)
+          || c.props?.children?.toLocaleUpperCase()?.includes(upSearchValue));
   const getChildren = () => {
     const menus = options.length > 0 ? options.map(c => React.cloneElement(c, {
       checkValues: finalCheckValues,

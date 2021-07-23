@@ -1,7 +1,7 @@
 import * as _ from 'lodash/object';
 import moment from 'moment';
 import { FormatMessage } from 'components';
-import {getAllTabData, setDataByTabId, clearAllTabData, getDataByTabId} from './cache';
+import {getAllTabData, setDataByTabId, clearAllTabData, getDataByTabId, getMemoryCache} from './cache';
 import emptyProjectTemplate from './emptyProjectTemplate';
 import { separator } from '../../profile';
 import {firstUp} from './string';
@@ -1224,4 +1224,14 @@ export const transformationData = (oldDataSource) => {
     };
   }
   return oldDataSource;
+};
+
+export const validateNeedSave = (dataSource) => {
+  const cacheData = getAllTabData();
+  if (Object.keys(cacheData).length > 0) {
+    return true;
+  } else if (dataSource !== getMemoryCache('data')) {
+    return true;
+  }
+  return false;
 };
