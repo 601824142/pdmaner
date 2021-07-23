@@ -16,6 +16,7 @@ function createWindow() {
     minHeight: 600,
     frame: false,
     resizable: false,
+    titleBarStyle: 'hiddenInset',
     webPreferences: {
       nodeIntegration: true
     }
@@ -72,8 +73,62 @@ function createWindow() {
     }
     event.returnValue = docx;
   });
+  let menu;
   // 设置菜单
-  Menu.setApplicationMenu(null);
+  if (process.platform === 'darwin') {
+    const template = [
+      {
+        role: 'appMenu',
+        submenu: [
+          {role: 'about'},
+          {type: 'separator'},
+          {type: 'separator'},
+          {role: 'hide'},
+          {role: 'hideothers'},
+          {role: 'unhide'},
+          {type: 'separator'},
+          {role: 'quit'}
+        ]
+      },
+      {
+        role: 'editMenu',
+        submenu: [
+          {role: 'undo'},
+          {role: 'redo'},
+          {type: 'separator'},
+          {role: 'cut'},
+          {role: 'copy'},
+          {role: 'paste'},
+          {role: 'pasteandmatchstyle'},
+          {role: 'delete'},
+          {role: 'selectall'},
+          {type: 'separator'},
+        ]
+      },
+      {
+        role: 'windowMenu',
+        submenu: [
+          {role: 'minimize'},
+          {role: 'close'},
+          {role: 'zoom'},
+          {role: 'front'}
+        ]
+      },
+      {
+        role: 'help',
+        submenu: [
+          {
+            label: 'Learn More',
+            click () { require('electron').shell.openExternal('https://gitee.com/robergroup/chiner') }
+          }
+        ]
+      }
+    ]
+    menu = Menu.buildFromTemplate(template);
+  } else {
+    menu = null;
+  }
+  Menu.setApplicationMenu(menu);
 }
 
 // Electron 会在初始化后并准备
