@@ -47,19 +47,22 @@ export default React.memo(({prefix, title, resizeable, info}) => {
     }
   };
   if (platform === 'json') {
+    const darwinClass = process.platform === 'darwin' ? ` ${currentPrefix}-toolbar-title-darwin` : '';
     return <div className={`${currentPrefix}-toolbar`}>
-      <span className={`${currentPrefix}-toolbar-title`}>
+      <span className={`${currentPrefix}-toolbar-title${darwinClass}`}>
         <span>{}</span>
         <span>{title}</span>
         <span className={`${currentPrefix}-toolbar-info`} title={info}>{info}</span>
       </span>
-      <span className={`${currentPrefix}-toolbar-opt`}>
-        <Icon type='fa-window-minimize' onClick={minimize}/>
-        {
-          resizeable ? <Icon type='fa-window-maximize' onClick={fullScreenClick} ref={iconRef}/> : ''
-        }
-        <Icon type='fa-window-close-o' onClick={_close}/>
-      </span>
+      {
+        process.platform !== 'darwin' && <span className={`${currentPrefix}-toolbar-opt`}>
+          <Icon type='fa-window-minimize' onClick={minimize}/>
+          {
+            resizeable ? <Icon type='fa-window-maximize' onClick={fullScreenClick} ref={iconRef}/> : ''
+          }
+          <Icon type='fa-window-close-o' onClick={_close}/>
+        </span>
+      }
     </div>;
   }
   return '';

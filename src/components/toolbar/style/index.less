@@ -15,6 +15,21 @@
     -webkit-app-region: no-drag;
   }
   &-title {
+    &-darwin {
+      width: 100% !important;
+      & > span:first-child {
+        display: none !important;
+      }
+      & > span:nth-child(2) {
+        display: none !important;
+      }
+      & > span:nth-child(3) {
+        width: 100% !important;
+        margin-left: 50px;
+        margin-right: 50px;
+        text-align: center;
+      }
+    }
     display: flex;
     flex-direction: row;
     align-items: center;
