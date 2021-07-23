@@ -1216,7 +1216,7 @@ export const transformationData = (oldDataSource) => {
           fields: (e.fields || []).map(f => {
             return {
               ..._.omit(f, ['remark']),
-              comment: f.remark || '',
+              comment: f.comment || f.remark || '',
             };
           }),
         };
