@@ -14,15 +14,18 @@ const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder
       setDefaultValue(e.target.value);
       onChange && onChange(e);
     } else {
-      e.target.value = e.target.value.trim().substr(0, maxLength);
+      e.target.value = e.target.value.substr(0, maxLength);
       setDefaultValue(e.target.value);
       onChange && onChange(e);
     }
 
   };
   const _onBlur = (e) => {
-    const { onBlur } = restProps;
+    const { onBlur, onChange } = restProps;
+    e.target.value = e.target.value.trim();
     onBlur && onBlur(e);
+    onChange && onChange(e);
+    setDefaultValue(e.target.value);
   };
   let tempValue = stateValue;
   if ('value' in restProps) {
@@ -34,7 +37,7 @@ const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder
   };
   const onCompositionEnd = (e) => {
     const { onChange } = restProps;
-    e.target.value = e.target.value.trim().substr(0, maxLength);
+    e.target.value = e.target.value.substr(0, maxLength);
     setDefaultValue(e.target.value);
     onChange && onChange(e);
     composition.current = false;

@@ -36,6 +36,7 @@ export const Paste = (cb) => {
 export const Save = (cb) => {
   window.onkeydown = (e) => {
     if ((e.ctrlKey || e.metaKey) && (e.keyCode === 83)) {
+      e.target.blur();
       cb && cb();
     }
   };

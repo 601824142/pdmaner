@@ -16,7 +16,7 @@ import StandardGroupSelect from '../../app/container/standardfield/StandardGroup
 const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                                dataSource, customerHeaders, disableHeaderIcon, tableDataChange,
                                defaultEmptyField, validate, disableCopyAndCut, onTableRowClick,
-                               onAdd, ExtraOpt, style, uniqueKey = 'defKey', hiddenHeader,
+                               onAdd, ExtraOpt, style, hiddenHeader,
                                className, expand, otherOpt = true, disableHeaderReset,
                                updateDataSource, disableAddStandard, ready, twinkle, getDataSource,
                                disableDragRow = true, freeze = false, reading = false,
@@ -82,15 +82,15 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       };
     });
   }, [headers, allColumns]);
-  const comBlur = (f, name, e) => {
-    const value = e.target.value;
-    if (value && (name === uniqueKey) &&
-        (data?.fields?.filter(d => d[name] === value).length > 1)) {
-      Component.Modal.error({
-        title: Component.FormatMessage.string({id: 'optFail'}),
-        message: Component.FormatMessage.string({id: 'uniqueKeyError'}),
-      });
-    }
+  const comBlur = () => {
+    // const value = e.target.value;
+    // if (value && (name === uniqueKey) &&
+    //     (fieldsRef.current.filter(d => d[name] === value).length > 1)) {
+    //   Component.Modal.error({
+    //     title: Component.FormatMessage.string({id: 'optFail'}),
+    //     message: Component.FormatMessage.string({id: 'uniqueKeyError'}),
+    //   });
+    // }
   };
   const cellClick = (h, f) => {
     if (h !== 'domain' || (h === 'domain' && !selectedFieldsRef.current.includes(f.__key))) {
