@@ -199,7 +199,7 @@
           "hideInGraph": true
         },
         {
-          "refKey": "remark",
+          "refKey": "comment",
           "hideInGraph": true
         },
         {
@@ -501,11 +501,11 @@
           "freeze": false
         },
         {
-          "refKey": "remark",
+          "refKey": "comment",
           "hideInGraph": true,
           "code": "remark",
           "value": "说明",
-          "newCode": "remark",
+          "newCode": "comment",
           "com": "Input",
           "relationNoShow": true,
           "freeze": false
@@ -763,7 +763,7 @@
           "hideInGraph": true
         },
         {
-          "refKey": "remark",
+          "refKey": "comment",
           "hideInGraph": true
         },
         {
@@ -1049,7 +1049,7 @@
           "hideInGraph": true
         },
         {
-          "refKey": "remark",
+          "refKey": "comment",
           "hideInGraph": true
         },
         {
@@ -1603,7 +1603,7 @@
           "hideInGraph": true
         },
         {
-          "refKey": "remark",
+          "refKey": "comment",
           "hideInGraph": true
         },
         {
@@ -1925,7 +1925,7 @@
           "hideInGraph": false
         },
         {
-          "refKey": "remark",
+          "refKey": "comment",
           "hideInGraph": true
         },
         {
@@ -2149,7 +2149,7 @@
           "hideInGraph": true
         },
         {
-          "refKey": "remark",
+          "refKey": "comment",
           "hideInGraph": true
         },
         {
@@ -2384,7 +2384,7 @@
           "hideInGraph": true
         },
         {
-          "refKey": "remark",
+          "refKey": "comment",
           "hideInGraph": true
         },
         {
@@ -2645,7 +2645,7 @@
           "hideInGraph": true
         },
         {
-          "refKey": "remark",
+          "refKey": "comment",
           "hideInGraph": true
         },
         {
