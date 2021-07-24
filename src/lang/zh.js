@@ -80,7 +80,7 @@ export default {
         getProjectData: '获取项目信息。。。',
         getProjectDataError: '获取项目信息失败！项目文件不存在或者已经损坏！',
         avatarValidate: {
-            placeholder: '像素为56*56，大小为10KB以内，可直接使用base64',
+            placeholder: '像素为64*64，大小为10KB以内，可直接使用base64',
             validate: '无效的图片！大小不能超过10KB，图片像素为56*56',
         },
     },

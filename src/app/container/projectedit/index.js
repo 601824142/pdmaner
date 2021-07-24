@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {Loading, Modal, Input, UploadInput, PathSelectInput, FormatMessage, Icon, openModal, Button} from 'components';
 
+import { images } from './images';
+
 import './style/index.less';
 // eslint-disable-next-line import/named
 import { readJsonPromise, platform, dirname } from '../../../lib/middle';
@@ -81,7 +83,6 @@ export default React.memo(({prefix, data = {}, reading, onChange, dataFinish}) =
     const onCancel = () => {
       modal.close();
     };
-    const images = [];
     const List = () => {
       const [selected, setSelected] = useState(-1);
       const _setSelected = (i, index) => {

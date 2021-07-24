@@ -16,9 +16,6 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    & > div + div {
-      margin-left: 10px;
-    }
     &-item-selected {
       border: 2px solid @primary-color;
     }
@@ -26,10 +23,11 @@
       border: 2px solid transparent;
     }
     & > div {
+      margin: 0 5px;
       cursor: pointer;
       & > img {
-        width: 59px;
-        height: 59px;
+        width: 64px;
+        height: 64px;
       }
     }
   }
