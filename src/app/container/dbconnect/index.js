@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {IconTitle, Radio, Input, Icon, Button, Modal, FormatMessage, Tooltip, Select, Terminal} from 'components';
 import _ from 'lodash/object';
 import { emptyDbConn, getDemoDbConnect } from '../../../lib/datasource_util';
-import { openFileOrDirPath, connectDB } from '../../../lib/middle';
+import { openFileOrDirPath, connectDB, showItemInFolder, getLogPath } from '../../../lib/middle';
 
 import './style/index.less';
 import {getPrefix} from '../../../lib/prefixUtil';
@@ -18,6 +18,8 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
     return dbConn.filter(d => d.defKey === dataSource?.profile?.default?.dbConn)[0]?.defKey || '';
   });
   const { properties = {}, defName } = (dbConn.filter(d => d.defKey === defaultConn)[0] || {});
+  const propertiesRef = useRef(null);
+  propertiesRef.current = properties;
   const defaultConnChange = (e) => {
     const defaultData = dbConn.filter(d => d.defKey === e.target.value)[0];
     updateDefaultConn(defaultData.defKey);
@@ -30,7 +32,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
         return {
           ...d,
           [name]: e.target.value,
-          properties: key === 'type' ? {
+          properties: name === 'type' ? {
             driver_class_name: url[e.target.value?.toLocaleLowerCase()]?.driverClass || '',
             url: url[e.target.value?.toLocaleLowerCase()]?.url || '',
             password: '',
@@ -88,14 +90,14 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
   const selectJarFile = () => {
     openFileOrDirPath([{name: FormatMessage.string({id: 'dbConnect.customDriver'}), extensions: ['jar']}], ['openFile']).then((res) => {
       onChange({target: {
-        value: res,
+          value: res,
         }}, 'customer_driver');
     }).catch((err) => {
       Modal.error({title: FormatMessage.string({id: 'openDirError'}), message: err.message || err});
     });
   };
-  const test = (e, btn) => {
-    if (Object.keys(properties).filter(p => p !== 'customer_driver').some(p => !properties[p])) {
+  const test = useCallback((e, btn) => {
+    if (Object.keys(propertiesRef.current).filter(p => p !== 'customer_driver').some(p => !propertiesRef.current[p])) {
       Modal.error({
         title: FormatMessage.string({id: 'optFail'}),
         message: FormatMessage.string({id: 'formValidateMessage'}),
@@ -103,7 +105,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
     } else {
       btn && btn.updateStatus('loading');
       connectDB(dataSource, {
-        ...properties,
+        ...propertiesRef.current,
         lang,
       }, 'PingLoadDriverClass', (result) => {
         btn && btn.updateStatus('normal');
@@ -115,7 +117,10 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
             bodyStyle: {width: '80%'},
             contentStyle: {width: '100%', height: '100%'},
             title: FormatMessage.string({id: 'dbConnect.connectError'}),
-            message: <Terminal termReady={termReady}/>,
+            message: <div>
+              <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
+              <Terminal termReady={termReady}/>
+            </div>,
           });
         } else {
           Modal.success({
@@ -125,7 +130,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
         }
       });
     }
-  };
+  }, []);
   const jdbcHelp = <div className={`${currentPrefix}-dbconnect-example-config`}>
     {
       Object.keys(url).map((o) => {
@@ -135,11 +140,11 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
               {`${o} ${FormatMessage.string({id: 'dbConnect.configExample'})}↓`}
             </div>
             <div className={`${currentPrefix}-dbconnect-example-config-item-content-label`}>
-                driver_class:
+              driver_class:
               <span className={`${currentPrefix}-dbconnect-example-config-item-content-value`}>{url[o].driverClass}</span>
             </div>
             <div className={`${currentPrefix}-dbconnect-example-config-item-content-label`}>
-                url:
+              url:
               <span className={`${currentPrefix}-dbconnect-example-config-item-content-value`}>{url[o].url}</span>
             </div>
           </div>
@@ -168,7 +173,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
           {
             defaultConn ?
               <span><FormatMessage id='dbConnect.defaultDbConnectDesc'/>{defName}</span>
-                : <FormatMessage id='dbConnect.defaultDbConnectEmpty'/>
+              : <FormatMessage id='dbConnect.defaultDbConnectEmpty'/>
           }
         </span>
       </div>
@@ -198,12 +203,12 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
                     onChange={e => dbChange(e, 'type', conn.defKey)}
                   >
                     {dataTypeSupports
-                        .map(type => (<Option
-                          key={type}
-                          value={type}
-                        >
-                          {type}
-                        </Option>))}
+                      .map(type => (<Option
+                        key={type}
+                        value={type}
+                      >
+                        {type}
+                      </Option>))}
                   </Select>
                 </span>
               </div>
@@ -222,7 +227,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
           <span
             className={`${currentPrefix}-form-item-label`}
             title={FormatMessage.string({id: 'dbConnect.customDriver'})}
-        >
+          >
             <FormatMessage id='dbConnect.customDriver'/>
             <Tooltip placement='top' title={FormatMessage.string({id: 'dbConnect.customDriverPlaceholder'})} force>
               <span className={`${currentPrefix}-form-item-label-help`}>
@@ -238,14 +243,14 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
               suffix={<span className={`${currentPrefix}-dbconnect-opt`} onClick={selectJarFile}>
                 <Icon type='fa-ellipsis-h' title={FormatMessage.string({id: 'openFile'})}/>
               </span>}
-          />
+            />
           </span>
         </div>
         <div className={`${currentPrefix}-form-item`}>
           <span
             className={`${currentPrefix}-form-item-label`}
             title={FormatMessage.string({id: 'dbConnect.driver'})}
-        >
+          >
             <span className={`${currentPrefix}-form-item-label-require`}>{}</span>
             <FormatMessage id='dbConnect.driver'/>
             <Tooltip placement='left' title={jdbcHelp} force>
@@ -258,14 +263,14 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
             <Input
               onChange={e => onChange(e, 'driver_class_name')}
               value={properties.driver_class_name || ''}
-          />
+            />
           </span>
         </div>
         <div className={`${currentPrefix}-form-item`}>
           <span
             className={`${currentPrefix}-form-item-label`}
             title={FormatMessage.string({id: 'dbConnect.url'})}
-        >
+          >
             <span className={`${currentPrefix}-form-item-label-require`}>{}</span>
             <FormatMessage id='dbConnect.url'/>
             <Tooltip placement='left' title={jdbcHelp} force>
@@ -278,7 +283,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
             <Input
               onChange={e => onChange(e, 'url')}
               value={properties.url || ''}
-          />
+            />
           </span>
         </div>
         <div className={`${currentPrefix}-form-item`}>
@@ -286,7 +291,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
             style={{paddingRight: '15px'}}
             className={`${currentPrefix}-form-item-label`}
             title={FormatMessage.string({id: 'dbConnect.username'})}
-        >
+          >
             <span className={`${currentPrefix}-form-item-label-require`}>{}</span>
             <FormatMessage id='dbConnect.username'/>
           </span>
@@ -294,7 +299,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
             <Input
               onChange={e => onChange(e, 'username')}
               value={properties.username || ''}
-          />
+            />
           </span>
         </div>
         <div className={`${currentPrefix}-form-item`}>
@@ -302,7 +307,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
             style={{paddingRight: '15px'}}
             className={`${currentPrefix}-form-item-label`}
             title={FormatMessage.string({id: 'dbConnect.password'})}
-        >
+          >
             <span className={`${currentPrefix}-form-item-label-require`}>{}</span>
             <FormatMessage id='dbConnect.password'/>
           </span>
@@ -310,7 +315,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
             <Input
               onChange={e => onChange(e, 'password')}
               value={properties.password || ''}
-          />
+            />
           </span>
         </div>
         <div className={`${currentPrefix}-dbconnect-right-button`}>

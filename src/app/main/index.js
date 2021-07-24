@@ -44,7 +44,7 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 import {addBodyEvent, removeBodyEvent} from '../../lib/listener';
 import {firstUp} from '../../lib/string';
-import {connectDB, selectWordFile} from '../../lib/middle';
+import {connectDB, getLogPath, selectWordFile, showItemInFolder} from '../../lib/middle';
 import { imgAll } from '../../lib/generatefile/img';
 
 const TabItem = Tab.TabItem;
@@ -300,7 +300,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                   bodyStyle: {width: '80%'},
                   contentStyle: {width: '100%', height: '100%'},
                   title: FormatMessage.string({id: 'optFail'}),
-                  message: <Terminal termReady={termReady}/>,
+                  message: <div>
+                    <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
+                    <Terminal termReady={termReady}/>
+                  </div>,
                 });
               } else {
                 restProps.closeLoading();
@@ -492,7 +495,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             bodyStyle: {width: '80%'},
             contentStyle: {width: '100%', height: '100%'},
             title: FormatMessage.string({id: 'optFail'}),
-            message: <Terminal termReady={termReady}/>,
+            message: <div>
+              <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
+              <Terminal termReady={termReady}/>
+            </div>,
           });
           restProps.closeLoading();
         } else {

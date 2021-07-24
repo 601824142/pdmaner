@@ -524,6 +524,7 @@ export default {
         relationFieldSize: '关系图最大展示字段数',
     },
     dbConnect: {
+        log: '请查看日志文件,位于：',
         title: '数据库连接配置',
         defaultDbConnectDesc: '当前选择的默认数据库连接是：',
         defaultDbConnectEmpty: '当前暂无默认选择连接',

@@ -524,6 +524,7 @@ export default {
         relationFieldSize: 'relation show field size',
     },
     dbConnect: {
+        log: 'Check the log file at:',
         title: 'db connect setting',
         defaultDbConnectDesc: 'The default database is:',
         defaultDbConnectEmpty: 'Currently, there is no default selected connection',

@@ -1,7 +1,7 @@
 import React, { useEffect, forwardRef, useImperativeHandle } from 'react';
 
 import {Icon, Modal, FormatMessage, Terminal} from 'components';
-import { connectDB } from '../../../../lib/middle';
+import {connectDB, getLogPath, showItemInFolder} from '../../../../lib/middle';
 import {getPrefix} from '../../../../lib/prefixUtil';
 
 export default React.memo(forwardRef(({prefix, dataSource, getDbData,
@@ -19,7 +19,10 @@ export default React.memo(forwardRef(({prefix, dataSource, getDbData,
           bodyStyle: {width: '80%'},
           contentStyle: {width: '100%', height: '100%'},
           title: FormatMessage.string({id: 'dbReverseParse.parseDbError'}),
-          message: <Terminal termReady={termReady}/>,
+          message: <div>
+            <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
+            <Terminal termReady={termReady}/>
+          </div>,
         });
         parseError();
       } else {

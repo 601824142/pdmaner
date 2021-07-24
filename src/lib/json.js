@@ -7,7 +7,7 @@ import * as _ from 'lodash/object';
 import { projectSuffix } from '../../profile';
 const { execFile } = require('child_process');
 
-const { ipcRenderer, remote } = require('electron');
+const { ipcRenderer, remote, shell } = require('electron');
 const { app, dialog } = remote;
 
 const user_config = 'user_config.json';
@@ -472,3 +472,11 @@ export const writeLog = (err) => {
         .then(() => res(logPath))
   });
 };
+
+export const getLogPath = () => {
+  return path.join(app.getPath('home'), '/logs/chiner');
+}
+
+export const showItemInFolder = () => {
+  shell.showItemInFolder(getLogPath());
+}
