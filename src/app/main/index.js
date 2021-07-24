@@ -519,7 +519,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           });
         }
       });
-      console.log(data);
+      //console.log(data);
     }, (file) => {
       const result = file.name.endsWith('.pdm') || file.name.endsWith('.PDM');
       if (!result) {
@@ -858,7 +858,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
               return;
             }
           }
-          Object.keys(tempData).filter(f => f !== 'language').forEach((f) => {
+          Object.keys(tempData).filter(f => (f !== 'language') && (f !== 'javaHome')).forEach((f) => {
             tempDataSource = _.set(tempDataSource, f,
                 Array.isArray(tempData[f]) ? tempData[f].map(d => _.omit(d, '__key')) : tempData[f]);
           });
@@ -883,6 +883,9 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                 }));
           });
         }
+        if ('javaHome' in tempData) {
+          restProps?.updateJavaHome(tempData.javaHome);
+        }
         restProps?.save(tempDataSource, FormatMessage.string({id: 'saveProject'}), !projectInfoRef.current); // 配置项内容在关闭弹窗后自动保存
       }
       modal && modal.close();
@@ -901,6 +904,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       tempData[fieldName] = value;
     };
     modal = openModal(<Com
+      config={config}
       lang={config.lang}
       dataChange={dataChange}
       prefix={prefix}

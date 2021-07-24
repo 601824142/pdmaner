@@ -146,7 +146,10 @@ export const getUserConfig = () => {
     const getData = (path, defaultData) => {
       return new Promise((r, j) => {
         readJsonPromise(path).then((data) => {
-          r(data);
+          r({
+            ...defaultData,
+            ...data,
+          });
         }).catch(() => {
           // 如果用户信息报错 则需要使用默认数据进行覆盖
           saveJsonPromise(path, defaultData).then(() => {

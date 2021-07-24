@@ -502,6 +502,7 @@ export default {
         JavaHomeConfigResult: {
             success: 'config success',
             error: 'config error',
+            placeholder: 'If it is not filled in, it will be automatically read from the environment variable of the system',
         },
         SystemParameter: 'SystemParameter',
         DbConnect: 'DbConnect',

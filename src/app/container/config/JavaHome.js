@@ -4,12 +4,12 @@ import { Input, Icon, Button, Modal, FormatMessage } from 'components';
 import { openFileOrDirPath, getJavaHome, execFileCmd, getPathStep } from '../../../lib/middle';
 import {getPrefix} from '../../../lib/prefixUtil';
 
-export default React.memo(({ prefix, dataSource, dataChange }) => {
-  const javaHome = dataSource?.profile?.javaHome || getJavaHome();
+export default React.memo(({ prefix, dataSource, dataChange, config }) => {
+  const javaHome = config?.javaHome || dataSource?.profile?.javaHome || getJavaHome();
   const [value, updateValue] = useState(javaHome);
   const onChange = (e) => {
     updateValue(e.target.value);
-    dataChange && dataChange(e.target.value, 'profile.javaHome');
+    dataChange && dataChange(e.target.value, 'javaHome');
   };
   const selectDir = () => {
     openFileOrDirPath([], ['openDirectory']).then((res) => {
@@ -51,6 +51,7 @@ export default React.memo(({ prefix, dataSource, dataChange }) => {
       </span>
       <span className={`${currentPrefix}-form-item-component`}>
         <Input
+          placeholder={FormatMessage.string({id: 'config.JavaHomeConfigResult.placeholder'})}
           onChange={onChange}
           value={value}
           suffix={<span className={`${currentPrefix}-setting-java-home-opt`}>
@@ -58,6 +59,9 @@ export default React.memo(({ prefix, dataSource, dataChange }) => {
             <Button onClick={test}>
               <FormatMessage id='button.test'/>
             </Button>
+            <span onClick={() => require('electron').shell.openExternal('https://jingyan.baidu.com/article/6dad5075d1dc40a123e36ea3.html')}>
+               <Icon type='icon-xinxi'/>
+            </span>
           </span>}
         />
       </span>

@@ -502,6 +502,7 @@ export default {
         JavaHomeConfigResult: {
             success: '配置成功',
             error: '配置失败',
+            placeholder: '不填将自动从系统的环境变量中读取',
         },
         SystemParameter: '系统参数',
         DbConnect: '数据库连接配置',

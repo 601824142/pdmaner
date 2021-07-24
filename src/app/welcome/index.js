@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import {Progressbar, Modal, UpdateMessage, FormatMessage} from 'components';
 import { fail, success, pageType, CONFIG } from '../../lib/variable';
 import './style/index.less';
-import { changeLanguage, getUserConfigData, removeHistory } from '../../actions/config';
+import { changeLanguage, getUserConfigData, removeHistory, updateJavaHome } from '../../actions/config';
 import Home from '../home';
 import {setMemoryCache} from '../../lib/cache';
 import {
@@ -162,6 +162,9 @@ const mapDispatchToProps = (dispatch, { store }) => {
         case 'remove': dispatch(removeHistory(...data));break;
         default: break;
       }
+    },
+    updateJavaHome: (javaHome) => {
+      dispatch(updateJavaHome(javaHome));
     },
   };
 };
