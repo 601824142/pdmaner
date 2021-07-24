@@ -838,7 +838,7 @@ export const pdman2sino = (data, projectName) => {
         // 需要增加
         mappings.push({
           defKey: applyFor,
-          defName: `${d.name || ''}_${applyFor}`,
+          defName: `${d.name || applyFor}`,
           ...(applyArray.reduce((a, b) => {
             a[b] = (apply[b]?.type || '').replace(/\(\d+,*\d*\)/g, '');
             return a;
