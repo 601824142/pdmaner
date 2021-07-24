@@ -12,3 +12,16 @@
   //border-bottom: 1px solid @primary-border-color;
   //border-right: 1px solid @primary-border-color;
 }
+.@{prefix}-form-item-component-upload {
+  & > span {
+    & > input {
+      width: auto;
+    }
+  }
+  &-in {
+    display: inline-block;
+    height: 100%;
+    padding: 0 5px;
+    border-left: 1px solid @primary-border-color;
+  }
+}

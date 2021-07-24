@@ -8,4 +8,29 @@
       vertical-align: bottom;
     }
   }
+  &-img-list {
+    margin-bottom: 10px;
+    max-height: 400px;
+    overflow: auto;
+    padding: 0 5px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    & > div + div {
+      margin-left: 10px;
+    }
+    &-item-selected {
+      border: 2px solid @primary-color;
+    }
+    &-item-normal {
+      border: 2px solid transparent;
+    }
+    & > div {
+      cursor: pointer;
+      & > img {
+        width: 59px;
+        height: 59px;
+      }
+    }
+  }
 }

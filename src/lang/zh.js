@@ -76,6 +76,7 @@ export default {
         updateDate: '更新时间',
         avatar: '图标',
         noAvatar: '暂无图标',
+        pickAvatar: '从内置图标库中挑选',
         getProjectData: '获取项目信息。。。',
         getProjectDataError: '获取项目信息失败！项目文件不存在或者已经损坏！',
         avatarValidate: {

@@ -76,6 +76,7 @@ export default {
         updateDate: 'updateDate',
         avatar: 'avatar',
         noAvatar: 'unset avatar',
+        pickAvatar: 'Select from the built-in Icon Library',
         getProjectData: 'getProjectData...',
         getProjectDataError: 'Failed to get project information! The project file does not exist or is damaged!',
         avatarValidate: {
