@@ -650,18 +650,19 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         if (cell.isNode()) {
           cell.attr('body', {
             stroke: 'red',
-            strokeWidth: 1,
+            strokeWidth: 3,
           }, { ignoreHistory : true});
           cell.shape !== 'table' && changePortsVisible(false, cell);
         } else {
           cell.attr('line/stroke', currentColor.current.selected, { ignoreHistory : true});
+          cell.attr('line/strokeWidth', 2, { ignoreHistory : true});
           cell.addTools({
             name: 'vertices',
             args: {
               attrs: {
                 stroke: currentColor.current.selected,
                 fill: currentColor.current.circleFill,
-                strokeWidth: 1,
+                strokeWidth: 2,
               },
             },
           }, null, { ignoreHistory : true});
@@ -671,6 +672,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         if (cell.isNode()) {
           cell.attr('body', {
             stroke: cell.shape === 'group' ? '#000000' : currentColor.current.border,
+            strokeWidth: 2,
           }, { ignoreHistory : true});
           if (cell.shape === 'edit-node' || cell.shape === 'edit-node-circle' || cell.shape === 'group') {
             if (cell.shape === 'group') {
@@ -687,6 +689,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         } else {
           cell.attr('line/stroke', cell.getProp('fillColor')
               || currentColor.current.fillColor, { ignoreHistory : true});
+          cell.attr('line/strokeWidth', 1, { ignoreHistory : true});
           cell.removeTools({ ignoreHistory : true});
         }
       });
