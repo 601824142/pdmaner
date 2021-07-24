@@ -86,7 +86,7 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
   const removeProject = (h) => {
     Modal.confirm({
       title: FormatMessage.string({id: 'deleteConfirmTitle'}),
-      message: FormatMessage.string({id: 'deleteConfirm'}),
+      message: FormatMessage.string({id: 'deleteFromDiskConfirm'}),
       lang,
       onOk:() => {
         deleteProject(h);

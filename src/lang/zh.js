@@ -197,6 +197,7 @@ export default {
     deleteConfirmTitle: '删除确认',
     importConfirm: '导入操作会覆盖当前项目是否继续？',
     deleteConfirm: '删除操作不可撤销是否继续？',
+    deleteFromDiskConfirm: '您将会将此文件从硬盘上删除，请问你确认删除吗？',
     deleteWarring: '无效的删除数据',
     clearConfirmTitle: '清空确认',
     clearConfirm: '清空操作不可撤销是否继续？',

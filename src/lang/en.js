@@ -197,6 +197,7 @@ export default {
     deleteConfirmTitle: 'Delete confirm',
     importConfirm: 'Import operation will overwrite current project whether to continue?',
     deleteConfirm: 'Delete cannot be undone, is continue ?',
+    deleteFromDiskConfirm: 'You will delete this file from your hard disk. Are you sure you want to delete it?',
     deleteWarring: 'delete fail : invalid data',
     clearConfirmTitle: 'Clear confirm',
     clearConfirm: 'Clear cannot be undone, is continue ?',
