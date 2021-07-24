@@ -1,5 +1,6 @@
 import React, {useState, useMemo, useEffect, useRef} from 'react';
 import _ from 'lodash/object';
+import moment from 'moment';
 import {
   Menu,
   Tab,
@@ -11,7 +12,7 @@ import {
   Icon,
   Modal,
   FormatMessage,
-  Checkbox, Tooltip, Upload, Terminal,
+  Checkbox, Tooltip, Upload, Terminal, Download,
 } from 'components';
 import Dict from '../container/dict';
 import Entity from '../container/entity';
@@ -531,6 +532,16 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       return result;
     }, false);
   };
+  const exportDomains = () => {
+    Download(
+      [JSON.stringify({
+        dataTypeSupports: _.get(dataSourceRef.current, 'profile.dataTypeSupports', []),
+        codeTemplates: _.get(dataSourceRef.current, 'profile.codeTemplates', []),
+        dataTypeMapping:  _.get(dataSourceRef.current, 'dataTypeMapping', []),
+        domains: _.get(dataSourceRef.current, 'domains', []),
+      }, null, 2)],
+      'application/json', `${moment().unix()}.domains.json`);
+  };
   const importDomains = () => {
     const calcData = (oldData, newData, key) => {
       return newData.concat(oldData
@@ -543,34 +554,41 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     };
     Upload('application/json', (d) => {
       const data = JSON.parse(d);
-      restProps?.update({
-        ...dataSourceRef.current,
-        profile: {
-          ...dataSourceRef.current?.profile,
-          dataTypeSupports: calcData(
-            _.get(dataSourceRef.current, 'profile.dataTypeSupports'),
-            _.get(data, 'profile.dataTypeSupports')),
-          codeTemplates: calcData(
-            _.get(dataSourceRef.current, 'profile.codeTemplates'),
-            _.get(data, 'profile.codeTemplates'), 'applyFor'),
-        },
-        dataTypeMapping: {
-          ...dataSourceRef.current?.dataTypeMapping,
-          mappings: calcData(
-            _.get(dataSourceRef.current, 'dataTypeMapping.mappings'),
-            _.get(data, 'dataTypeMapping.mappings'), 'defKey'),
-        },
-        domains: calcData(
-          _.get(dataSourceRef.current, 'domains'),
-          _.get(data, 'domains'), 'defKey'),
-      });
-      Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+      if (!data.domains) {
+        Modal.error({
+          title: FormatMessage.string({id: 'optFail'}),
+          message: FormatMessage.string({id: 'invalidDomainsFile'}),
+        });
+      } else {
+        restProps?.update({
+          ...dataSourceRef.current,
+          profile: {
+            ...dataSourceRef.current?.profile,
+            dataTypeSupports: calcData(
+              _.get(dataSourceRef.current, 'profile.dataTypeSupports', []),
+              _.get(data, 'dataTypeSupports', [])),
+            codeTemplates: calcData(
+              _.get(dataSourceRef.current, 'profile.codeTemplates', []),
+              _.get(data, 'codeTemplates', []), 'applyFor'),
+          },
+          dataTypeMapping: {
+            ...dataSourceRef.current?.dataTypeMapping,
+            mappings: calcData(
+              _.get(dataSourceRef.current, 'dataTypeMapping.mappings', []),
+              _.get(data, 'dataTypeMapping.mappings', []), 'defKey'),
+          },
+          domains: calcData(
+            _.get(dataSourceRef.current, 'domains', []),
+            _.get(data, 'domains', []), 'defKey'),
+        });
+        Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+      }
     }, (file) => {
-      const result = file.name.endsWith('.chnr.json');
+      const result = file.name.endsWith('.domains.json');
       if (!result) {
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),
-          message: FormatMessage.string({id: 'invalidChnrFile'}),
+          message: FormatMessage.string({id: 'invalidDomainsFile'}),
         });
       }
       return result;
@@ -954,6 +972,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       case 'powerdesigner': importFromPb();break;
       case 'db': importFromDb();break;
       case 'domains': importDomains();break;
+      case 'exportDomains': exportDomains();break;
       case 'undo': undo(); break;
       case 'redo': redo(); break;
       case 'img': exportImg(); break;

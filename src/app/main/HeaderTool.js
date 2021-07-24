@@ -200,6 +200,7 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
         dropMenu={[
             {key: 'word', name: FormatMessage.string({id: 'toolbar.exportWord'})},
             {key: 'sql', name: FormatMessage.string({id: 'toolbar.exportSql'})},
+            { key: 'exportDomains', name: FormatMessage.string({id: 'toolbar.exportDomains'}) },
             {
               key: 'img',
               name: FormatMessage.string({id: 'toolbar.exportImg'}),
