@@ -370,7 +370,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           const allEntities = importPdRef.current.getData()
               .reduce((a, b) => a.concat((b.fields || [])
                   .map(f => ({...f, group: b.defKey}))), []);
-          console.log(allEntities);
+          //console.log(allEntities);
           // 合并分组 关系图 数据域
           // 1.判断关系图是否有重复
           let tempNewData = {...newData};
@@ -435,6 +435,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                   .filter(m => currentMappings.findIndex(c => c.defKey === m.defKey) < 0)),
             },
           };
+          updateGroupType('modalGroup');
           injectDataSource(newDataSource, allEntities, newData.domains || [], modal);
         };
         modal = openModal(<ImportPd
