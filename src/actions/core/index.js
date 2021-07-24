@@ -300,18 +300,18 @@ export const createProject = (data, path, title, type) => {
               dispatch(createProjectSuccess(newData, realFilePath));
               dispatch(closeLoading(STATUS[1], null, '', type));
             } else {
-              dispatch(createProjectError(err));
+             // dispatch(createProjectError(err));
               dispatch(closeLoading(STATUS[2], err));
             }
           })(dispatch, getState);
         }).catch((err) => {
           dispatch(createProjectError(err));
-          dispatch(closeLoading(STATUS[2], err));
+        // dispatch(closeLoading(STATUS[2], err));
         });
       }
     }).catch((err) => {
       dispatch(closeLoading(STATUS[2], err));
-      dispatch(createProjectError(err));
+     // dispatch(createProjectError(err));
     });
   };
 };

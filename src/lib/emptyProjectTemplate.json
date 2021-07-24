@@ -81,7 +81,10 @@
           "defaultValue": "",
           "hideInGraph": false
         }
-      ]
+      ],
+      "entityInitProperties": {
+        "partitionBy": ""
+      }
     },
     "javaHome": "",
     "sql": {

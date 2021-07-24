@@ -738,12 +738,12 @@ export const getViewColumn = () => {
   return headers;
 }
 
-export const getEmptyEntity = (fields = []) => {
+export const getEmptyEntity = (fields = [], properties = {}) => {
   return {
     defKey: '',
     defName: '',
     comment: '',
-    properties: { partitionBy : ''},
+    properties,
     nameTemplate: '{defKey}[{defName}]',
     headers: getFullColumns()
       .map(h => ({

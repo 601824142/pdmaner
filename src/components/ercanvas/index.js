@@ -331,6 +331,9 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
   const getEntityInitFields = () => {
     return _.get(dataSourceRef.current, 'profile.default.entityInitFields', []);
   };
+  const getEntityInitProperties = () => {
+    return _.get(dataSourceRef.current, 'profile.default.entityInitProperties', {});
+  };
   const updateFields = (originKey, fields) => {
     if (!validateTableStatus(`${originKey}${separator}entity`)) {
       const getKey = (f) => {
@@ -1035,6 +1038,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                     hideInGraph: h.relationNoShow,
                   })),
               fields: getEntityInitFields(),
+              properties: getEntityInitProperties(),
             }),
             viewGroups: (dataSourceRef.current.viewGroups || []).map((g) => {
               if ((g.refDiagrams || []).includes(tabKey.split(separator)[0])) {
@@ -1089,6 +1093,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           defKey: generatorTableKey('TABLE_1', dataSourceRef.current),
           defName: '数据表',
           fields: getEntityInitFields(),
+          properties: getEntityInitProperties(),
         };
       } else {
         empty = dataSourceRef.current?.entities?.filter(entity => entity.defKey === key)[0];

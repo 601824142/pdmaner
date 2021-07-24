@@ -499,6 +499,7 @@ export default {
     config: {
         title: '设置',
         EntityInitFields: '新建表默认字段',
+        EntityBasePropertiesList: '新建表默认属性',
         JavaHomeConfigResult: {
             success: '配置成功',
             error: '配置失败',

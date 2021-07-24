@@ -499,6 +499,7 @@ export default {
     config: {
         title: 'setting',
         EntityInitFields: 'New Entity Init Fields',
+        EntityBasePropertiesList: 'New Entity Base Properties',
         JavaHomeConfigResult: {
             success: 'config success',
             error: 'config error',
