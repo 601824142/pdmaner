@@ -127,6 +127,7 @@ export const updateAllData = (dataSource, tabs) => {
                         'relation',
                         'vertices',
                         'label',
+                        'labels',
                         'fontColor',
                         'fillColor',
                         'parent',

@@ -223,6 +223,7 @@ export default {
             removeEdge: 'removeEdge',
             setRelation: 'setRelation',
             editRelation: 'editRelation',
+            relationLabel: 'relationLabel',
         },
         node: {
             delete: 'delete node',
