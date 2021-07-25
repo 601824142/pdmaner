@@ -16,6 +16,27 @@
     border-radius: 5px 5px 0 0;
     background: @third-primary-color;
     border-bottom: 1px solid @primary-border-color;
+    &-icon {
+      position: relative;
+      margin-top: -4px;
+      float: right;
+      width: 24px;
+      height: 24px;
+      background: @warring-color-under;
+      border-radius: 0 5px 0 0;
+      & > div {
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+        border-width: 18px;
+        border-right-color: @third-primary-color;
+        transform: rotate(-45deg);
+        left: -19px;
+        top: 7px;
+      }
+    }
   }
   &-body {
     height: calc(100% - 27px);

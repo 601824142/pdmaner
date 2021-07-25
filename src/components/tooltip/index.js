@@ -6,7 +6,7 @@ import {getPrefix} from '../../lib/prefixUtil';
 
 const Tooltip = React.memo(forwardRef(({prefix, children, offsetLeft = 0, offsetTop = 0,
                                          title, visible = true, className = '', mouseEnterDelay = 0,
-                                         force, placement = 'bottom'}, ref) => {
+                                         force, placement = 'bottom', conversion = 1}, ref) => {
   const currentPrefix = getPrefix(prefix);
   const containerRef = useRef(null);
   const parentRef = useRef(null);
@@ -59,8 +59,8 @@ const Tooltip = React.memo(forwardRef(({prefix, children, offsetLeft = 0, offset
         containerRef.current.style.top = `${rect.bottom + 10 + offsetTop}px`;
         containerRef.current.style.left = `${rect.left + (rect.width / 2) - containerRef.current.clientWidth / 2 + offsetLeft}px`;
       } else if (placement === 'top') {
-        containerRef.current.style.bottom = `${window.innerHeight - rect.top + 10 + offsetTop}px`;
-        containerRef.current.style.left = `${rect.left + (rect.width / 2) - containerRef.current.clientWidth / 2 + offsetLeft}px`;
+        containerRef.current.style.bottom = `${window.innerHeight - rect.top / conversion + 10 + offsetTop}px`;
+        containerRef.current.style.left = `${rect.left / conversion + (rect.width / 2 / conversion) - containerRef.current.clientWidth / 2 + offsetLeft}px`;
       } else if (placement === 'topLeft') {
         titleRef.current.style.maxHeight = `${rect.top - 20}px`;
         containerRef.current.style.bottom = `${window.innerHeight - rect.top + 10 + offsetTop}px`;
