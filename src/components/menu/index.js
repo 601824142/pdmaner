@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, {useState, useRef, useImperativeHandle, forwardRef, useEffect} from 'react';
 import _ from 'lodash/object';
 
 import ContextMenu from 'components/contextmenu';
@@ -180,6 +180,9 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     }
     return false;
   };
+  useEffect(() => {
+    updateSelectedMenu([]);
+  }, [groupType]);
   const getMenuItem = (parentMenu, menu = parentMenu, offsetNumber = 0) => {
     const parentKey = menu === parentMenu ? null : parentMenu[defKey];
     return (

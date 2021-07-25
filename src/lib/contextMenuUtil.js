@@ -912,18 +912,28 @@ const clearOpt = (dataSource, menu, updateDataSource) => {
 };
 
 const moveOpt = (dataSource, menu, updateDataSource) => {
-  const { dataType, dataKey } = menu;
+  const { dataType, dataKey, otherMenus } = menu;
   let modal = null;
-  const getRefName = () => {
-    switch (dataType) {
+  const getRefName = (type) => {
+    switch (type) {
       case 'entity': return 'refEntities';
       case 'view': return 'refViews';
       case 'diagram': return 'refDiagrams';
       case 'dict': return 'refDicts';
     }
   };
-  const refName = getRefName();
+  const refName = getRefName(dataType);
   let oldData = (dataSource?.viewGroups || []).filter(v => v[refName]?.includes(dataKey)).map(v => v.defKey);
+  const allGroupData = otherMenus.reduce((a, b) => {
+    const tempA = {...a};
+    const type = getRefName(b.type);
+    if (!tempA[type]) {
+      tempA[type] = [];
+    }
+    tempA[type].push(b.key);
+    return tempA;
+  }, {});
+  console.log(allGroupData);
   const dataChange = (groups) => {
     oldData = groups;
   };
@@ -938,12 +948,20 @@ const moveOpt = (dataSource, menu, updateDataSource) => {
         if (selectGroups.includes(v.defKey)) {
           return {
             ...v,
-            [refName]: [...new Set((v[refName] || []).concat(dataKey))]
+            ...Object.keys(allGroupData).reduce((a, b) => {
+              const tempA = {...a};
+              tempA[b] = [...new Set((v[b] || []).concat(allGroupData[b]))];
+              return tempA;
+            },{}),
           }
         } else {
           return {
             ...v,
-            [refName]: (v[refName] || []).filter(k => k !== dataKey),
+            ...Object.keys(allGroupData).reduce((a, b) => {
+              const tempA = {...a};
+              tempA[b] = (v[b] || []).filter(k => !allGroupData[b].includes(k));
+              return tempA;
+            },{}),
           }
         }
       }),
