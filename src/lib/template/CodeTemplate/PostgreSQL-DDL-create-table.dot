@@ -1,0 +1,16 @@
+DROP TABLE IF EXISTS {{=it.entity.defKey}};
+CREATE TABLE {{=it.entity.defKey}}(
+{{ pkList = [] ; }}
+{{~it.entity.fields:field:index}}
+    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}
+    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' AUTO_INCREMENT' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}
+{{~}}
+{{? pkList.length >0 }}
+    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})
+{{?}}
+);
+$blankline
+{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}
+{{~it.entity.fields:field:index}}
+{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}
+{{~}}
