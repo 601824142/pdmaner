@@ -673,16 +673,6 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         } else {
           cell.attr('line/stroke', currentColor.current.selected, { ignoreHistory : true});
           cell.attr('line/strokeWidth', 2, { ignoreHistory : true});
-          cell.addTools({
-            name: 'vertices',
-            args: {
-              attrs: {
-                stroke: currentColor.current.selected,
-                fill: currentColor.current.circleFill,
-                strokeWidth: 2,
-              },
-            },
-          }, null, { ignoreHistory : true});
         }
       });
       removed.forEach((cell) => {
@@ -707,7 +697,6 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           cell.attr('line/stroke', cell.getProp('fillColor')
               || currentColor.current.fillColor, { ignoreHistory : true});
           cell.attr('line/strokeWidth', 1, { ignoreHistory : true});
-          cell.removeTools({ ignoreHistory : true});
         }
       });
       selectionChanged && selectionChanged(added);
@@ -956,6 +945,16 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     });
     graph.on('edge:selected', ({ edge }) => {
       edge.addTools([
+        {
+          name: 'vertices',
+          args: {
+            attrs: {
+              stroke: currentColor.current.selected,
+              fill: currentColor.current.circleFill,
+              strokeWidth: 2,
+            },
+          },
+        },
         {
           name: 'target-arrowhead',
           args: {
