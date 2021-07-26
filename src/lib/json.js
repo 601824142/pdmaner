@@ -478,5 +478,11 @@ export const getLogPath = () => {
 }
 
 export const showItemInFolder = () => {
-  shell.showItemInFolder(getLogPath());
+  shell.openItem(getLogPath());
 }
+
+export const showTemplateFolder = () => {
+  const template = ipcRenderer.sendSync('template');
+  shell.openItem(template);
+}
+

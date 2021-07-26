@@ -1,0 +1,40 @@
+package cn.com.chiner.entity;
+$blankline
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+$blankline
+{{
+    var today=new Date();
+    var fullYear=today.getFullYear();
+    var month=today.getMonth() + 1;
+    var days=today.getDate();
+}}
+ /**
+ * @author : http://www.chiner.pro
+ * @date : {{=fullYear}}-{{=month}}-{{=days}}
+ * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}
+ */
+@Table(name="{{=it.entity.defKey}}")
+public class {{=it.func.camel(it.entity.defKey,true) }} implements Serializable,Cloneable{
+{{~it.entity.fields:field:index}}
+    /** {{=it.func.join(field.defName,field.comment,';')}} */
+    {{? field.primaryKey }}
+    @Id
+    @GeneratedValue
+    {{?}}
+    private {{=field.type}} {{=it.func.camel(field.defKey,false)}} ;
+{{~}}
+$blankline
+
+{{~it.entity.fields:field:index}}
+    /** {{=it.func.join(field.defName,field.comment,';')}} */
+    public {{=field.type}} get{{=it.func.camel(field.defKey,true)}}(){
+        return this.{{=it.func.camel(field.defKey,false)}};
+    }
+    /** {{=it.func.join(field.defName,field.comment,';')}} */
+    public void set{{=it.func.camel(field.defKey,true)}}({{=field.type}} {{= it.func.camel(field.defKey,false) }}){
+        return this.{{=it.func.camel(field.defKey,false)}};
+    }
+{{~}}
+}

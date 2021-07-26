@@ -29,6 +29,7 @@ const selectWordFile = json.selectWordFile;
 const writeLog = json.writeLog;
 const showItemInFolder = json.showItemInFolder;
 const getLogPath = json.getLogPath;
+const showTemplateFolder = json.showTemplateFolder;
 
 export {
   saveJsonPromise,
@@ -58,5 +59,6 @@ export {
   writeLog,
   showItemInFolder,
   getLogPath,
+  showTemplateFolder,
 };
 
