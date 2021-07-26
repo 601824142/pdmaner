@@ -24,7 +24,17 @@ export const img = (data, dataSource, needCalc = true, groups) => {
       const other = {}
       if (d.shape === 'erdRelation') {
         const relation = d.relation.split(':');
-        other.labels = [{
+        other.labels = (d.labels || []).map(l => {
+          return {
+            ...l,
+            position: {
+              offset: {
+                x: 10,
+                y: 8,
+              },
+            },
+          }
+        }).concat([{
           attrs: {
             text: {
               text: (relation[0] || '').toLocaleUpperCase(),
@@ -51,7 +61,7 @@ export const img = (data, dataSource, needCalc = true, groups) => {
                 y: 8,
               },
             },
-          }];
+          }]);
       }
       return {
         ..._.omit(d, ['attrs', 'component']),

@@ -27,6 +27,9 @@ const saveTempImages = json.saveTempImages;
 const saveAsWordTemplate = json.saveAsWordTemplate;
 const selectWordFile = json.selectWordFile;
 const writeLog = json.writeLog;
+const showItemInFolder = json.showItemInFolder;
+const getLogPath = json.getLogPath;
+const showTemplateFolder = json.showTemplateFolder;
 
 export {
   saveJsonPromise,
@@ -54,5 +57,8 @@ export {
   saveAsWordTemplate,
   selectWordFile,
   writeLog,
+  showItemInFolder,
+  getLogPath,
+  showTemplateFolder,
 };
 

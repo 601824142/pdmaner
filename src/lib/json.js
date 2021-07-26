@@ -7,7 +7,7 @@ import * as _ from 'lodash/object';
 import { projectSuffix } from '../../profile';
 const { execFile } = require('child_process');
 
-const { ipcRenderer, remote } = require('electron');
+const { ipcRenderer, remote, shell } = require('electron');
 const { app, dialog } = remote;
 
 const user_config = 'user_config.json';
@@ -146,7 +146,10 @@ export const getUserConfig = () => {
     const getData = (path, defaultData) => {
       return new Promise((r, j) => {
         readJsonPromise(path).then((data) => {
-          r(data);
+          r({
+            ...defaultData,
+            ...data,
+          });
         }).catch(() => {
           // 如果用户信息报错 则需要使用默认数据进行覆盖
           saveJsonPromise(path, defaultData).then(() => {
@@ -469,3 +472,17 @@ export const writeLog = (err) => {
         .then(() => res(logPath))
   });
 };
+
+export const getLogPath = () => {
+  return path.join(app.getPath('home'), '/logs/chiner');
+}
+
+export const showItemInFolder = () => {
+  shell.openItem(getLogPath());
+}
+
+export const showTemplateFolder = () => {
+  const template = ipcRenderer.sendSync('template');
+  shell.openItem(template);
+}
+

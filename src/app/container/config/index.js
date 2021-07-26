@@ -4,16 +4,18 @@ import { SimpleTab, FormatMessage } from 'components';
 import './style/index.less';
 import EntityInitFields from './EntityInitFields';
 import SystemParameter from './SystemParameter';
+import EntityBasePropertiesList from './EntityInitProperties';
 //import DbConnect from './DbConnect';
 import {getPrefix} from '../../../lib/prefixUtil';
 
 const Components = {
   EntityInitFields,
   SystemParameter,
+  EntityBasePropertiesList,
   //DbConnect,
 };
-export default React.memo(({prefix, dataSource, dataChange, updateDataSource}) => {
-  const configTab = ['EntityInitFields', 'SystemParameter']
+export default React.memo(({prefix, dataSource, dataChange, updateDataSource, config}) => {
+  const configTab = ['EntityInitFields', 'EntityBasePropertiesList', 'SystemParameter']
   const currentPrefix = getPrefix(prefix);
   return <SimpleTab
     options={configTab
@@ -22,7 +24,7 @@ export default React.memo(({prefix, dataSource, dataChange, updateDataSource}) =
         return {
           key: d,
           title: FormatMessage.string({id: `config.${d}`}) || d,
-          content: <Com updateDataSource={updateDataSource} dataSource={dataSource} prefix={currentPrefix} dataChange={dataChange}/>,
+          content: <Com config={config} updateDataSource={updateDataSource} dataSource={dataSource} prefix={currentPrefix} dataChange={dataChange}/>,
         };
       })}
   />;

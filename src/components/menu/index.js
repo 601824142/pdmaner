@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, {useState, useRef, useImperativeHandle, forwardRef, useEffect} from 'react';
 import _ from 'lodash/object';
 
 import ContextMenu from 'components/contextmenu';
@@ -126,7 +126,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
   const rowOnDrop = (i, child, parentKey, menu) => {
     if ((child.type === startRef.current.type) &&
         (startRef.current.index > -1) && (startRef.current.index !== i)) {
-      const name = allType.filter(t => t.type === child.type)[0];
+      const name = allType.concat({ type: 'dataType', name: 'profile.dataTypeSupports', defKey: '' }).filter(t => t.type === child.type)[0];
       if (name) {
         if (parentKey) {
           update && update({
@@ -150,7 +150,8 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
                 dataSource,
                 name.name,
                 moveArrayPosition(_.get(dataSource, name.name)
-                        .filter(c => menu.children.findIndex(m => m.defKey === c.defKey) > -1),
+                        .filter(c => menu.children
+                          .findIndex(m => m.defKey === (name.type === 'dataType' ? c : c.defKey)) > -1),
                     startRef.current.index, i > startRef.current.index ? i : i + 1),
             ),
           });
@@ -174,12 +175,16 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
           m.type === 'dict' ||
           m.type === 'mapping' ||
           m.type === 'domain' ||
-          m.type === 'diagram';
+          m.type === 'diagram' ||
+          m.type === 'dataType';
     } else if (draggable){
       return m.type === 'entity';
     }
     return false;
   };
+  useEffect(() => {
+    updateSelectedMenu([]);
+  }, [groupType]);
   const getMenuItem = (parentMenu, menu = parentMenu, offsetNumber = 0) => {
     const parentKey = menu === parentMenu ? null : parentMenu[defKey];
     return (

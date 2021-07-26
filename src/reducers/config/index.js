@@ -8,6 +8,7 @@ const config = (state = { lang: langType[0] }, action) => {
       return {
         ...state,
         data: action.data,
+        javaHome: action.data[0]?.javaHome,
         lang: action.data[0]?.lang,
         result: success,
       };
@@ -15,6 +16,7 @@ const config = (state = { lang: langType[0] }, action) => {
       return {
         ...state,
         data: action.data,
+        javaHome: action.data[0]?.javaHome,
         lang: action.data[0]?.lang,
         result: success,
       };

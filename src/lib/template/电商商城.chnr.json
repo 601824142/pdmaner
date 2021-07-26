@@ -567,7 +567,7 @@
           "freeze": false
         },
         {
-          "refKey": "remark",
+          "refKey": "comment",
           "hideInGraph": true,
           "code": "remark",
           "value": "说明",

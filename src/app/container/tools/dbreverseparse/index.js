@@ -6,7 +6,7 @@ import ParseDb from './ParseDb';
 import DealData from './DealData';
 import './style/index.less';
 import {getPrefix} from '../../../../lib/prefixUtil';
-import {connectDB} from '../../../../lib/middle';
+import {connectDB, getLogPath, showItemInFolder} from '../../../../lib/middle';
 
 export default React.memo(({prefix, dataSource, dataChange, onClose, onOk}) => {
   const dealDataRef = useRef(null);
@@ -65,7 +65,10 @@ export default React.memo(({prefix, dataSource, dataChange, onClose, onOk}) => {
             bodyStyle: {width: '80%'},
             contentStyle: {width: '100%', height: '100%'},
             title: FormatMessage.string({id: 'dbReverseParse.parseDbError'}),
-            message: <Terminal termReady={termReady}/>,
+            message: <div>
+              <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
+              <Terminal termReady={termReady}/>
+            </div>,
           });
         } else {
           let tempData = data.body.map((d) => {

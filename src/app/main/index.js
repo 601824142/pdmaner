@@ -1,5 +1,6 @@
 import React, {useState, useMemo, useEffect, useRef} from 'react';
 import _ from 'lodash/object';
+import moment from 'moment';
 import {
   Menu,
   Tab,
@@ -11,7 +12,7 @@ import {
   Icon,
   Modal,
   FormatMessage,
-  Checkbox, Tooltip, Upload, Terminal,
+  Checkbox, Tooltip, Upload, Terminal, Download,
 } from 'components';
 import Dict from '../container/dict';
 import Entity from '../container/entity';
@@ -43,7 +44,7 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 import {addBodyEvent, removeBodyEvent} from '../../lib/listener';
 import {firstUp} from '../../lib/string';
-import {connectDB, selectWordFile} from '../../lib/middle';
+import {connectDB, getLogPath, selectWordFile, showItemInFolder} from '../../lib/middle';
 import { imgAll } from '../../lib/generatefile/img';
 
 const TabItem = Tab.TabItem;
@@ -299,7 +300,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                   bodyStyle: {width: '80%'},
                   contentStyle: {width: '100%', height: '100%'},
                   title: FormatMessage.string({id: 'optFail'}),
-                  message: <Terminal termReady={termReady}/>,
+                  message: <div>
+                    <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
+                    <Terminal termReady={termReady}/>
+                  </div>,
                 });
               } else {
                 restProps.closeLoading();
@@ -370,7 +374,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           const allEntities = importPdRef.current.getData()
               .reduce((a, b) => a.concat((b.fields || [])
                   .map(f => ({...f, group: b.defKey}))), []);
-          console.log(allEntities);
+          //console.log(allEntities);
           // 合并分组 关系图 数据域
           // 1.判断关系图是否有重复
           let tempNewData = {...newData};
@@ -435,6 +439,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                   .filter(m => currentMappings.findIndex(c => c.defKey === m.defKey) < 0)),
             },
           };
+          updateGroupType('modalGroup');
           injectDataSource(newDataSource, allEntities, newData.domains || [], modal);
         };
         modal = openModal(<ImportPd
@@ -490,7 +495,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             bodyStyle: {width: '80%'},
             contentStyle: {width: '100%', height: '100%'},
             title: FormatMessage.string({id: 'optFail'}),
-            message: <Terminal termReady={termReady}/>,
+            message: <div>
+              <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
+              <Terminal termReady={termReady}/>
+            </div>,
           });
           restProps.closeLoading();
         } else {
@@ -518,7 +526,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           });
         }
       });
-      console.log(data);
+      //console.log(data);
     }, (file) => {
       const result = file.name.endsWith('.pdm') || file.name.endsWith('.PDM');
       if (!result) {
@@ -529,6 +537,68 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       }
       return result;
     }, false);
+  };
+  const exportDomains = () => {
+    Download(
+      [JSON.stringify({
+        dataTypeSupports: _.get(dataSourceRef.current, 'profile.dataTypeSupports', []),
+        codeTemplates: _.get(dataSourceRef.current, 'profile.codeTemplates', []),
+        dataTypeMapping:  _.get(dataSourceRef.current, 'dataTypeMapping', []),
+        domains: _.get(dataSourceRef.current, 'domains', []),
+      }, null, 2)],
+      'application/json', `${moment().unix()}.domains.json`);
+  };
+  const importDomains = () => {
+    const calcData = (oldData, newData, key) => {
+      return newData.concat(oldData
+        .filter(o => newData.findIndex((n) => {
+          if (key) {
+            return n[key] === o[key];
+          }
+          return n === o;
+        }) < 0));
+    };
+    Upload('application/json', (d) => {
+      const data = JSON.parse(d);
+      if (!data.domains) {
+        Modal.error({
+          title: FormatMessage.string({id: 'optFail'}),
+          message: FormatMessage.string({id: 'invalidDomainsFile'}),
+        });
+      } else {
+        restProps?.update({
+          ...dataSourceRef.current,
+          profile: {
+            ...dataSourceRef.current?.profile,
+            dataTypeSupports: calcData(
+              _.get(dataSourceRef.current, 'profile.dataTypeSupports', []),
+              _.get(data, 'dataTypeSupports', [])),
+            codeTemplates: calcData(
+              _.get(dataSourceRef.current, 'profile.codeTemplates', []),
+              _.get(data, 'codeTemplates', []), 'applyFor'),
+          },
+          dataTypeMapping: {
+            ...dataSourceRef.current?.dataTypeMapping,
+            mappings: calcData(
+              _.get(dataSourceRef.current, 'dataTypeMapping.mappings', []),
+              _.get(data, 'dataTypeMapping.mappings', []), 'defKey'),
+          },
+          domains: calcData(
+            _.get(dataSourceRef.current, 'domains', []),
+            _.get(data, 'domains', []), 'defKey'),
+        });
+        Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+      }
+    }, (file) => {
+      const result = file.name.endsWith('.domains.json');
+      if (!result) {
+        Modal.error({
+          title: FormatMessage.string({id: 'optFail'}),
+          message: FormatMessage.string({id: 'invalidDomainsFile'}),
+        });
+      }
+      return result;
+    });
   };
   const importFromDb = () => {
     // 判断是否已经存在数据库连接
@@ -812,7 +882,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
               return;
             }
           }
-          Object.keys(tempData).filter(f => f !== 'language').forEach((f) => {
+          Object.keys(tempData).filter(f => (f !== 'language') && (f !== 'javaHome')).forEach((f) => {
             tempDataSource = _.set(tempDataSource, f,
                 Array.isArray(tempData[f]) ? tempData[f].map(d => _.omit(d, '__key')) : tempData[f]);
           });
@@ -837,7 +907,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                 }));
           });
         }
-        restProps?.save(tempDataSource); // 配置项内容在关闭弹窗后自动保存
+        if ('javaHome' in tempData) {
+          restProps?.updateJavaHome(tempData.javaHome);
+        }
+        restProps?.save(tempDataSource, FormatMessage.string({id: 'saveProject'}), !projectInfoRef.current); // 配置项内容在关闭弹窗后自动保存
       }
       modal && modal.close();
     };
@@ -855,6 +928,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       tempData[fieldName] = value;
     };
     modal = openModal(<Com
+      config={config}
       lang={config.lang}
       dataChange={dataChange}
       prefix={prefix}
@@ -903,6 +977,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       case 'pdman': importFromPDMan();break;
       case 'powerdesigner': importFromPb();break;
       case 'db': importFromDb();break;
+      case 'domains': importDomains();break;
+      case 'exportDomains': exportDomains();break;
       case 'undo': undo(); break;
       case 'redo': redo(); break;
       case 'img': exportImg(); break;

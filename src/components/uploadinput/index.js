@@ -4,7 +4,7 @@ import { Icon, Input } from 'components/index';
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 
-export default React.memo(({prefix, defaultValue, title,
+export default React.memo(({prefix, defaultValue, title, suffix,
                              placeholder, onChange, base64, accept, uploadBefore,
                              ...restProps}) => {
   const [value, updateValue] = useState(defaultValue || '');
@@ -60,9 +60,12 @@ export default React.memo(({prefix, defaultValue, title,
     value={newValue}
     onChange={valueOnChange}
     suffix={
-      <span onClick={selectFile} className={`${currentPrefix}-upload-input`}>
+      <><span onClick={selectFile} className={`${currentPrefix}-upload-input`}>
         <input type='file' onChange={_onChange} ref={fileInput} readOnly accept={accept}/>
         <Icon type='fa-ellipsis-h' title={title}/>
-      </span>}
+      </span>
+        {suffix}
+      </>
+    }
   />;
 });

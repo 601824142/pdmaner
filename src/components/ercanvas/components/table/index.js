@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import { Graph } from '@antv/x6';
 import '@antv/x6-react-shape';
 import { separator } from '../../../../../profile';
+import Tooltip from '../../../tooltip';
 import './style/index.less';
 import {hex2Rgba} from '../../../../lib/color';
 
@@ -64,6 +65,14 @@ const Table = forwardRef(({node}, ref) => {
       style={{background: node.getProp('fillColor')}}
     >
       {`${getTitle()}${store?.data.count > 0 ? `:${store?.data.count}` : ''}`}
+      {
+        data?.comment &&
+          <Tooltip title={data?.comment} force conversion={2} placement='top'>
+            <div className='chiner-er-table-header-icon'>
+              <div style={{borderRightColor: node.getProp('fillColor')}}>{}</div>
+            </div>
+          </Tooltip>
+      }
     </div>
     <div
       className='chiner-er-table-body'

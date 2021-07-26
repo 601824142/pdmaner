@@ -33,11 +33,26 @@
   overflow: auto;
   height: 60vh;
 }
+.@{prefix}-setting-entity-init-properties {
+  padding: 5px;
+  overflow: auto;
+  height: 60vh;
+  .@{prefix}-entity-base-properties-list-container {
+    height: calc(100% - 30px);
+    overflow: auto;
+  }
+}
 
 .@{prefix}-setting-java-home {
  // padding: 5px;
  // height: 60vh;
   .opt();
+  &-opt {
+    span:last-child {
+      padding: 0 5px;
+      border-left: 1px solid @primary-border-color;
+    }
+  }
 }
 .@{prefix}-setting-sql-delimiter {
 //  padding: 5px;

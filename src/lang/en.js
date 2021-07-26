@@ -23,6 +23,8 @@ export default {
         importPDMan: 'import PDMan file',
         importPowerDesigner: 'import PowerDesigner file',
         importDb: 'import DB',
+        importDomains: 'import Domains',
+        exportDomains: 'export Domains',
         export: 'export',
         exportImg: 'export the current canvas as a picture',
         exportSql: 'export DDL',
@@ -46,6 +48,7 @@ export default {
     invalidProjectFile: 'Invalid project file',
     invalidProjectData: 'Invalid chnr file, please create a new project before importing!Do not modify the project suffix directly',
     invalidPdmFile: 'Invalid pdm file',
+    invalidDomainsFile: 'Invalid domains file',
     invalidPDManFile: 'Invalid PDMan file',
     createProjectExists: 'Project already exists',
     saveProject: 'saveProject...',
@@ -74,6 +77,7 @@ export default {
         updateDate: 'updateDate',
         avatar: 'avatar',
         noAvatar: 'unset avatar',
+        pickAvatar: 'Select from the built-in Icon Library',
         getProjectData: 'getProjectData...',
         getProjectDataError: 'Failed to get project information! The project file does not exist or is damaged!',
         avatarValidate: {
@@ -195,6 +199,7 @@ export default {
     deleteConfirmTitle: 'Delete confirm',
     importConfirm: 'Import operation will overwrite current project whether to continue?',
     deleteConfirm: 'Delete cannot be undone, is continue ?',
+    deleteFromDiskConfirm: 'You will delete this file from your hard disk. Are you sure you want to delete it?',
     deleteWarring: 'delete fail : invalid data',
     clearConfirmTitle: 'Clear confirm',
     clearConfirm: 'Clear cannot be undone, is continue ?',
@@ -218,6 +223,7 @@ export default {
             removeEdge: 'removeEdge',
             setRelation: 'setRelation',
             editRelation: 'editRelation',
+            relationLabel: 'relationLabel',
         },
         node: {
             delete: 'delete node',
@@ -495,9 +501,11 @@ export default {
     config: {
         title: 'setting',
         EntityInitFields: 'New Entity Init Fields',
+        EntityBasePropertiesList: 'New Entity Base Properties',
         JavaHomeConfigResult: {
             success: 'config success',
             error: 'config error',
+            placeholder: 'If it is not filled in, it will be automatically read from the environment variable of the system',
         },
         SystemParameter: 'SystemParameter',
         DbConnect: 'DbConnect',
@@ -517,6 +525,7 @@ export default {
         relationFieldSize: 'relation show field size',
     },
     dbConnect: {
+        log: 'Check the log file at:',
         title: 'db connect setting',
         defaultDbConnectDesc: 'The default database is:',
         defaultDbConnectEmpty: 'Currently, there is no default selected connection',
@@ -610,9 +619,6 @@ components: {
     },
     listSelect: {
         result: 'a total of {size} standard fields have been parsed, of which {repeat} already exists',
-        all: 'all',
-        reversed: 'reversed',
-        clear: 'clear',
         remove: 'remove',
         repeatMessage: 'Selecting this data table will override the existing data table in the system',
         search: 'code/name',

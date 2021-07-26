@@ -437,7 +437,10 @@ export const getDemoTemplateData = (templateShow) => {
       "defName": "学生",
       "comment": "学生信息表",
       "properties": {
-        "partitionBy": ""
+        "partitioned by": "(pt_d string)",
+        "row format delimited": "",
+        "fields terminated by": "','",
+        "collection items terminated by": "'-'"
       },
       "fields": [
         {

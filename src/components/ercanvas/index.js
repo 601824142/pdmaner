@@ -189,6 +189,7 @@ import { separator } from '../../../profile';
 import Entity from '../../app/container/entity';
 import {getPrefix} from '../../lib/prefixUtil';
 import { img } from '../../lib/generatefile/img';
+import LabelEditor from './LabelEditor';
 
 const { Dnd } = Addon;
 
@@ -331,6 +332,9 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
   const getEntityInitFields = () => {
     return _.get(dataSourceRef.current, 'profile.default.entityInitFields', []);
   };
+  const getEntityInitProperties = () => {
+    return _.get(dataSourceRef.current, 'profile.default.entityInitProperties', {});
+  };
   const updateFields = (originKey, fields) => {
     if (!validateTableStatus(`${originKey}${separator}entity`)) {
       const getKey = (f) => {
@@ -399,20 +403,33 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     cells
         .forEach((c) => {
           c.setProp(key, color.hex, { ignoreHistory : true});
-          if (c.shape === 'erdRelation' && key === 'fillColor') {
-            const tempLine = c.attr('line');
-            c.attr('line', {
-              ...tempLine,
-              stroke: color.hex,
-              sourceMarker: {
-                ...tempLine.sourceMarker,
-                fillColor: color.hex,
-              },
-              targetMarker: {
-                ...tempLine.targetMarker,
-                fillColor: color.hex,
-              },
-            }, { ignoreHistory : true});
+          if (c.shape === 'erdRelation') {
+            if (key === 'fillColor') {
+              const tempLine = c.attr('line');
+              c.attr('line', {
+                ...tempLine,
+                stroke: color.hex,
+                sourceMarker: {
+                  ...tempLine.sourceMarker,
+                  fillColor: color.hex,
+                },
+                targetMarker: {
+                  ...tempLine.targetMarker,
+                  fillColor: color.hex,
+                },
+              }, { ignoreHistory : true});
+            }
+           c.setLabels([{
+             attrs: {
+               text: {
+                 fill: c.getProp('fontColor'),
+                 text: c.getLabelAt(0)?.attrs?.text?.text || '',
+               },
+               rect: {
+                 fill: c.getProp('fillColor'),
+               },
+             },
+           }], { ignoreHistory : true, relation: true});
           }
         });
   };
@@ -633,8 +650,11 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         menuContainer.focus();
       });
     };
-    graph.on('cell:changed', () => {
-      dataChange && dataChange(graph.toJSON({diff: true}));
+    graph.on('cell:changed', ({options}) => {
+      if (!((Object.keys(options).length === 0) || (options.ignoreHistory && !options.relation))) {
+        // 过滤掉无需保存的数据
+        dataChange && dataChange(graph.toJSON({diff: true}));
+      }
     });
     graph.on('cell:removed', () => {
       dataChange && dataChange(graph.toJSON({diff: true}));
@@ -647,27 +667,19 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         if (cell.isNode()) {
           cell.attr('body', {
             stroke: 'red',
-            strokeWidth: 1,
+            strokeWidth: 3,
           }, { ignoreHistory : true});
           cell.shape !== 'table' && changePortsVisible(false, cell);
         } else {
           cell.attr('line/stroke', currentColor.current.selected, { ignoreHistory : true});
-          cell.addTools({
-            name: 'vertices',
-            args: {
-              attrs: {
-                stroke: currentColor.current.selected,
-                fill: currentColor.current.circleFill,
-                strokeWidth: 1,
-              },
-            },
-          }, null, { ignoreHistory : true});
+          cell.attr('line/strokeWidth', 2, { ignoreHistory : true});
         }
       });
       removed.forEach((cell) => {
         if (cell.isNode()) {
           cell.attr('body', {
             stroke: cell.shape === 'group' ? '#000000' : currentColor.current.border,
+            strokeWidth: 2,
           }, { ignoreHistory : true});
           if (cell.shape === 'edit-node' || cell.shape === 'edit-node-circle' || cell.shape === 'group') {
             if (cell.shape === 'group') {
@@ -679,12 +691,12 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                 });
               }
             }
-            cell.setProp('editable', false, { ignoreHistory : true});
+            cell.setProp('editable', false, { ignoreHistory : true, relation: true});
           }
         } else {
           cell.attr('line/stroke', cell.getProp('fillColor')
               || currentColor.current.fillColor, { ignoreHistory : true});
-          cell.removeTools({ ignoreHistory : true});
+          cell.attr('line/strokeWidth', 1, { ignoreHistory : true});
         }
       });
       selectionChanged && selectionChanged(added);
@@ -772,7 +784,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
               relation: 'n',
             },
           },
-        }, { ignoreHistory: true });
+        }, { ignoreHistory: true, relation: true });
       }
       const calcPorts = (port, calcNode) => {
         const incomingEdges = graph.getIncomingEdges(calcNode) || [];
@@ -803,7 +815,9 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     });
     graph.on('edge:contextmenu', ({cell, e}) => {
       createContentMenu(e, [
-        {name: FormatMessage.string({id: 'canvas.edge.editRelation'})}], (i) => {
+        {name: FormatMessage.string({id: 'canvas.edge.editRelation'})},
+        {name: FormatMessage.string({id: 'canvas.edge.relationLabel'})},
+      ], (i) => {
         if (i === 0) {
           const label = cell.getProp('relation') || '1:n';
           const relationArray = label.split(':');
@@ -843,6 +857,45 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                   </Button>,
                 ],
               });
+        } else {
+          let modal = null;
+          let value = cell.getLabelAt(0)?.attrs?.text?.text || '';
+          const labelChange = (v) => {
+            value = v;
+          };
+          const onOK = () => {
+            cell.setLabels([{
+              attrs: {
+                text: {
+                  fill: cell.getProp('fontColor'),
+                  text: value,
+                },
+                rect: {
+                  fill: cell.getProp('fillColor'),
+                },
+              },
+            }], { ignoreHistory : true, relation: true});
+            modal && modal.close();
+          };
+          const onCancel = () => {
+            modal && modal.close();
+          };
+          modal = openModal(
+            <LabelEditor
+              label={value}
+              labelChange={labelChange}
+            />,
+            {
+              title: <FormatMessage id='canvas.edge.relationLabel'/>,
+              buttons: [
+                <Button key='onOK' onClick={onOK}>
+                  <FormatMessage id='button.ok'/>
+                </Button>,
+                <Button key='onCancel' onClick={onCancel}>
+                  <FormatMessage id='button.cancel'/>
+                </Button>,
+              ],
+            });
         }
       });
     });
@@ -892,6 +945,16 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     });
     graph.on('edge:selected', ({ edge }) => {
       edge.addTools([
+        {
+          name: 'vertices',
+          args: {
+            attrs: {
+              stroke: currentColor.current.selected,
+              fill: currentColor.current.circleFill,
+              strokeWidth: 2,
+            },
+          },
+        },
         {
           name: 'target-arrowhead',
           args: {
@@ -1035,6 +1098,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                     hideInGraph: h.relationNoShow,
                   })),
               fields: getEntityInitFields(),
+              properties: getEntityInitProperties(),
             }),
             viewGroups: (dataSourceRef.current.viewGroups || []).map((g) => {
               if ((g.refDiagrams || []).includes(tabKey.split(separator)[0])) {
@@ -1089,10 +1153,14 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           defKey: generatorTableKey('TABLE_1', dataSourceRef.current),
           defName: '数据表',
           fields: getEntityInitFields(),
+          properties: getEntityInitProperties(),
         };
       } else {
         empty = dataSourceRef.current?.entities?.filter(entity => entity.defKey === key)[0];
         count = graph.getNodes().filter(n => n.data?.defKey === key).length;
+      }
+      if (!empty) {
+        return;
       }
       const { width, height, fields, headers, maxWidth, ports } =
           calcNodeData(empty, dataSourceRef.current, getTableGroup());

@@ -7,7 +7,7 @@ import {
   FormatMessage,
   Input,
   Radio,
-  Checkbox, Message,
+  Checkbox,
 } from 'components';
 
 import Preview from './Preview';
@@ -15,6 +15,7 @@ import Preview from './Preview';
 import './style/index.less';
 import { defaultTemplate } from '../../../lib/datasource_util';
 import {getPrefix} from '../../../lib/prefixUtil';
+import {showTemplateFolder} from '../../../lib/json';
 
 const RadioGroup = Radio.RadioGroup;
 
@@ -58,7 +59,8 @@ const CodeEditorContent = ({prefix, onChange, value, templateShow,
           </Button>],
       });
     } else {
-      Message.warring({title: FormatMessage.string({id: 'wait'})});
+      showTemplateFolder();
+      //Message.warring({title: FormatMessage.string({id: 'wait'})});
       /*modal = openModal(<DefaultTemplate
         templateChange={templateChange}
       />, {

@@ -107,7 +107,8 @@
     "asar": true,
     "asarUnpack": [
       "build/jar/",
-      "build/file/"
+      "build/file/",
+      "build/template/"
     ],
     "dmg": {
       "icon": "build/icon.icns",
