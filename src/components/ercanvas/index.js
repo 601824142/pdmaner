@@ -437,16 +437,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     return graphRef.current.scale();
   };
   const validateScale = (factor) => {
-    const scale = getScaleNumber().sx;
-    if (factor + scale >= 2) {
-      Message.warring({title: FormatMessage.string({id: 'canvas.isMax'})});
-      graphRef.current.scale(2);
-    } else if(factor + scale < 0.2) {
-      Message.warring({title: FormatMessage.string({id: 'canvas.isMin'})});
-      graphRef.current.scale(0.2);
-    } else {
-      graphRef.current.zoom(factor);
-    }
+    graphRef.current.zoom(factor);
   };
   const render = () => {
     graphRef.current.resetSelection();
@@ -512,13 +503,6 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       mousewheel: {
         enabled: true,
         modifiers: ['ctrl', 'meta'],
-        guard: (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            validateScale(e.wheelDelta > 0 ? 0.1 : -0.1);
-            return false;
-          }
-          return false;
-        },
       },
       connecting: {
         connectionPoint: 'anchor',
@@ -602,6 +586,10 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             },
           },
         },
+      },
+      scaling: {
+        min: 0.1,
+        max: 2,
       },
     });
     graph.bindKey(['ctrl+z','command+z'], () => {
