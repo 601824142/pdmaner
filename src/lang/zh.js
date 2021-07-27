@@ -61,6 +61,7 @@ export default {
     openDirError: '目录选择失败',
     openFileError: '文件选择失败',
     saveSuccess: '保存成功',
+    saveFail: '保存失败',
     project: {
         entities: '数据表',
         views: '视图',

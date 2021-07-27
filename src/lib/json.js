@@ -109,7 +109,7 @@ export const readJsonPromise = (filePath) => {
   });
 };
 
-export const saveJsonPromiseAs = (data) => {
+export const saveJsonPromiseAs = (data, refactor) => {
   const tempData = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
   const extensions = [];
   if (process.platform === 'darwin') {
@@ -124,7 +124,7 @@ export const saveJsonPromiseAs = (data) => {
         return path.replace(/\.json$/g, `.${projectSuffix}.json`);
       }
       return path;
-    }).then(({filePath}) => res(filePath)).catch(err => rej(err));
+    }, {}, refactor).then(({filePath}) => res(filePath)).catch(err => rej(err));
   });
 };
 
@@ -184,7 +184,7 @@ export const saveUserConfig = (data = []) => {
   });
 };
 
-export const saveFile = (data, filters, fileValidate, options) => {
+export const saveFile = (data, filters, fileValidate, options, refactor) => {
   // 将调用系统的目录弹出框
   return new Promise((res, rej) => {
     dialog.showSaveDialog({
@@ -197,7 +197,7 @@ export const saveFile = (data, filters, fileValidate, options) => {
           // 需要重组文件名
           tempFile = fileValidate(filePath);
         }
-        saveNormalFile(tempFile, data).then((data) => {
+        saveNormalFile(tempFile, refactor ? refactor(data, tempFile) : data).then((data) => {
           res({
             data,
             filePath: tempFile,

@@ -142,8 +142,8 @@ const mapDispatchToProps = (dispatch, { store }) => {
     delete: (data, title) => {
       dispatch(removeProject(data, title));
     },
-    save: (data, title, saveAs) => {
-      dispatch(saveProject(data, saveAs));
+    save: (data, title, saveAs, callback) => {
+      dispatch(saveProject(data, saveAs, callback));
     },
     changeLang: (type, title) => {
       dispatch(changeLanguage(store.getState()?.config?.data, type, title));

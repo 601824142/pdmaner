@@ -1,5 +1,6 @@
 import moment from 'moment';
 import _ from 'lodash/object';
+import crypto from 'crypto';
 
 import {
   saveJsonPromise, readJsonPromise, saveJsonPromiseAs, openProjectFilePath,
@@ -135,7 +136,26 @@ export const updateProjectInfo = (info) => {
   };
 };
 
-export const saveProject = (data, saveAs) => {
+export const validateSaveProject = (info, data) => {
+  return new Promise((res, rej) => {
+    // 创建保存前的hash
+    const saveData = typeof data !== 'string' ? JSON.stringify(data, null, 2) : data;
+    const hashOldRead = crypto.createHash('md5');
+    hashOldRead.update(saveData);
+    readJsonPromise(info.path).then((newData) => {
+      const hashNewRead = crypto.createHash('md5');
+      const newDataStr = typeof newData !== 'string' ? JSON.stringify(newData, null, 2) : newData;
+      hashNewRead.update(`${newDataStr}`);
+      if (hashOldRead.digest('hex') === hashNewRead.digest('hex')) {
+        res();
+      } else {
+        rej(new Error());
+      }
+    });
+  });
+};
+
+export const saveProject = (data, saveAs, callback) => {
   // 此处为异步操作
   const time = moment().format('YYYY-M-D HH:mm:ss');
   const tempData = {
@@ -146,33 +166,58 @@ export const saveProject = (data, saveAs) => {
   return (dispatch, getState) => {
     //dispatch(openLoading(title)); // 开启全局loading
     const info = getState()?.core?.info;
+    const getName = (p) => {
+      const name = basename(p, '.json');
+      return name.split('.')[0];
+    };
     if (saveAs) {
-      saveJsonPromiseAs(data).then((path) => {
-        addHistory({
-          describe: data.describe || '',
-          name: data.name || '',
-          avatar: data.avatar || '',
-          path,
-        }, (err) => {
-          if (!err) {
-            setMemoryCache('data', tempData);
-            dispatch(saveProjectSuccess(tempData));
-            dispatch(updateProjectInfo(path));
-          } else {
-            dispatch(saveProjectFail(err));
-          }
-        })(dispatch, getState);
+      saveJsonPromiseAs(data, (d, f) => {
+        const oldData = JSON.parse(d.toString().replace(/^\uFEFF/, ''));
+        oldData.name = getName(f);
+        return JSON.stringify(oldData, null, 2);
+      }).then((path) => {
+        const name = getName(path);
+        validateSaveProject({path}, {...data, name}).then(() => {
+          addHistory({
+            describe: data.describe || '',
+            name,
+            avatar: data.avatar || '',
+            path,
+          }, (err) => {
+            if (!err) {
+              tempData.name = name;
+              setMemoryCache('data', tempData);
+              callback && callback();
+              dispatch(saveProjectSuccess(tempData));
+              dispatch(updateProjectInfo(path));
+            } else {
+              callback && callback(err);
+              dispatch(saveProjectFail(err));
+            }
+          })(dispatch, getState);
+        }).catch((err) => {
+          callback && callback(err);
+          dispatch(saveProjectFail(err));
+        });
       })
         .catch((err) => {
+          callback && callback(err);
           dispatch(saveProjectFail(err));
         });
     } else {
       saveJsonPromise(info, tempData)
         .then(() => {
-          setMemoryCache('data', tempData);
-          dispatch(saveProjectSuccess(tempData));
+          validateSaveProject({path: info}, tempData).then(() => {
+            setMemoryCache('data', tempData);
+            callback && callback();
+            dispatch(saveProjectSuccess(tempData));
+          }).catch((err) => {
+            callback && callback(err);
+            dispatch(saveProjectFail(err));
+          });
         })
         .catch((err) => {
+          callback && callback(err);
           dispatch(saveProjectFail(err));
         });
     }

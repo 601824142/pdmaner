@@ -61,6 +61,7 @@ export default {
     openDirError: 'open dir error',
     openFileError: 'open file error',
     saveSuccess: 'save success',
+    saveFail: 'save fail',
     project: {
         entities: 'ENTITIES',
         views: 'VIEWS',
