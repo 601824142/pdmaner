@@ -8,7 +8,7 @@
   "dbConns": [],
   "profile": {
     "default": {
-      "db": "",
+      "db": "MYSQL",
       "dbConn": "89F8A23D-7DC0-4A22-B399-B314B82834AC",
       "entityInitFields": [
         {

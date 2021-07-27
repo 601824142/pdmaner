@@ -271,7 +271,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "EMAIL",
@@ -772,7 +772,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "ORDER_STATUS",
@@ -1903,7 +1903,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "CONTENT",
@@ -1933,7 +1933,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "VIEW_COUNT",
@@ -2179,7 +2179,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "STATUS",
@@ -2641,7 +2641,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "ROLE_LEVEL",

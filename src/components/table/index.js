@@ -41,6 +41,18 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     }
     return getFullColumns();
   }, []);
+  const getFieldProps = (prop) => {
+    if (prop){
+      const domain = domains.filter(d => d.defKey === prop)[0] || { len: '', scale: '' };
+      const dataType = mapping.filter(m => m.defKey === domain.applyFor)[0]?.[db] || '';
+      return {
+        len: domain.len === undefined ? '' : domain.len,
+        scale: domain.scale === undefined ? '' : domain.scale,
+        type: dataType,
+      };
+    }
+    return {};
+  };
   const getInitState = (preData = []) => {
     return {
       ...data,
@@ -48,6 +60,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
         const oldField = preData.filter(preF => preF.defKey === f.defKey);
         return {
           ...f,
+          ...getFieldProps(f.domain),
           __key: f.__key || oldField.__key || Math.uuid(), // 复用key 减少无意义渲染
         };
       }),
@@ -117,16 +130,10 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
           if (name === 'domain') {
             if (selectedFieldsRef.current.includes(field.__key) || f.__key === field.__key) {
               // 需要联动修改 字段长度和小数位数
-              const others = {};
-              const domain = domains.filter(d => d.defKey === value)[0] || { len: '', scale: '' };
-              const dataType = mapping.filter(m => m.defKey === domain.applyFor)[0]?.[db] || '';
-              others.len = domain.len === undefined ? '' : domain.len;
-              others.scale = domain.scale === undefined ? '' : domain.scale;
-              others.type = dataType;
               return {
                 ...field,
                 [name]: value,
-                ...others,
+                ...getFieldProps(value),
               };
             }
             return field;
@@ -134,7 +141,8 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
             const others = {};
             if (name === 'primaryKey' && value) {
               others.notNull = true;
-            } else if((name === 'type' || name === 'len' || name === 'scale') && !!field.domain){
+            } else if((name === 'type' || name === 'len' || name === 'scale')
+              && !!field.domain && (f[name] !== value)){
               others.domain = '';
             }
             return {
