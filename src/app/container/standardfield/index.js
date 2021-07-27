@@ -61,10 +61,11 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
     setFilterValue(e.target.value);
   };
   const finalData = (dataSource.standardFields || []).map((g) => {
+    const reg = new RegExp(filterValue, 'ig');
     return {
       ...g,
       fields: (g.fields || [])
-          .filter(f => getKey(f).toLocaleLowerCase().includes(filterValue.toLocaleLowerCase())),
+          .filter(f => reg.test(getKey(f))),
     };
   });
   const onClick = (d) => {

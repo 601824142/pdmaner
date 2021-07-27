@@ -27,6 +27,7 @@ export default React.memo(({prefix, newData, checkBoxChange,
   const _onChange = (e) => {
     setFilterValue(e.target.value);
   };
+  const reg = new RegExp(searchValue, 'ig');
   return <div className={`${prefix}-listselect-left`}>
     <div className={`${prefix}-listselect-left-search`}>
       <SearchInput
@@ -39,8 +40,7 @@ export default React.memo(({prefix, newData, checkBoxChange,
         <tbody>
           {
           newData.filter(d => (!!d.defKey)
-            && (`${d.defKey || ''}`.includes(searchValue)
-              || `${d.defName || ''}`.includes(searchValue))).map((d, i) => {
+            && (reg.test(d.defKey || '') || reg.test(d.defName || ''))).map((d, i) => {
             return <Item
               defaultSelected={defaultSelected}
               i={i}

@@ -75,10 +75,9 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
   if ('checkValue' in restProps) {
     finalCheckValues = restProps.checkValue;
   }
-  const upSearchValue = searchValue.toLocaleUpperCase();
+  const reg = new RegExp(searchValue, 'ig');
   const options = [].concat(children)
-      .filter(c => c.props?.value?.toLocaleUpperCase()?.includes(upSearchValue)
-          || c.props?.children?.toLocaleUpperCase()?.includes(upSearchValue));
+      .filter(c => reg.test(c.props?.value || '') || reg.test(c.props?.children || ''));
   const getChildren = () => {
     const menus = options.length > 0 ? options.map(c => React.cloneElement(c, {
       checkValues: finalCheckValues,
