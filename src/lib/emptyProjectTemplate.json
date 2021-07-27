@@ -83,7 +83,6 @@
         }
       ],
       "entityInitProperties": {
-        "partitionBy": ""
       }
     },
     "javaHome": "",
