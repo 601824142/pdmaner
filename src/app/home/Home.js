@@ -37,7 +37,7 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
         });
       } else {
         if (projectData && Object.keys(oldData).length > 0){
-          renameProject(newDataSource, oldData);
+          renameProject(newDataSource, oldData, projectData);
         } else {
           if (!newDataSource.describe){
             newDataSource.describe = newDataSource.name;
@@ -147,9 +147,17 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
     </div>;
   };
   const openUrl = () => {
-    // eslint-disable-next-line global-require,import/no-extraneous-dependencies
-    require('electron').shell.openExternal('https://www.wjx.cn/vj/PIZj3DI.aspx');
+    const href = 'https://www.wjx.cn/vj/PIZj3DI.aspx';
+    if (platform === 'json') {
+      // eslint-disable-next-line global-require,import/no-extraneous-dependencies
+      require('electron').shell.openExternal(href);
+    } else {
+      const a = document.createElement('a');
+      a.href = href;
+      a.click();
+    }
   };
+  const reg = new RegExp(searchValue, 'ig');
   return <div className={`${currentPrefix}-home-container`}>
     <div className={`${currentPrefix}-home-toolbar`}>
       <ToolBar resizeable title={FormatMessage.string({id: 'system.title'})}/>
@@ -242,8 +250,7 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
               <div className={`${currentPrefix}-home-container-body-right-list-tab-content`}>
                 {
                   config?.data[0]?.projectHistories?.
-                  filter(p => p.describe?.includes(searchValue)
-                      || p.name?.includes(searchValue))?.
+                  filter(p => reg.test(p.describe || '') || reg.test(p.name || '')).
                   map((p) => {
                     return <Tooltip
                       offsetLeft={-18}

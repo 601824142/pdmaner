@@ -15,7 +15,8 @@ import Preview from './Preview';
 import './style/index.less';
 import { defaultTemplate } from '../../../lib/datasource_util';
 import {getPrefix} from '../../../lib/prefixUtil';
-import {showTemplateFolder} from '../../../lib/json';
+// eslint-disable-next-line import/named
+import { platform } from '../../../lib/middle';
 
 const RadioGroup = Radio.RadioGroup;
 
@@ -59,7 +60,17 @@ const CodeEditorContent = ({prefix, onChange, value, templateShow,
           </Button>],
       });
     } else {
-      showTemplateFolder();
+      const href = 'https://gitee.com/robergroup/chiner/tree/develop/src/lib/template/CodeTemplate';
+      if (platform === 'json') {
+        // eslint-disable-next-line global-require,import/no-extraneous-dependencies
+        require('electron').shell.openExternal(href);
+      } else {
+        const a = document.createElement('a');
+        a.href = href;
+        a.click();
+      }
+      //showTemplateFolder();
+      // src/lib/template/CodeTemplate
       //Message.warring({title: FormatMessage.string({id: 'wait'})});
       /*modal = openModal(<DefaultTemplate
         templateChange={templateChange}

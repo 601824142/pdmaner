@@ -91,13 +91,19 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         injectTempTabs.current.concat(tabsRef.current));
     if (newData.result.status) {
       replace.splice(0, replace.length - 1, ...newData.replace); // 重置数组
-      restProps.save(newData.dataSource, FormatMessage.string({id: 'saveProject'}), isSaveAs);
-      if (!isSaveAs) {
-        restProps?.update(newData.dataSource);
-        Message.success({title: FormatMessage.string({id: 'saveSuccess'})});
-      }
-      injectTempTabs.current = [];
-      callback && callback(false);
+      restProps.save(newData.dataSource, FormatMessage.string({id: 'saveProject'}), isSaveAs, (err) => {
+        if (!err) {
+          if (!isSaveAs) {
+            restProps?.update(newData.dataSource);
+          }
+          Message.success({title: FormatMessage.string({id: 'saveSuccess'})});
+          injectTempTabs.current = [];
+          callback && callback(false);
+        } else {
+          callback && callback(true);
+          Message.error({title: FormatMessage.string({id: 'saveFail'})});
+        }
+      });
     } else {
       callback && callback(true);
       Modal.error({
@@ -546,7 +552,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         dataTypeMapping:  _.get(dataSourceRef.current, 'dataTypeMapping', []),
         domains: _.get(dataSourceRef.current, 'domains', []),
       }, null, 2)],
-      'application/json', `${moment().unix()}.domains.json`);
+      'application/json',
+      `${dataSourceRef.current.name}-${FormatMessage.string({id: 'project.domains'})}-${moment().format('YYYYMDHHmmss')}.json`);
   };
   const importDomains = () => {
     const calcData = (oldData, newData, key) => {
@@ -590,7 +597,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         Message.success({title: FormatMessage.string({id: 'optSuccess'})});
       }
     }, (file) => {
-      const result = file.name.endsWith('.domains.json');
+      const result = file.name.endsWith('.json');
       if (!result) {
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),

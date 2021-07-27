@@ -30,6 +30,7 @@ const writeLog = json.writeLog;
 const showItemInFolder = json.showItemInFolder;
 const getLogPath = json.getLogPath;
 const showTemplateFolder = json.showTemplateFolder;
+const basename = json.basename;
 
 export {
   saveJsonPromise,
@@ -60,5 +61,6 @@ export {
   showItemInFolder,
   getLogPath,
   showTemplateFolder,
+  basename,
 };
 

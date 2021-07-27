@@ -122,14 +122,12 @@ export default React.memo(({placeholder, prefix, dataSource,
     ];
   }, [dataSource]);
   const calcSuggest = (suggest, search) => {
-    const suggestArray = suggest.split('');
-    const startIndex = suggest.toLocaleUpperCase().indexOf(search.toLocaleUpperCase());
-    const endIndex = startIndex + search.length;
-    const starStr = suggestArray.slice(0, startIndex).join('');
-    const endStr = suggestArray.slice(endIndex, suggestArray.length).join('');
-    return <>{starStr}<span
-      className={`${currentPrefix}-search-suggest-list-search`}
-    >{suggest.slice(startIndex, endIndex)}</span>{endStr}</>;
+    const reg = new RegExp(search, 'ig');
+    const str = `<span class=${currentPrefix}-search-suggest-list-search>$&</span>`;
+    const finalData = `<span>${suggest.replace(reg, str)}</span>`;
+    // eslint-disable-next-line react/no-danger,react/no-danger-with-children
+    return <span dangerouslySetInnerHTML={{ __html: finalData }}
+    >{}</span>;
   };
   const _jumpPosition = (...args) => {
     setSearchValue('');
@@ -195,10 +193,10 @@ export default React.memo(({placeholder, prefix, dataSource,
     });
   };
   const getFilterData = (data = [], value) => {
+    const reg = new RegExp(value, 'ig');
     return data
         .filter((d) => {
-          return ((d.defKey || '').toLocaleUpperCase().includes(value.toLocaleUpperCase())
-              || (d.defName || '').toLocaleUpperCase().includes(value.toLocaleUpperCase()));
+          return reg.test(d.defKey || '') || reg.test(d.defName || '');
         });
   };
   const moreClick = (filterData) => {

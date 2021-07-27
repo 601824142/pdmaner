@@ -125,7 +125,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
               <FormatMessage id='tableBase.defKey'/>
             </span>
             <span className={`${currentPrefix}-form-item-component`}>
-              <Input maxLength={32} defaultValue={data.defKey} onChange={e => onChange(e, 'defKey')}/>
+              <Input maxLength={64} defaultValue={data.defKey} onChange={e => onChange(e, 'defKey')}/>
             </span>
           </div>
           <div className={`${currentPrefix}-form-item`}>

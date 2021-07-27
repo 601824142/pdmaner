@@ -25,6 +25,9 @@ const core = (state = {}, action) => {
       };
     case SAVE_PROJECT_FAIL:
     case READ_PROJECT_FAIL:
+      return {
+        ...state,
+      };
     case CREATE_PROJECT_ERROR:
       return {
         ...state,

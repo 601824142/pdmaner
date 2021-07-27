@@ -52,6 +52,8 @@ export default React.memo(({data, style, prefix, title}) => {
     if (e.ctrlKey || e.metaKey) {
       if (e.keyCode === 70) {
         searchRef.current.style.display = 'flex';
+        const input = searchRef.current.querySelector('input');
+        input?.focus();
       } else if (e.keyCode === 65) {
         window.getSelection().removeAllRanges();
         let selection = window.getSelection();
@@ -80,19 +82,20 @@ export default React.memo(({data, style, prefix, title}) => {
     if (e.target.value) {
       let count = 0;
       Array.from(ref.current.childNodes).forEach((n) => {
-        if (n.textContent && n.textContent.includes(value)) {
+        const reg = new RegExp(value, 'ig');
+        if (n.textContent && reg.test(n.textContent)) {
           count += 1;
-          const spanHtml = `<span class="${searchClass}">${value}</span>`;
+          const spanHtml = `<span class="${searchClass}">$&</span>`;
           let newHtml;
           if (n.nodeType === 3) {
-            newHtml = n.textContent.replace(value, spanHtml);
+            newHtml = n.textContent.replace(reg, spanHtml);
             // eslint-disable-next-line no-param-reassign
             const text = document.createElement('span');
             text.innerHTML = newHtml;
             n.parentElement.replaceChild(text, n);
             searchNodesRef.current.push(text);
           } else {
-            newHtml = n.innerHTML.replace(value, spanHtml);
+            newHtml = n.innerHTML.replace(reg, spanHtml);
             // eslint-disable-next-line no-param-reassign
             n.innerHTML = newHtml;
             searchNodesRef.current.push(n);

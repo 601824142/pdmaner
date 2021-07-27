@@ -1,11 +1,12 @@
 import moment from 'moment';
 import _ from 'lodash/object';
+import crypto from 'crypto';
 
 import {
   saveJsonPromise, readJsonPromise, saveJsonPromiseAs, openProjectFilePath,
   saveVersionProject, removeVersionProject,
   removeAllVersionProject, openFileOrDirPath, ensureDirectoryExistence,
-  dirSplicing, fileExists, deleteFile,
+  dirSplicing, fileExists, deleteFile, basename,
 } from '../../lib/middle';
 import { openLoading, closeLoading, optReset, STATUS } from '../common';
 //import { pdman2sino, version2sino } from '../../lib/datasource_util';
@@ -135,7 +136,26 @@ export const updateProjectInfo = (info) => {
   };
 };
 
-export const saveProject = (data, saveAs) => {
+export const validateSaveProject = (info, data) => {
+  return new Promise((res, rej) => {
+    // 创建保存前的hash
+    const saveData = typeof data !== 'string' ? JSON.stringify(data, null, 2) : data;
+    const hashOldRead = crypto.createHash('md5');
+    hashOldRead.update(saveData);
+    readJsonPromise(info.path).then((newData) => {
+      const hashNewRead = crypto.createHash('md5');
+      const newDataStr = typeof newData !== 'string' ? JSON.stringify(newData, null, 2) : newData;
+      hashNewRead.update(`${newDataStr}`);
+      if (hashOldRead.digest('hex') === hashNewRead.digest('hex')) {
+        res();
+      } else {
+        rej(new Error());
+      }
+    });
+  });
+};
+
+export const saveProject = (data, saveAs, callback) => {
   // 此处为异步操作
   const time = moment().format('YYYY-M-D HH:mm:ss');
   const tempData = {
@@ -146,33 +166,58 @@ export const saveProject = (data, saveAs) => {
   return (dispatch, getState) => {
     //dispatch(openLoading(title)); // 开启全局loading
     const info = getState()?.core?.info;
+    const getName = (p) => {
+      const name = basename(p, '.json');
+      return name.split('.')[0];
+    };
     if (saveAs) {
-      saveJsonPromiseAs(data).then((path) => {
-        addHistory({
-          describe: data.describe || '',
-          name: data.name || '',
-          avatar: data.avatar || '',
-          path,
-        }, (err) => {
-          if (!err) {
-            setMemoryCache('data', tempData);
-            dispatch(saveProjectSuccess(tempData));
-            dispatch(updateProjectInfo(path));
-          } else {
-            dispatch(saveProjectFail(err));
-          }
-        })(dispatch, getState);
+      saveJsonPromiseAs(data, (d, f) => {
+        const oldData = JSON.parse(d.toString().replace(/^\uFEFF/, ''));
+        oldData.name = getName(f);
+        return JSON.stringify(oldData, null, 2);
+      }).then((path) => {
+        const name = getName(path);
+        validateSaveProject({path}, {...data, name}).then(() => {
+          addHistory({
+            describe: data.describe || '',
+            name,
+            avatar: data.avatar || '',
+            path,
+          }, (err) => {
+            if (!err) {
+              tempData.name = name;
+              setMemoryCache('data', tempData);
+              callback && callback();
+              dispatch(saveProjectSuccess(tempData));
+              dispatch(updateProjectInfo(path));
+            } else {
+              callback && callback(err);
+              dispatch(saveProjectFail(err));
+            }
+          })(dispatch, getState);
+        }).catch((err) => {
+          callback && callback(err);
+          dispatch(saveProjectFail(err));
+        });
       })
         .catch((err) => {
+          callback && callback(err);
           dispatch(saveProjectFail(err));
         });
     } else {
       saveJsonPromise(info, tempData)
         .then(() => {
-          setMemoryCache('data', tempData);
-          dispatch(saveProjectSuccess(tempData));
+          validateSaveProject({path: info}, tempData).then(() => {
+            setMemoryCache('data', tempData);
+            callback && callback();
+            dispatch(saveProjectSuccess(tempData));
+          }).catch((err) => {
+            callback && callback(err);
+            dispatch(saveProjectFail(err));
+          });
         })
         .catch((err) => {
+          callback && callback(err);
           dispatch(saveProjectFail(err));
         });
     }
@@ -361,13 +406,15 @@ export const updateProject = (data) => {
   };
 };
 
-export const renameProject = (newData, oldData, title) => {
+export const renameProject = (newData, oldData, title, dataInfo) => {
   // 判断项目名和项目目录是否已经修改 该方法无只需触发loading操作的action
   return (dispatch, getState) => {
     dispatch(openLoading(title));
     // 1.需要调整项目文件 先新建 再删除
-    const oldFilePath = dirSplicing(oldData.path, `${oldData.name}.${projectSuffix}.json`);
-    const newFilePath = dirSplicing(newData.path, `${newData.name}.${projectSuffix}.json`);
+    const name = basename(dataInfo.path, '.json');
+    const suffix = name.split('.')[1];
+    const oldFilePath = dirSplicing(oldData.path, `${oldData.name}.${suffix}.json`);
+    const newFilePath = dirSplicing(newData.path, `${newData.name}.${suffix}.json`);
     const config = getState()?.config?.data[0];
     if (fileExists(newFilePath) && (oldFilePath !== newFilePath)) {
       dispatch(closeLoading(STATUS[2], allLangData[config.lang].createProjectExists));

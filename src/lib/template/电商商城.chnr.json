@@ -1,7 +1,7 @@
 {
   "name": "电商商城",
   "describe": "电子商城参考案例",
-  "avatar": "",
+  "avatar": "data:image/png;base64,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",
   "version": "3.0.0",
   "createdTime": "2021-6-24 20:43:43",
   "updatedTime": "2021-7-12 21:19:29",
@@ -271,7 +271,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "EMAIL",
@@ -772,7 +772,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "ORDER_STATUS",
@@ -1903,7 +1903,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "CONTENT",
@@ -1933,7 +1933,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "VIEW_COUNT",
@@ -2179,7 +2179,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "STATUS",
@@ -2641,7 +2641,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "refDict": "",
-          "domain": "MiddleString"
+          "domain": ""
         },
         {
           "defKey": "ROLE_LEVEL",

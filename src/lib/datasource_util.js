@@ -356,25 +356,14 @@ export const updateAllViewFiledRefEntity = (dataSource, replace) => {
   }
 };
 
-export const updateAllFieldsType = (dataSource, cb) => {
+export const updateAllFieldsType = (dataSource, oldDomain, newDomain) => {
   // 默认数据库发生变化时 所有的数据类型全部更换 需要从缓存读取数据进行替换
-  const domains = _.get(dataSource, 'domains', []);
-  const mappings = _.get(dataSource, 'dataTypeMapping.mappings', []);
-  const db = _.get(dataSource, 'profile.default.db', _.get(dataSource, 'profile.dataTypeSupports', [])[0]);
   const mapFields = (d) => {
     return _.get(d, 'fields', [])
       .map((f) => {
-        const domain = domains.filter(d => d.defKey === f.domain)[0] || {};
-        const dataType = mappings.filter(m => m.defKey === domain.applyFor)[0]?.[db] || '';
-        let tempData = {};
-        if (cb) {
-          tempData = cb(f);
-        } else {
-          tempData = { type: dataType }; // 默认更改字段的类型
-        }
         return {
           ...f,
-          ...tempData,
+          domain: f.domain === oldDomain ? newDomain : (f.domain || ''),
         };
       })
   };
@@ -1050,7 +1039,7 @@ export  const getTextWidth = (text, font) => {
   dom.innerText = text;
   const width =  dom.getBoundingClientRect().width;
   document.body.removeChild(dom);
-  return width;
+  return Math.ceil(width);
 };
 
 export  const calcNodeData = (nodeData, dataSource, groups) => {

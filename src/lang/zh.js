@@ -61,6 +61,7 @@ export default {
     openDirError: '目录选择失败',
     openFileError: '文件选择失败',
     saveSuccess: '保存成功',
+    saveFail: '保存失败',
     project: {
         entities: '数据表',
         views: '视图',
@@ -223,7 +224,7 @@ export default {
             removeEdge: '删除连接线',
             setRelation: '设置对应关系',
             editRelation: '编辑关系',
-            relationLabel: '连线信息',
+            relationLabel: '关系说明',
         },
         node: {
             delete: '删除节点',

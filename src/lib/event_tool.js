@@ -1,7 +1,7 @@
 import * as Component from 'components';
 
 const creatTempInput = () => {
-  const input = document.createElement('input');
+  const input = document.createElement('textarea');
   document.body.appendChild(input);
   input.style.opacity = '0';
   return input;

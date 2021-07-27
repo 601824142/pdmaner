@@ -61,10 +61,11 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
     setFilterValue(e.target.value);
   };
   const finalData = (dataSource.standardFields || []).map((g) => {
+    const reg = new RegExp(filterValue, 'ig');
     return {
       ...g,
       fields: (g.fields || [])
-          .filter(f => getKey(f).toLocaleLowerCase().includes(filterValue.toLocaleLowerCase())),
+          .filter(f => reg.test(getKey(f))),
     };
   });
   const onClick = (d) => {
@@ -131,7 +132,9 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
     const standardFields = _.get(dataSource, 'standardFields', []);
     Download(
         [JSON.stringify(standardFields, null, 2)],
-        'application/json', `${FormatMessage.string({id: 'standardFields.standardFieldsLib'})}-${moment().unix()}.json`);
+        'application/json',
+      `${dataSource.name}-${FormatMessage.string({id: 'standardFields.standardFieldsLib'})}-${moment().format('YYYYMDHHmmss')}.json`,
+     );
   };
   const importStandardFields = () => {
     Upload('application/json', (data) => {

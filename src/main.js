@@ -73,13 +73,6 @@ function createWindow() {
     }
     event.returnValue = docx;
   });
-  ipcMain.on("template", (event) => {
-    if (process.env.NODE_ENV === 'development') {
-      event.returnValue = path.join(__dirname, '../public/template');
-    } else {
-      event.returnValue = path.join(__dirname, '../../app.asar.unpacked/build/template')
-    }
-  });
   let menu;
   // 设置菜单
   if (process.platform === 'darwin') {

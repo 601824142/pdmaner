@@ -479,19 +479,7 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
           },
         };
         tempDataSource.domains = domains; // 更新domains
-        const mappings = _.get(dataSource, 'dataTypeMapping.mappings', []);
-        const db = _.get(dataSource, 'profile.default.db', _.get(dataSource, 'dataTypeSupports', [])[0]);
-        tempDataSource = updateAllFieldsType(tempDataSource, ({domain, type}) => {
-          // 替换某些字段的type
-          const oldDomain = domains.filter(d => d.defKey === domain)[0] || {};
-          const oldDataType = mappings.filter(m => m.defKey === oldDomain.applyFor)[0]?.[db] || '';
-          if (data.defKey === oldDomain.applyFor) {
-            return {
-              type: oldDataType === type ? data[db] : type,
-            };
-          }
-          return { type };
-        });
+        tempDataSource = updateAllFieldsType(tempDataSource);
         updateDataSource && updateDataSource(tempDataSource);
       } else if (dataType === 'dataType') {
         let tempDataSource = {
@@ -541,31 +529,9 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
           }),
         };
         if ((dataType === 'domain')) {
-          const mappings = _.get(dataSource, 'dataTypeMapping.mappings', []);
-          const db = _.get(dataSource, 'profile.default.db', _.get(dataSource, 'dataTypeSupports', [])[0]);
           const domainCompare = ['defKey', 'applyFor', 'len', 'scale'];
           if (domainCompare.some(d => oldData[d] !== data[d])) {
-            tempDataSource = updateAllFieldsType(tempDataSource, (f) => {
-              // 替换所有字段的domain
-              if (f.domain === oldData.defKey) {
-                let type = f.type;
-                if (oldData.applyFor !== data.applyFor) {
-                  // 需要更新字段的type
-                  const oldType = mappings.filter(m => m.defKey === oldData.applyFor)[0]?.[db];
-                  if (oldType === type) {
-                    // type 未被修改过
-                    type = mappings.filter(m => m.defKey === data.applyFor)[0]?.[db] || type;
-                  }
-                }
-                return {
-                  domain: data.defKey,
-                  len: f.len === oldData.len ? data.len : f.len,
-                  scale: f.len === oldData.scale ? data.scale : f.scale,
-                  type
-                };
-              }
-              return f;
-            })
+            tempDataSource = updateAllFieldsType(tempDataSource, oldData.defKey, data.defKey);
           }
         }
         updateDataSource && updateDataSource(tempDataSource);

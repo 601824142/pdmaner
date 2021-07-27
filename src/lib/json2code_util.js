@@ -32,11 +32,7 @@ const getFieldType = (datatype, domains, field, code, currentCode) => {
   if (domain) {
     const type = datatype.filter(d => d.defKey === domain.applyFor)[0];
     if (type) {
-      if (field.type !== type[currentCode]) {
-        return field.type;
-      } else {
-        return type[code] || field.type;
-      }
+      return type[code] || field.type;
     }
     return field.type;
   }

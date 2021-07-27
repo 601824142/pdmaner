@@ -22,8 +22,8 @@ export default React.memo(({prefix, open, create, rename, updateHistory, openTem
   const _create = (data, path) => {
     create(data, path, FormatMessage.string({id: 'createProject'}));
   };
-  const _rename = (newData, oldData) => {
-    rename(newData, oldData, FormatMessage.string({id: 'renameProject'}));
+  const _rename = (newData, oldData, dataInfo) => {
+    rename(newData, oldData, FormatMessage.string({id: 'renameProject'}), dataInfo);
   };
   const _deleteProject = (h) => {
     restProps?.delete(h, FormatMessage.string({id: 'deleteProject'}));
