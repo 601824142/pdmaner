@@ -486,3 +486,6 @@ export const showTemplateFolder = () => {
   shell.openItem(template);
 }
 
+export const basename = (fileName, extension) => {
+  return path.basename(fileName, extension);
+}

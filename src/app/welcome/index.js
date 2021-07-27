@@ -136,8 +136,8 @@ const mapDispatchToProps = (dispatch, { store }) => {
     update: (data) => {
       dispatch(updateProject(data));
     },
-    rename: (newData, oldData, title) => {
-      dispatch(renameProject(newData, oldData, title));
+    rename: (newData, oldData, title, dataInfo) => {
+      dispatch(renameProject(newData, oldData, title, dataInfo));
     },
     delete: (data, title) => {
       dispatch(removeProject(data, title));

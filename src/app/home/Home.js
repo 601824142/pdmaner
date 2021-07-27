@@ -37,7 +37,7 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
         });
       } else {
         if (projectData && Object.keys(oldData).length > 0){
-          renameProject(newDataSource, oldData);
+          renameProject(newDataSource, oldData, projectData);
         } else {
           if (!newDataSource.describe){
             newDataSource.describe = newDataSource.name;

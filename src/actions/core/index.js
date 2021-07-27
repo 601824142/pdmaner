@@ -5,7 +5,7 @@ import {
   saveJsonPromise, readJsonPromise, saveJsonPromiseAs, openProjectFilePath,
   saveVersionProject, removeVersionProject,
   removeAllVersionProject, openFileOrDirPath, ensureDirectoryExistence,
-  dirSplicing, fileExists, deleteFile,
+  dirSplicing, fileExists, deleteFile, basename,
 } from '../../lib/middle';
 import { openLoading, closeLoading, optReset, STATUS } from '../common';
 //import { pdman2sino, version2sino } from '../../lib/datasource_util';
@@ -361,13 +361,15 @@ export const updateProject = (data) => {
   };
 };
 
-export const renameProject = (newData, oldData, title) => {
+export const renameProject = (newData, oldData, title, dataInfo) => {
   // 判断项目名和项目目录是否已经修改 该方法无只需触发loading操作的action
   return (dispatch, getState) => {
     dispatch(openLoading(title));
     // 1.需要调整项目文件 先新建 再删除
-    const oldFilePath = dirSplicing(oldData.path, `${oldData.name}.${projectSuffix}.json`);
-    const newFilePath = dirSplicing(newData.path, `${newData.name}.${projectSuffix}.json`);
+    const name = basename(dataInfo.path, '.json');
+    const suffix = name.split('.')[1];
+    const oldFilePath = dirSplicing(oldData.path, `${oldData.name}.${suffix}.json`);
+    const newFilePath = dirSplicing(newData.path, `${newData.name}.${suffix}.json`);
     const config = getState()?.config?.data[0];
     if (fileExists(newFilePath) && (oldFilePath !== newFilePath)) {
       dispatch(closeLoading(STATUS[2], allLangData[config.lang].createProjectExists));
