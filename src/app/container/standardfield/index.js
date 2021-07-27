@@ -131,7 +131,9 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
     const standardFields = _.get(dataSource, 'standardFields', []);
     Download(
         [JSON.stringify(standardFields, null, 2)],
-        'application/json', `${FormatMessage.string({id: 'standardFields.standardFieldsLib'})}-${moment().unix()}.json`);
+        'application/json',
+      `${dataSource.name}-${FormatMessage.string({id: 'standardFields.standardFieldsLib'})}-${moment().format('YYYYMDHHmmss')}.json`,
+     );
   };
   const importStandardFields = () => {
     Upload('application/json', (data) => {

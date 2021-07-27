@@ -546,7 +546,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         dataTypeMapping:  _.get(dataSourceRef.current, 'dataTypeMapping', []),
         domains: _.get(dataSourceRef.current, 'domains', []),
       }, null, 2)],
-      'application/json', `${moment().unix()}.domains.json`);
+      'application/json',
+      `${dataSourceRef.current.name}-${FormatMessage.string({id: 'project.domains'})}-${moment().format('YYYYMDHHmmss')}.json`);
   };
   const importDomains = () => {
     const calcData = (oldData, newData, key) => {
@@ -590,7 +591,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         Message.success({title: FormatMessage.string({id: 'optSuccess'})});
       }
     }, (file) => {
-      const result = file.name.endsWith('.domains.json');
+      const result = file.name.endsWith('.json');
       if (!result) {
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),

@@ -73,7 +73,7 @@ export default React.memo(({prefix, dataSource}) => {
   const exportDDL = () => {
     Download(
         [codeData],
-        'application/sql', `${moment().unix()}.sql`);
+        'application/sql', `${dataSource.name}-DDL-${moment().format('YYYYMDHHmmss')}.sql`);
   };
   const onPreview = () => {
     const template = dataTypeSupport.type === 'appCode'

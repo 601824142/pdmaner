@@ -1232,7 +1232,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             const diagram = (dataSourceRef.current?.diagrams || [])
                 .filter(d => d.defKey === diagramKey)[0] || {};
             DataUri.downloadDataUri(canvas.toDataURL('image/png'),
-                `${diagram.defKey}-${diagram.defName}-${moment().unix()}.png`);
+                `${dataSourceRef.current.name}-${diagram.defKey}[${diagram.defName || diagram.defKey}]-${moment().format('YYYYMDHHmmss')}.png`);
           });
         });
       },
