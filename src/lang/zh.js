@@ -223,7 +223,7 @@ export default {
             removeEdge: '删除连接线',
             setRelation: '设置对应关系',
             editRelation: '编辑关系',
-            relationLabel: '连线信息',
+            relationLabel: '关系说明',
         },
         node: {
             delete: '删除节点',

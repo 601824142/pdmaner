@@ -422,11 +422,11 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
            c.setLabels([{
              attrs: {
                text: {
-                 fill: c.getProp('fontColor'),
-                 text: c.getLabelAt(0)?.attrs?.text?.text || '',
+                // fill: c.getProp('fontColor'),
+                text: c.getLabelAt(0)?.attrs?.text?.text || '',
                },
                rect: {
-                 fill: c.getProp('fillColor'),
+                // fill: c.getProp('fillColor'),
                },
              },
            }], { ignoreHistory : true, relation: true});
@@ -867,11 +867,11 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             cell.setLabels([{
               attrs: {
                 text: {
-                  fill: cell.getProp('fontColor'),
+                  // fill: cell.getProp('fontColor'),
                   text: value,
                 },
                 rect: {
-                  fill: cell.getProp('fillColor'),
+                  // fill: cell.getProp('fillColor'),
                 },
               },
             }], { ignoreHistory : true, relation: true});
