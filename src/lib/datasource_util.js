@@ -1050,7 +1050,7 @@ export  const getTextWidth = (text, font) => {
   dom.innerText = text;
   const width =  dom.getBoundingClientRect().width;
   document.body.removeChild(dom);
-  return width;
+  return Math.ceil(width);
 };
 
 export  const calcNodeData = (nodeData, dataSource, groups) => {
