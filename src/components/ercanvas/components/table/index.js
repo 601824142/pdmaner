@@ -53,6 +53,7 @@ const Table = forwardRef(({node}, ref) => {
         .split(',');
     return `rgba(${tempColor.join(',')}, 0.05)`;
   };
+  const conversion = /win/ig.test(navigator.platform) ? 2 : 1;
   return <div
     ref={ref}
     className='chiner-er-table'
@@ -67,7 +68,7 @@ const Table = forwardRef(({node}, ref) => {
       {`${getTitle()}${store?.data.count > 0 ? `:${store?.data.count}` : ''}`}
       {
         data?.comment &&
-          <Tooltip title={data?.comment} force conversion={2} placement='top'>
+          <Tooltip title={data?.comment} force conversion={conversion} placement='top'>
             <div className='chiner-er-table-header-icon'>
               <div style={{borderRightColor: node.getProp('fillColor')}}>{}</div>
             </div>
