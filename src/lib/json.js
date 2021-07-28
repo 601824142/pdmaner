@@ -112,7 +112,7 @@ export const readJsonPromise = (filePath) => {
 export const saveJsonPromiseAs = (data, refactor) => {
   const tempData = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
   const extensions = [];
-  if (process.platform === 'darwin') {
+  if (process.platform !== 'win32') {
     // mac 下无法识别.XXX.json为后缀的文件
     extensions.push('json');
   } else {
@@ -120,7 +120,9 @@ export const saveJsonPromiseAs = (data, refactor) => {
   }
   return new Promise((res, rej) => {
     saveFile(tempData, [{ name: projectSuffix, extensions: extensions}], (path) => {
-      if (!path.endsWith(`.${projectSuffix}.json`)) {
+      if (!path.endsWith('.json')) {
+        return `${path}.${projectSuffix}.json`;
+      }else if (!path.endsWith(`.${projectSuffix}.json`)) {
         return path.replace(/\.json$/g, `.${projectSuffix}.json`);
       }
       return path;
@@ -252,7 +254,7 @@ export const openFileOrDirPath = (filters, properties) => {
 export const openProjectFilePath = (errorFileMessage, suffix) => {
   const tempSuffix = suffix || projectSuffix;
   const extensions = [];
-  if (process.platform === 'darwin') {
+  if (process.platform !== 'win32') {
     // mac 下无法识别XXX.json为后缀的文件
     extensions.push('json');
   } else {
