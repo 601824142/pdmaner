@@ -25,13 +25,13 @@ export default React.memo(({prefix, title, resizeable, info}) => {
       const { current } = iconRef;
       maximizeChange(() => {
         if (process.platform === 'darwin') {
-          current.style.display = 'none';
+          current.setAttribute('class', `${currentPrefix}-toolbar-opt-darwin-min`);
         } else {
           current.setAttribute('class', 'fa fa-window-restore');
         }
       }, () => {
         if (process.platform === 'darwin') {
-          current.style.display = 'flex';
+          current.setAttribute('class', `${currentPrefix}-toolbar-opt-darwin-max`);
         } else {
           current.setAttribute('class', 'fa fa-window-maximize');
         }
@@ -47,8 +47,13 @@ export default React.memo(({prefix, title, resizeable, info}) => {
   const fullScreenClick = () => {
     const { current } = iconRef;
     if (process.platform === 'darwin') {
-      maximize(true);
-      current.style.display = 'none';
+      if (current?.getAttribute('class').includes('max')) {
+        maximize(true);
+        current.setAttribute('class', `${currentPrefix}-toolbar-opt-darwin-min`);
+      } else {
+        maximize(false);
+        current.setAttribute('class', `${currentPrefix}-toolbar-opt-darwin-max`);
+      }
     } else if (current?.getAttribute('class').includes('fa-window-maximize')) {
         maximize(true);
         current.setAttribute('class', 'fa fa-window-restore');
@@ -72,10 +77,10 @@ export default React.memo(({prefix, title, resizeable, info}) => {
             resizeable ? <Icon type='fa-window-maximize' onClick={fullScreenClick} ref={iconRef}/> : ''
           }
           <Icon type='fa-window-close-o' onClick={_close}/>
-        </span> : <span className={`${currentPrefix}-toolbar-opt-darwin`} ref={iconRef}>
+        </span> : <span className={`${currentPrefix}-toolbar-opt-darwin`}>
           <span onClick={_close}><Icon type='fa-times'/></span>
           <span onClick={minimize}><Icon type='fa-minus'/></span>
-          <span onClick={fullScreenClick}>{}</span>
+          <span className={`${currentPrefix}-toolbar-opt-darwin-max`} ref={iconRef} onClick={fullScreenClick}>{}</span>
         </span>
       }
     </div>;

@@ -45,14 +45,14 @@ export const maximize = (flag) => {
   if (flag) {
     if (process.platform === 'darwin') {
       win.setFullScreen(true);
-      win.setWindowButtonVisibility(true);
+     // win.setWindowButtonVisibility(true);
     } else {
       win.maximize();
     }
   } else {
     if (process.platform === 'darwin') {
       win.setFullScreen(false);
-      win.setWindowButtonVisibility(false);
+     // win.setWindowButtonVisibility(false);
     } else {
       win.unmaximize();
     }
@@ -62,11 +62,11 @@ export const maximize = (flag) => {
 // 7.监听窗口最大化
 export const maximizeChange = (enter, leave) => {
   win?.on('enter-full-screen', () => {
-    win.setWindowButtonVisibility(true);
+   // win.setWindowButtonVisibility(true);
     enter && enter();
   });
   win?.on('leave-full-screen', () => {
-    win.setWindowButtonVisibility(false);
+   // win.setWindowButtonVisibility(false);
     leave && leave();
   });
   win?.on('unmaximize', () => {
