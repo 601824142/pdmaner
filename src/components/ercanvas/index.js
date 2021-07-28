@@ -201,6 +201,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
   const needRender = useRef(false);
   const graphRef = useRef(null);
   const dndRef = useRef(null);
+  const interactingRef = useRef(true);
   const dataSourceRef = useRef(dataSource);
   dataSourceRef.current = dataSource;
   const dataRef = useRef(data);
@@ -546,11 +547,16 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
               node.shape === 'group';
         },
       },
-      interacting: {
-        nodeMovable: ({cell}) => {
-          return !((cell.shape === 'edit-node' || cell.shape === 'group' || cell.shape === 'edit-node-circle')
-              && cell.getProp('editable'));
-        },
+      interacting: () => {
+        if (interactingRef.current) {
+          return {
+            nodeMovable: ({cell}) => {
+              return !((cell.shape === 'edit-node' || cell.shape === 'group' || cell.shape === 'edit-node-circle')
+                && cell.getProp('editable'));
+            },
+          };
+        }
+        return false;
       },
       onPortRendered(args) {
         const selectors = args.contentSelectors;
@@ -980,6 +986,9 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       targetNode?.setProp('targetPort', '', { ignoreHistory : true});
       edge.attr('line/stroke', edge.getProp('fillColor') ||
           currentColor.current.fillColor, { ignoreHistory : true});
+    });
+    graph.on('cell:mousedown', ({e}) => {
+      interactingRef.current = !(e.ctrlKey || e.metaKey);
     });
     graph.on('node:dblclick', ({cell}) => {
       if (cell.shape === 'table') {
