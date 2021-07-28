@@ -183,7 +183,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     return false;
   };
   useEffect(() => {
-    updateSelectedMenu([]);
+    //updateSelectedMenu([]);
   }, [groupType]);
   const getMenuItem = (parentMenu, menu = parentMenu, offsetNumber = 0) => {
     const parentKey = menu === parentMenu ? null : parentMenu[defKey];
@@ -326,6 +326,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     return {
       jumpPosition,
       jumpDetail,
+      restSelected: () => updateSelectedMenu([]),
     };
   }, []);
   const _createGroup = (e) => {
