@@ -159,6 +159,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     });
   };
   const _groupMenuChange = () => {
+    (currentMenu.current || menuModelRef.current)?.restSelected();
     updateGroupType((pre) => {
       return pre === 'modalAll' ?  'modalGroup' : 'modalAll';
     });
