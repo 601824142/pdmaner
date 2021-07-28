@@ -24,9 +24,17 @@ export default React.memo(({prefix, title, resizeable, info}) => {
     if (resizeable) {
       const { current } = iconRef;
       maximizeChange(() => {
-        current.setAttribute('class', 'fa fa-window-restore');
+        if (process.platform === 'darwin') {
+          current.style.display = 'none';
+        } else {
+          current.setAttribute('class', 'fa fa-window-restore');
+        }
       }, () => {
-        current.setAttribute('class', 'fa fa-window-maximize');
+        if (process.platform === 'darwin') {
+          current.style.display = 'flex';
+        } else {
+          current.setAttribute('class', 'fa fa-window-maximize');
+        }
       });
       resizable(true);
       return () => {
@@ -38,13 +46,16 @@ export default React.memo(({prefix, title, resizeable, info}) => {
   }, []);
   const fullScreenClick = () => {
     const { current } = iconRef;
-    if (current?.getAttribute('class').includes('fa-window-maximize')) {
+    if (process.platform === 'darwin') {
       maximize(true);
-      current.setAttribute('class', 'fa fa-window-restore');
-    } else {
-      maximize(false);
-      current.setAttribute('class', 'fa fa-window-maximize');
-    }
+      current.style.display = 'none';
+    } else if (current?.getAttribute('class').includes('fa-window-maximize')) {
+        maximize(true);
+        current.setAttribute('class', 'fa fa-window-restore');
+      } else {
+        maximize(false);
+        current.setAttribute('class', 'fa fa-window-maximize');
+      }
   };
   if (platform === 'json') {
     const darwinClass = process.platform === 'darwin' ? ` ${currentPrefix}-toolbar-title-darwin` : '';
@@ -55,12 +66,16 @@ export default React.memo(({prefix, title, resizeable, info}) => {
         <span className={`${currentPrefix}-toolbar-info`} title={info}>{info}</span>
       </span>
       {
-        process.platform !== 'darwin' && <span className={`${currentPrefix}-toolbar-opt`}>
+        process.platform !== 'darwin' ? <span className={`${currentPrefix}-toolbar-opt`}>
           <Icon type='fa-window-minimize' onClick={minimize}/>
           {
             resizeable ? <Icon type='fa-window-maximize' onClick={fullScreenClick} ref={iconRef}/> : ''
           }
           <Icon type='fa-window-close-o' onClick={_close}/>
+        </span> : <span className={`${currentPrefix}-toolbar-opt-darwin`} ref={iconRef}>
+          <span onClick={_close}><Icon type='fa-times'/></span>
+          <span onClick={minimize}><Icon type='fa-minus'/></span>
+          <span onClick={fullScreenClick}>{}</span>
         </span>
       }
     </div>;

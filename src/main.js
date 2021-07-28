@@ -16,7 +16,7 @@ function createWindow() {
     minHeight: 600,
     frame: false,
     resizable: false,
-    titleBarStyle: 'hiddenInset',
+    //titleBarStyle: 'customButtonsOnHover',
     webPreferences: {
       nodeIntegration: true
     }
