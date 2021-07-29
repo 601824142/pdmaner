@@ -8,6 +8,7 @@ import { ToolBar, Icon, Modal, openModal, Button, FormatMessage, SearchInput, To
 import { platform } from '../../lib/middle';
 import ProjectEdit from '../container/projectedit';
 import {getPrefix} from '../../lib/prefixUtil';
+import { version } from '../../../package';
 
 import * as template from '../../lib/template';
 
@@ -169,7 +170,11 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
             {}
           </div>
           <div className={`${currentPrefix}-home-container-body-left-logo-title`}>
-            <FormatMessage id='system.title'/>
+            <span>CHINER</span>
+            <span>
+              <FormatMessage id='system.title'/>
+            </span>
+            <span>v{version}</span>
           </div>
         </div>
         <div className={`${currentPrefix}-home-container-body-left-opt`}>

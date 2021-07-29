@@ -41,6 +41,22 @@
             background-image: url("logo.png");
             background-size: cover;
           }
+          &-title {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            & > span:first-child {
+              font-weight: bold;
+            }
+            & > span:nth-child(2) {
+              font-weight: bold;
+            }
+            & > span:last-child {
+              font-size: 12px;
+              opacity: 0.8;
+            }
+          }
         }
         &-opt {
           width: 100%;
