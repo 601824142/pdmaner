@@ -90,11 +90,15 @@ export const saveJsonPromise = (filePath, data) => {
   return new Promise((res, rej) => {
     const tempData = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
     const tempFilePath = filePath.endsWith('.json') ? filePath : `${filePath}.json`;
-    saveNormalFile(tempFilePath, tempData).then((data) => {
-      res(data);
-    }).catch((err) => {
-      rej(err);
-    });
+    if (!tempData) {
+      rej(new Error('error'));
+    } else {
+      saveNormalFile(tempFilePath, tempData).then((data) => {
+        res(data);
+      }).catch((err) => {
+        rej(err);
+      });
+    }
   });
 };
 
@@ -483,9 +487,8 @@ export const showItemInFolder = () => {
   shell.openItem(getLogPath());
 }
 
-export const showTemplateFolder = () => {
-  const template = ipcRenderer.sendSync('template');
-  shell.openItem(template);
+export const showErrorLogFolder = (file) => {
+  shell.openItem(file);
 }
 
 export const basename = (fileName, extension) => {

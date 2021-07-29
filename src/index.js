@@ -8,7 +8,7 @@ import { Modal } from 'components';
 import Welcome from './app/welcome';
 import reducers from './reducers';
 import './style/detault.less';
-import { writeLog } from './lib/middle';
+import { writeLog, showErrorLogFolder } from './lib/middle';
 
 const store = createStore(reducers,
   {},
@@ -22,7 +22,9 @@ class Container extends React.Component{
     writeLog(error).then((file) => {
       Modal.error({
         title: '出错了',
-        message: `程序出现异常，请前往日志文件查看出错日志：${file}`,
+        message: <span>
+          程序出现异常，请前往日志文件查看出错日志：<a onClick={() => showErrorLogFolder(file)}>{file}</a>
+        </span>,
       });
     });
   }
