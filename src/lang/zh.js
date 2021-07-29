@@ -376,6 +376,7 @@ export default {
         defKey: '类型代码',
         defName: '显示名称',
         defaultDb: '(默认)',
+        defaultDbInfo: '检测到你未配置默认数据库，系统将自动为你指定默认数据库',
     },
     dict: {
         view: '查看',

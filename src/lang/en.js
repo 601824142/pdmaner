@@ -376,6 +376,7 @@ export default {
         defKey: 'dataTypeCode',
         defName: 'dataTypeName',
         defaultDb: '(default)',
+        defaultDbInfo: 'It is detected that you do not have a default database configured. The system will automatically specify a default database for you',
     },
     dict: {
         view: 'view',

@@ -127,6 +127,18 @@ const validate = (require, data) => {
   return !require.some(r => !data[r]);
 };
 
+const calcDefaultDb = (newData, oldData) => {
+  if (newData.defaultDb && (newData.type === 'dbDDL')) {
+    return newData.dataTypeSupport;
+  } else if (oldData.defaultDb === oldData.dataTypeSupport) {
+    Message.success({
+      title: FormatMessage.string({id: 'dataType.defaultDbInfo'})
+    });
+    return newData.dataTypeSupport;
+  }
+  return oldData.defaultDb;
+}
+
 const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, customerDealData, callback) => {
   // 新增操作合集
   const { dataType, parentKey } = menu;
@@ -309,7 +321,8 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
                 dataTypeSupports: (tempDataSource?.profile?.dataTypeSupports || []).concat(data[modalData.uniqueKey]),
                 default: {
                   ..._.get(tempDataSource, 'profile.default', {}),
-                  db: data.defaultDb ? data[modalData.uniqueKey] : '',
+                  db: data.defaultDb ? data[modalData.uniqueKey] :
+                    _.get(tempDataSource, 'profile.default.db', ''),
                 },
                 codeTemplates: _.get(tempDataSource, 'profile.codeTemplates', []).concat({
                   applyFor: data[modalData.uniqueKey],
@@ -488,8 +501,7 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
             ..._.get(dataSource, 'profile', {}),
             default: {
               ..._.get(dataSource, 'profile.default', {}),
-              db: ((data.defaultDb !== oldData.defaultDb) && (data.type === 'dbDDL'))
-                ? data[keyName] : oldData.defaultDb,
+              db: calcDefaultDb(data, oldData),
             },
             dataTypeSupports: _.get(dataSource, 'profile.dataTypeSupports', []).map((d) => {
               if (d === oldData[keyName]) {
@@ -795,12 +807,18 @@ const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
         Message.success({title: FormatMessage.string({id: 'deleteSuccess'})});
       } else if(domain && domain.type === 'dataType') {
         const deleteData = otherMenus.filter(m => m.type === dataType).map(m => m.key);
+        const dataTypeSupports = (dataSource.profile?.dataTypeSupports || [])
+          .filter(d => !deleteData.includes(d));
+        const db = _.get(dataSource, 'profile.default.db');
         updateDataSource && updateDataSource({
           ...dataSource,
           profile: {
             ...dataSource.profile,
-            dataTypeSupports: (dataSource.profile?.dataTypeSupports || [])
-                .filter(d => !deleteData.includes(d)),
+            default: {
+              ...dataSource.profile.default,
+              db: !dataTypeSupports.includes(db) ? (dataTypeSupports[0] || '') : db,
+            },
+            dataTypeSupports,
             codeTemplates: (dataSource.profile?.codeTemplates || [])
                 .filter(d => !deleteData.includes(d.applyFor))
           }
