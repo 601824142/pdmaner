@@ -23,11 +23,12 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 
 export default React.memo(({mode = 'mysql', theme = 'monokai', value, onChange,
-                             height, width, focus, firstLine}) => {
+                             height, width, focus, firstLine, readOnly, onLoad}) => {
   const name = useMemo(() => Math.uuid(), []);
-  const onLoad = (ace) => {
+  const _onLoad = (ace) => {
     focus && ace.focus();
     firstLine && ace.selection.moveCursorTo(0, 0);
+    onLoad && onLoad(ace);
   };
   const _onChange = (data) => {
     onChange && onChange({
@@ -53,7 +54,8 @@ export default React.memo(({mode = 'mysql', theme = 'monokai', value, onChange,
       value={value}
       enableBasicAutocompletion
       enableLiveAutocompletion
-      onLoad={onLoad}
+      onLoad={_onLoad}
+      readOnly={readOnly}
     />
   </div>;
 });
