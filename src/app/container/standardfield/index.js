@@ -61,7 +61,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
     setFilterValue(e.target.value);
   };
   const finalData = (dataSource.standardFields || []).map((g) => {
-    const reg = new RegExp(filterValue, 'ig');
+    const reg = new RegExp((filterValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
     return {
       ...g,
       fields: (g.fields || [])

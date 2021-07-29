@@ -122,7 +122,7 @@ export default React.memo(({placeholder, prefix, dataSource,
     ];
   }, [dataSource]);
   const calcSuggest = (suggest, search) => {
-    const reg = new RegExp(search, 'ig');
+    const reg = new RegExp((search || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
     const str = `<span class=${currentPrefix}-search-suggest-list-search>$&</span>`;
     const finalData = `<span>${suggest.replace(reg, str)}</span>`;
     // eslint-disable-next-line react/no-danger,react/no-danger-with-children
@@ -193,7 +193,7 @@ export default React.memo(({placeholder, prefix, dataSource,
     });
   };
   const getFilterData = (data = [], value) => {
-    const reg = new RegExp(value, 'ig');
+    const reg = new RegExp((value || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
     return data
         .filter((d) => {
           return reg.test(d.defKey || '') || reg.test(d.defName || '');

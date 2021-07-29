@@ -82,7 +82,7 @@ export default React.memo(({data, style, prefix, title}) => {
     if (e.target.value) {
       let count = 0;
       Array.from(ref.current.childNodes).forEach((n) => {
-        const reg = new RegExp(value, 'ig');
+        const reg = new RegExp((value || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
         if (n.textContent && reg.test(n.textContent)) {
           count += 1;
           const spanHtml = `<span class="${searchClass}">$&</span>`;
@@ -136,10 +136,11 @@ export default React.memo(({data, style, prefix, title}) => {
       }
     } else {
       clear();
+      ref.current.focus();
       searchRef.current.style.display = 'none';
     }
   };
-  return (<div tabIndex='-1' style={style} className={`${currentPrefix}-code-highlight`} onKeyDown={_onKeyDown}>
+  return (<div style={style} className={`${currentPrefix}-code-highlight`}>
     <div className={`${currentPrefix}-code-highlight-search`} ref={searchRef}>
       <span className={`${currentPrefix}-code-highlight-search-input`}>
         <Input onChange={_onChange}/>
@@ -162,7 +163,7 @@ export default React.memo(({data, style, prefix, title}) => {
       menus={dropMenu}
       menuClick={menuClick}
     >
-      <pre ref={ref} style={{...style, opacity: 0}} onMouseUp={onMouseUp}>
+      <pre tabIndex='-1' onKeyDown={_onKeyDown} ref={ref} style={{...style, opacity: 0}} onMouseUp={onMouseUp}>
         {typeof data === 'function' ? data() : data}
       </pre>
     </DropDown>
