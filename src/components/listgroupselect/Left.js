@@ -45,7 +45,7 @@ export default React.memo(({prefix, newData, checkBoxChange,
               defaultSelected={defaultSelected}
               i={i}
               prefix={prefix}
-              key={d.defKey}
+              key={`${d.defKey}${i}`}
               d={d}
               checkBoxChange={checkBoxChange}
               repeatData={repeatData}
