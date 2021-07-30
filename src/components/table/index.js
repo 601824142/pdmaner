@@ -497,8 +497,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
               addField(null, finalFields);
             } catch (error) {
               Component.Message.error({
-                title: Component.FormatMessage.string({id: `tableValidate.${error?.message}`})
-                    || Component.FormatMessage.string({id: 'tableValidate.invalidJsonData'}),
+                title: Component.FormatMessage.string({id: 'tableValidate.invalidJsonData'}),
               });
             }
           });
