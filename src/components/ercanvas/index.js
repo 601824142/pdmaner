@@ -433,6 +433,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
            }], { ignoreHistory : true, relation: true});
           }
         });
+    dataChange && dataChange(graphRef.current.toJSON({diff: true}));
   };
   const getScaleNumber = () => {
     return graphRef.current.scale();
