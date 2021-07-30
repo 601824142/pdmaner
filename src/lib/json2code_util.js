@@ -179,6 +179,7 @@ const getTemplateString = (template, templateData) => {
     }
   });
   resultText = resultText.replace(/\n(\n)*( )*(\n)*\n/g,"\n");  //删除空行
+  resultText = resultText.replace(/\r\n(\r\n)*( )*(\r\n)*\r\n/g,"\r\n"); //(不同操作系统换行符有区别)删除空行
   resultText = resultText.replace(/\$blankline/g,'');              //单独处理需要空行的情况
   return resultText;
 };

@@ -9,7 +9,7 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 import {addDomResize, removeDomResize} from '../../lib/listener';
 
-export default React.memo(({data, style, prefix}) => {
+export default React.memo(({data, style, prefix, mode = 'sql'}) => {
   const [size, setSize] = useState({});
   const id = useMemo(() => Math.uuid(), []);
   const editorRef = useRef(null);
@@ -57,6 +57,7 @@ export default React.memo(({data, style, prefix}) => {
     >
       <div>
         <CodeEditor
+          mode={mode}
           onLoad={onLoad}
           readOnly
           value={typeof data === 'function' ? data() : data}
