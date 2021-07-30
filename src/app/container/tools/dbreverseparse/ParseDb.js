@@ -4,13 +4,13 @@ import {Icon, Modal, FormatMessage, Terminal} from 'components';
 import {connectDB, getLogPath, showItemInFolder} from '../../../../lib/middle';
 import {getPrefix} from '../../../../lib/prefixUtil';
 
-export default React.memo(forwardRef(({prefix, dataSource, getDbData,
+export default React.memo(forwardRef(({prefix, dataSource, getDbData, config,
                                         parseFinish, parseError}, ref) => {
   const dbConn = dataSource?.dbConn || [];
   const parser = () => {
     const dbData = getDbData();
     const properties = (dbConn.filter(d => d.defKey === dbData.defKey)[0] || {})?.properties || {};
-    connectDB(dataSource, properties, 'DBReverseGetAllTablesList', (data) => {
+    connectDB(dataSource, config, properties, 'DBReverseGetAllTablesList', (data) => {
       if (data.status === 'FAILED') {
         const termReady = (term) => {
           term.write(data.body);

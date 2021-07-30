@@ -66,6 +66,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   tabsRef.current = tabs;
   const dataSourceRef = useRef({});
   dataSourceRef.current = restProps.dataSource;
+  const configRef = useRef({});
+  configRef.current = config;
   const [groupType, updateGroupType] = useState(restProps.dataSource?.profile?.modelType || 'modalAll');
   const [activeKey, updateActiveKey] = useState('');
   const tabInstanceRef = useRef({});
@@ -290,7 +292,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           restProps.openLoading(FormatMessage.string({id: 'toolbar.exportWordStep1'}));
           imgAll(dataSourceRef.current).then((imgDir) => {
             restProps.openLoading(FormatMessage.string({id: 'toolbar.exportWordStep2'}));
-            connectDB(dataSourceRef.current, {
+            connectDB(dataSourceRef.current, configRef.current, {
               sinerFile: projectInfo,
               docxTpl: template,
               imgDir: imgDir,
@@ -490,7 +492,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const importFromPb = () => {
     Upload('', (data) => {
       restProps.openLoading();
-      connectDB(dataSourceRef.current, {
+      connectDB(dataSourceRef.current, configRef.current, {
         pdmFile: data.path,
       }, 'ParsePDMFile', (result) => {
         if (result.status === 'FAILED') {
@@ -625,6 +627,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         injectDataSource(dataSourceRef.current, data, [], modal);
       };
       modal = openModal(<DbReverseParse
+        config={configRef.current}
         onOk={onOk}
         onClose={onClose}
         dataSource={dataSourceRef.current}

@@ -8,7 +8,7 @@ import './style/index.less';
 import {getPrefix} from '../../../../lib/prefixUtil';
 import {connectDB, getLogPath, showItemInFolder} from '../../../../lib/middle';
 
-export default React.memo(({prefix, dataSource, dataChange, onClose, onOk}) => {
+export default React.memo(({prefix, dataSource, dataChange, config, onClose, onOk}) => {
   const dealDataRef = useRef(null);
   const [currentKey, updateCurrentKey] = useState(1);
   const parseDbRef = useRef(null);
@@ -52,7 +52,7 @@ export default React.memo(({prefix, dataSource, dataChange, onClose, onOk}) => {
     if (selectedTable.length > 0) {
       const properties = (dbConn.filter(d => d.defKey === dbData.defKey)[0] || {})?.properties
         || {};
-      connectDB(dataSource, {
+      connectDB(dataSource, config, {
         ...properties,
         tables: selectedTable.map(t => t.originDefKey).join(','),
       }, 'DBReverseGetTableDDL', (data) => {
@@ -116,6 +116,7 @@ export default React.memo(({prefix, dataSource, dataChange, onClose, onOk}) => {
         {
           title: FormatMessage.string({id: 'dbReverseParse.parseDbTitle'}),
           content: <ParseDb
+            config={config}
             ref={parseDbRef}
             parseError={parseError}
             getDbData={getDbData}

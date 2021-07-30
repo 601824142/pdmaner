@@ -353,7 +353,7 @@ export const execFileCmd = (cmd, params, cb) => {
     });
 };
 
-export const connectDB = (dataSource, params = {}, cmd, cb) => {
+export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
   // 创建临时文件
   const outFile = `${execJarOut}${moment().unix()}.json`;
   console.log(outFile);
@@ -370,7 +370,7 @@ export const connectDB = (dataSource, params = {}, cmd, cb) => {
     });
     return paramArray.concat(`out=${outFile}`);
   };
-  const javaHome = _.get(dataSource, 'profile.javaHome', '');
+  const javaHome = config?.javaHome || _.get(dataSource, 'profile.javaHome', '');
   const jar = ipcRenderer.sendSync('jarPath');
   const tempValue = javaHome ? `${javaHome}${path.sep}bin${path.sep}java` : 'java';
   const customerDriver = _.get(params, 'customer_driver', '');
