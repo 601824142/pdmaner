@@ -32,6 +32,8 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
   const [selectFields, setSelectFields] = useState([]);
   const listSelectRef = useRef([]);
   const contentRef = useRef(null);
+  const dataSourceRef = useRef(dataSource);
+  dataSourceRef.current = dataSource;
   const iconClick = () => {
     setFold(pre => !pre);
   };
@@ -75,7 +77,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       if (tempData) {
         if (validateStandardFields(tempData)) {
           tempData && updateDataSource({
-            ...dataSource,
+            ...dataSourceRef.current,
             standardFields: tempData.map((group) => {
               return {
                 ..._.omit(group, ['__key']),
@@ -115,6 +117,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       prefix={prefix}
       dataChange={dataChange}
       dataSource={dataSource}
+      updateDataSource={updateDataSource}
     />, {
       bodyStyle: {width: '80%'},
       title: FormatMessage.string({id: 'standardFields.editStandardFields'}),

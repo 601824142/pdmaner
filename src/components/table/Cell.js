@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import * as _ from 'lodash/object';
 import * as Component from 'components/index';
 import {emptyDict, getColumnWidth, validateDictBase} from '../../lib/datasource_util';
@@ -6,15 +6,12 @@ import DictBase from '../../app/container/dict/DictBase';
 
 
 export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, currentPrefix,
-                             onChange, onBlur, checkboxComponents, reading, cellRef,
-                             getDataSource, updateDataSource, openDict, defaultGroups}) => {
-  const [dict, setDict] = useState(dataSource?.dicts || []);
+                             onChange, onBlur, checkboxComponents, reading, cellRef, dicts,
+                             setDict, getDataSource, updateDataSource,
+                             openDict, defaultGroups}) => {
   const tooltipRef = useRef(null);
   const columnWidth = getColumnWidth();
   const cell = useRef(null);
-  useEffect(() => {
-    setDict(dataSource?.dicts);
-  }, [dataSource?.dicts]);
   useEffect(() => {
     cellRef && cellRef(cell);
   }, []);
@@ -107,7 +104,7 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
   };
   const viewDict = () => {
     const { Table, Button } = Component;
-    const data = (dataSource?.dicts || [])?.filter(d => d.defKey === f[name])[0];
+    const data = (dicts || [])?.filter(d => d.defKey === f[name])[0];
     if (data) {
       const onOk = () => {
         tooltipRef.current.setTooltipVisible(false);
@@ -216,7 +213,7 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
         simple
       >
         {
-          dict.map(v => (
+          dicts.map(v => (
             <Component.MultipleSelect.Option
               key={v.defKey}
               value={v.defKey}>{`${v.defKey}(${v.defName || v.defKey})`}
@@ -254,7 +251,7 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
     return !((pre?.dataSource?.domains !== next?.dataSource?.domains)
       || (pre.f[pre.name] !== next.f[next.name]));
   } else if (pre.name === 'refDict') {
-    return !((pre?.dataSource?.dicts !== next?.dataSource?.dicts)
+    return !((pre?.dicts !== next?.dicts)
         || (pre.f[pre.name] !== next.f[next.name]));
   }
   return pre.f[pre.name] === next.f[next.name];

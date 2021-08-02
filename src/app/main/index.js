@@ -845,14 +845,14 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     let title = '';
     const onOk = () => {
       if (Object.keys(tempData).length !== 0) {
-        let tempDataSource = {...(restProps?.dataSource || {})};
+        let tempDataSource = getDataSource();
         if (name === 'dbreverse') {
           const { value = [], realData : { entities = [], viewGroups = [] } = {} }
               = tempData?.dbreverse || {};
           // 此处有多处需要更新
           // 先处理实体和分组信息
-          const entitiesKey = (restProps?.dataSource?.entities || [])
-              .concat(restProps?.dataSource?.views || [])
+          const entitiesKey = (tempDataSource?.entities || [])
+              .concat(tempDataSource?.views || [])
               .map(e => e.defKey);
           const newEntities = entities
               .filter(e => value.includes(e.defKey))
@@ -943,6 +943,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       lang={config.lang}
       dataChange={dataChange}
       prefix={prefix}
+      getDataSource={getDataSource}
       dataSource={restProps?.dataSource}
       updateDataSource={restProps.update}
     />, {

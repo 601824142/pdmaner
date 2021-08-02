@@ -6,8 +6,8 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
                              getClass, tableRowClick, disableDragRow, checkboxComponents,
                              onMouseDown, currentPrefix, onExpand, expands, dataSource,
                              updateTableDataByName, comBlur, cellRef, onKeyDown, freeze,
-                             reading, getDataSource, updateDataSource, cellClick,
-                             hiddenFields, selectedColumns, openDict, defaultGroups}) => {
+                             reading, getDataSource, updateDataSource, cellClick, setDict,
+                             hiddenFields, selectedColumns, openDict, defaultGroups, dicts}) => {
   const otherStyle = freeze ? { position: 'sticky', left: 0, zIndex: 2 } : {};
   const needHideInGraph = tempHeaders.findIndex(h => h.refKey === 'hideInGraph') > -1;
   let type = 'fa-eye';
@@ -84,6 +84,8 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
                 onBlur={e => comBlur(f, h?.refKey, e)}
                 remarkChange={(name, e) => updateTableDataByName(f, name, e)}
                 defaultGroups={defaultGroups}
+                dicts={dicts}
+                setDict={setDict}
               />
             </td>;
           })
@@ -108,6 +110,6 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
   return simpleProps.every(p => pre[p] === next[p])
       && calcArray(pre.expands, next.expands)
       && pre?.dataSource?.domains === next?.dataSource?.domains
-      && pre?.dataSource?.dicts === next?.dataSource?.dicts;
+      && pre?.dicts === next?.dicts;
 });
 
