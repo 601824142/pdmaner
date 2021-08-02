@@ -11,8 +11,8 @@ if (platform === 'json') {
   os = require('os');
 }
 
-const defaultUrl = `http://www.pdman.cn/launch/${os.platform()}/${packageData.version}`;
-//const defaultUrl = 'http://127.0.0.1/latest-version.json';
+//const defaultUrl = `http://www.pdman.cn/launch/${os.platform()}/${packageData.version}`;
+const defaultUrl = 'http://127.0.0.1/update.json';
 
 export const compareVersion = (v1 = '') => {
   // 版本规范为 => x.x.x 主版本号.次版本号.小版本号
@@ -20,9 +20,9 @@ export const compareVersion = (v1 = '') => {
   const oldVersions = packageData.version.split('.');
   let needUpdate = false;
   for (let i = 0; i < 3; i++) {
-    if (newVersions[i] < oldVersions[i]) {
+    if (parseInt(newVersions[i]) < parseInt(oldVersions[i])) {
       break;
-    } else if(newVersions[i] > oldVersions[i]){
+    } else if(parseInt(newVersions[i]) > parseInt(oldVersions[i])){
       needUpdate = true;
     }
   }
