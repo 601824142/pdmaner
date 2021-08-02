@@ -7,6 +7,7 @@ export default React.memo(({ prefix, dataSource, dataChange, updateDataSource, g
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-setting-entity-init-fields`}>
     <Table
+      disableHeaderIcon
       getDataSource={getDataSource}
       updateDataSource={updateDataSource}
       disableHeaderSort
