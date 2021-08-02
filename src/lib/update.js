@@ -11,8 +11,8 @@ if (platform === 'json') {
   os = require('os');
 }
 
-//const defaultUrl = `http://www.pdman.cn/launch/${os.platform()}/${packageData.version}`;
-const defaultUrl = 'http://127.0.0.1/update.json';
+const defaultUrl = `http://www.pdman.cn/launch/${os.platform()}/${packageData.version}`;
+//const defaultUrl = 'http://127.0.0.1/update.json';
 
 export const compareVersion = (v1 = '') => {
   // 版本规范为 => x.x.x 主版本号.次版本号.小版本号
