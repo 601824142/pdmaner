@@ -522,6 +522,13 @@ export default {
             zh: 'CHINESE',
             en: 'ENGLISH',
         },
+        autoSave: {
+            label: 'autoSave',
+            0: 'close',
+            10: '10 minutes',
+            30: '30 minutes',
+            60: '60 minutes',
+        },
         ModelLabel: 'default display label',
         ModelLabelMessage: '(Take effect after restarting or reopening the project)',
         relationFieldSize: 'relation show field size',

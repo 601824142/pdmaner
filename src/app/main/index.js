@@ -52,6 +52,7 @@ const TabItem = Tab.TabItem;
 const Index = React.memo(({getUserData, open, config, common, prefix, projectInfo,
                             ...restProps}) => {
   const [tabs, updateTabs] = useState([]);
+  const autoSaveRef = useRef(null);
   const menuNorWidth = 290;
   const menuMinWidth = 50;
   const isResize = useRef({status: false});
@@ -90,7 +91,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const saveProject = (saveAs, callback) => {
     const isSaveAs = saveAs || !projectInfoRef.current;
     const newData = updateAllData(dataSourceRef.current,
-        injectTempTabs.current.concat(tabsRef.current));
+        injectTempTabs.current.concat(tabsRef.current), true);
     if (newData.result.status) {
       replace.splice(0, replace.length - 1, ...newData.replace); // 重置数组
       restProps.save(newData.dataSource, FormatMessage.string({id: 'saveProject'}), isSaveAs, (err) => {
@@ -921,6 +922,9 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         if ('javaHome' in tempData) {
           restProps?.updateJavaHome(tempData.javaHome);
         }
+        if ('autoSave' in tempData) {
+          restProps?.updateAutoSave(tempData.autoSave);
+        }
         restProps?.save(tempDataSource, FormatMessage.string({id: 'saveProject'}), !projectInfoRef.current); // 配置项内容在关闭弹窗后自动保存
       }
       modal && modal.close();
@@ -1114,6 +1118,26 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       removeBodyEvent('onmouseleave', id);
     };
   }, []);
+  useEffect(() => {
+    const clear = () => {
+      if (autoSaveRef.current) {
+        clearInterval(autoSaveRef.current);
+      }
+    };
+    clear();
+    if (config.autoSave && projectInfoRef.current) {
+      // 开始执行自动保存任务
+      autoSaveRef.current = setInterval(() => {
+        console.log('autoSave');
+        restProps.autoSave(updateAllData(dataSourceRef.current,
+          injectTempTabs.current.concat(tabsRef.current), false).dataSource);
+      }, config.autoSave * 60 * 1000);
+    }
+    return () => {
+      // 结束执行自动保存任务
+      clear();
+    };
+  }, [config.autoSave]);
   const createGroupMenu = getMenu('add', '', 'groups', [], groupType, '');
   return <Loading visible={common.loading} title={common.title}>
     <div className={`${currentPrefix}-main-toolbar`}>

@@ -9,19 +9,27 @@ export const SAVE_USER_CONFIG_FAIL = 'SAVE_USER_CONFIG_FAIL'; // 保存失败
 export const GET_USER_CONFIG_SUCCESS = 'GET_USER_CONFIG_SUCCESS'; // 保存成功
 export const GET_USER_CONFIG_FAIL = 'GET_USER_CONFIG_FAIL'; // 保存失败
 
-export const updateJavaHome = (data) => {
+const updateUserConfig = (name, value) => {
   return (dispatch, getState) => {
     const configData = getState()?.config?.data || [];
     saveUserConfigData(configData.map((d, index) => {
       if (index === 0) {
         return {
           ...d,
-          javaHome: data,
+          [name]: value,
         }
       }
       return d;
     }))(dispatch);
   };
+}
+
+export const updateJavaHome = (data) => {
+  return updateUserConfig('javaHome', data);
+};
+
+export const updateAutoSave = (data) => {
+  return updateUserConfig('autoSave', data);
 };
 
 export const changeLanguage = (data = [], type, title) => {

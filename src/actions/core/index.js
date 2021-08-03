@@ -6,7 +6,7 @@ import {
   saveJsonPromise, readJsonPromise, saveJsonPromiseAs, openProjectFilePath,
   saveVersionProject, removeVersionProject,
   removeAllVersionProject, openFileOrDirPath, ensureDirectoryExistence,
-  dirSplicing, fileExists, deleteFile, basename,
+  dirSplicing, fileExists, deleteFile, basename, writeLog,
 } from '../../lib/middle';
 import { openLoading, closeLoading, optReset, STATUS } from '../common';
 //import { pdman2sino, version2sino } from '../../lib/datasource_util';
@@ -149,10 +149,31 @@ export const validateSaveProject = (info, data) => {
       if (hashOldRead.digest('hex') === hashNewRead.digest('hex')) {
         res();
       } else {
-        rej(new Error());
+        rej(new Error('error'));
       }
     });
   });
+};
+
+export const autoSaveProject = (data) => {
+  // 此处为异步操作
+  const time = moment().format('YYYY-M-D HH:mm:ss');
+  const tempData = {
+    ...data,
+    updatedTime: time,
+  };
+  return (dispatch, getState) => {
+    const info = getState()?.core?.info;
+    saveJsonPromise(info, tempData)
+      .then(() => {
+        validateSaveProject({path: info}, tempData).catch((err) => {
+          writeLog(err);
+        });
+      })
+      .catch((err) => {
+        writeLog(err);
+      });
+  };
 };
 
 export const saveProject = (data, saveAs, callback) => {

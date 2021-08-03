@@ -10,6 +10,7 @@ const config = (state = { lang: langType[0] }, action) => {
         data: action.data,
         javaHome: action.data[0]?.javaHome,
         lang: action.data[0]?.lang,
+        autoSave: action.data[0]?.autoSave,
         result: success,
       };
     case SAVE_USER_CONFIG_SUCCESS:
@@ -18,6 +19,7 @@ const config = (state = { lang: langType[0] }, action) => {
         data: action.data,
         javaHome: action.data[0]?.javaHome,
         lang: action.data[0]?.lang,
+        autoSave: action.data[0]?.autoSave,
         result: success,
       };
     case GET_USER_CONFIG_FAIL:

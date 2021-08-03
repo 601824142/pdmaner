@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import {Progressbar, Modal, UpdateMessage, FormatMessage} from 'components';
 import { fail, success, pageType, CONFIG } from '../../lib/variable';
 import './style/index.less';
-import { changeLanguage, getUserConfigData, removeHistory, updateJavaHome } from '../../actions/config';
+import { changeLanguage, getUserConfigData, removeHistory, updateJavaHome, updateAutoSave } from '../../actions/config';
 import Home from '../home';
 import {setMemoryCache} from '../../lib/cache';
 import {
@@ -15,6 +15,7 @@ import {
   renameProject,
   removeProject,
   saveProject,
+  autoSaveProject,
   openDemoProject,
 } from '../../actions/core';
 import { openLoading, closeLoading } from '../../actions/common';
@@ -145,6 +146,10 @@ const mapDispatchToProps = (dispatch, { store }) => {
     save: (data, title, saveAs, callback) => {
       dispatch(saveProject(data, saveAs, callback));
     },
+    autoSave: (data) => {
+      // 静悄悄保存 无需任何提示
+      dispatch(autoSaveProject(data));
+    },
     changeLang: (type, title) => {
       dispatch(changeLanguage(store.getState()?.config?.data, type, title));
     },
@@ -165,6 +170,9 @@ const mapDispatchToProps = (dispatch, { store }) => {
     },
     updateJavaHome: (javaHome) => {
       dispatch(updateJavaHome(javaHome));
+    },
+    updateAutoSave: (autoSave) => {
+      dispatch(updateAutoSave(autoSave));
     },
   };
 };

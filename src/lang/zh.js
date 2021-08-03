@@ -522,6 +522,13 @@ export default {
             zh: '中文',
             en: '英文',
         },
+        autoSave: {
+            label: '自动保存',
+            0: '关闭',
+            10: '10分钟',
+            30: '30分钟',
+            60: '60分钟',
+        },
         ModelLabel: '模型默认显示模式',
         ModelLabelMessage: '(重启或重新打开项目后生效)',
         relationFieldSize: '关系图最大展示字段数',

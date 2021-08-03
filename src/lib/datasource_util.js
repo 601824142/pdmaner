@@ -40,7 +40,7 @@ export const filterEdge = (allNodes, c) => {
   }).length === 2
 };
 
-export const updateAllData = (dataSource, tabs) => {
+export const updateAllData = (dataSource, tabs, needClear = true) => {
   // 整理项目中所有的关系图数据 去除无效的关系图数据 更新所有的tab数据
   const needReplace = [];
   let tempData = {...dataSource};
@@ -175,7 +175,7 @@ export const updateAllData = (dataSource, tabs) => {
       }
     });
     if (flag) {
-      clearAllTabData();
+      needClear && clearAllTabData();
       return {
         dataSource: {
           ...updateAllEntity(updateAllViewFiledRefEntity(updateAllDiagrams(tempData, needReplace), needReplace), needReplace),

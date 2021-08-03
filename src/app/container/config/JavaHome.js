@@ -14,7 +14,7 @@ export default React.memo(({ prefix, dataSource, dataChange, config }) => {
   const selectDir = () => {
     openFileOrDirPath([], ['openDirectory']).then((res) => {
       updateValue(res);
-      dataChange && dataChange(res, 'profile.javaHome');
+      dataChange && dataChange(res, 'javaHome');
     }).catch((err) => {
       Modal.error({
         title: FormatMessage.string({id: 'openDirError'}),
