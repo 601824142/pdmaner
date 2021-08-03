@@ -162,7 +162,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
           groups={standardFields}
         />, {
           bodyStyle: {width: '60%'},
-          title: <FormatMessage id='toolbar.importStandardFieldsLib'/>,
+          title: <FormatMessage id='standardFields.importStandardFieldsLib'/>,
           buttons: [
             <Button key='ok' onClick={onOk} type='primary'>
               <FormatMessage id='button.ok'/>

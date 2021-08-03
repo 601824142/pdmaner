@@ -631,6 +631,8 @@ export default {
             search: '代码/显示名称',
             empty: '暂无数据，请点击左侧选择',
             disable: '关系图中使用的数据表为必选数据表',
+            group: '分组',
+            groupNotAllowEmpty: '分组不能为空',
         },
     },
     projectTemplate: {

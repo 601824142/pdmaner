@@ -633,6 +633,8 @@ components: {
         search: 'code/name',
         empty: 'No data, please click on the left to select',
         disable: 'The data table used in the diagram is required',
+        group: 'group',
+        groupNotAllowEmpty: 'group not allow empty',
     },
 },
 projectTemplate: {
