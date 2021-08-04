@@ -199,13 +199,14 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
           ${selectedMenu.some(s => s.key === menu[defKey] && s.type === menu.type) ? ` ${currentPrefix}-menu-container-fold-item-selected` : ''}`}
           onClick={e => _expandMenuClick(e, menu[defKey], menu.type, parentKey)}
         >
-          <Icon type={menu[icon]} className={`${currentPrefix}-menu-container-fold-item-left`}/>
-          <span
-            className={`${currentPrefix}-menu-container-fold-item-name ${currentPrefix}-menu-container-fold-item-name-parent`}
+          <span>
+            <Icon type={menu[icon]} className={`${currentPrefix}-menu-container-fold-item-left`}/>
+            <span
+              className={`${currentPrefix}-menu-container-fold-item-name ${currentPrefix}-menu-container-fold-item-name-parent`}
           >
-            {getName && getName(menu) || menu[defName]}({menu[children].length})
+              {getName && getName(menu) || menu[defName]}({menu[children].length})
+            </span>
           </span>
-
           <Icon
             style={{
               transform: `${expandMenu.includes(menu[defKey]) ? 'rotate(0deg)' : 'rotate(90deg)'}`,
@@ -244,12 +245,14 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
                   draggable
                   onDragStart={e => tempDragTable(e, child, key, i)}
                 >
-                  <span>{}</span>
-                  <span>{}</span>
-                  <span>{}</span>
-                  <span>{}</span>
-                  <span>{}</span>
-                  <span>{}</span>
+                  <div>
+                    <span>{}</span>
+                    <span>{}</span>
+                    <span>{}</span>
+                    <span>{}</span>
+                    <span>{}</span>
+                    <span>{}</span>
+                  </div>
                 </span>
               }
             </li>);
