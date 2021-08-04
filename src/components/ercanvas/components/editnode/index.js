@@ -1,10 +1,15 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Graph, Markup } from '@antv/x6';
+import marked from 'marked';
 import FormatMessage from '../../../formatmessage';
 import '@antv/x6-react-shape';
 import './style/index.less';
+import { renderer } from '../util';
+// eslint-disable-next-line import/named
+import { platform } from '../../../../lib/middle';
 
 const EditNode = forwardRef(({node}, ref) => {
+  const preRef = useRef(null);
   const label = node.getProp('label');
   const inputRef = useRef(null);
   const editable = node.getProp('editable');
@@ -14,23 +19,21 @@ const EditNode = forwardRef(({node}, ref) => {
   useEffect(() => {
     if (editable) {
       inputRef.current.focus();
+    } else if (platform === 'json') {
+      const links = preRef.current.querySelectorAll('a[href]');
+      links.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          const url = link.getAttribute('href');
+          e.preventDefault();
+          // eslint-disable-next-line global-require,import/no-extraneous-dependencies
+          require('electron').shell.openExternal(url);
+        });
+      });
     }
   }, [editable]);
   const getLabel = () => {
-    const labelArray = label.replace('\r\n', '\n').split('\n---\n');
-    if (labelArray.length === 1) {
-      return labelArray;
-    }
-    return <div>
-      {labelArray.map((l, i) => {
-        if (i === 0) {
-          return <div style={{padding: '5px', borderBottom: '1px solid #DFE3EB', fontWeight: 'bold'}} key={i}>{l}</div>;
-        } else if (i === labelArray.length - 1) {
-          return <div style={{padding: '5px'}} key={i}>{l}</div>;
-        }
-        return <div style={{padding: '5px',borderBottom: '1px solid #DFE3EB'}} key={i}>{l}</div>;
-      })}
-    </div>;
+    marked.use({ renderer });
+    return marked(label);
   };
   return <div
     ref={ref}
@@ -48,9 +51,9 @@ const EditNode = forwardRef(({node}, ref) => {
         placeholder={FormatMessage.string({id: 'canvas.node.remarkPlaceholder'})}
         ref={inputRef}
         defaultValue={label}
-      /> : <pre>
-        {getLabel()}
-      </pre>
+      /> :
+        // eslint-disable-next-line react/no-danger
+      <pre ref={preRef} dangerouslySetInnerHTML={{__html: getLabel()}}/>
     }
   </div>;
 });

@@ -233,7 +233,7 @@ export default {
             entityOpen: '打开',
             entityTab: '标签',
             defaultRemark: '双击输入内容',
-            remarkPlaceholder: '请输入备注',
+            remarkPlaceholder: '请输入内容(支持Markdown)',
             extendError: '继承失败，该数据表无可见的主键',
         },
         title: '从左侧数据表中拖拽数据表至关系图中',

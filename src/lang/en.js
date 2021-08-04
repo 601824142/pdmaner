@@ -233,7 +233,7 @@ export default {
             entityOpen: 'open',
             entityTab: 'tab',
             defaultRemark: 'Double click the input',
-            remarkPlaceholder: 'Please enter your data',
+            remarkPlaceholder: 'Please enter your data(support Markdown)',
             extendError: 'Inheritance failed, the data table has no visible primary key',
         },
         title: 'Drag entity from left entities to diagram',

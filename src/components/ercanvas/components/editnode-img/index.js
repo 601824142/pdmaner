@@ -1,24 +1,12 @@
 import React, { forwardRef } from 'react';
 import { Graph, Markup } from '@antv/x6';
 import '@antv/x6-react-shape';
+import marked from 'marked';
 
 const EditNode = forwardRef(({node}, ref) => {
   const label = node.getProp('label');
   const getLabel = () => {
-    const labelArray = label.replace('\r\n', '\n').split('\n---\n');
-    if (labelArray.length === 1) {
-      return labelArray;
-    }
-    return <div>
-      {labelArray.map((l, i) => {
-        if (i === 0) {
-          return <div style={{padding: '5px', borderBottom: '1px solid #DFE3EB', fontWeight: 'bold'}} key={i}>{l}</div>;
-        } else if (i === labelArray.length - 1) {
-          return <div style={{padding: '5px'}} key={i}>{l}</div>;
-        }
-        return <div style={{padding: '5px',borderBottom: '1px solid #DFE3EB'}} key={i}>{l}</div>;
-      })}
-    </div>;
+    return marked(label);
   };
   return <div
     ref={ref}
@@ -35,9 +23,18 @@ const EditNode = forwardRef(({node}, ref) => {
         border: node.shape === 'group-img' ? '1px dashed #DFE3EB' : '1px solid #DFE3EB',
       }}
   >
-    <pre style={{WebkitTextFillColor: node.getProp('fontColor') || 'rgba(0,0,0,.65)', width: '100%', textAlign: 'center'}}>
-      {getLabel()}
-    </pre>
+    <pre
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{__html: getLabel()}}
+      style={{
+        padding: '2px',
+        WebkitTextFillColor: node.getProp('fontColor') || 'rgba(0,0,0,.65)',
+        width: '100%',
+        display: 'flex',
+        textAlign: 'center',
+        flexDirection: 'column',
+      }}
+    />
   </div>;
 });
 
