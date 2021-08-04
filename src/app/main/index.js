@@ -1129,8 +1129,13 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       // 开始执行自动保存任务
       autoSaveRef.current = setInterval(() => {
         console.log('autoSave');
-        restProps.autoSave(updateAllData(dataSourceRef.current,
-          injectTempTabs.current.concat(tabsRef.current), false).dataSource);
+        const newData = updateAllData(dataSourceRef.current,
+          injectTempTabs.current.concat(tabsRef.current), false);
+        if (newData.result.status) {
+          restProps.autoSave(newData.dataSource);
+        } else {
+          restProps.autoSave(dataSourceRef.current);
+        }
       }, config.autoSave * 60 * 1000);
     }
     return () => {
