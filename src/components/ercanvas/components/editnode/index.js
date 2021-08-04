@@ -16,6 +16,22 @@ const EditNode = forwardRef(({node}, ref) => {
       inputRef.current.focus();
     }
   }, [editable]);
+  const getLabel = () => {
+    const labelArray = label.replace('\r\n', '\n').split('\n---\n');
+    if (labelArray.length === 1) {
+      return labelArray;
+    }
+    return <div>
+      {labelArray.map((l, i) => {
+        if (i === 0) {
+          return <div style={{padding: '5px', borderBottom: '1px solid #DFE3EB', fontWeight: 'bold'}} key={i}>{l}</div>;
+        } else if (i === labelArray.length - 1) {
+          return <div style={{padding: '5px'}} key={i}>{l}</div>;
+        }
+        return <div style={{padding: '5px',borderBottom: '1px solid #DFE3EB'}} key={i}>{l}</div>;
+      })}
+    </div>;
+  };
   return <div
     ref={ref}
     className={`chiner-er-editnode ${node.shape === 'edit-node-circle' ? 'chiner-er-editnode-circle' : ''}`}
@@ -33,7 +49,7 @@ const EditNode = forwardRef(({node}, ref) => {
         ref={inputRef}
         defaultValue={label}
       /> : <pre>
-        {label}
+        {getLabel()}
       </pre>
     }
   </div>;
