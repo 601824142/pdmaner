@@ -372,7 +372,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
       bodyStyle: realType === 'dataTypeSupports' ? {width: '80%'} : {},
       title: title || modalData.title,
       buttons,
-      focusFirst: true,
+      focusFirst: realType !== 'views',
     }
   )
 };

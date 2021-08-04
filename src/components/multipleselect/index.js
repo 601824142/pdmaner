@@ -101,6 +101,14 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
       updateSearch('');
     }
   };
+  const onFocus = () => {
+    setVisible(true);
+  };
+  const onKeyDown = (e) => {
+    if (e.keyCode === 9) {
+      setVisible(false);
+    }
+  };
   const selected = [].concat(children).filter(c => finalCheckValues.includes(c.props.value));
   const calcPosition = (dom) => {
     const rectSelect = selectRef.current.getBoundingClientRect();
@@ -161,7 +169,9 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
         {restProps.placeholder || ''}
       </span>
       <input
+        onKeyDown={onKeyDown}
         ref={inputRef}
+        onFocus={onFocus}
         onChange={inputChange}
         value={searchValue}
         className={`${currentPrefix}-multiple-select-data-${simple ? 'simple' : 'normal'}-input`}
