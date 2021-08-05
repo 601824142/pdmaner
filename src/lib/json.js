@@ -7,8 +7,8 @@ import * as _ from 'lodash/object';
 import { projectSuffix } from '../../profile';
 const { execFile } = require('child_process');
 
-const { ipcRenderer, remote, shell } = require('electron');
-const { app, dialog } = remote;
+const { ipcRenderer, shell } = require('electron');
+const { app, dialog } = require('@electron/remote');
 
 const user_config = 'user_config.json';
 const project_config = 'project_config.json';
@@ -484,11 +484,11 @@ export const getLogPath = () => {
 }
 
 export const showItemInFolder = () => {
-  shell.openItem(getLogPath());
+  shell.openPath(getLogPath());
 }
 
 export const showErrorLogFolder = (file) => {
-  shell.openItem(file);
+  shell.openPath(file);
 }
 
 export const basename = (fileName, extension) => {
