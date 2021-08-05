@@ -137,6 +137,14 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       }
       return t;
     }));
+    activeTabStack.current = activeTabStack.current.map((s) => {
+      const i = replaceTabs.findIndex(r => (r.old + separator + r.type) === s);
+      const replaceTab = replaceTabs[i];
+      if (i > -1) {
+        return replaceTab.new + separator + replaceTab.type;
+      }
+      return s;
+    });
     if (index > -1) {
       const newActiveTab = replaceTabs[index];
       updateActiveKey(newActiveTab.new + separator + newActiveTab.type);
@@ -1144,6 +1152,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     };
   }, [config.autoSave]);
   const createGroupMenu = getMenu('add', '', 'groups', [], groupType, '');
+  console.log(tabs);
   return <Loading visible={common.loading} title={common.title}>
     <div className={`${currentPrefix}-main-toolbar`}>
       <ToolBar
