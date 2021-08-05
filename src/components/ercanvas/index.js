@@ -491,6 +491,10 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       keyboard: {
         enabled: true,
       },
+      clipboard: {
+        enabled: true,
+        useLocalStorage: true,
+      },
       scroller: {
         enabled: true,
         pannable: true,
@@ -598,6 +602,19 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         min: 0.1,
         max: 2,
       },
+    });
+    graph.bindKey(['ctrl+c','command+c'], () => {
+      const cells = graph.getSelectedCells();
+      if (cells && cells.length) {
+        graph.copy(cells);
+      }
+    });
+    graph.bindKey(['ctrl+v','command+v'], () => {
+      if (!graph.isClipboardEmpty()) {
+        const cells = graph.paste();
+        graph.cleanSelection();
+        graph.select(cells);
+      }
     });
     graph.bindKey(['ctrl+z','command+z'], () => {
       graph.undo({undo: true});
@@ -1109,6 +1126,12 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             }),
           };
           updateDataSource && updateDataSource(newDataSource);
+        } else {
+          cell.setProp({
+            count: graph.getNodes()
+              .filter(n => n.data?.defKey === cell?.data?.defKey)
+              .length - 1,
+          }, { ignoreHistory : true});
         }
       }
       if (options.undo && cell.isNode()) {
