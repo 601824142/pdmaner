@@ -18,6 +18,13 @@ const Header = React.memo(({
                              activeKey,
                              closeTab,
                            }) => {
+  const calcTitle = (c) => {
+    if (position === 'left') {
+      return <div className={`${currentPrefix}-tab-header-left-title`}>
+        <span>{c.props.title}</span></div>;
+    }
+    return c.props.title;
+  };
   return <div className={`${currentPrefix}-tab-header ${currentPrefix}-tab-header-${position}`}>
     {tabChildren.map(c =>
       <DropDown
@@ -49,9 +56,7 @@ const Header = React.memo(({
             title={c.props.tooltip}
             visible={position === 'top'}
           >
-            <span>{position === 'left' ? c.props.title.split('').map((t) => {
-                return <div key={t}>{t}</div>;
-              }) : c.props.title}</span>
+            <span>{calcTitle(c)}</span>
           </Tooltip>
         </span>
       </DropDown>)}
