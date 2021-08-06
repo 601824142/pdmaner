@@ -89,7 +89,8 @@ export default {
     quick: {
         save: '保存项目',
         toggleCase: '大小写转换',
-        drag: '关系图界面，按住Ctrl + 拖动鼠标，可拖动画布',
+        drag: '关系图界面，按住Ctrl/Command + 拖动鼠标，可拖动画布',
+        minimap: '关系图界面，按住Ctrl/Command + M，可开关小地图',
     },
     welcome: '欢迎使用',
     welcomeVersionTitle: '检测版本信息...',

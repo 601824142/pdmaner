@@ -18,7 +18,9 @@ const EditNode = forwardRef(({node}, ref) => {
   };
   useEffect(() => {
     if (editable) {
-      inputRef.current.focus();
+      if (window.getComputedStyle(inputRef.current).pointerEvents !== 'none') {
+        inputRef.current.focus();
+      }
     } else if (platform === 'json') {
       const links = preRef.current.querySelectorAll('a[href]');
       links.forEach((link) => {

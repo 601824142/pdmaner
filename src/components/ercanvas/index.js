@@ -488,6 +488,20 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           return !args.options.ignoreHistory;
         },
       },
+      minimap: {
+        enabled: true,
+        container: document.getElementById(`${id}minimapContainer`),
+        graphOptions: {
+          async: true,
+          // eslint-disable-next-line consistent-return
+          createCellView:(cell) => {
+            // 在小地图中不渲染边
+            if (cell.isEdge()) {
+              return null;
+            }
+          },
+        },
+      },
       keyboard: {
         enabled: true,
       },
@@ -607,6 +621,18 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       const cells = graph.getSelectedCells();
       if (cells && cells.length) {
         graph.copy(cells);
+      }
+    });
+    graph.bindKey(['ctrl+m','command+m'], () => {
+      const minimapContainer = document.getElementById(`${id}minimapContainer`);
+      if (minimapContainer) {
+        if (minimapContainer.style.opacity === '0') {
+          minimapContainer.style.opacity = '1';
+          minimapContainer.style.pointerEvents = 'auto';
+        } else {
+          minimapContainer.style.opacity = '0';
+          minimapContainer.style.pointerEvents = 'none';
+        }
       }
     });
     graph.bindKey(['ctrl+v','command+v'], () => {
@@ -1283,5 +1309,6 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       id={id}
       style={{height: '100%'}}
     >{}</div>
+    <div style={{opacity: 0, pointerEvents: 'none'}} className='minimapContainer' id={`${id}minimapContainer`}>{}</div>
   </>;
 };

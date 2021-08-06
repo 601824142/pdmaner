@@ -90,6 +90,7 @@ export default {
         save: 'save project',
         toggleCase: 'toggle case',
         drag: 'In the diagram interface, hold down Ctrl + and drag the mouse to drag the canvas',
+        minimap: 'In the diagram interface, press and hold Ctrl / Command + m to switch the diagram',
     },
     welcome: 'welcome to use',
     welcomeVersionTitle: 'checkVersionData...',
