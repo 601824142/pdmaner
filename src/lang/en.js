@@ -411,6 +411,7 @@ export default {
         selectEntityIcon: 'Click to select entity',
         emptyEntityRefs: 'No imported entity found, please import entity first and then import field',
         importFields: 'Import fields',
+        fieldSearchPlaceholder: 'code/name',
     },
     viewBase: {
         defKey: 'Code',

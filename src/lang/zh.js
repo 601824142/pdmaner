@@ -411,6 +411,7 @@ export default {
         selectEntityIcon: '点击选择实体',
         emptyEntityRefs: '未发现引入实体，请先引入实体再引入字段',
         importFields: '导入字段',
+        fieldSearchPlaceholder: '字段代码/显示名称',
     },
     viewBase: {
         defKey: '视图代码',

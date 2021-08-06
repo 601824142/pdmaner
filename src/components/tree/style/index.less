@@ -1,6 +1,7 @@
 @import "~style";
 
 .@{prefix}-tree {
+  height: 100%;
   &-container {
     &-ul {
       li {
@@ -30,6 +31,14 @@
           display: none;
         }
       }
+    }
+  }
+  &-all {
+    padding: 5px;
+    height: 100%;
+    & > ul {
+      height: calc(100% - 30px);
+      overflow: auto;
     }
   }
 }
