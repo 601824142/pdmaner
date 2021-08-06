@@ -45,11 +45,13 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
   const needReplace = [];
   let tempData = {...dataSource};
   const allTabData = getAllTabData();
-  let result = { status: true };
+  let message = '';
   let flag = false;
   // 需要校验数据表是否有重复字段
   // 需要校验数据表展示在关系图上的字段是否超过限制
   let sizeError = [];
+  let repeatError = [];
+  const size = _.get(dataSource, 'profile.relationFieldSize', 15);
   tabs.map(t => {
     return {
       type: t.type,
@@ -60,25 +62,41 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
     }
   }).forEach(t => {
     if (t.type === 'entity') {
-      const keys = t.data.fields.map(f => f.defKey);
-      result.status = keys.length === new Set(keys).size;
-      if (result.status) {
-        const size = _.get(dataSource, 'profile.relationFieldSize', 15);
-        result.status = t.data.fields.filter(f => !f.hideInGraph).length <= size;
-        if(!result.status) {
-          sizeError.push(t.data.defKey);
-          result.message = FormatMessage
-              .string({id: 'entityHideInGraphSizeError', data: {
-                size,
-                entities: sizeError.join(','),
-              }});
-        }
-      } else {
-        result.message = FormatMessage.string({id: 'entityUniqueKeyError'});
+      const keys = (t.data?.fields || []).map(f => f.defKey);
+      if(!(t.data.fields.filter(f => !f.hideInGraph).length <= size)) {
+        sizeError.push(t.data.defKey);
+      }
+      if (keys.length !== new Set(keys).size) {
+        const fields = t.data?.fields || [];
+        const repeat = fields.reduce((a, b) => {
+          if (fields.filter(f => f.defKey === b.defKey).length > 1 && !a.includes(b.defKey)) {
+            return a.concat(b.defKey || FormatMessage.string({id: 'emptyField'}));
+          }
+          return a;
+        }, []).join('|');
+        repeatError.push(`${t.data.defKey}=>[${repeat}]`);
       }
     }
   })
-  if (result.status) {
+  if (sizeError.length > 0) {
+    // 字段关系图显示超限
+    message += FormatMessage.string({
+      id: 'entityHideInGraphSizeError',
+      data: {
+          size,
+          entities: sizeError.join(','),
+      }}) + ';';
+  }
+  if (repeatError.length > 0) {
+    // 字段重复显示超限
+    message += FormatMessage.string({
+      id: 'entityUniqueKeyError',
+      data: {
+        entities: repeatError.join(','),
+      }
+    });
+  }
+  if (!message) {
     const getData = () => {
       return Object.keys(allTabData).reduce((pre, next) => {
         const tempPre = {...pre};
@@ -182,16 +200,20 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
           viewGroups: updateAllGroups(viewGroups, needReplace),
         },
         replace: needReplace,
-        result
+        result: {
+          status: true,
+        },
       };
     }
     return {
       dataSource,
       replace: [],
-      result
+      result: {
+        status: true,
+      },
     };
   }
-  return { result }
+  return { result: { status: false, message } };
 };
 
 const updateAllEntity = (dataSource, needReplace) => {
