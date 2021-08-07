@@ -104,7 +104,11 @@ export default {
     home: {
         project: 'project',
         allProject: 'all project',
+        jumpOptBook: 'Click to jump to the online document',
         optBook: 'operation manual',
+        optBookTitle: 'Scan the QR code below to read the document',
+        optBookTitle1: 'Ding Ding, Wechat code scanning',
+        optBookTitle2: 'Wechat applet',
         recently: 'recently open',
         exampleProject: 'example project',
         search: 'project name/desc',
