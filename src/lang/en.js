@@ -104,6 +104,7 @@ export default {
     home: {
         project: 'project',
         allProject: 'all project',
+        optBook: 'operation manual',
         recently: 'recently open',
         exampleProject: 'example project',
         search: 'project name/desc',

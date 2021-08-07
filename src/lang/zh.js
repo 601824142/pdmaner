@@ -104,6 +104,7 @@ export default {
     home: {
         project: '项目',
         allProject: '全部项目',
+        optBook: '操作手册',
         recently: '最近打开',
         exampleProject: '参考模板',
         search: '项目名/项目描述',
