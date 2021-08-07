@@ -356,7 +356,7 @@ export const execFileCmd = (cmd, params, cb) => {
 export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
   // 创建临时文件
   const outFile = `${execJarOut}${moment().unix()}.json`;
-  console.log(outFile);
+  console.log(outFile, config);
   const getParam = (params) => {
     const paramArray = [];
     Object.keys(params).forEach((p) => {
@@ -371,13 +371,14 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
     return paramArray.concat(`out=${outFile}`);
   };
   const javaHome = config?.javaHome || _.get(dataSource, 'profile.javaHome', '');
+  const jvmMemory = ('jvmMemory' in (config || {})) ? config.jvmMemory : 8;
   const jar = ipcRenderer.sendSync('jarPath');
   const tempValue = javaHome ? `${javaHome}${path.sep}bin${path.sep}java` : 'java';
   const customerDriver = _.get(params, 'customer_driver', '');
   const commend = [
     '-Dfile.encoding=utf-8',
-    '-Xms1024m',
-    '-Xmx1024m',
+    `-Xms${jvmMemory * 1024}m`,
+    `-Xmx${jvmMemory * 1024}m`,
     '-jar', jar, cmd,
     ...getParam(params),
   ];

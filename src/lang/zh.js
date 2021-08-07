@@ -274,7 +274,6 @@ export default {
     },
     modelTab: '模型',
     domainTab: '数据域',
-    changeLang: '语言切换',
     getUserConfigData: '正在获取用户配置信息...',
     button: {
         ok: '确定',
@@ -517,6 +516,8 @@ export default {
             error: '配置失败',
             placeholder: '不填将自动从系统的环境变量中读取',
         },
+        JVM_MemoryLabel: 'JVM最大可用内存',
+        JVM_MemoryPlaceholder: '默认8',
         SystemParameter: '系统参数',
         DbConnect: '数据库连接配置',
         SqlDelimiterLabel: 'SQL分隔符',

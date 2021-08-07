@@ -9,7 +9,7 @@ export default React.memo(({prefix, dataChange, config}) => {
     dataChange && dataChange(e.target.value, 'autoSave');
   };
   const currentPrefix = getPrefix(prefix);
-  return <div className={`${currentPrefix}-setting-language`}>
+  return <div className={`${currentPrefix}-setting-autoSave`}>
     <div className={`${currentPrefix}-form-item`}>
       <span
         className={`${currentPrefix}-form-item-label`}

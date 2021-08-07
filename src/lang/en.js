@@ -274,7 +274,6 @@ export default {
     },
     modelTab: 'model',
     domainTab: 'domain',
-    changeLang: 'changeLanguage',
     getUserConfigData: 'getting user config data...',
     button: {
         ok: 'ok',
@@ -517,6 +516,8 @@ export default {
             error: 'config error',
             placeholder: 'If it is not filled in, it will be automatically read from the environment variable of the system',
         },
+        JVM_MemoryLabel: 'JVM Max Memory',
+        JVM_MemoryPlaceholder: 'Default 8',
         SystemParameter: 'SystemParameter',
         DbConnect: 'DbConnect',
         SqlDelimiterLabel: 'sqlDelimiter',

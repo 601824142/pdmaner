@@ -4,7 +4,11 @@ import { connect } from 'react-redux';
 import {Progressbar, Modal, UpdateMessage, FormatMessage} from 'components';
 import { fail, success, pageType, CONFIG } from '../../lib/variable';
 import './style/index.less';
-import { changeLanguage, getUserConfigData, removeHistory, updateJavaHome, updateAutoSave } from '../../actions/config';
+import {
+  getUserConfigData,
+  removeHistory,
+  saveUserConfigSome,
+} from '../../actions/config';
 import Home from '../home';
 import {setMemoryCache} from '../../lib/cache';
 import {
@@ -120,10 +124,13 @@ const mapStateToProps = (state) => {
     common: state.common,
   };
 };
-const mapDispatchToProps = (dispatch, { store }) => {
+const mapDispatchToProps = (dispatch) => {
   return {
     getUserData: (title) => {
       dispatch(getUserConfigData(title));
+    },
+    saveUserData: (data) => {
+      dispatch(saveUserConfigSome(data));
     },
     openTemplate: (h, title) => {
       dispatch(openDemoProject(h, title, pageType[2]));
@@ -150,9 +157,6 @@ const mapDispatchToProps = (dispatch, { store }) => {
       // 静悄悄保存 无需任何提示
       dispatch(autoSaveProject(data));
     },
-    changeLang: (type, title) => {
-      dispatch(changeLanguage(store.getState()?.config?.data, type, title));
-    },
     create: (data, path, title) => {
       dispatch(createProject(data, path, title, pageType[2]));
     },
@@ -167,12 +171,6 @@ const mapDispatchToProps = (dispatch, { store }) => {
         case 'remove': dispatch(removeHistory(...data));break;
         default: break;
       }
-    },
-    updateJavaHome: (javaHome) => {
-      dispatch(updateJavaHome(javaHome));
-    },
-    updateAutoSave: (autoSave) => {
-      dispatch(updateAutoSave(autoSave));
     },
   };
 };

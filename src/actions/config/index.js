@@ -9,46 +9,6 @@ export const SAVE_USER_CONFIG_FAIL = 'SAVE_USER_CONFIG_FAIL'; // 保存失败
 export const GET_USER_CONFIG_SUCCESS = 'GET_USER_CONFIG_SUCCESS'; // 保存成功
 export const GET_USER_CONFIG_FAIL = 'GET_USER_CONFIG_FAIL'; // 保存失败
 
-const updateUserConfig = (name, value) => {
-  return (dispatch, getState) => {
-    const configData = getState()?.config?.data || [];
-    saveUserConfigData(configData.map((d, index) => {
-      if (index === 0) {
-        return {
-          ...d,
-          [name]: value,
-        }
-      }
-      return d;
-    }))(dispatch);
-  };
-}
-
-export const updateJavaHome = (data) => {
-  return updateUserConfig('javaHome', data);
-};
-
-export const updateAutoSave = (data) => {
-  return updateUserConfig('autoSave', data);
-};
-
-export const changeLanguage = (data = [], type, title) => {
-  return (dispatch, getState) => {
-    dispatch(openLoading(title));
-    const configData = getState()?.config?.data || [];
-    const config = configData[0];
-    saveUserConfigData(configData.map((d, index) => {
-      if (index === 0) {
-        return {
-          ...d,
-          lang: type,
-        }
-      }
-      return d;
-    }), allLangData[config.lang].updateConfig)(dispatch);
-  };
-};
-
 const saveUserConfigSuccess = (data) => {
   return {
     type: SAVE_USER_CONFIG_SUCCESS,
@@ -77,7 +37,7 @@ const getUserConfigFail = (err) => {
   };
 };
 
-export const getUserConfigData = (title) => {
+export const getUserConfigData = () => {
   return (dispatch) => {
     getUserConfig()
       .then((data) => {
@@ -86,6 +46,19 @@ export const getUserConfigData = (title) => {
       .catch((err) => {
         dispatch(getUserConfigFail(err));
       });
+  };
+};
+
+export const saveUserConfigSome = (data) => {
+  return (dispatch, getState) => {
+    const configData = getState()?.config?.data || [];
+    const config = {...configData[0], ...data};
+    saveUserConfigData(configData.map((d, index) => {
+      if (index === 0) {
+        return config;
+      }
+      return d;
+    }), allLangData[config.lang].updateConfig)(dispatch);
   };
 };
 

@@ -6,7 +6,7 @@ import {getPrefix} from '../../lib/prefixUtil';
 
 const NumberInput = React.memo(({ defaultValue, formatter, parser,
                                   onBlur, readOnly, disable, prefix,
-                                  maxLength = 14,
+                                  maxLength = 14, placeholder,
                                   min = Number.MIN_SAFE_INTEGER,
                                   max = Number.MAX_SAFE_INTEGER,
                                   ...restProps }) => {
@@ -85,6 +85,7 @@ const NumberInput = React.memo(({ defaultValue, formatter, parser,
     onChange={_onChange}
     onFocus={_onFocus}
     onBlur={_onBlur}
+    placeholder={placeholder}
   />);
 });
 export default NumberInput;
