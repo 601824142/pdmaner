@@ -14,10 +14,10 @@ if (platform === 'json') {
 const defaultUrl = `http://www.pdman.cn/launch/${os.platform()}/${packageData.version}`;
 //const defaultUrl = 'http://127.0.0.1/update.json';
 
-export const compareVersion = (v1 = '') => {
+export const compareVersion = (v1 = '', v2) => {
   // 版本规范为 => x.x.x 主版本号.次版本号.小版本号
   const newVersions = v1.split('.');
-  const oldVersions = packageData.version.split('.');
+  const oldVersions = v2 || packageData.version.split('.');
   let needUpdate = false;
   for (let i = 0; i < 3; i++) {
     if (parseInt(newVersions[i]) < parseInt(oldVersions[i])) {

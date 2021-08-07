@@ -508,6 +508,16 @@ export default {
         },
     },
     config: {
+        UiHint: 'UI suggestions',
+        uiHint: {
+            addCount: 'Add {count} UI suggestions',
+            add: 'add',
+            delete: 'delete',
+            moveUp: 'up',
+            moveDown: 'down',
+            defKey: 'UI code',
+            defName: 'UI name',
+        },
         title: 'setting',
         EntityInitFields: 'New Entity Init Fields',
         EntityBasePropertiesList: 'New Entity Base Properties',

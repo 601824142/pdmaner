@@ -23,7 +23,8 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "uiHint": "Integer"
         },
         {
           "defKey": "CREATED_BY",
@@ -37,7 +38,8 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "uiHint": "Text"
         },
         {
           "defKey": "CREATED_TIME",
@@ -51,7 +53,8 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "uiHint": "DatePicker"
         },
         {
           "defKey": "UPDATED_BY",
@@ -65,7 +68,8 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "uiHint": "Text"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -79,7 +83,8 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "uiHint": "DatePicker"
         }
       ],
       "entityInitProperties": {
@@ -132,7 +137,73 @@
     ],
     "generatorDoc": {
       "docTemplate": ""
-    }
+    },
+    "uiHint": [
+      {
+        "defKey": "Text",
+        "defName": "文本框"
+      },
+      {
+        "defKey": "Double",
+        "defName": "小数输入框"
+      },
+      {
+        "defKey": "Integer",
+        "defName": "整数输入框"
+      },
+      {
+        "defKey": "Currency",
+        "defName": "金额输入框"
+      },
+      {
+        "defKey": "TextArea",
+        "defName": "多行文本框"
+      },
+      {
+        "defKey": "RichText",
+        "defName": "富文本"
+      },
+      {
+        "defKey": "Select",
+        "defName": "下拉框"
+      },
+      {
+        "defKey": "Cascader",
+        "defName": "级联选择器"
+      },
+      {
+        "defKey": "TreeSelect",
+        "defName": "树选择器"
+      },
+      {
+        "defKey": "CheckBox",
+        "defName": "复选框"
+      },
+      {
+        "defKey": "RadioBox",
+        "defName": "单选框"
+      },
+      {
+        "defKey": "DatePicker",
+        "defName": "日期选择"
+      },
+      {
+        "defKey": "YearMonthPicker",
+        "defName": "月份选择"
+      },
+      {
+        "defKey": "YearPicker",
+        "defName": "年份选择"
+      },
+      {
+        "defKey": "DateRange",
+        "defName": "区间日期"
+      },
+      {
+        "defKey": "AddressPicker",
+        "defName": "地址"
+      }
+    ]
   },
   "entities": [],
   "views": [],
@@ -156,7 +227,7 @@
       "applyFor": "string",
       "len": "60",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "IdOrKey",
@@ -164,7 +235,7 @@
       "applyFor": "string",
       "len": 32,
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Name",
@@ -172,7 +243,7 @@
       "applyFor": "string",
       "len": 90,
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Int",
@@ -180,7 +251,7 @@
       "applyFor": "int",
       "len": "",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Double",
@@ -188,7 +259,7 @@
       "applyFor": "double",
       "len": "32",
       "scale": "8",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Money",
@@ -196,7 +267,7 @@
       "applyFor": "double",
       "len": 32,
       "scale": 8,
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "DateTime",
@@ -204,7 +275,7 @@
       "applyFor": "date",
       "len": "",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "YesNo",
@@ -212,7 +283,7 @@
       "applyFor": "string",
       "len": "1",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Dict",
@@ -220,7 +291,7 @@
       "applyFor": "string",
       "len": "32",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "DescText",
@@ -228,7 +299,7 @@
       "applyFor": "string",
       "len": "900",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     }
   ]
 }

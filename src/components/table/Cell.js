@@ -16,6 +16,7 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
     cellRef && cellRef(cell);
   }, []);
   const domains = _.get(dataSource, 'domains', []);
+  const uiHint = _.get(dataSource, 'profile.uiHint', []);
   const numberComponents = ['len', 'scale'];
   const openRemark = () => {
     const { Button, openModal } = Component;
@@ -155,6 +156,16 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
           {d.defName || d.defKey}
         </Component.Select.Option>))}
     </Component.Select>;
+  } else if(name === 'uiHint') {
+    return <Component.Select value={f[name]} onChange={onChange}>
+      {uiHint.map(d =>
+        (<Component.Select.Option
+          key={d.defKey}
+          value={d.defKey}
+        >
+          {d.defName || d.defKey}
+        </Component.Select.Option>))}
+    </Component.Select>;
   } else if(name === 'codeType') {
     return <Component.Select value={f[name]} onChange={onChange}>
       <Component.Select.Option
@@ -253,6 +264,9 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
   } else if (pre.name === 'refDict') {
     return !((pre?.dicts !== next?.dicts)
         || (pre.f[pre.name] !== next.f[next.name]));
+  } else if (pre.name === 'uiHint') {
+    return !((pre?.dataSource?.uiHint !== next?.dataSource?.uiHint)
+      || (pre.f[pre.name] !== next.f[next.name]));
   }
   return pre.f[pre.name] === next.f[next.name];
 });

@@ -3295,7 +3295,7 @@
       "applyFor": "string",
       "len": "60",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "IdOrKey",
@@ -3303,7 +3303,7 @@
       "applyFor": "string",
       "len": 32,
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Name",
@@ -3311,7 +3311,7 @@
       "applyFor": "string",
       "len": 90,
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Int",
@@ -3319,7 +3319,7 @@
       "applyFor": "int",
       "len": "",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Double",
@@ -3327,7 +3327,7 @@
       "applyFor": "double",
       "len": "32",
       "scale": "8",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Money",
@@ -3335,7 +3335,7 @@
       "applyFor": "double",
       "len": 32,
       "scale": 8,
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "DateTime",
@@ -3343,7 +3343,7 @@
       "applyFor": "date",
       "len": "",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "YesNo",
@@ -3351,7 +3351,7 @@
       "applyFor": "string",
       "len": "1",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Dict",
@@ -3359,7 +3359,7 @@
       "applyFor": "string",
       "len": "32",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "DescText",
@@ -3367,7 +3367,7 @@
       "applyFor": "string",
       "len": "900",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     }
   ],
   "diagrams": [

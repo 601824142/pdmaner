@@ -427,52 +427,121 @@ export const getCodeByDataTable = (dataSource, group, dataTable, code, templateS
 // 获取demo数据的代码
 export const getDemoTemplateData = (templateShow) => {
   let data = '';
-  const demoGroup = [{defKey: "USER", defName: "用户"}];
+  const demoGroup = [{defKey: "DEFAULT_GROUP", defName: "默认分组"}];
   const demoTable = {
     entity: {
       "defKey": "SIMS_STUDENT",
       "defName": "学生",
-      "comment": "学生信息表",
+      "comment": "",
       "properties": {
         "partitioned by": "(pt_d string)",
         "row format delimited": "",
         "fields terminated by": "','",
         "collection items terminated by": "'-'"
       },
+      "nameTemplate": "{defKey}[{defName}]",
+      "headers": [
+        {
+          "refKey": "hideInGraph",
+          "hideInGraph": true,
+          "freeze": true
+        },
+        {
+          "refKey": "defKey",
+          "hideInGraph": false,
+          "freeze": true
+        },
+        {
+          "refKey": "defName",
+          "hideInGraph": false,
+          "freeze": true
+        },
+        {
+          "refKey": "primaryKey",
+          "hideInGraph": false
+        },
+        {
+          "refKey": "notNull",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "autoIncrement",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "domain",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "type",
+          "hideInGraph": false
+        },
+        {
+          "refKey": "len",
+          "hideInGraph": false
+        },
+        {
+          "refKey": "scale",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "comment",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "refDict",
+          "hideInGraph": true,
+          "freeze": false
+        },
+        {
+          "refKey": "defaultValue",
+          "hideInGraph": true,
+          "freeze": false
+        },
+        {
+          "refKey": "isStandard",
+          "hideInGraph": false,
+          "freeze": false
+        },
+        {
+          "refKey": "uiHint",
+          "hideInGraph": true,
+          "freeze": false,
+        }
+      ],
       "fields": [
         {
           "defKey": "COLLEGE_ID",
           "defName": "所在学院ID",
           "comment": "",
-          "type": "VARCHAR",
           "len": 32,
           "scale": "",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey"
+          "domain": "IdOrKey",
+          "type": ""
         },
         {
           "defKey": "CLASS_ID",
           "defName": "所在班级ID",
           "comment": "",
-          "type": "VARCHAR",
           "len": 32,
           "scale": "",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey"
+          "domain": "IdOrKey",
+          "type": ""
         },
         {
           "defKey": "STUDENT_ID",
           "defName": "学生ID",
           "comment": "",
-          "type": "VARCHAR",
           "len": 32,
           "scale": "",
           "primaryKey": true,
@@ -480,13 +549,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey"
+          "domain": "IdOrKey",
+          "type": ""
         },
         {
           "defKey": "STUDENT_NAME",
           "defName": "学生姓名",
           "comment": "",
-          "type": "VARCHAR",
           "len": 90,
           "scale": "",
           "primaryKey": false,
@@ -494,13 +563,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name"
+          "domain": "Name",
+          "type": ""
         },
         {
           "defKey": "ENG_NAME",
           "defName": "英文名",
           "comment": "",
-          "type": "VARCHAR",
           "len": 90,
           "scale": "",
           "primaryKey": false,
@@ -508,13 +577,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name"
+          "domain": "Name",
+          "type": ""
         },
         {
           "defKey": "ID_CARD_NO",
           "defName": "身份证号",
           "comment": "",
-          "type": "VARCHAR",
           "len": "60",
           "scale": "",
           "primaryKey": false,
@@ -522,13 +591,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString"
+          "domain": "DefaultString",
+          "type": ""
         },
         {
           "defKey": "MOBILE_PHONE",
           "defName": "手机号",
           "comment": "",
-          "type": "VARCHAR",
           "len": "60",
           "scale": "",
           "primaryKey": false,
@@ -536,42 +605,42 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString"
+          "domain": "DefaultString",
+          "type": ""
         },
         {
           "defKey": "GENDER",
           "defName": "性别",
           "comment": "",
-          "type": "VARCHAR",
           "len": "32",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "M",
+          "defaultValue": "'M'",
           "hideInGraph": false,
           "domain": "Dict",
-          "refDict": "Gender"
+          "refDict": "Gender",
+          "type": ""
         },
         {
           "defKey": "MONTHLY_SALARY",
           "defName": "月薪",
           "comment": "",
-          "type": "NUMBER",
-          "len": 32,
-          "scale": 8,
+          "len": 24,
+          "scale": 6,
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Money"
+          "domain": "Money",
+          "type": ""
         },
         {
           "defKey": "BIRTH",
           "defName": "出生日期",
           "comment": "",
-          "type": "DATETIME",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -579,13 +648,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DateTime"
+          "domain": "DateTime",
+          "type": ""
         },
         {
           "defKey": "AVATAR",
           "defName": "头像",
           "comment": "",
-          "type": "INT",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -593,13 +662,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int"
+          "domain": "Int",
+          "type": ""
         },
         {
           "defKey": "HEIGHT",
           "defName": "身高",
           "comment": "",
-          "type": "INT",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -607,13 +676,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int"
+          "domain": "Int",
+          "type": ""
         },
         {
           "defKey": "WEIGHT",
           "defName": "体重",
           "comment": "",
-          "type": "INT",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -621,28 +690,28 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int"
+          "domain": "Int",
+          "type": ""
         },
         {
           "defKey": "NATION",
           "defName": "名族",
           "comment": "",
-          "type": "VARCHAR",
           "len": "32",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "01",
+          "defaultValue": "'01'",
           "hideInGraph": false,
           "domain": "Dict",
-          "refDict": "GBNation"
+          "refDict": "GBNation",
+          "type": ""
         },
         {
           "defKey": "POLITICAL",
           "defName": "政治面貌",
           "comment": "",
-          "type": "VARCHAR",
           "len": "32",
           "scale": "",
           "primaryKey": false,
@@ -651,28 +720,28 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Dict",
-          "refDict": "Political"
+          "refDict": "Political",
+          "type": ""
         },
         {
           "defKey": "MARITAL",
           "defName": "婚姻状况",
           "comment": "",
-          "type": "VARCHAR",
           "len": "32",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "UNMARRIED",
+          "defaultValue": "'UNMARRIED'",
           "hideInGraph": true,
           "domain": "Dict",
-          "refDict": "Marital"
+          "refDict": "Marital",
+          "type": ""
         },
         {
           "defKey": "DOMICILE_PLACE_PROVINCE",
           "defName": "籍贯（省）",
           "comment": "",
-          "type": "VARCHAR",
           "len": "60",
           "scale": "",
           "primaryKey": false,
@@ -680,13 +749,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString"
+          "domain": "DefaultString",
+          "type": ""
         },
         {
           "defKey": "DOMICILE_PLACE_CITY",
           "defName": "籍贯（市）",
           "comment": "",
-          "type": "VARCHAR",
           "len": "60",
           "scale": "",
           "primaryKey": false,
@@ -694,13 +763,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString"
+          "domain": "DefaultString",
+          "type": ""
         },
         {
           "defKey": "DOMICILE_PLACE_ADDRESS",
           "defName": "户籍地址",
           "comment": "",
-          "type": "VARCHAR",
           "len": "60",
           "scale": "",
           "primaryKey": false,
@@ -708,13 +777,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString"
+          "domain": "DefaultString",
+          "type": ""
         },
         {
           "defKey": "HOBBY",
           "defName": "爱好",
           "comment": "",
-          "type": "VARCHAR",
           "len": "60",
           "scale": "",
           "primaryKey": false,
@@ -722,13 +791,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString"
+          "domain": "DefaultString",
+          "type": ""
         },
         {
           "defKey": "INTRO",
           "defName": "简要介绍",
           "comment": "",
-          "type": "VARCHAR",
           "len": "900",
           "scale": "",
           "primaryKey": false,
@@ -736,13 +805,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DescText"
+          "domain": "DescText",
+          "type": ""
         },
         {
           "defKey": "PRESENT_ADDRESS",
           "defName": "居住地址",
           "comment": "",
-          "type": "VARCHAR",
           "len": "60",
           "scale": "",
           "primaryKey": false,
@@ -750,13 +819,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString"
+          "domain": "DefaultString",
+          "type": ""
         },
         {
           "defKey": "EMAIL",
           "defName": "电子邮件",
           "comment": "",
-          "type": "VARCHAR",
           "len": "60",
           "scale": "",
           "primaryKey": false,
@@ -764,13 +833,13 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString"
+          "domain": "DefaultString",
+          "type": ""
         },
         {
           "defKey": "ENTRY_DATE",
           "defName": "入学日期",
           "comment": "",
-          "type": "DATETIME",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -778,28 +847,28 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DateTime"
+          "domain": "DateTime",
+          "type": ""
         },
         {
           "defKey": "STATUS",
           "defName": "状态",
           "comment": "",
-          "type": "VARCHAR",
           "len": "32",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "Normal",
+          "defaultValue": "'Normal'",
           "hideInGraph": true,
           "domain": "Dict",
-          "refDict": "StudentStatus"
+          "refDict": "StudentStatus",
+          "type": ""
         },
         {
           "defKey": "TENANT_ID",
           "defName": "租户号",
           "comment": "",
-          "type": "VARCHAR",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -807,93 +876,91 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey"
+          "domain": "IdOrKey",
+          "type": ""
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
           "domain": "Int",
-          "type": "INT",
           "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "type": ""
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
           "domain": "IdOrKey",
-          "type": "VARCHAR",
           "len": 32,
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "type": ""
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
           "domain": "DateTime",
-          "type": "DATETIME",
           "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "type": ""
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
           "domain": "IdOrKey",
-          "type": "VARCHAR",
           "len": 32,
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "type": ""
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
           "domain": "DateTime",
-          "type": "DATETIME",
           "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "type": ""
         }
       ],
-      "correlations": [],
-      "indexes": [
+      "correlations": [
         {
-          "defKey": "idx_smis_student_id",
-          "defName": null,
-          "unique": true,
-          "comment": "",
-          "fields": [
-            {
-              "fieldDefKey": "STUDENT_ID",
-              "ascOrDesc": "A"
-            }
-          ]
-        },
+          "myField": "CLASS_ID",
+          "refEntity": "SIMS_CLASS",
+          "refField": "CLASS_ID",
+          "myRows": "n",
+          "refRows": "1",
+          "innerType": ""
+        }
+      ],
+      "indexes": [
         {
           "defKey": "idx_smis_student_01",
           "defName": null,

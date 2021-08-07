@@ -5,6 +5,7 @@ import {getAllTabData, setDataByTabId, clearAllTabData, getDataByTabId, getMemor
 import emptyProjectTemplate from './emptyProjectTemplate';
 import { separator } from '../../profile';
 import {firstUp} from './string';
+import {compareVersion} from './update';
 
 export const removeUnlessFields = (data, fields = []) => {
   if (Array.isArray(data)) {
@@ -378,19 +379,10 @@ export const updateAllViewFiledRefEntity = (dataSource, replace) => {
   }
 };
 
-export const updateAllFieldsType = (dataSource, oldDomain, newDomain) => {
-  // 默认数据库发生变化时 所有的数据类型全部更换 需要从缓存读取数据进行替换
-  const mapFields = (d) => {
-    return _.get(d, 'fields', [])
-      .map((f) => {
-        return {
-          ...f,
-          domain: f.domain === oldDomain ? newDomain : (f.domain || ''),
-        };
-      })
-  };
+const refactorAllFields = (dataSource, fuc) => {
   const allData = getAllTabData();
   let tempDataSource = {...dataSource};
+  // 视图和数据表
   const names = [{key: 'entity', keys: 'entities'}, {key: 'view', keys: 'views'}];
   names.forEach((name) => {
     const currentCacheData = Object.keys(allData)
@@ -409,7 +401,7 @@ export const updateAllFieldsType = (dataSource, oldDomain, newDomain) => {
           }
           tempEntity = {
             ...tempEntity,
-            fields: mapFields(tempEntity),
+            fields: (tempEntity?.fields || []).map(f => fuc(f)),
           };
           if (entity) {
             setDataByTabId(entity.tabKey, {
@@ -422,7 +414,35 @@ export const updateAllFieldsType = (dataSource, oldDomain, newDomain) => {
         }),
     }
   });
+  const otherFields = ['profile.default.entityInitFields', 'standardFields'];
+  // 标准字段库
+  // 默认字段库
+  otherFields.forEach((other) => {
+    tempDataSource = _.set(tempDataSource, other, _.get(tempDataSource, other, [])
+      .map(f => fuc(f)));
+  });
   return tempDataSource;
+}
+
+export const updateAllFieldsUiHint = (dataSource, changes) => {
+  return refactorAllFields(dataSource, (f) => {
+    const change = changes.filter(c => c.old === f.uiHint)[0];
+    return {
+      ...f,
+      uiHint: change ? change.new : (typeof f.uiHint === 'object' ? '' : f.uiHint),
+    };
+  });
+};
+
+export const updateAllFieldsType = (dataSource, oldDomain, newDomain) => {
+  // 默认数据库发生变化时 所有的数据类型全部更换 需要从缓存读取数据进行替换
+  const mapFields = (f) => {
+    return {
+      ...f,
+      domain: f.domain === oldDomain ? newDomain : (f.domain || ''),
+    };
+  };
+  return refactorAllFields(dataSource, mapFields);
 };
 
 export const importFields = (entities, fields, data, useDefaultFields, onlyEntityFields) => {
@@ -532,7 +552,7 @@ export const emptyDomain = {
   applyFor: '',
   len: '',
   scale: '',
-  uiHint: {},
+  uiHint: '',
 };
 
 export const emptyDataType = {
@@ -707,6 +727,7 @@ export const getColumnWidth = () => {
     defaultValue: 200,
     isStandard: 100,
     intro: 200,
+    uiHint: 100,
   };
 };
 
@@ -740,7 +761,8 @@ export const getFullColumns = () => {
     {code: 'remark', value: FormatMessage.string({id: 'tableHeaders.remark'}), newCode: 'comment', com: 'Input', relationNoShow: true},
     {code: 'refDict', value: FormatMessage.string({id: 'tableHeaders.refDict'}), newCode: 'refDict', com: 'SearchSelect', relationNoShow: true},
     {code: 'defaultValue', value: FormatMessage.string({id: 'tableHeaders.defaultValue'}), newCode: 'defaultValue', com: 'Input', relationNoShow: true},
-    {code: 'isStandard', value: FormatMessage.string({id: 'standardFields.isStandard'}), newCode: 'isStandard',com: 'label', relationNoShow: false}
+    {code: 'isStandard', value: FormatMessage.string({id: 'standardFields.isStandard'}), newCode: 'isStandard',com: 'label', relationNoShow: false},
+    {code: 'uiHint', value: FormatMessage.string({id: 'tableHeaders.uiHint'}), newCode: 'uiHint',com: 'Select', relationNoShow: true}
   ]; // 完整的头部信息
 };
 
@@ -993,7 +1015,7 @@ export const pdman2sino = (data, projectName) => {
             innerType: '',
           };
         });
-      const headers = _.get(e, 'headers', []).filter(h => h.fieldName !== 'uiHint'); // 暂时先过滤uiHint
+      const headers = _.get(e, 'headers', []);
       columnOrder.forEach(c => {
         if (!headers.map(h => (h.fieldName || h.code)).includes(c.code)) {
           headers.push(c);
@@ -1210,32 +1232,56 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
 export const transformationData = (oldDataSource) => {
   // 某些场景下需要对原始项目进行兼容 统一在此处进行转换操作
   // 1.处理remark
+  let tempDataSource = {...oldDataSource};
   if (oldDataSource.version === '3.0.0') {
-    return {
-      ...oldDataSource,
-      entities: (oldDataSource.entities || []).map(e => {
-        return {
-          ...e,
-          headers: (e.headers || []).map(h => {
-            if (h.refKey === 'remark') {
-              return {
-                ...h,
-                refKey: 'comment',
-              };
-            }
-            return h;
-          }),
-          fields: (e.fields || []).map(f => {
+    const refactor = (e) => {
+      return {
+        ...e,
+        headers: (e.headers || []).map(h => {
+          if (h.refKey === 'remark') {
             return {
-              ..._.omit(f, ['remark']),
-              comment: f.comment || f.remark || '',
+              ...h,
+              refKey: 'comment',
             };
-          }),
-        };
-      }),
+          }
+          return h;
+        }),
+        fields: (e.fields || []).map(f => {
+          return {
+            ..._.omit(f, ['remark']),
+            comment: f.comment || f.remark || '',
+          };
+        }),
+      };
+    }
+    tempDataSource = {
+      ...oldDataSource,
+      entities: (oldDataSource.entities || []).map(e => refactor(e)),
+      views: (oldDataSource.views || []).map(v => refactor(v)),
     };
   }
-  return oldDataSource;
+  // 2.处理新增的列
+  if (compareVersion('3.1.0', oldDataSource.version.split('.'))) {
+    const refactor = (e) => {
+      if ((e.headers || []).findIndex(h => h.refKey === 'uiHint') < 0) {
+        return {
+          ...e,
+          headers: (e.headers || []).concat({
+            "freeze": false,
+            "refKey": "uiHint",
+            "hideInGraph": true
+          }),
+        }
+      }
+      return e;
+    }
+    tempDataSource = {
+      ...oldDataSource,
+      entities: (oldDataSource.entities || []).map(e => refactor(e)),
+      views: (oldDataSource.views || []).map(v => refactor(v)),
+    };
+  }
+  return tempDataSource;
 };
 
 export const validateNeedSave = (dataSource) => {

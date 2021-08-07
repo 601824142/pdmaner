@@ -508,6 +508,16 @@ export default {
         },
     },
     config: {
+        UiHint: 'UI建议',
+        uiHint: {
+            addCount: '增加{count}条UI建议',
+            add: '新增',
+            delete: '删除',
+            moveUp: '上移',
+            moveDown: '下移',
+            defKey: 'UI建议值',
+            defName: 'UI建议名',
+        },
         title: '设置',
         EntityInitFields: '新建表默认字段',
         EntityBasePropertiesList: '新建表默认属性',

@@ -5,6 +5,7 @@ import './style/index.less';
 import EntityInitFields from './EntityInitFields';
 import SystemParameter from './SystemParameter';
 import EntityBasePropertiesList from './EntityInitProperties';
+import UiHint from './UiHint';
 //import DbConnect from './DbConnect';
 import {getPrefix} from '../../../lib/prefixUtil';
 
@@ -12,11 +13,12 @@ const Components = {
   EntityInitFields,
   SystemParameter,
   EntityBasePropertiesList,
+  UiHint,
   //DbConnect,
 };
 export default React.memo(({prefix, dataSource, dataChange, updateDataSource,
                              config, getDataSource}) => {
-  const configTab = ['EntityInitFields', 'EntityBasePropertiesList', 'SystemParameter']
+  const configTab = ['EntityInitFields', 'EntityBasePropertiesList', 'SystemParameter', 'UiHint']
   const currentPrefix = getPrefix(prefix);
   return <SimpleTab
     options={configTab

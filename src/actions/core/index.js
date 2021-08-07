@@ -161,6 +161,7 @@ export const autoSaveProject = (data) => {
   const tempData = {
     ...data,
     updatedTime: time,
+    version,
   };
   return (dispatch, getState) => {
     const info = getState()?.core?.info;
@@ -183,6 +184,7 @@ export const saveProject = (data, saveAs, callback) => {
     ...data,
     createdTime: saveAs ? time : data.createdTime || time,
     updatedTime: time,
+    version,
   };
   return (dispatch, getState) => {
     //dispatch(openLoading(title)); // 开启全局loading

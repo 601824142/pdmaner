@@ -35,7 +35,7 @@ import { getMenu, getMenus, dealMenuClick } from '../../lib/contextMenuUtil';
 import {
   validateKey,
   updateAllData,
-  allType, pdman2sino, getFullColumns,
+  allType, pdman2sino, getFullColumns, updateAllFieldsUiHint,
 } from '../../lib/datasource_util';
 import { setDataByTabId } from '../../lib/cache';
 import { Save } from '../../lib/event_tool';
@@ -920,8 +920,25 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                 }));
             });
           }
-          restProps?.saveUserData(_.pick(tempData, filterData));
+          const userData = _.pick(tempData, filterData);
+          if (Object.keys(userData).length > 0) {
+            restProps?.saveUserData(userData);
+          }
+          if ('profile.uiHint' in tempData) {
+            const dataKeys = _.get(tempData, 'profile.uiHint', []).map(d => d.__key);
+            const changes = Object.keys(tempData.uiHintChanges || {})
+              .filter(k => dataKeys.includes(k))
+              .reduce((a, b) => {
+              const d = tempData.uiHintChanges[b] || {};
+              if (d.newData) {
+                return a.concat({old: d.oldData, new: d.newData});
+              }
+              return a;
+            }, []);
+            tempDataSource = updateAllFieldsUiHint(tempDataSource, changes);
+          }
         }
+        filterData.splice(0, 0, 'uiHintChanges');
         Object.keys(tempData).filter(f => !filterData.includes(f)).forEach((f) => {
           tempDataSource = _.set(tempDataSource, f,
             Array.isArray(tempData[f]) ? tempData[f].map(d => _.omit(d, '__key')) : tempData[f]);
