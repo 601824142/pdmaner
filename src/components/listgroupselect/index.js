@@ -58,8 +58,9 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
     }
   };
   const _onGroupChange = (e, defKey) => {
+    const keys = [].concat(defKey);
     importDataRef.current = importDataRef.current.map((f) => {
-      if (f.defKey === defKey) {
+      if (keys.includes(f.defKey)) {
         return {
           ...f,
           group: e.target.value,
@@ -68,9 +69,9 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
       return f;
     });
   };
-  const onRemove = (key) => {
+  const onRemove = (keys) => {
     setChecked((pre) => {
-      return pre.filter(p => p !== key);
+      return pre.filter(p => !keys.includes(p));
     });
   };
   const _checkBoxChange = (e, defKey) => {
@@ -110,7 +111,7 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
       <Right
         defaultSelected={defaultSelected}
         currentGroup={currentGroup}
-        newData={[...new Set(checked.reverse())].map((c) => {
+        newData={[...new Set(checked)].map((c) => {
           return newData.filter(d => d.defKey === c)[0];
         }).filter(d => !!d)}
         prefix={currentPrefix}

@@ -9,7 +9,7 @@ import {getPrefix} from '../../../lib/prefixUtil';
 
 const Option = Select.Option;
 
-export default React.memo(({prefix, dataSource, dataChange, lang}) => {
+export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
   const url = getDemoDbConnect();
   const dataTypeSupports = _.get(dataSource, 'profile.dataTypeSupports', []);
   const defaultDb = _.get(dataSource, 'profile.default.db', dataTypeSupports[0]);
@@ -104,7 +104,7 @@ export default React.memo(({prefix, dataSource, dataChange, lang}) => {
       });
     } else {
       btn && btn.updateStatus('loading');
-      connectDB(dataSource, {
+      connectDB(dataSource, config, {
         ...propertiesRef.current,
         lang,
       }, 'PingLoadDriverClass', (result) => {

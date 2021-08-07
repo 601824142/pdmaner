@@ -10,10 +10,12 @@
   height: 100%;
   font-size: 12px;
   & > pre {
+    width: 100%;
     padding: 2px;
     overflow: auto;
-    //white-space: normal;
     word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
     text-align: center;
   }
   & > textarea {
@@ -43,4 +45,7 @@
   height: 100%;
   background: #FFF;
   border: 1px solid #ACDAFC;
+}
+.x6-widget-transform {
+  z-index: 999;
 }

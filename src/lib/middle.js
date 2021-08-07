@@ -29,7 +29,7 @@ const selectWordFile = json.selectWordFile;
 const writeLog = json.writeLog;
 const showItemInFolder = json.showItemInFolder;
 const getLogPath = json.getLogPath;
-const showTemplateFolder = json.showTemplateFolder;
+const showErrorLogFolder = json.showErrorLogFolder;
 const basename = json.basename;
 
 export {
@@ -60,7 +60,7 @@ export {
   writeLog,
   showItemInFolder,
   getLogPath,
-  showTemplateFolder,
+  showErrorLogFolder,
   basename,
 };
 

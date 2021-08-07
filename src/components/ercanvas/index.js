@@ -433,6 +433,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
            }], { ignoreHistory : true, relation: true});
           }
         });
+    dataChange && dataChange(graphRef.current.toJSON({diff: true}));
   };
   const getScaleNumber = () => {
     return graphRef.current.scale();
@@ -487,8 +488,26 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           return !args.options.ignoreHistory;
         },
       },
+      minimap: {
+        enabled: true,
+        container: document.getElementById(`${id}minimapContainer`),
+        graphOptions: {
+          async: true,
+          // eslint-disable-next-line consistent-return
+          createCellView:(cell) => {
+            // 在小地图中不渲染边
+            if (cell.isEdge()) {
+              return null;
+            }
+          },
+        },
+      },
       keyboard: {
         enabled: true,
+      },
+      clipboard: {
+        enabled: true,
+        useLocalStorage: true,
       },
       scroller: {
         enabled: true,
@@ -597,6 +616,31 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         min: 0.1,
         max: 2,
       },
+    });
+    graph.bindKey(['ctrl+c','command+c'], () => {
+      const cells = graph.getSelectedCells();
+      if (cells && cells.length) {
+        graph.copy(cells);
+      }
+    });
+    graph.bindKey(['ctrl+m','command+m'], () => {
+      const minimapContainer = document.getElementById(`${id}minimapContainer`);
+      if (minimapContainer) {
+        if (minimapContainer.style.opacity === '0') {
+          minimapContainer.style.opacity = '1';
+          minimapContainer.style.pointerEvents = 'auto';
+        } else {
+          minimapContainer.style.opacity = '0';
+          minimapContainer.style.pointerEvents = 'none';
+        }
+      }
+    });
+    graph.bindKey(['ctrl+v','command+v'], () => {
+      if (!graph.isClipboardEmpty()) {
+        const cells = graph.paste();
+        graph.cleanSelection();
+        graph.select(cells);
+      }
     });
     graph.bindKey(['ctrl+z','command+z'], () => {
       graph.undo({undo: true});
@@ -1108,6 +1152,12 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             }),
           };
           updateDataSource && updateDataSource(newDataSource);
+        } else {
+          cell.setProp({
+            count: graph.getNodes()
+              .filter(n => n.data?.defKey === cell?.data?.defKey)
+              .length - 1,
+          }, { ignoreHistory : true});
         }
       }
       if (options.undo && cell.isNode()) {
@@ -1259,5 +1309,6 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       id={id}
       style={{height: '100%'}}
     >{}</div>
+    <div style={{opacity: 0, pointerEvents: 'none'}} className='minimapContainer' id={`${id}minimapContainer`}>{}</div>
   </>;
 };

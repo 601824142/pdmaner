@@ -7,8 +7,8 @@ import * as _ from 'lodash/object';
 import { projectSuffix } from '../../profile';
 const { execFile } = require('child_process');
 
-const { ipcRenderer, remote, shell } = require('electron');
-const { app, dialog } = remote;
+const { ipcRenderer, shell } = require('electron');
+const { app, dialog } = require('@electron/remote');
 
 const user_config = 'user_config.json';
 const project_config = 'project_config.json';
@@ -90,11 +90,15 @@ export const saveJsonPromise = (filePath, data) => {
   return new Promise((res, rej) => {
     const tempData = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
     const tempFilePath = filePath.endsWith('.json') ? filePath : `${filePath}.json`;
-    saveNormalFile(tempFilePath, tempData).then((data) => {
-      res(data);
-    }).catch((err) => {
-      rej(err);
-    });
+    if (!tempData) {
+      rej(new Error('error'));
+    } else {
+      saveNormalFile(tempFilePath, tempData).then((data) => {
+        res(data);
+      }).catch((err) => {
+        rej(err);
+      });
+    }
   });
 };
 
@@ -349,10 +353,10 @@ export const execFileCmd = (cmd, params, cb) => {
     });
 };
 
-export const connectDB = (dataSource, params = {}, cmd, cb) => {
+export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
   // 创建临时文件
   const outFile = `${execJarOut}${moment().unix()}.json`;
-  console.log(outFile);
+  console.log(outFile, config);
   const getParam = (params) => {
     const paramArray = [];
     Object.keys(params).forEach((p) => {
@@ -366,14 +370,15 @@ export const connectDB = (dataSource, params = {}, cmd, cb) => {
     });
     return paramArray.concat(`out=${outFile}`);
   };
-  const javaHome = _.get(dataSource, 'profile.javaHome', '');
+  const javaHome = config?.javaHome || _.get(dataSource, 'profile.javaHome', '');
+  const jvmMemory = ('jvmMemory' in (config || {})) ? config.jvmMemory : 8;
   const jar = ipcRenderer.sendSync('jarPath');
   const tempValue = javaHome ? `${javaHome}${path.sep}bin${path.sep}java` : 'java';
   const customerDriver = _.get(params, 'customer_driver', '');
   const commend = [
     '-Dfile.encoding=utf-8',
-    '-Xms1024m',
-    '-Xmx1024m',
+    `-Xms${jvmMemory * 1024}m`,
+    `-Xmx${jvmMemory * 1024}m`,
     '-jar', jar, cmd,
     ...getParam(params),
   ];
@@ -480,12 +485,11 @@ export const getLogPath = () => {
 }
 
 export const showItemInFolder = () => {
-  shell.openItem(getLogPath());
+  shell.openPath(getLogPath());
 }
 
-export const showTemplateFolder = () => {
-  const template = ipcRenderer.sendSync('template');
-  shell.openItem(template);
+export const showErrorLogFolder = (file) => {
+  shell.openPath(file);
 }
 
 export const basename = (fileName, extension) => {

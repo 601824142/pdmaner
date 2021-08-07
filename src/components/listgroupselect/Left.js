@@ -27,7 +27,7 @@ export default React.memo(({prefix, newData, checkBoxChange,
   const _onChange = (e) => {
     setFilterValue(e.target.value);
   };
-  const reg = new RegExp(searchValue, 'ig');
+  const reg = new RegExp((searchValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
   return <div className={`${prefix}-listselect-left`}>
     <div className={`${prefix}-listselect-left-search`}>
       <SearchInput
@@ -45,7 +45,7 @@ export default React.memo(({prefix, newData, checkBoxChange,
               defaultSelected={defaultSelected}
               i={i}
               prefix={prefix}
-              key={d.defKey}
+              key={`${d.defKey}${i}`}
               d={d}
               checkBoxChange={checkBoxChange}
               repeatData={repeatData}

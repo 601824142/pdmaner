@@ -35,7 +35,7 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
       <span className={`${currentPrefix}-preview-left-title`}>
         <FormatMessage id='database.preview.demoData'/>
       </span>
-      <CodeHighlight data={demoData} style={style} language='JSON'/></div>
+      <CodeHighlight data={demoData} style={style} mode='json'/></div>
     <div className={`${currentPrefix}-preview-center`}>
       <span className={`${currentPrefix}-preview-center-title`}>
         <span>
@@ -50,6 +50,6 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
       <span className={`${currentPrefix}-preview-right-title`}>
         <FormatMessage id='database.preview.result'/>
       </span>
-      <CodeHighlight data={demoCode} style={style} language={mode}/></div>
+      <CodeHighlight data={demoCode} style={style} mode={mode}/></div>
   </div>;
 });

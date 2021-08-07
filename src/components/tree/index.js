@@ -2,18 +2,21 @@ import React, { useState, useMemo } from 'react';
 
 import CheckBox from 'components/checkbox';
 import Icon from 'components/icon';
+import SearchInput from 'components/searchinput';
 
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 import {tree2array} from '../../lib/tree';
 
-const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds, onChange}) => {
+const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
+                           onChange, placeholder}) => {
   const calcKey = (c) => {
     return c.reduce((a, b) => a.concat(b.key).concat(calcKey(b.children || [])), []);
   };
   const arrayData = useMemo(() => tree2array(dataSource), [dataSource]);
   const parentKeys = useMemo(() => arrayData.filter(d => !!d.children).map(d => d.key),
       [arrayData]);
+  const [searchValue, updateSearchValue] = useState('');
   const [checkeds, updateCheckeds] = useState(() => {
     const checkedData = (defaultCheckeds || []);
     const checkData = arrayData.filter(d => checkedData.includes(d.key));
@@ -77,6 +80,8 @@ const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds, onCh
     onChange && onChange(tempCheckeds.filter(k => !parentKeys.includes(k)));
   };
   const currentPrefix = getPrefix(prefix);
+  const reg = new RegExp((searchValue || '')
+    .replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
   const renderChild = (d, p) => {
     return d.children ?
       <ul key={d.key}>
@@ -90,7 +95,7 @@ const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds, onCh
           </CheckBox></li>
         {
           d.children.length > 0 && <ul style={{marginLeft: 17}} className={`${currentPrefix}-tree-container-ul-child-${expands.includes(d.key) ? 'show' : 'hidden'}`}>
-            {d.children.map(c => renderChild(c, d))}
+            {d.children.filter(c => reg.test(c.value || '')).map(c => renderChild(c, d))}
           </ul>
         }
       </ul> : <li key={d.key} style={{marginLeft: 8}}>
@@ -102,12 +107,23 @@ const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds, onCh
         </CheckBox>
       </li>;
   };
+  const onSearchChange = (e) => {
+    updateSearchValue(e.target.value);
+    const currentReg = new RegExp((e.target.value || '')
+      .replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
+    const searchData = e.target.value ? arrayData.filter(d => currentReg.test(d.value || '')) : [];
+    updateExpands(pre => pre
+      .concat([...new Set(searchData.reduce((a, b) => a.concat(b.parents.map(p => p.key)), []))]));
+  };
   return (
     <ul className={`${currentPrefix}-tree`}>
-      <ul>
-        {
-          dataSource.map(d => renderChild(d))
-        }
+      <ul className={`${currentPrefix}-tree-all`}>
+        <li><SearchInput onChange={onSearchChange} placeholder={placeholder}/></li>
+        <ul>
+          {
+            dataSource.map(d => renderChild(d))
+          }
+        </ul>
       </ul>
     </ul>
   );

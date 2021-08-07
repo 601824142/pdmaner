@@ -8,7 +8,7 @@ export default React.memo(({prefix, dataChange}) => {
   const { lang } = useContext(ConfigContent);
   const Option = Select.Option;
   const onChange = (e) => {
-    dataChange && dataChange(e.target.value, 'language');
+    dataChange && dataChange(e.target.value, 'lang');
   };
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-setting-language`}>

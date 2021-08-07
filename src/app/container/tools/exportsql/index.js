@@ -39,6 +39,7 @@ export default React.memo(({prefix, dataSource}) => {
   const [dataTypeSupport, setDataTypeSupport] = useState(() => {
     return codeTemplates.filter(c => c.applyFor === defaultDb)[0];
   });
+  const [mode, setMode] = useState(dataTypeSupport?.type === 'appCode' ? dataTypeSupport.applyFor : 'sql');
   const onChange = (e) => {
     setDataTypeSupport(codeTemplates.filter(c => c.applyFor === e.target.value)[0]);
   };
@@ -91,6 +92,7 @@ export default React.memo(({prefix, dataSource}) => {
           tempA[type[1]].push(type[2]);
           return tempA;
         }, {})));
+    setMode(dataTypeSupport?.type === 'appCode' ? dataTypeSupport.applyFor : 'sql');
   };
   const _codeChange = (code) => {
     setCodeData(code);
@@ -210,6 +212,7 @@ export default React.memo(({prefix, dataSource}) => {
       <div><Button type='primary' onClick={exportDDL}><FormatMessage id='exportSql.export'/></Button></div>
       <div>
         <CodeEditor
+          mode={mode}
           value={codeData}
           width='auto'
           height='calc(80vh - 45px)'

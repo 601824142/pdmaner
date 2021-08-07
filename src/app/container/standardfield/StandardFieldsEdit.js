@@ -11,7 +11,7 @@ import {
 } from '../../../lib/datasource_util';
 
 
-export default React.memo(({prefix, dataChange, dataSource, twinkle}) => {
+export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataSource}) => {
   const id = useMemo(() => Math.uuid(), []);
   const standardFieldsRef = useRef((dataSource.standardFields || []).map((g) => {
     return {
@@ -72,6 +72,7 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle}) => {
       children: <div style={{width}}>
         <Table
           {...commonProps}
+          updateDataSource={updateDataSource}
           getDataSource={getDataSource}
           data={{
               headers: getFullColumns(),
@@ -95,6 +96,7 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle}) => {
   return <div className={`${currentPrefix}-standard-fields`} ref={resizeDomRef}>
     <Table
       {...commonProps}
+      //updateDataSource={updateDataSource}
       getDataSource={getDataSource}
       twinkle={twinkle}
       otherOpt={false}

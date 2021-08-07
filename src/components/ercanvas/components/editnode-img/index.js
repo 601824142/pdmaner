@@ -1,9 +1,13 @@
 import React, { forwardRef } from 'react';
 import { Graph, Markup } from '@antv/x6';
 import '@antv/x6-react-shape';
+import marked from 'marked';
 
 const EditNode = forwardRef(({node}, ref) => {
   const label = node.getProp('label');
+  const getLabel = () => {
+    return marked(label);
+  };
   return <div
     ref={ref}
     style={{
@@ -19,9 +23,18 @@ const EditNode = forwardRef(({node}, ref) => {
         border: node.shape === 'group-img' ? '1px dashed #DFE3EB' : '1px solid #DFE3EB',
       }}
   >
-    <pre style={{WebkitTextFillColor: node.getProp('fontColor') || 'rgba(0,0,0,.65)'}}>
-      {label}
-    </pre>
+    <pre
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{__html: getLabel()}}
+      style={{
+        padding: '2px',
+        WebkitTextFillColor: node.getProp('fontColor') || 'rgba(0,0,0,.65)',
+        width: '100%',
+        display: 'flex',
+        textAlign: 'center',
+        flexDirection: 'column',
+      }}
+    />
   </div>;
 });
 

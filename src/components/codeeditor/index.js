@@ -14,20 +14,21 @@ import 'ace-builds/src-noconflict/snippets/java';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'ace-builds/src-noconflict/theme-monokai';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import 'ace-builds/src-noconflict/mode-mysql';
+import 'ace-builds/src-noconflict/mode-sql';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import 'ace-builds/src-noconflict/snippets/mysql';
+import 'ace-builds/src-noconflict/snippets/sql';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'ace-builds/src-noconflict/ext-language_tools';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'ace-builds/src-noconflict/ext-searchbox';
 
-export default React.memo(({mode = 'mysql', theme = 'monokai', value, onChange,
-                             height, width, focus, firstLine}) => {
+export default React.memo(({mode = 'sql', theme = 'monokai', value, onChange,
+                             height, width, focus, firstLine, readOnly, onLoad}) => {
   const name = useMemo(() => Math.uuid(), []);
-  const onLoad = (ace) => {
+  const _onLoad = (ace) => {
     focus && ace.focus();
     firstLine && ace.selection.moveCursorTo(0, 0);
+    onLoad && onLoad(ace);
   };
   const _onChange = (data) => {
     onChange && onChange({
@@ -46,14 +47,15 @@ export default React.memo(({mode = 'mysql', theme = 'monokai', value, onChange,
       fontSize={14}
       height={height}
       width={width}
-      mode={mode}
+      mode={(mode || '').toLocaleLowerCase()}
       theme={theme}
       name={name}
       onChange={_onChange}
       value={value}
       enableBasicAutocompletion
       enableLiveAutocompletion
-      onLoad={onLoad}
+      onLoad={_onLoad}
+      readOnly={readOnly}
     />
   </div>;
 });

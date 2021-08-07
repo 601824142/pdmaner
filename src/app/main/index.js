@@ -52,6 +52,7 @@ const TabItem = Tab.TabItem;
 const Index = React.memo(({getUserData, open, config, common, prefix, projectInfo,
                             ...restProps}) => {
   const [tabs, updateTabs] = useState([]);
+  const autoSaveRef = useRef(null);
   const menuNorWidth = 290;
   const menuMinWidth = 50;
   const isResize = useRef({status: false});
@@ -66,6 +67,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   tabsRef.current = tabs;
   const dataSourceRef = useRef({});
   dataSourceRef.current = restProps.dataSource;
+  const configRef = useRef({});
+  configRef.current = config;
   const [groupType, updateGroupType] = useState(restProps.dataSource?.profile?.modelType || 'modalAll');
   const [activeKey, updateActiveKey] = useState('');
   const tabInstanceRef = useRef({});
@@ -88,7 +91,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const saveProject = (saveAs, callback) => {
     const isSaveAs = saveAs || !projectInfoRef.current;
     const newData = updateAllData(dataSourceRef.current,
-        injectTempTabs.current.concat(tabsRef.current));
+        injectTempTabs.current.concat(tabsRef.current), true);
     if (newData.result.status) {
       replace.splice(0, replace.length - 1, ...newData.replace); // 重置数组
       restProps.save(newData.dataSource, FormatMessage.string({id: 'saveProject'}), isSaveAs, (err) => {
@@ -134,6 +137,14 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       }
       return t;
     }));
+    activeTabStack.current = activeTabStack.current.map((s) => {
+      const i = replaceTabs.findIndex(r => (r.old + separator + r.type) === s);
+      const replaceTab = replaceTabs[i];
+      if (i > -1) {
+        return replaceTab.new + separator + replaceTab.type;
+      }
+      return s;
+    });
     if (index > -1) {
       const newActiveTab = replaceTabs[index];
       updateActiveKey(newActiveTab.new + separator + newActiveTab.type);
@@ -290,7 +301,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           restProps.openLoading(FormatMessage.string({id: 'toolbar.exportWordStep1'}));
           imgAll(dataSourceRef.current).then((imgDir) => {
             restProps.openLoading(FormatMessage.string({id: 'toolbar.exportWordStep2'}));
-            connectDB(dataSourceRef.current, {
+            connectDB(dataSourceRef.current, configRef.current, {
               sinerFile: projectInfo,
               docxTpl: template,
               imgDir: imgDir,
@@ -490,7 +501,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const importFromPb = () => {
     Upload('', (data) => {
       restProps.openLoading();
-      connectDB(dataSourceRef.current, {
+      connectDB(dataSourceRef.current, configRef.current, {
         pdmFile: data.path,
       }, 'ParsePDMFile', (result) => {
         if (result.status === 'FAILED') {
@@ -625,6 +636,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         injectDataSource(dataSourceRef.current, data, [], modal);
       };
       modal = openModal(<DbReverseParse
+        config={configRef.current}
         onOk={onOk}
         onClose={onClose}
         dataSource={dataSourceRef.current}
@@ -842,14 +854,15 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     let title = '';
     const onOk = () => {
       if (Object.keys(tempData).length !== 0) {
-        let tempDataSource = {...(restProps?.dataSource || {})};
+        let tempDataSource = getDataSource();
+        const filterData = ['lang', 'javaHome', 'autoSave', 'jvmMemory'];
         if (name === 'dbreverse') {
           const { value = [], realData : { entities = [], viewGroups = [] } = {} }
               = tempData?.dbreverse || {};
           // 此处有多处需要更新
           // 先处理实体和分组信息
-          const entitiesKey = (restProps?.dataSource?.entities || [])
-              .concat(restProps?.dataSource?.views || [])
+          const entitiesKey = (tempDataSource?.entities || [])
+              .concat(tempDataSource?.views || [])
               .map(e => e.defKey);
           const newEntities = entities
               .filter(e => value.includes(e.defKey))
@@ -877,47 +890,42 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                 .map(d => _.omit(d, '__key'));
             tempDataSource = _.set(tempDataSource, n, _.get(tempDataSource, n, []).concat(newData));
           });
-          restProps?.update(tempDataSource);
-        } else {
-          if (name === 'dbConnect') {
-            if (new Set((tempData.dbConn || [])
-                .filter(d => !!d.defKey)
-                .map(d => d.defKey)).size !== (tempData.dbConn || []).length) {
-              Modal.error({
-                title: FormatMessage.string({id: 'optFail'}),
-                message: FormatMessage.string({id: 'dbConnect.validateDb'}),
-              });
-              return;
-            }
+        } else if (name === 'dbConnect') {
+          if (new Set((tempData.dbConn || [])
+            .filter(d => !!d.defName)
+            .map(d => d.defName)).size !== (tempData.dbConn || []).length) {
+            Modal.error({
+              title: FormatMessage.string({id: 'optFail'}),
+              message: FormatMessage.string({id: 'dbConnect.validateDb'}),
+            });
+            return;
           }
-          Object.keys(tempData).filter(f => (f !== 'language') && (f !== 'javaHome')).forEach((f) => {
-            tempDataSource = _.set(tempDataSource, f,
-                Array.isArray(tempData[f]) ? tempData[f].map(d => _.omit(d, '__key')) : tempData[f]);
-          });
-        }
-        if ('language' in tempData && tempData.language !== lang) {
-          restProps?.changeLang(tempData.language, FormatMessage.string({id: 'changeLang'}));
-          // 需要更新一些默认的数据
-          const needUpdates = [
-            {
-              key: 'profile.default.entityInitFields',
-              langName: 'entityInitFields',
-            },
-          ];
-          needUpdates.forEach(({key, langName}) => {
-            tempDataSource = _.set(tempDataSource, key,
+        } else if (name === 'config') {
+          if ('lang' in tempData && tempData.lang !== lang) {
+            // 需要更新一些默认的数据
+            const needUpdates = [
+              {
+                key: 'profile.default.entityInitFields',
+                langName: 'entityInitFields',
+              },
+            ];
+            needUpdates.forEach(({key, langName}) => {
+              tempDataSource = _.set(tempDataSource, key,
                 _.get(tempDataSource, key).map((f) => {
                   return {
                     ...f,
                     defName: FormatMessage.string({id: `projectTemplate.${langName}.${f.defKey}`})
-                        || f.defName,
+                      || f.defName,
                   };
                 }));
-          });
+            });
+          }
+          restProps?.saveUserData(_.pick(tempData, filterData));
         }
-        if ('javaHome' in tempData) {
-          restProps?.updateJavaHome(tempData.javaHome);
-        }
+        Object.keys(tempData).filter(f => !filterData.includes(f)).forEach((f) => {
+          tempDataSource = _.set(tempDataSource, f,
+            Array.isArray(tempData[f]) ? tempData[f].map(d => _.omit(d, '__key')) : tempData[f]);
+        });
         restProps?.save(tempDataSource, FormatMessage.string({id: 'saveProject'}), !projectInfoRef.current); // 配置项内容在关闭弹窗后自动保存
       }
       modal && modal.close();
@@ -940,6 +948,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       lang={config.lang}
       dataChange={dataChange}
       prefix={prefix}
+      getDataSource={getDataSource}
       dataSource={restProps?.dataSource}
       updateDataSource={restProps.update}
     />, {
@@ -1110,7 +1119,33 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       removeBodyEvent('onmouseleave', id);
     };
   }, []);
+  useEffect(() => {
+    const clear = () => {
+      if (autoSaveRef.current) {
+        clearInterval(autoSaveRef.current);
+      }
+    };
+    clear();
+    if (config.autoSave && projectInfoRef.current) {
+      // 开始执行自动保存任务
+      autoSaveRef.current = setInterval(() => {
+        console.log('autoSave');
+        const newData = updateAllData(dataSourceRef.current,
+          injectTempTabs.current.concat(tabsRef.current), false);
+        if (newData.result.status) {
+          restProps.autoSave(newData.dataSource);
+        } else {
+          restProps.autoSave(dataSourceRef.current);
+        }
+      }, config.autoSave * 60 * 1000);
+    }
+    return () => {
+      // 结束执行自动保存任务
+      clear();
+    };
+  }, [config.autoSave]);
   const createGroupMenu = getMenu('add', '', 'groups', [], groupType, '');
+  console.log(tabs);
   return <Loading visible={common.loading} title={common.title}>
     <div className={`${currentPrefix}-main-toolbar`}>
       <ToolBar

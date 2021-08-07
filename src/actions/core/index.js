@@ -6,7 +6,7 @@ import {
   saveJsonPromise, readJsonPromise, saveJsonPromiseAs, openProjectFilePath,
   saveVersionProject, removeVersionProject,
   removeAllVersionProject, openFileOrDirPath, ensureDirectoryExistence,
-  dirSplicing, fileExists, deleteFile, basename,
+  dirSplicing, fileExists, deleteFile, basename, writeLog,
 } from '../../lib/middle';
 import { openLoading, closeLoading, optReset, STATUS } from '../common';
 //import { pdman2sino, version2sino } from '../../lib/datasource_util';
@@ -149,10 +149,31 @@ export const validateSaveProject = (info, data) => {
       if (hashOldRead.digest('hex') === hashNewRead.digest('hex')) {
         res();
       } else {
-        rej(new Error());
+        rej(new Error('error'));
       }
     });
   });
+};
+
+export const autoSaveProject = (data) => {
+  // 此处为异步操作
+  const time = moment().format('YYYY-M-D HH:mm:ss');
+  const tempData = {
+    ...data,
+    updatedTime: time,
+  };
+  return (dispatch, getState) => {
+    const info = getState()?.core?.info;
+    saveJsonPromise(info, tempData)
+      .then(() => {
+        validateSaveProject({path: info}, tempData).catch((err) => {
+          writeLog(err);
+        });
+      })
+      .catch((err) => {
+        writeLog(err);
+      });
+  };
 };
 
 export const saveProject = (data, saveAs, callback) => {
@@ -411,10 +432,8 @@ export const renameProject = (newData, oldData, title, dataInfo) => {
   return (dispatch, getState) => {
     dispatch(openLoading(title));
     // 1.需要调整项目文件 先新建 再删除
-    const name = basename(dataInfo.path, '.json');
-    const suffix = name.split('.')[1];
-    const oldFilePath = dirSplicing(oldData.path, `${oldData.name}.${suffix}.json`);
-    const newFilePath = dirSplicing(newData.path, `${newData.name}.${suffix}.json`);
+    const oldFilePath = dirSplicing(dataInfo.path, '');
+    const newFilePath = dirSplicing(newData.path, `${newData.name}.${projectSuffix}.json`);
     const config = getState()?.config?.data[0];
     if (fileExists(newFilePath) && (oldFilePath !== newFilePath)) {
       dispatch(closeLoading(STATUS[2], allLangData[config.lang].createProjectExists));

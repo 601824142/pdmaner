@@ -75,7 +75,7 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
   if ('checkValue' in restProps) {
     finalCheckValues = restProps.checkValue;
   }
-  const reg = new RegExp(searchValue, 'ig');
+  const reg = new RegExp((searchValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
   const options = [].concat(children)
       .filter(c => reg.test(c.props?.value || '') || reg.test(c.props?.children || ''));
   const getChildren = () => {
@@ -99,6 +99,14 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
     if (!simple && (e.target !== current)) {
       inputRef.current.style.width = '4px';
       updateSearch('');
+    }
+  };
+  const onFocus = () => {
+    setVisible(true);
+  };
+  const onKeyDown = (e) => {
+    if (e.keyCode === 9) {
+      setVisible(false);
     }
   };
   const selected = [].concat(children).filter(c => finalCheckValues.includes(c.props.value));
@@ -161,7 +169,9 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
         {restProps.placeholder || ''}
       </span>
       <input
+        onKeyDown={onKeyDown}
         ref={inputRef}
+        onFocus={onFocus}
         onChange={inputChange}
         value={searchValue}
         className={`${currentPrefix}-multiple-select-data-${simple ? 'simple' : 'normal'}-input`}

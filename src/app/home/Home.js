@@ -8,8 +8,26 @@ import { ToolBar, Icon, Modal, openModal, Button, FormatMessage, SearchInput, To
 import { platform } from '../../lib/middle';
 import ProjectEdit from '../container/projectedit';
 import {getPrefix} from '../../lib/prefixUtil';
+import { version } from '../../../package';
 
 import * as template from '../../lib/template';
+
+const CodeImg = ({currentPrefix}) => {
+  return <div className={`${currentPrefix}-home-container-codeimg`}>
+    <div><FormatMessage id='home.optBookTitle'/></div>
+    <div>
+      <div>
+        <img src='./asset/codeimage/web.png' alt=''/>
+        <span><FormatMessage id='home.optBookTitle1'/></span>
+      </div>
+      <p/>
+      <div>
+        <img src='./asset/codeimage/app.jpeg' alt=''/>
+        <span><FormatMessage id='home.optBookTitle2'/></span>
+      </div>
+    </div>
+  </div>;
+};
 
 export default React.memo(({prefix, importProject, createProject, openTemplate,
                              renameProject, updateHistory, deleteProject, lang, config}) => {
@@ -146,8 +164,8 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
       </span>
     </div>;
   };
-  const openUrl = () => {
-    const href = 'https://www.wjx.cn/vj/PIZj3DI.aspx';
+  const openUrl = (url) => {
+    const href = url;
     if (platform === 'json') {
       // eslint-disable-next-line global-require,import/no-extraneous-dependencies
       require('electron').shell.openExternal(href);
@@ -157,7 +175,7 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
       a.click();
     }
   };
-  const reg = new RegExp(searchValue, 'ig');
+  const reg = new RegExp((searchValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
   return <div className={`${currentPrefix}-home-container`}>
     <div className={`${currentPrefix}-home-toolbar`}>
       <ToolBar resizeable title={FormatMessage.string({id: 'system.title'})}/>
@@ -169,7 +187,11 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
             {}
           </div>
           <div className={`${currentPrefix}-home-container-body-left-logo-title`}>
-            <FormatMessage id='system.title'/>
+            <span>CHINER</span>
+            <span>
+              <FormatMessage id='system.title'/>
+            </span>
+            <span>v{version}</span>
           </div>
         </div>
         <div className={`${currentPrefix}-home-container-body-left-opt`}>
@@ -223,6 +245,16 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
               <Icon type='icon-quanbuxiangmu' style={{marginRight: 4}}/>
               <FormatMessage id='home.allProject'/>
             </div>
+            <Tooltip placement='bottom' title={<CodeImg currentPrefix={currentPrefix}/>} force>
+              <div
+                title={FormatMessage.string({id: 'home.jumpOptBook'})}
+                onClick={() => openUrl('https://www.yuque.com/chiner/docs/manual')}
+                className={`${currentPrefix}-home-container-body-right-nav-type-unselected`}
+              >
+                <Icon type='fa-book' style={{marginRight: 4, fontSize: '16px'}}/>
+                <FormatMessage id='home.optBook'/>
+              </div>
+            </Tooltip>
           </div>
         </div>
         <div className={`${currentPrefix}-home-container-body-right-list`}>
@@ -231,7 +263,7 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
               <div className={`${currentPrefix}-home-container-body-right-list-title`}>
                 <FormatMessage id='home.allProject'/>
               </div>
-              <div onClick={openUrl} className={`${currentPrefix}-home-container-body-right-ad`}>
+              <div onClick={() => openUrl('https://www.wjx.cn/vj/PIZj3DI.aspx')} className={`${currentPrefix}-home-container-body-right-ad`}>
                 <Icon type='fa-bullhorn'/>
                 <span>
                   企业版预订登记，前999名，享受最低三折起折扣优惠

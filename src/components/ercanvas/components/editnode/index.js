@@ -1,10 +1,15 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Graph, Markup } from '@antv/x6';
+import marked from 'marked';
 import FormatMessage from '../../../formatmessage';
 import '@antv/x6-react-shape';
 import './style/index.less';
+import { renderer } from '../util';
+// eslint-disable-next-line import/named
+import { platform } from '../../../../lib/middle';
 
 const EditNode = forwardRef(({node}, ref) => {
+  const preRef = useRef(null);
   const label = node.getProp('label');
   const inputRef = useRef(null);
   const editable = node.getProp('editable');
@@ -13,9 +18,25 @@ const EditNode = forwardRef(({node}, ref) => {
   };
   useEffect(() => {
     if (editable) {
-      inputRef.current.focus();
+      if (window.getComputedStyle(inputRef.current).pointerEvents !== 'none') {
+        inputRef.current.focus();
+      }
+    } else if (platform === 'json') {
+      const links = preRef.current.querySelectorAll('a[href]');
+      links.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          const url = link.getAttribute('href');
+          e.preventDefault();
+          // eslint-disable-next-line global-require,import/no-extraneous-dependencies
+          require('electron').shell.openExternal(url);
+        });
+      });
     }
   }, [editable]);
+  const getLabel = () => {
+    marked.use({ renderer });
+    return marked(label);
+  };
   return <div
     ref={ref}
     className={`chiner-er-editnode ${node.shape === 'edit-node-circle' ? 'chiner-er-editnode-circle' : ''}`}
@@ -32,9 +53,9 @@ const EditNode = forwardRef(({node}, ref) => {
         placeholder={FormatMessage.string({id: 'canvas.node.remarkPlaceholder'})}
         ref={inputRef}
         defaultValue={label}
-      /> : <pre>
-        {label}
-      </pre>
+      /> :
+        // eslint-disable-next-line react/no-danger
+      <pre ref={preRef} dangerouslySetInnerHTML={{__html: getLabel()}}/>
     }
   </div>;
 });

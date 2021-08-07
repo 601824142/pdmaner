@@ -9,10 +9,10 @@ import {getPrefix} from '../../../lib/prefixUtil';
 
 export default React.memo(({prefix, dataSource, dataChange, data}) => {
   const currentPrefix = getPrefix(prefix);
-  const getTreeData = (name) => {
+  const getTreeData = (name, formatMessage) => {
     return [{
       key: name,
-      value: `${name}(${(dataSource?.[name] || []).length})`,
+      value: `${FormatMessage.string({id: `group.${formatMessage}`})}(${(dataSource?.[name] || []).length})`,
       children: (dataSource?.[name] || [])
         .map(d => ({key: d.defKey, value: `${d.defKey}[${d.defName || d.defKey}]`})),
     }];
@@ -33,7 +33,8 @@ export default React.memo(({prefix, dataSource, dataChange, data}) => {
           key: 'refEntities',
           title: FormatMessage.string({id: 'group.refEntities'}),
           content: <Tree
-            dataSource={getTreeData('entities')}
+            placeholder={FormatMessage.string({id: 'group.refEntities'})}
+            dataSource={getTreeData('entities', 'refEntities')}
             defaultCheckeds={getDefaultSelect('refEntities')}
             onChange={keys => dataChange(keys, 'refEntities')}
           />,
@@ -42,7 +43,8 @@ export default React.memo(({prefix, dataSource, dataChange, data}) => {
           key: 'refViews',
           title: FormatMessage.string({id: 'group.refViews'}),
           content: <Tree
-            dataSource={getTreeData('views')}
+            placeholder={FormatMessage.string({id: 'group.refViews'})}
+            dataSource={getTreeData('views', 'refViews')}
             defaultCheckeds={getDefaultSelect('refViews')}
             onChange={keys => dataChange(keys, 'refViews')}
           />,
@@ -51,7 +53,8 @@ export default React.memo(({prefix, dataSource, dataChange, data}) => {
           key: 'refDiagrams',
           title: FormatMessage.string({id: 'group.refDiagrams'}),
           content: <Tree
-            dataSource={getTreeData('diagrams')}
+            placeholder={FormatMessage.string({id: 'group.refDiagrams'})}
+            dataSource={getTreeData('diagrams', 'refDiagrams')}
             defaultCheckeds={getDefaultSelect('refDiagrams')}
             onChange={keys => dataChange(keys, 'refDiagrams')}
           />,
@@ -60,7 +63,8 @@ export default React.memo(({prefix, dataSource, dataChange, data}) => {
           key: 'refDicts',
           title: FormatMessage.string({id: 'group.refDicts'}),
           content: <Tree
-            dataSource={getTreeData('dicts')}
+            placeholder={FormatMessage.string({id: 'group.refDicts'})}
+            dataSource={getTreeData('dicts', 'refDicts')}
             defaultCheckeds={getDefaultSelect('refDicts')}
             onChange={keys => dataChange(keys, 'refDicts')}
           />,

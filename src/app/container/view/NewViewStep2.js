@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle, useEffect } from 'react';
-import {Tree} from 'components';
+import {FormatMessage, Tree} from 'components';
 import {separator} from '../../../../profile';
 
 export default React.memo(forwardRef(({data = [], onChange, getData}, ref) => {
@@ -12,8 +12,9 @@ export default React.memo(forwardRef(({data = [], onChange, getData}, ref) => {
       setTreeData,
     };
   } ,[]);
-  return <div>
+  return <div style={{height: '100%'}}>
     <Tree
+      placeholder={FormatMessage.string({id: 'view.fieldSearchPlaceholder'})}
       dataSource={treeData.map(e => ({
           key: e.defKey,
           value: `${e.defKey}-${e.defName}`,

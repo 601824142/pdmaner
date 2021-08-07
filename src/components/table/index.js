@@ -24,6 +24,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   const inputRef = useRef({});
   const currentPrefix = getPrefix(prefix);
   const [expands, setExpands] = useState([]);
+  const [dicts, setDict] = useState(dataSource?.dicts || []);
   const checkboxComponents = ['primaryKey', 'notNull', 'autoIncrement', 'unique', 'enabled', 'defaultDb'];
   const domains = _.get(dataSource, 'domains', []);
   const mapping = _.get(dataSource, 'dataTypeMapping.mappings', []);
@@ -70,6 +71,9 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   const [{ headers = [], fields = [], ...restData }, updateTableData] = useState(getInitState);
   const [preData, updatePreData] = useState(data);
   const fieldsRef = useRef([]);
+  useEffect(() => {
+    setDict(dataSource?.dicts);
+  }, [dataSource?.dicts]);
   fieldsRef.current = fields;
   if (preData !== data) {
     // 如果上一次的数据源和当前的数据源不相同 则需要更新
@@ -497,8 +501,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
               addField(null, finalFields);
             } catch (error) {
               Component.Message.error({
-                title: Component.FormatMessage.string({id: `tableValidate.${error?.message}`})
-                    || Component.FormatMessage.string({id: 'tableValidate.invalidJsonData'}),
+                title: Component.FormatMessage.string({id: 'tableValidate.invalidJsonData'}),
               });
             }
           });
@@ -993,6 +996,8 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                   selectedFields={selectedFields}
                   expands={expands}
                   dataSource={dataSource}
+                  dicts={dicts}
+                  setDict={setDict}
                   updateTableDataByName={updateTableDataByName}
                   comBlur={comBlur}
                   freeze={freeze}

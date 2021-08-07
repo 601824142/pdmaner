@@ -32,6 +32,8 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
   const [selectFields, setSelectFields] = useState([]);
   const listSelectRef = useRef([]);
   const contentRef = useRef(null);
+  const dataSourceRef = useRef(dataSource);
+  dataSourceRef.current = dataSource;
   const iconClick = () => {
     setFold(pre => !pre);
   };
@@ -61,7 +63,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
     setFilterValue(e.target.value);
   };
   const finalData = (dataSource.standardFields || []).map((g) => {
-    const reg = new RegExp(filterValue, 'ig');
+    const reg = new RegExp((filterValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
     return {
       ...g,
       fields: (g.fields || [])
@@ -75,7 +77,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       if (tempData) {
         if (validateStandardFields(tempData)) {
           tempData && updateDataSource({
-            ...dataSource,
+            ...dataSourceRef.current,
             standardFields: tempData.map((group) => {
               return {
                 ..._.omit(group, ['__key']),
@@ -115,6 +117,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       prefix={prefix}
       dataChange={dataChange}
       dataSource={dataSource}
+      updateDataSource={updateDataSource}
     />, {
       bodyStyle: {width: '80%'},
       title: FormatMessage.string({id: 'standardFields.editStandardFields'}),
@@ -159,7 +162,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
           groups={standardFields}
         />, {
           bodyStyle: {width: '60%'},
-          title: <FormatMessage id='toolbar.importStandardFieldsLib'/>,
+          title: <FormatMessage id='standardFields.importStandardFieldsLib'/>,
           buttons: [
             <Button key='ok' onClick={onOk} type='primary'>
               <FormatMessage id='button.ok'/>

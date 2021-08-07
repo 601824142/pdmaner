@@ -45,6 +45,13 @@
       height: @top-tab-header;
     }
     &-left {
+      &-title {
+        display: block;
+        & > span {
+          width: auto !important;
+          writing-mode: tb;
+        }
+      }
       width: @left-tab-width;
       display: flex;
       flex-direction: column;

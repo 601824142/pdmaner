@@ -5,7 +5,7 @@ import { platform } from './middle';
 let win = null;
 
 if (platform === 'json') {
-  win = require('electron').remote.getCurrentWindow();
+  win = require('@electron/remote').getCurrentWindow();
 }
 
 // 1.最小化
