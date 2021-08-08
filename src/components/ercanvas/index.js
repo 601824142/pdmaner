@@ -668,12 +668,13 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     });
     graph.bindKey(['ctrl+v','command+v'], () => {
       if (!graph.isClipboardEmpty()) {
+        graph.resetSelection();
         const cells = graph.paste();
         const keys = [];
         const copyEntities = cells
           .filter(c => c.shape === 'table').map((c) => {
             const copyDefKey = c.getData().defKey || '';
-            const tempKey = copyDefKey.includes('_') ? copyDefKey : `${copyDefKey}_1`;
+            const tempKey = /_(\d)+$/.test(copyDefKey) ? copyDefKey : `${copyDefKey}_1`;
             const newKey = generatorTableKey(tempKey, {
               entities: (dataSourceRef.current.entities || []).concat(keys),
             });
@@ -685,7 +686,6 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             };
           });
         updateDataSource && updateDataSource(addEntityData(copyEntities, 'copy'));
-        graph.cleanSelection();
         graph.select(cells);
       }
     });

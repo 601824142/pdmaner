@@ -527,7 +527,7 @@ export default {
             placeholder: 'If it is not filled in, it will be automatically read from the environment variable of the system',
         },
         JVMLabel: 'JVM Parameters',
-        JVMPlaceholder: 'multiple parameters, please use , to split',
+        JVMPlaceholder: 'multiple parameters, please use Space to split',
         SystemParameter: 'SystemParameter',
         DbConnect: 'DbConnect',
         SqlDelimiterLabel: 'sqlDelimiter',

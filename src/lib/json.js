@@ -378,7 +378,7 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
   const customerDriver = _.get(params, 'customer_driver', '');
   const commend = [
     '-Dfile.encoding=utf-8',
-    ...jvm.split(','),
+    ...jvm.split(' '),
     '-jar', jar, cmd,
     ...getParam(params),
   ];

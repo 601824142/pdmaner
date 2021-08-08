@@ -313,6 +313,7 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
           </span>
           <span className={`${currentPrefix}-form-item-component`}>
             <Input
+              type='password'
               onChange={e => onChange(e, 'password')}
               value={properties.password || ''}
             />

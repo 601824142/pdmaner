@@ -1312,4 +1312,4 @@ export const validateNeedSave = (dataSource) => {
   return false;
 };
 
-export const defaultJVM = '-Xms1024m,-Xmx8192m,-XX:MaxPermSize=256m,-XX:-UseGCOverheadLimit';
+export const defaultJVM = '-Xms1024m -Xmx8192m -XX:MaxPermSize=256m -XX:-UseGCOverheadLimit';

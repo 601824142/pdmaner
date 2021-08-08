@@ -527,7 +527,7 @@ export default {
             placeholder: '不填将自动从系统的环境变量中读取',
         },
         JVMLabel: 'JVM参数',
-        JVMPlaceholder: '多个参数请以,分割',
+        JVMPlaceholder: '多个参数请以空格分割',
         SystemParameter: '系统参数',
         DbConnect: '数据库连接配置',
         SqlDelimiterLabel: 'SQL分隔符',
