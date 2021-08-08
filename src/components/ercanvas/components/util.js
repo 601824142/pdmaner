@@ -19,7 +19,7 @@ export const renderer = {
     return `<p style="margin: 5px">${text}</p>`;
   },
   hr(){
-    return '<hr style="margin: 2px"/>';
+    return '<hr style="margin: 1px;border-style: solid;color: #F2F5F6"/>';
   },
   list(body, ordered, start) {
     const type = ordered ? 'ol' : 'ul',

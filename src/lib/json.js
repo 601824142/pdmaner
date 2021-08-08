@@ -5,6 +5,7 @@ import path from 'path';
 import moment from 'moment';
 import * as _ from 'lodash/object';
 import { projectSuffix } from '../../profile';
+import { defaultJVM } from './datasource_util';
 const { execFile } = require('child_process');
 
 const { ipcRenderer, shell } = require('electron');
@@ -356,7 +357,7 @@ export const execFileCmd = (cmd, params, cb) => {
 export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
   // 创建临时文件
   const outFile = `${execJarOut}${moment().unix()}.json`;
-  console.log(outFile, config);
+  console.log(outFile);
   const getParam = (params) => {
     const paramArray = [];
     Object.keys(params).forEach((p) => {
@@ -371,14 +372,13 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
     return paramArray.concat(`out=${outFile}`);
   };
   const javaHome = config?.javaHome || _.get(dataSource, 'profile.javaHome', '');
-  const jvmMemory = ('jvmMemory' in (config || {})) ? config.jvmMemory : 8;
+  const jvm = ('jvm' in (config || {})) ? config.jvm : defaultJVM;
   const jar = ipcRenderer.sendSync('jarPath');
   const tempValue = javaHome ? `${javaHome}${path.sep}bin${path.sep}java` : 'java';
   const customerDriver = _.get(params, 'customer_driver', '');
   const commend = [
     '-Dfile.encoding=utf-8',
-    `-Xms${jvmMemory * 1024}m`,
-    `-Xmx${jvmMemory * 1024}m`,
+    ...jvm.split(','),
     '-jar', jar, cmd,
     ...getParam(params),
   ];

@@ -617,6 +617,37 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         max: 2,
       },
     });
+    const addEntityData = (cell, type) => {
+      const cells = [].concat(cell);
+      let initData = {};
+      if (type === 'create') {
+        initData = {
+          headers: getFullColumns()
+            .map(h => ({
+              refKey: h.newCode,
+              hideInGraph: h.relationNoShow,
+            })),
+          fields: getEntityInitFields(),
+          properties: getEntityInitProperties(),
+        };
+      }
+      return {
+        ...dataSourceRef.current,
+        entities: dataSourceRef.current.entities.concat(cells.map(c => ({
+          ..._.omit(c.data, ['maxWidth', 'count']),
+          ...initData,
+        }))),
+        viewGroups: (dataSourceRef.current.viewGroups || []).map((g) => {
+          if ((g.refDiagrams || []).includes(tabKey.split(separator)[0])) {
+            return {
+              ...g,
+              refEntities: (g.refEntities || []).concat(cells.map(c => c.data.defKey)),
+            };
+          }
+          return g;
+        }),
+      };
+    };
     graph.bindKey(['ctrl+c','command+c'], () => {
       const cells = graph.getSelectedCells();
       if (cells && cells.length) {
@@ -638,6 +669,22 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graph.bindKey(['ctrl+v','command+v'], () => {
       if (!graph.isClipboardEmpty()) {
         const cells = graph.paste();
+        const keys = [];
+        const copyEntities = cells
+          .filter(c => c.shape === 'table').map((c) => {
+            const copyDefKey = c.getData().defKey || '';
+            const tempKey = copyDefKey.includes('_') ? copyDefKey : `${copyDefKey}_1`;
+            const newKey = generatorTableKey(tempKey, {
+              entities: (dataSourceRef.current.entities || []).concat(keys),
+            });
+            keys.push({defKey: newKey});
+            c.setProp('originKey', newKey, {ignoreHistory : true});
+            c.setData({defKey: newKey}, {ignoreHistory : true, relation: true});
+            return {
+              data: c.data,
+            };
+          });
+        updateDataSource && updateDataSource(addEntityData(copyEntities, 'copy'));
         graph.cleanSelection();
         graph.select(cells);
       }
@@ -1129,35 +1176,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       if (cell.shape === 'table') {
         if ((dataSourceRef.current.entities || [])
             .findIndex(e => cell.data.defKey === e.defKey) < 0){
-          const newDataSource = {
-            ...dataSourceRef.current,
-            entities: dataSourceRef.current.entities.concat({
-              ..._.omit(cell.data, ['maxWidth', 'count']),
-              headers: getFullColumns()
-                  .map(h => ({
-                    refKey: h.newCode,
-                    hideInGraph: h.relationNoShow,
-                  })),
-              fields: getEntityInitFields(),
-              properties: getEntityInitProperties(),
-            }),
-            viewGroups: (dataSourceRef.current.viewGroups || []).map((g) => {
-              if ((g.refDiagrams || []).includes(tabKey.split(separator)[0])) {
-                return {
-                  ...g,
-                  refEntities: (g.refEntities || []).concat(cell.data.defKey),
-                };
-              }
-              return g;
-            }),
-          };
-          updateDataSource && updateDataSource(newDataSource);
-        } else {
-          cell.setProp({
-            count: graph.getNodes()
-              .filter(n => n.data?.defKey === cell?.data?.defKey)
-              .length - 1,
-          }, { ignoreHistory : true});
+          updateDataSource && updateDataSource(addEntityData(cell, 'create'));
         }
       }
       if (options.undo && cell.isNode()) {

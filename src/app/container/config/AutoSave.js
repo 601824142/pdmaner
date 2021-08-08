@@ -26,10 +26,28 @@ export default React.memo(({prefix, dataChange, config}) => {
             <FormatMessage id='config.autoSave.0'/>
           </Option>
           <Option
+            key={2}
+            value={2}
+          >
+            <FormatMessage id='config.autoSave.2'/>
+          </Option>
+          <Option
+            key={5}
+            value={5}
+          >
+            <FormatMessage id='config.autoSave.5'/>
+          </Option>
+          <Option
             key={10}
             value={10}
           >
             <FormatMessage id='config.autoSave.10'/>
+          </Option>
+          <Option
+            key={20}
+            value={20}
+          >
+            <FormatMessage id='config.autoSave.20'/>
           </Option>
           <Option
             key={30}

@@ -137,7 +137,7 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
         return (
           <div key={o} className={`${currentPrefix}-dbconnect-example-config-item`}>
             <div className={`${currentPrefix}-dbconnect-example-config-item-header`}>
-              {`${o} ${FormatMessage.string({id: 'dbConnect.configExample'})}↓`}
+              {`${url[o].defKey} ${FormatMessage.string({id: 'dbConnect.configExample'})}↓`}
             </div>
             <div className={`${currentPrefix}-dbconnect-example-config-item-content-label`}>
               driver_class:

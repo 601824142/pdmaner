@@ -487,21 +487,35 @@ export const validateKey = (key, fields) => {
 export const getDemoDbConnect = () => {
   return {
     mysql: {
+      defKey: 'MySQL',
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.mysql'}),
       driverClass: 'com.mysql.cj.jdbc.Driver',
     },
     oracle: {
+      defKey: 'ORACLE',
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.oracle'}),
       driverClass: 'oracle.jdbc.driver.OracleDriver',
     },
     sqlserver: {
+      defKey: 'SQLServer',
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.sqlserver'}),
       driverClass: 'com.microsoft.sqlserver.jdbc.SQLServerDriver',
     },
     postgresql: {
+      defKey: 'PostgreSQL',
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.postgresql'}),
       driverClass: 'org.postgresql.Driver',
     },
+    db2: {
+      defKey: 'DB2',
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.db2'}),
+      driverClass: 'com.ibm.db2.jcc.DB2Driver',
+    },
+    dm: {
+      defKey: 'DM(达梦)',
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.dm'}),
+      driverClass: 'dm.jdbc.driver.DmDriver',
+    }
   }
 };
 
@@ -1277,6 +1291,10 @@ export const transformationData = (oldDataSource) => {
     }
     tempDataSource = {
       ...oldDataSource,
+      profile: {
+        ...oldDataSource.profile,
+        uiHint: oldDataSource.profile?.uiHint || emptyProjectTemplate.profile.uiHint,
+      },
       entities: (oldDataSource.entities || []).map(e => refactor(e)),
       views: (oldDataSource.views || []).map(v => refactor(v)),
     };
@@ -1293,3 +1311,5 @@ export const validateNeedSave = (dataSource) => {
   }
   return false;
 };
+
+export const defaultJVM = '-Xms1024m,-Xmx8192m,-XX:MaxPermSize=256m,-XX:-UseGCOverheadLimit';
