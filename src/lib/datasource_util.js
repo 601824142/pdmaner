@@ -1081,7 +1081,7 @@ export const generatorTableKey = (defKey, dataSource) => {
     return defKey;
   } else {
     const key = defKey.split('_');
-    return generatorTableKey(`${key.slice(0, key.length - 1)}_${parseInt(key[key.length - 1]) + 1}`, dataSource);
+    return generatorTableKey(`${key.slice(0, key.length - 1).join('_')}_${parseInt(key[key.length - 1]) + 1}`, dataSource);
   }
 }
 
