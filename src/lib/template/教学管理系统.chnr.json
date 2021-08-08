@@ -4,18 +4,18 @@
   "avatar": "",
   "version": "3.1.0",
   "createdTime": "2021-7-25 19:55:06",
-  "updatedTime": "2021-8-8 12:12:44",
+  "updatedTime": "2021-8-8 17:21:54",
   "dbConns": [],
   "profile": {
     "default": {
-      "db": "MYSQL",
+      "db": "",
       "dbConn": "",
       "entityInitFields": [
         {
           "defKey": "TENANT_ID",
           "defName": "租户号",
           "comment": "",
-          "type": "VARCHAR",
+          "type": "",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -27,10 +27,10 @@
         },
         {
           "defKey": "REVISION",
-          "defName": "REVISION",
+          "defName": "乐观锁",
           "comment": "",
           "domain": "IdOrKey",
-          "type": "VARCHAR",
+          "type": "",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -41,10 +41,10 @@
         },
         {
           "defKey": "CREATED_BY",
-          "defName": "CREATED_BY",
+          "defName": "创建人",
           "comment": "",
           "domain": "IdOrKey",
-          "type": "VARCHAR",
+          "type": "",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -55,10 +55,10 @@
         },
         {
           "defKey": "CREATED_TIME",
-          "defName": "CREATED_TIME",
+          "defName": "创建时间",
           "comment": "",
           "domain": "DateTime",
-          "type": "DATETIME",
+          "type": "",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -69,10 +69,10 @@
         },
         {
           "defKey": "UPDATED_BY",
-          "defName": "UPDATED_BY",
+          "defName": "更新人",
           "comment": "",
           "domain": "IdOrKey",
-          "type": "VARCHAR",
+          "type": "",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -83,10 +83,10 @@
         },
         {
           "defKey": "UPDATED_TIME",
-          "defName": "UPDATED_TIME",
+          "defName": "更新时间",
           "comment": "",
           "domain": "DateTime",
-          "type": "DATETIME",
+          "type": "",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -164,7 +164,7 @@
       {
         "type": "appCode",
         "applyFor": "C#",
-        "content": "using System;\nusing System.Collections.Generic;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n/*\n * @author : http://www.chiner.com.cn\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace Chiner.Application\n{\n    public class {{=it.func.camel(it.entity.defKey,true) }}\n    {\n    \n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}} { get; set; }\n        $blankline\n        {{~}}\n        \n    }\n}"
+        "content": "using System;\nusing System.Collections.Generic;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n/*\n * @author : http://www.chiner.com.cn\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace Chiner.Application\n{\n    public partial class {{=it.func.camel(it.entity.defKey,true) }}\n    {\n    \n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}} { get; set; }\n        $blankline\n        {{~}}\n        \n    }\n}"
       }
     ],
     "generatorDoc": {
@@ -173,27 +173,19 @@
     "relationFieldSize": "15",
     "uiHint": [
       {
-        "data": [
-          "",
-          ""
-        ],
         "defKey": "Input",
-        "defName": "普通输入"
+        "defName": "普通输入框"
       },
       {
-        "data": [
-          "",
-          ""
-        ],
         "defKey": "Select",
-        "defName": "下拉输入"
+        "defName": "下拉输入框"
       },
       {
         "data": [
           "",
           ""
         ],
-        "defKey": "Check",
+        "defKey": "CheckBox",
         "defName": "复选框"
       },
       {
@@ -201,7 +193,7 @@
           "",
           ""
         ],
-        "defKey": "Radio",
+        "defKey": "RadioBox",
         "defName": "单选框"
       },
       {
@@ -209,10 +201,6 @@
           "",
           ""
         ],
-        "defKey": "Text",
-        "defName": "长文本"
-      },
-      {
         "defKey": "Double",
         "defName": "小数输入"
       },
@@ -229,8 +217,24 @@
         "defName": "日期输入"
       },
       {
-        "defKey": "DateYearMonth",
+        "defKey": "DataYearMonth",
         "defName": "年月输入"
+      },
+      {
+        "data": [
+          "",
+          ""
+        ],
+        "defKey": "Text",
+        "defName": "长文本输入"
+      },
+      {
+        "data": [
+          "",
+          ""
+        ],
+        "defKey": "RichText",
+        "defName": "富文本输入"
       }
     ]
   },
@@ -4013,7 +4017,7 @@
       "applyFor": "string",
       "len": "60",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "IdOrKey",
@@ -4021,7 +4025,7 @@
       "applyFor": "string",
       "len": 32,
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Name",
@@ -4029,7 +4033,7 @@
       "applyFor": "string",
       "len": 90,
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Int",
@@ -4037,7 +4041,7 @@
       "applyFor": "int",
       "len": "",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Double",
@@ -4045,7 +4049,7 @@
       "applyFor": "double",
       "len": 24,
       "scale": 6,
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Money",
@@ -4053,7 +4057,7 @@
       "applyFor": "double",
       "len": 24,
       "scale": 6,
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "DateTime",
@@ -4061,7 +4065,7 @@
       "applyFor": "date",
       "len": "",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "YesNo",
@@ -4069,7 +4073,7 @@
       "applyFor": "string",
       "len": "1",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "Dict",
@@ -4077,7 +4081,7 @@
       "applyFor": "string",
       "len": "32",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     },
     {
       "defKey": "DescText",
@@ -4085,7 +4089,7 @@
       "applyFor": "string",
       "len": "900",
       "scale": "",
-      "uiHint": {}
+      "uiHint": ""
     }
   ],
   "diagrams": [
@@ -4143,17 +4147,6 @@
             ]
           },
           {
-            "id": "942a65c8-c294-4ea4-98ec-1df43daa3ff5",
-            "shape": "table",
-            "position": {
-              "x": 1341,
-              "y": 231.499999999998
-            },
-            "count": 1,
-            "originKey": "SIMS_LESSON",
-            "parent": "02b64cef-3ee3-48a5-9867-9dc4e9726bfd"
-          },
-          {
             "id": "4a31fc9b-4f5a-4f2c-880b-409d433ba848",
             "shape": "table",
             "position": {
@@ -4185,6 +4178,53 @@
             "count": 0,
             "originKey": "SIMS_INSTRUCT",
             "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
+          },
+          {
+            "id": "9972b579-d4c5-4520-9202-7a57bf539151",
+            "shape": "table",
+            "position": {
+              "x": 30.50000000000165,
+              "y": 242.999999999998
+            },
+            "count": 0,
+            "originKey": "SIMS_MAJOR",
+            "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
+          },
+          {
+            "id": "56317816-819f-41ea-a6ef-bdcd0027fb68",
+            "shape": "table",
+            "position": {
+              "x": 34.50000000000165,
+              "y": 19.99999999999801
+            },
+            "count": 0,
+            "originKey": "SIMS_COLLEGE",
+            "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
+          },
+          {
+            "id": "6210b0eb-8566-4b64-885b-f1b00d6078d7",
+            "shape": "table",
+            "position": {
+              "x": 521.0000000000016,
+              "y": 19.99999999999801
+            },
+            "count": 0,
+            "originKey": "SIMS_CLASS",
+            "fontColor": "#555555",
+            "fillColor": "#dce775",
+            "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
+          },
+          {
+            "id": "26b28925-27ed-488d-b20d-2abbcafa5057",
+            "shape": "table",
+            "position": {
+              "x": 1351,
+              "y": 19.99999999999801
+            },
+            "count": 0,
+            "originKey": "SIMS_EXAM",
+            "fillColor": "#9acc98",
+            "parent": "02b64cef-3ee3-48a5-9867-9dc4e9726bfd"
           },
           {
             "id": "f03ab359-7568-4402-bc56-4593bf5e1420",
@@ -4528,41 +4568,6 @@
             }
           },
           {
-            "id": "9972b579-d4c5-4520-9202-7a57bf539151",
-            "shape": "table",
-            "position": {
-              "x": 30.50000000000165,
-              "y": 242.999999999998
-            },
-            "count": 0,
-            "originKey": "SIMS_MAJOR",
-            "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
-          },
-          {
-            "id": "56317816-819f-41ea-a6ef-bdcd0027fb68",
-            "shape": "table",
-            "position": {
-              "x": 34.50000000000165,
-              "y": 19.99999999999801
-            },
-            "count": 0,
-            "originKey": "SIMS_COLLEGE",
-            "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
-          },
-          {
-            "id": "6210b0eb-8566-4b64-885b-f1b00d6078d7",
-            "shape": "table",
-            "position": {
-              "x": 521.0000000000016,
-              "y": 19.99999999999801
-            },
-            "count": 0,
-            "originKey": "SIMS_CLASS",
-            "fontColor": "#555555",
-            "fillColor": "#dce775",
-            "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
-          },
-          {
             "id": "9a5658de-7e28-4815-95c2-ccf5ff90e6c1",
             "shape": "table",
             "position": {
@@ -4576,15 +4581,14 @@
             "parent": "02b64cef-3ee3-48a5-9867-9dc4e9726bfd"
           },
           {
-            "id": "26b28925-27ed-488d-b20d-2abbcafa5057",
+            "id": "942a65c8-c294-4ea4-98ec-1df43daa3ff5",
             "shape": "table",
             "position": {
-              "x": 1351,
-              "y": 19.99999999999801
+              "x": 1341,
+              "y": 231.499999999998
             },
-            "count": 0,
-            "originKey": "SIMS_EXAM",
-            "fillColor": "#9acc98",
+            "count": 1,
+            "originKey": "SIMS_LESSON",
             "parent": "02b64cef-3ee3-48a5-9867-9dc4e9726bfd"
           }
         ]
@@ -4632,64 +4636,10 @@
               "port": "in"
             },
             "relation": "1:n",
-            "fillColor": "#ACDAFC"
-          },
-          {
-            "id": "ef0d6ba9-b285-435f-8331-f1196a5c9958",
-            "shape": "erdRelation",
-            "source": {
-              "cell": "1380680e-72b6-42cc-b634-b92b155c38c5",
-              "port": "out2"
-            },
-            "target": {
-              "cell": "563779f2-b18d-4158-b78b-36fa30b4b371",
-              "port": "in3"
-            },
-            "relation": "1:n",
             "vertices": [
               {
-                "x": 270,
-                "y": 160
-              }
-            ],
-            "fillColor": "#ACDAFC"
-          },
-          {
-            "id": "734f21dd-e215-4a14-90ab-f18b0df70d61",
-            "shape": "erdRelation",
-            "source": {
-              "cell": "02b5b284-86e8-413b-a2ce-d2c052e13c94",
-              "port": "out2"
-            },
-            "target": {
-              "cell": "dc34a8bc-62a9-4a97-bc60-7195d1aa66e8",
-              "port": "in2"
-            },
-            "relation": "1:n",
-            "vertices": [
-              {
-                "x": 270,
-                "y": 298
-              }
-            ],
-            "fillColor": "#ACDAFC"
-          },
-          {
-            "id": "b291fcaf-a0b5-4975-a64b-97a5ee028887",
-            "shape": "erdRelation",
-            "source": {
-              "cell": "34f587ad-faf7-4fa9-948d-e623648d77b9",
-              "port": "out2"
-            },
-            "target": {
-              "cell": "dc34a8bc-62a9-4a97-bc60-7195d1aa66e8",
-              "port": "out2"
-            },
-            "relation": "1:n",
-            "vertices": [
-              {
-                "x": 450,
-                "y": 298
+                "x": 480,
+                "y": 140
               }
             ],
             "fillColor": "#ACDAFC"
@@ -4709,7 +4659,7 @@
             "vertices": [
               {
                 "x": 749,
-                "y": 480
+                "y": 520
               }
             ],
             "fillColor": "#ACDAFC"
@@ -4728,8 +4678,8 @@
             "relation": "1:n",
             "vertices": [
               {
-                "x": 130,
-                "y": 460
+                "x": 70,
+                "y": 540
               }
             ],
             "fillColor": "#ACDAFC"
@@ -4763,297 +4713,65 @@
             "fillColor": "#ACDAFC"
           },
           {
-            "id": "1380680e-72b6-42cc-b634-b92b155c38c5",
-            "shape": "edit-node-circle",
-            "position": {
-              "x": 160,
-              "y": 248
+            "id": "6e18b347-52cb-4e8f-a426-f2274a1e0581",
+            "shape": "erdRelation",
+            "source": {
+              "cell": "1380680e-72b6-42cc-b634-b92b155c38c5",
+              "port": "out"
             },
-            "label": "专业",
-            "fillColor": "#acdafc",
-            "size": {
-              "width": 80,
-              "height": 60
+            "target": {
+              "cell": "563779f2-b18d-4158-b78b-36fa30b4b371",
+              "port": "in3"
             },
-            "ports": {
-              "groups": {
-                "in": {
-                  "attrs": {
-                    "fo": {
-                      "width": 8,
-                      "height": 8,
-                      "x": -4,
-                      "y": -4,
-                      "magnet": "true",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  },
-                  "zIndex": 3,
-                  "position": {
-                    "name": "left"
-                  }
-                },
-                "out": {
-                  "attrs": {
-                    "fo": {
-                      "width": 8,
-                      "height": 8,
-                      "x": -4,
-                      "y": -4,
-                      "magnet": "true",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  },
-                  "zIndex": 3,
-                  "position": {
-                    "name": "right"
-                  }
-                },
-                "top": {
-                  "attrs": {
-                    "fo": {
-                      "width": 8,
-                      "height": 8,
-                      "x": -4,
-                      "y": -4,
-                      "magnet": "true",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  },
-                  "zIndex": 3,
-                  "position": {
-                    "name": "top"
-                  }
-                },
-                "bottom": {
-                  "attrs": {
-                    "fo": {
-                      "width": 8,
-                      "height": 8,
-                      "x": -4,
-                      "y": -4,
-                      "magnet": "true",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  },
-                  "zIndex": 3,
-                  "position": {
-                    "name": "bottom"
-                  }
-                }
-              },
-              "items": [
-                {
-                  "group": "in",
-                  "id": "in"
-                },
-                {
-                  "group": "in",
-                  "id": "in2"
-                },
-                {
-                  "group": "in",
-                  "id": "in3"
-                },
-                {
-                  "group": "out",
-                  "id": "out"
-                },
-                {
-                  "group": "out",
-                  "id": "out2"
-                },
-                {
-                  "group": "out",
-                  "id": "out3"
-                },
-                {
-                  "group": "top",
-                  "id": "top"
-                },
-                {
-                  "group": "top",
-                  "id": "top2"
-                },
-                {
-                  "group": "top",
-                  "id": "top3"
-                },
-                {
-                  "group": "bottom",
-                  "id": "bottom"
-                },
-                {
-                  "group": "bottom",
-                  "id": "bottom2"
-                },
-                {
-                  "group": "bottom",
-                  "id": "bottom3"
-                }
-              ]
-            }
+            "relation": "1:n",
+            "fillColor": "#ACDAFC"
+          },
+          {
+            "id": "a7446b72-6145-4f91-aa0a-59dbd0cdd07e",
+            "shape": "erdRelation",
+            "source": {
+              "cell": "34f587ad-faf7-4fa9-948d-e623648d77b9",
+              "port": "out"
+            },
+            "target": {
+              "cell": "dc34a8bc-62a9-4a97-bc60-7195d1aa66e8",
+              "port": "in2"
+            },
+            "relation": "1:n",
+            "fillColor": "#ACDAFC"
+          },
+          {
+            "id": "734f21dd-e215-4a14-90ab-f18b0df70d61",
+            "shape": "erdRelation",
+            "source": {
+              "cell": "02b5b284-86e8-413b-a2ce-d2c052e13c94",
+              "port": "out2"
+            },
+            "target": {
+              "cell": "dc34a8bc-62a9-4a97-bc60-7195d1aa66e8",
+              "port": "out2"
+            },
+            "relation": "1:n",
+            "vertices": [
+              {
+                "x": 470,
+                "y": 360
+              }
+            ],
+            "fillColor": "#ACDAFC"
           },
           {
             "id": "34f587ad-faf7-4fa9-948d-e623648d77b9",
             "shape": "edit-node-circle",
             "position": {
-              "x": 326,
-              "y": 369
+              "x": 140,
+              "y": 394
             },
-            "label": "教师",
+            "label": "### 教师\n---\n<u>教师号</u>\n教师姓名\n教师介绍\n教师性别",
             "fillColor": "#acdafc",
             "size": {
-              "width": 80,
-              "height": 60
-            },
-            "ports": {
-              "groups": {
-                "in": {
-                  "attrs": {
-                    "fo": {
-                      "width": 8,
-                      "height": 8,
-                      "x": -4,
-                      "y": -4,
-                      "magnet": "true",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  },
-                  "zIndex": 3,
-                  "position": {
-                    "name": "left"
-                  }
-                },
-                "out": {
-                  "attrs": {
-                    "fo": {
-                      "width": 8,
-                      "height": 8,
-                      "x": -4,
-                      "y": -4,
-                      "magnet": "true",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  },
-                  "zIndex": 3,
-                  "position": {
-                    "name": "right"
-                  }
-                },
-                "top": {
-                  "attrs": {
-                    "fo": {
-                      "width": 8,
-                      "height": 8,
-                      "x": -4,
-                      "y": -4,
-                      "magnet": "true",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  },
-                  "zIndex": 3,
-                  "position": {
-                    "name": "top"
-                  }
-                },
-                "bottom": {
-                  "attrs": {
-                    "fo": {
-                      "width": 8,
-                      "height": 8,
-                      "x": -4,
-                      "y": -4,
-                      "magnet": "true",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  },
-                  "zIndex": 3,
-                  "position": {
-                    "name": "bottom"
-                  }
-                }
-              },
-              "items": [
-                {
-                  "group": "in",
-                  "id": "in"
-                },
-                {
-                  "group": "in",
-                  "id": "in2"
-                },
-                {
-                  "group": "in",
-                  "id": "in3"
-                },
-                {
-                  "group": "out",
-                  "id": "out"
-                },
-                {
-                  "group": "out",
-                  "id": "out2"
-                },
-                {
-                  "group": "out",
-                  "id": "out3"
-                },
-                {
-                  "group": "top",
-                  "id": "top"
-                },
-                {
-                  "group": "top",
-                  "id": "top2"
-                },
-                {
-                  "group": "top",
-                  "id": "top3"
-                },
-                {
-                  "group": "bottom",
-                  "id": "bottom"
-                },
-                {
-                  "group": "bottom",
-                  "id": "bottom2"
-                },
-                {
-                  "group": "bottom",
-                  "id": "bottom3"
-                }
-              ]
-            }
-          },
-          {
-            "id": "02b5b284-86e8-413b-a2ce-d2c052e13c94",
-            "shape": "edit-node-circle",
-            "position": {
-              "x": 160,
-              "y": 369
-            },
-            "label": "课程",
-            "fillColor": "#acdafc",
-            "size": {
-              "width": 80,
-              "height": 60
+              "width": 120,
+              "height": 120
             },
             "ports": {
               "groups": {
@@ -5187,13 +4905,153 @@
             "shape": "edit-node-circle",
             "position": {
               "x": 326,
-              "y": 268
+              "y": 248
             },
-            "label": "授课",
+            "label": "### 授课\n---\n授课老师\n授课专业\n授课班级",
             "fillColor": "#acdafc",
             "size": {
-              "width": 80,
-              "height": 60
+              "width": 110,
+              "height": 100
+            },
+            "ports": {
+              "groups": {
+                "in": {
+                  "attrs": {
+                    "fo": {
+                      "width": 8,
+                      "height": 8,
+                      "x": -4,
+                      "y": -4,
+                      "magnet": "true",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  },
+                  "zIndex": 3,
+                  "position": {
+                    "name": "left"
+                  }
+                },
+                "out": {
+                  "attrs": {
+                    "fo": {
+                      "width": 8,
+                      "height": 8,
+                      "x": -4,
+                      "y": -4,
+                      "magnet": "true",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  },
+                  "zIndex": 3,
+                  "position": {
+                    "name": "right"
+                  }
+                },
+                "top": {
+                  "attrs": {
+                    "fo": {
+                      "width": 8,
+                      "height": 8,
+                      "x": -4,
+                      "y": -4,
+                      "magnet": "true",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  },
+                  "zIndex": 3,
+                  "position": {
+                    "name": "top"
+                  }
+                },
+                "bottom": {
+                  "attrs": {
+                    "fo": {
+                      "width": 8,
+                      "height": 8,
+                      "x": -4,
+                      "y": -4,
+                      "magnet": "true",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  },
+                  "zIndex": 3,
+                  "position": {
+                    "name": "bottom"
+                  }
+                }
+              },
+              "items": [
+                {
+                  "group": "in",
+                  "id": "in"
+                },
+                {
+                  "group": "in",
+                  "id": "in2"
+                },
+                {
+                  "group": "in",
+                  "id": "in3"
+                },
+                {
+                  "group": "out",
+                  "id": "out"
+                },
+                {
+                  "group": "out",
+                  "id": "out2"
+                },
+                {
+                  "group": "out",
+                  "id": "out3"
+                },
+                {
+                  "group": "top",
+                  "id": "top"
+                },
+                {
+                  "group": "top",
+                  "id": "top2"
+                },
+                {
+                  "group": "top",
+                  "id": "top3"
+                },
+                {
+                  "group": "bottom",
+                  "id": "bottom"
+                },
+                {
+                  "group": "bottom",
+                  "id": "bottom2"
+                },
+                {
+                  "group": "bottom",
+                  "id": "bottom3"
+                }
+              ]
+            }
+          },
+          {
+            "id": "02b5b284-86e8-413b-a2ce-d2c052e13c94",
+            "shape": "edit-node-circle",
+            "position": {
+              "x": 316,
+              "y": 399
+            },
+            "label": "### 课程\n---\n<u>课程号</u>\n课程名\n课程介绍\n学分",
+            "fillColor": "#acdafc",
+            "size": {
+              "width": 130,
+              "height": 110
             },
             "ports": {
               "groups": {
@@ -5326,14 +5184,14 @@
             "id": "892b4b11-4750-4238-9c86-bb20192eb1bb",
             "shape": "edit-node-circle",
             "position": {
-              "x": 160,
-              "y": 110
+              "x": 145,
+              "y": 88
             },
-            "label": "学院",
+            "label": "### 学院\n---\n<u>学院号</u>\n学院名\n院长",
             "fillColor": "#acdafc",
             "size": {
-              "width": 80,
-              "height": 60
+              "width": 110,
+              "height": 100
             },
             "ports": {
               "groups": {
@@ -5467,13 +5325,13 @@
             "shape": "edit-node-circle",
             "position": {
               "x": 326,
-              "y": 110
+              "y": 85
             },
-            "label": "班级",
+            "label": "### 班级\n---\n班级号\n班级名\n班主任",
             "fillColor": "#37d67a",
             "size": {
-              "width": 80,
-              "height": 60
+              "width": 110,
+              "height": 110
             },
             "ports": {
               "groups": {
@@ -5609,7 +5467,7 @@
               "x": 709,
               "y": 188
             },
-            "label": "考试",
+            "label": "**考试**",
             "fillColor": "#ff8a65",
             "size": {
               "width": 80,
@@ -5743,17 +5601,157 @@
             }
           },
           {
+            "id": "1380680e-72b6-42cc-b634-b92b155c38c5",
+            "shape": "edit-node-circle",
+            "position": {
+              "x": 140,
+              "y": 248
+            },
+            "label": "### 专业\n---\n<u>专业号</u>\n专业名\n专业说明",
+            "fillColor": "#acdafc",
+            "size": {
+              "width": 120,
+              "height": 100
+            },
+            "ports": {
+              "groups": {
+                "in": {
+                  "attrs": {
+                    "fo": {
+                      "width": 8,
+                      "height": 8,
+                      "x": -4,
+                      "y": -4,
+                      "magnet": "true",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  },
+                  "zIndex": 3,
+                  "position": {
+                    "name": "left"
+                  }
+                },
+                "out": {
+                  "attrs": {
+                    "fo": {
+                      "width": 8,
+                      "height": 8,
+                      "x": -4,
+                      "y": -4,
+                      "magnet": "true",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  },
+                  "zIndex": 3,
+                  "position": {
+                    "name": "right"
+                  }
+                },
+                "top": {
+                  "attrs": {
+                    "fo": {
+                      "width": 8,
+                      "height": 8,
+                      "x": -4,
+                      "y": -4,
+                      "magnet": "true",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  },
+                  "zIndex": 3,
+                  "position": {
+                    "name": "top"
+                  }
+                },
+                "bottom": {
+                  "attrs": {
+                    "fo": {
+                      "width": 8,
+                      "height": 8,
+                      "x": -4,
+                      "y": -4,
+                      "magnet": "true",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  },
+                  "zIndex": 3,
+                  "position": {
+                    "name": "bottom"
+                  }
+                }
+              },
+              "items": [
+                {
+                  "group": "in",
+                  "id": "in"
+                },
+                {
+                  "group": "in",
+                  "id": "in2"
+                },
+                {
+                  "group": "in",
+                  "id": "in3"
+                },
+                {
+                  "group": "out",
+                  "id": "out"
+                },
+                {
+                  "group": "out",
+                  "id": "out2"
+                },
+                {
+                  "group": "out",
+                  "id": "out3"
+                },
+                {
+                  "group": "top",
+                  "id": "top"
+                },
+                {
+                  "group": "top",
+                  "id": "top2"
+                },
+                {
+                  "group": "top",
+                  "id": "top3"
+                },
+                {
+                  "group": "bottom",
+                  "id": "bottom"
+                },
+                {
+                  "group": "bottom",
+                  "id": "bottom2"
+                },
+                {
+                  "group": "bottom",
+                  "id": "bottom3"
+                }
+              ]
+            }
+          },
+          {
             "id": "1fcc5b1b-5a4e-4fc5-af7b-13e1eaff7133",
             "shape": "edit-node",
             "position": {
-              "x": 501,
-              "y": 113.00000000000017
+              "x": 521,
+              "y": 85
             },
-            "label": "### 学生\n---\n学号\n姓名\n性别\n年龄\n---\n其他",
-            "fillColor": "#ffd966",
+            "label": "### 学生\n---\n学生学号\n学生姓名\n学生性别\n学生年龄\n入学日期\n---\n父母姓名\n父母手机",
+            "fillColor": "#758ae7",
             "size": {
               "width": 140,
-              "height": 160
+              "height": 190
             },
             "ports": {
               "groups": {

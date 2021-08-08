@@ -15,7 +15,7 @@
           "defKey": "TENANT_ID",
           "defName": "租户号",
           "comment": "",
-          "type": "VARCHAR",
+          "type": "",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -27,10 +27,10 @@
         },
         {
           "defKey": "REVISION",
-          "defName": "REVISION",
+          "defName": "乐观锁",
           "comment": "",
           "domain": "IdOrKey",
-          "type": "VARCHAR",
+          "type": "",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -41,10 +41,10 @@
         },
         {
           "defKey": "CREATED_BY",
-          "defName": "CREATED_BY",
+          "defName": "创建人",
           "comment": "",
           "domain": "IdOrKey",
-          "type": "VARCHAR",
+          "type": "",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -55,10 +55,10 @@
         },
         {
           "defKey": "CREATED_TIME",
-          "defName": "CREATED_TIME",
+          "defName": "创建时间",
           "comment": "",
           "domain": "DateTime",
-          "type": "DATETIME",
+          "type": "",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -69,10 +69,10 @@
         },
         {
           "defKey": "UPDATED_BY",
-          "defName": "UPDATED_BY",
+          "defName": "更新人",
           "comment": "",
           "domain": "IdOrKey",
-          "type": "VARCHAR",
+          "type": "",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -83,10 +83,10 @@
         },
         {
           "defKey": "UPDATED_TIME",
-          "defName": "UPDATED_TIME",
+          "defName": "更新时间",
           "comment": "",
           "domain": "DateTime",
-          "type": "DATETIME",
+          "type": "",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -157,7 +157,7 @@
       {
         "type": "appCode",
         "applyFor": "C#",
-        "content": "using System;\nusing System.Collections.Generic;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n/*\n * @author : http://www.chiner.com.cn\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace Chiner.Application\n{\n    public class {{=it.func.camel(it.entity.defKey,true) }}\n    {\n    \n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}} { get; set; }\n        $blankline\n        {{~}}\n        \n    }\n}"
+        "content": "using System;\nusing System.Collections.Generic;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n/*\n * @author : http://www.chiner.com.cn\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace Chiner.Application\n{\n    public partial class {{=it.func.camel(it.entity.defKey,true) }}\n    {\n    \n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}} { get; set; }\n        $blankline\n        {{~}}\n        \n    }\n}"
       }
     ],
     "generatorDoc": {
@@ -166,27 +166,19 @@
     "relationFieldSize": "15",
     "uiHint": [
       {
-        "data": [
-          "",
-          ""
-        ],
         "defKey": "Input",
-        "defName": "普通输入"
+        "defName": "普通输入框"
       },
       {
-        "data": [
-          "",
-          ""
-        ],
         "defKey": "Select",
-        "defName": "下拉输入"
+        "defName": "下拉输入框"
       },
       {
         "data": [
           "",
           ""
         ],
-        "defKey": "Check",
+        "defKey": "CheckBox",
         "defName": "复选框"
       },
       {
@@ -194,7 +186,7 @@
           "",
           ""
         ],
-        "defKey": "Radio",
+        "defKey": "RadioBox",
         "defName": "单选框"
       },
       {
@@ -202,10 +194,6 @@
           "",
           ""
         ],
-        "defKey": "Text",
-        "defName": "长文本"
-      },
-      {
         "defKey": "Double",
         "defName": "小数输入"
       },
@@ -222,8 +210,24 @@
         "defName": "日期输入"
       },
       {
-        "defKey": "DateYearMonth",
+        "defKey": "DataYearMonth",
         "defName": "年月输入"
+      },
+      {
+        "data": [
+          "",
+          ""
+        ],
+        "defKey": "Text",
+        "defName": "长文本输入"
+      },
+      {
+        "data": [
+          "",
+          ""
+        ],
+        "defKey": "RichText",
+        "defName": "富文本输入"
       }
     ]
   },
