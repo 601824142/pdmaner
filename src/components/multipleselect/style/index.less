@@ -91,6 +91,7 @@
         width: 100%;
         z-index: 1;
         &-clear {
+          pointer-events: auto;
           position: absolute;
           right: 3px;
           top: 0;
@@ -139,8 +140,11 @@
   }
   &-option {
     cursor: pointer;
-    display: block;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     padding: 5px;
+    justify-content: space-between;
     &-check {
       i {
         display: inline-block;
