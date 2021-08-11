@@ -193,7 +193,7 @@ export default React.memo(({placeholder, prefix, dataSource,
     });
   };
   const getFilterData = (data = [], value) => {
-    const reg = new RegExp((value || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
+    const reg = new RegExp((value || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
     return data
         .filter((d) => {
           return reg.test(d.defKey || '') || reg.test(d.defName || '');

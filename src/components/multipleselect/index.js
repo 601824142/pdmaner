@@ -75,7 +75,7 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
   if ('checkValue' in restProps) {
     finalCheckValues = restProps.checkValue;
   }
-  const reg = new RegExp((searchValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
+  const reg = new RegExp((searchValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
   const options = [].concat(children)
       .filter(c => reg.test(c.props?.value || '') || reg.test(c.props?.children || ''));
   const getChildren = () => {

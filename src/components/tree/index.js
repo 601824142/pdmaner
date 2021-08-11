@@ -81,7 +81,7 @@ const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
   };
   const currentPrefix = getPrefix(prefix);
   const reg = new RegExp((searchValue || '')
-    .replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
+    .replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
   const renderChild = (d, p) => {
     return d.children ?
       <ul key={d.key}>
@@ -95,7 +95,7 @@ const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
           </CheckBox></li>
         {
           d.children.length > 0 && <ul style={{marginLeft: 17}} className={`${currentPrefix}-tree-container-ul-child-${expands.includes(d.key) ? 'show' : 'hidden'}`}>
-            {d.children.filter(c => reg.test(c.value || '')).map(c => renderChild(c, d))}
+            {d.children.filter(c => reg.test(c.key || '')).map(c => renderChild(c, d))}
           </ul>
         }
       </ul> : <li key={d.key} style={{marginLeft: 8}}>
@@ -110,7 +110,7 @@ const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
   const onSearchChange = (e) => {
     updateSearchValue(e.target.value);
     const currentReg = new RegExp((e.target.value || '')
-      .replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
+      .replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
     const searchData = e.target.value ? arrayData.filter(d => currentReg.test(d.value || '')) : [];
     updateExpands(pre => pre
       .concat([...new Set(searchData.reduce((a, b) => a.concat(b.parents.map(p => p.key)), []))]));
