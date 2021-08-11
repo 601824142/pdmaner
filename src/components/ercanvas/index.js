@@ -1078,6 +1078,9 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       edge.attr('line/stroke', edge.getProp('fillColor') ||
           currentColor.current.fillColor, { ignoreHistory : true});
     });
+    graph.on('edge:change:labels', () => {
+      dataChange && dataChange(graph.toJSON({diff: true}));
+    });
     graph.on('cell:mousedown', ({e}) => {
       interactingRef.current = !(e.ctrlKey || e.metaKey);
     });

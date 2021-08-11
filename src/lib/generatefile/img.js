@@ -28,7 +28,8 @@ export const img = (data, dataSource, needCalc = true, groups) => {
           return {
             ...l,
             position: {
-              offset: {
+              ...l.position,
+              offset: l.position?.offset ?  l.position?.offset + 8 : {
                 x: 10,
                 y: 8,
               },
