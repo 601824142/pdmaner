@@ -1085,7 +1085,7 @@ export const generatorTableKey = (defKey, dataSource) => {
   }
 }
 
-export  const getTextWidth = (text, font) => {
+export  const getTextWidth = (text, font, weight = 'normal') => {
   let dom = document.getElementById('calcTextWidth');
   if (!dom) {
     dom = document.createElement('div');
@@ -1093,6 +1093,7 @@ export  const getTextWidth = (text, font) => {
     dom.style.display = 'inline-block';
     document.body.appendChild(dom);
   }
+  dom.style.fontWeight = weight;
   dom.style.fontSize = `${font}px`;
   dom.innerText = text;
   const width =  dom.getBoundingClientRect().width;
@@ -1113,7 +1114,7 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
   // 计算表头的宽度
   const headerWidth = getTextWidth(
       `${nodeData.defKey}${nodeData.count > 0 ? `:${nodeData.count}` : ''}(${nodeData.defName})`,
-      12) + 20;
+      12, 'bold') + 20;
   // 计算每一列最长的内容
   const maxWidth = {};
   const fkOrPkWidth = 30; // 主键和外键的默认宽度
@@ -1130,9 +1131,12 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
     });
   });
   // 计算矩形的宽高
-  const width = headers.reduce((a, b) => {
+  let width = headers.reduce((a, b) => {
     return a + (maxWidth[b.refKey] || 10) + 8;
   }, 0) + 16; // 内容宽度加上左侧边距
+  if (width < headerWidth) {
+    width = headerWidth;
+  }
   // 高度除了字段还包含表名 所以需要字段 +1 同时需要加上上边距
   const height = (fields.length + 1) * 23 + 8;
   // 去除重复的字段
@@ -1183,7 +1187,7 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
       },
     ])} : {};
   return {
-    width: headerWidth > width ? headerWidth : width,
+    width,
     height,
     maxWidth,
     fields,
