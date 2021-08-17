@@ -226,6 +226,8 @@ export default {
         edge: {
             form: '连线起点',
             to: '连线终点',
+            none: '无',
+            arrow: '箭头',
             addEdgeMark: '增加锚点',
             removeEdgeMark: '删除锚点',
             removeEdge: '删除连接线',

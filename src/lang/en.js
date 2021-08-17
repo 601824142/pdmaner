@@ -226,6 +226,8 @@ export default {
         edge: {
             form: 'form',
             to: 'to',
+            none: 'none',
+            arrow: 'arrow',
             addEdgeMark: 'addEdgeMark',
             removeEdgeMark: 'removeEdgeMark',
             removeEdge: 'removeEdge',
