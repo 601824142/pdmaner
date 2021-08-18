@@ -993,6 +993,46 @@ export const getDemoTemplateData = (templateShow) => {
     },
     group: demoGroup,
   };
+  const demoDict =  {
+    "defKey": "Gender",
+    "defName": "性别",
+    "intro": "",
+    "items": [
+      {
+        "defKey": "M",
+        "defName": "男",
+        "intro": "",
+        "parentKey": "",
+        "enabled": true,
+        "attr1": "",
+        "attr2": "",
+        "attr3": "",
+        "sort": "1"
+      },
+      {
+        "defKey": "F",
+        "defName": "女",
+        "intro": "",
+        "parentKey": "",
+        "enabled": true,
+        "attr1": "",
+        "attr2": "",
+        "attr3": "",
+        "sort": "2"
+      },
+      {
+        "defKey": "U",
+        "defName": "未知",
+        "intro": "",
+        "parentKey": "",
+        "enabled": true,
+        "attr1": "",
+        "attr2": "",
+        "attr3": "",
+        "sort": "3"
+      }
+    ]
+  };
   switch (templateShow) {
     case 'content':
       data = JSON.stringify({...demoTable, separator: ';'}, null, 2);
@@ -1003,6 +1043,12 @@ export const getDemoTemplateData = (templateShow) => {
     case 'createIndex':
       data = JSON.stringify({
         ...demoTable,
+        separator: ';'
+      }, null, 2);
+      break;
+    case 'dictSQLTemplate':
+      data = JSON.stringify({
+        ...demoDict,
         separator: ';'
       }, null, 2);
       break;

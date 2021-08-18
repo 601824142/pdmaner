@@ -35,7 +35,7 @@ import { getMenu, getMenus, dealMenuClick } from '../../lib/contextMenuUtil';
 import {
   validateKey,
   updateAllData,
-  allType, pdman2sino, getFullColumns, updateAllFieldsUiHint,
+  allType, pdman2sino, getFullColumns, updateAllFieldsUiHint, emptyDictSQLTemplate,
 } from '../../lib/datasource_util';
 import { setDataByTabId } from '../../lib/cache';
 import { Save } from '../../lib/event_tool';
@@ -646,12 +646,12 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       });
     }
   };
-  const exportSql = () => {
+  const exportSql = (type) => {
     let modal;
     const onClose = () => {
       modal && modal.close();
     };
-    modal = openModal(<ExportSql dataSource={dataSourceRef.current}/>, {
+    modal = openModal(<ExportSql templateType={type} dataSource={dataSourceRef.current}/>, {
       title: FormatMessage.string({id: 'toolbar.exportSql'}),
       bodyStyle: { width: '80%' },
       buttons: [
@@ -938,7 +938,24 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             tempDataSource = updateAllFieldsUiHint(tempDataSource, changes);
           }
         }
-        filterData.splice(0, 0, 'uiHintChanges');
+        if ('dictSQLTemplate' in tempData) {
+          const path = 'profile.codeTemplates';
+          const codeTemplates = _.get(tempDataSource, path, []);
+          if (codeTemplates.findIndex(c => c.applyFor === 'dictSQLTemplate') < 0) {
+            codeTemplates.push(emptyDictSQLTemplate);
+          }
+          tempDataSource = _.set(tempDataSource, path, codeTemplates
+            .map((c) => {
+              if (c.applyFor === 'dictSQLTemplate') {
+                return {
+                  ...c,
+                  content: tempData.dictSQLTemplate || '',
+                };
+              }
+              return c;
+            }));
+        }
+        filterData.splice(0, 0, 'uiHintChanges', 'dictSQLTemplate');
         Object.keys(tempData).filter(f => !filterData.includes(f)).forEach((f) => {
           tempDataSource = _.set(tempDataSource, f,
             Array.isArray(tempData[f]) ? tempData[f].map(d => _.omit(d, '__key')) : tempData[f]);
@@ -1017,7 +1034,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       case 'redo': redo(); break;
       case 'img': exportImg(); break;
       case 'word': exportWord(); break;
-      case 'sql': exportSql(); break;
+      case 'sql': exportSql('sql'); break;
+      case 'dict': exportSql('dict'); break;
       case 'empty': createEmptyTable(e);break;
       case 'rect': createNode(e, 'rect');break;
       case 'round': createNode(e, 'round');break;

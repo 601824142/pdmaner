@@ -23,7 +23,7 @@ const CheckboxGroup = Checkbox.CheckboxGroup;
 const RadioGroup = Radio.RadioGroup;
 const Option = Select.Option;
 
-export default React.memo(({prefix, dataSource}) => {
+export default React.memo(({prefix, dataSource, templateType}) => {
   const entitySelectErf = useRef(null);
   const defaultTemplate = ['createTable', 'createIndex', 'content'];
   const templateRef = useRef(defaultTemplate);

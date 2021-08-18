@@ -95,7 +95,9 @@ const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
           </CheckBox></li>
         {
           d.children.length > 0 && <ul style={{marginLeft: 17}} className={`${currentPrefix}-tree-container-ul-child-${expands.includes(d.key) ? 'show' : 'hidden'}`}>
-            {d.children.filter(c => reg.test(c.key || '')).map(c => renderChild(c, d))}
+            {d.children.filter((c) => {
+              return c.children || reg.test(c.key || '');
+            }).map(c => renderChild(c, d))}
           </ul>
         }
       </ul> : <li key={d.key} style={{marginLeft: 8}}>

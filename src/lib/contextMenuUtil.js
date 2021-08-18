@@ -872,6 +872,17 @@ const clearOpt = (dataSource, menu, updateDataSource) => {
             ...dataSource,
             domains: [],
           });
+        } else if (dataType === 'dataTypeSupport') {
+          updateDataSource && updateDataSource({
+            ...dataSource,
+            profile: {
+              ...dataSource.profile,
+              dataTypeSupports: [],
+              codeTemplates: (dataSource?.profile?.codeTemplates || []).filter(c => {
+                return c.applyFor === 'dictSQLTemplate';
+              }),
+            },
+          });
         }
       } else {
         updateDataSource && updateDataSource({
