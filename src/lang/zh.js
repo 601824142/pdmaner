@@ -234,6 +234,8 @@ export default {
             setRelation: '设置对应关系',
             editRelation: '编辑关系',
             relationLabel: '关系说明',
+            brokenLine: '折线',
+            straightLine: '直线',
         },
         node: {
             delete: '删除节点',

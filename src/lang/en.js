@@ -234,6 +234,8 @@ export default {
             setRelation: 'setRelation',
             editRelation: 'editRelation',
             relationLabel: 'relationLabel',
+            brokenLine: 'brokenLine',
+            straightLine: 'straightLine',
         },
         node: {
             delete: 'delete node',

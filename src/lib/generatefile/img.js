@@ -91,7 +91,6 @@ export const img = (data, dataSource, needCalc = true, groups) => {
         ...other,
       };
     });
-    console.log(cells);
     graph.on('render:done', () => {
       res(dom);
     });

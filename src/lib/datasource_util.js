@@ -150,6 +150,7 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
                         'fontColor',
                         'fillColor',
                         'parent',
+                        'router'
                       ];
                       if (c.shape === 'edit-node' || c.shape === 'edit-node-circle') {
                         pickFields.push('size');

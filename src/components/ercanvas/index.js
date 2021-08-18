@@ -899,9 +899,14 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       }
     });
     graph.on('edge:contextmenu', ({cell, e}) => {
+      let lineType = 'straightLine';
+      if (cell.getProp('router')?.name === 'normal') {
+        lineType = 'brokenLine';
+      }
       createContentMenu(e, [
         {name: FormatMessage.string({id: 'canvas.edge.editRelation'})},
         {name: FormatMessage.string({id: 'canvas.edge.relationLabel'})},
+        {name: FormatMessage.string({id: `canvas.edge.${lineType}`})},
       ], (i) => {
         if (i === 0) {
           const label = cell.getProp('relation') || '1:n';
@@ -942,7 +947,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                   </Button>,
                 ],
               });
-        } else {
+        } else if (i === 1){
           let modal = null;
           let value = cell.getLabelAt(0)?.attrs?.text?.text || '';
           const labelChange = (v) => {
@@ -981,6 +986,23 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                 </Button>,
               ],
             });
+        } else {
+          graph.batchUpdate('rename', () => {
+            if (lineType === 'straightLine') {
+              cell.setProp('router', {
+                name: 'normal',
+              });
+              cell.setProp('vertices', []);
+            } else {
+              cell.setProp('router', {
+                name: 'manhattan',
+                args: {
+                  excludeShapes: ['group'],
+                },
+              });
+            }
+            dataChange && dataChange(graph.toJSON({diff: true}));
+          });
         }
       });
     });
