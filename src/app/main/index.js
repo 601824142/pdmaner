@@ -349,6 +349,34 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     const cavRef = getCurrentCav();
     cavRef.exportImg();
   };
+  const calcDomain = (data = [], dbKey = '') => {
+    const dataTypeSupports = _.get(dataSourceRef.current, 'profile.dataTypeSupports', []);
+    const defaultDb = _.get(dataSourceRef.current, 'profile.default.db', dataTypeSupports[0]);
+    const mappings = _.get(dataSourceRef.current, 'dataTypeMapping.mappings', []);
+    const domains = _.get(dataSourceRef.current, 'domains', []);
+    const dbConn = dataSourceRef.current?.dbConn || [];
+    const currentDb = dbConn.filter(d => d.defKey === dbKey)[0]?.type || defaultDb;
+    return data.map((d) => {
+      return {
+        ...d,
+        fields: (d.fields || []).map((f) => {
+          const domainData = domains.map((domain) => {
+            const mapping = mappings.filter(m => m.defKey === domain.applyFor)[0];
+            return {
+              defKey: domain.defKey,
+              type: `${mapping[currentDb]}${domain.len}${domain.scale}`,
+            };
+          }).filter(domain => domain.type === `${f.type}${f.len}${f.scale}`)[0];
+          const domain = domainData?.defKey || '';
+          return {
+            ...f,
+            domain,
+            type: domain ? '' : f.type,
+          };
+        }),
+      };
+    });
+  };
   const injectDataSource = (dataSource, selectData, domains, modal) => {
     const allEntityKey = selectData.map(d => d.defKey);
     const currentDomains = dataSource.domains || [];
@@ -529,7 +557,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             const allEntities = importPdRef.current.getData()
                 .reduce((a, b) => a.concat((b.fields || [])
                     .map(f => ({...f, group: b.defKey}))), []);
-            injectDataSource(dataSourceRef.current, allEntities, result.body?.domains, modal);
+            injectDataSource(dataSourceRef.current,
+              calcDomain(allEntities), result.body?.domains, modal);
           };
           modal = openModal(<ImportPd
             data={result.body?.tables || []}
@@ -632,8 +661,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       const onClose = () => {
         modal && modal.close();
       };
-      const onOk = (data) => {
-        injectDataSource(dataSourceRef.current, data, [], modal);
+      const onOk = (data, dbKey) => {
+        injectDataSource(dataSourceRef.current, calcDomain(data, dbKey), [], modal);
       };
       modal = openModal(<DbReverseParse
         config={configRef.current}

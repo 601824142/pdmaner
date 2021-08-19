@@ -7,7 +7,6 @@ import SearchInput from 'components/searchinput';
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 import {tree2array} from '../../lib/tree';
-import {separator} from '../../../profile';
 
 const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
                            onChange, placeholder}) => {
