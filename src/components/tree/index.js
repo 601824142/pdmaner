@@ -7,6 +7,7 @@ import SearchInput from 'components/searchinput';
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 import {tree2array} from '../../lib/tree';
+import {separator} from '../../../profile';
 
 const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
                            onChange, placeholder}) => {
@@ -96,7 +97,7 @@ const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
         {
           d.children.length > 0 && <ul style={{marginLeft: 17}} className={`${currentPrefix}-tree-container-ul-child-${expands.includes(d.key) ? 'show' : 'hidden'}`}>
             {d.children.filter((c) => {
-              return c.children || reg.test(c.key || '');
+              return c.children || reg.test(c.value || '');
             }).map(c => renderChild(c, d))}
           </ul>
         }

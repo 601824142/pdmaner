@@ -652,7 +652,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       modal && modal.close();
     };
     modal = openModal(<ExportSql templateType={type} dataSource={dataSourceRef.current}/>, {
-      title: FormatMessage.string({id: 'toolbar.exportSql'}),
+      title: FormatMessage.string({id: `toolbar.${type === 'dict' ? 'exportDict' : 'exportSql'}`}),
       bodyStyle: { width: '80%' },
       buttons: [
         <Button key='onClose' onClick={onClose}>
