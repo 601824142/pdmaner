@@ -135,6 +135,7 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
                       }
                       return c;
                     }).filter(c => !!c).map(c => {
+                      const otherData = {};
                       const pickFields = [
                         'id',
                         'shape',
@@ -152,15 +153,20 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
                         'parent',
                         'router'
                       ];
-                      if (c.shape === 'edit-node' || c.shape === 'edit-node-circle') {
+                      if (c.shape === 'edit-node' || c.shape === 'edit-node-circle'
+                        || c.shape === 'edit-node-polygon') {
                         pickFields.push('size');
                         pickFields.push('ports');
                       } else if (c.shape === 'group') {
                         pickFields.push('size');
                         pickFields.push('children');
                       }
+                      if (c.shape === 'edit-node-polygon') {
+                        otherData.label = c.label || c?.attrs?.text?.text || '';
+                      }
                       return {
                         ..._.pick(c, pickFields),
+                        ...otherData,
                       };
                     }),
                   },
@@ -1217,6 +1223,21 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
       size: n.size || (n.shape === 'edit-node' ? defaultEditNodeSize : defaultEditNodeCircleSize),
     };
   });
+  const polygon = cells.filter(c => c.shape === 'edit-node-polygon').map(c => {
+    return {
+      ...c,
+      attrs: {
+        body: {
+          fill: c.fillColor,
+        },
+        text: {
+          style: {
+            fill: c.fontColor,
+          },
+        },
+      },
+    }
+  });
   const nodes = cells.filter(c => c.shape === 'table').map((n) => {
     const nodeData = dataSource?.entities?.filter(e => e.defKey === n.originKey)[0];
     if (nodeData) {
@@ -1244,7 +1265,7 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
       .filter((e) => {
         return filterEdge(allNodes, e);
       });
-  return (groupNodes || []).concat(nodes || []).concat(edges || []).concat(remarks || []);
+  return (groupNodes || []).concat(nodes || []).concat(edges || []).concat(remarks || []).concat(polygon || []);
 };
 
 

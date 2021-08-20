@@ -32,6 +32,12 @@ Graph.registerEdge('erdRelation', {
     },
   },
   zIndex: 2,
+  connector: {
+    name: 'jumpover',
+    args: {
+      type: 'cubic',
+    },
+  },
   propHooks(metadata) {
     const { relation, fillColor, ...others } = metadata;
     if (relation) {

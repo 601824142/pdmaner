@@ -5,7 +5,7 @@ import { firstUp } from '../../lib/string';
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 
-export default React.memo(({children, trigger, prefix, menus,
+export default React.memo(({children, trigger, prefix, menus, disable,
                              menuClick, position = 'bottom', filterMenus}) => {
   const currentPrefix = getPrefix(prefix);
   const [visible, setVisible] = useState(false);
@@ -16,7 +16,7 @@ export default React.memo(({children, trigger, prefix, menus,
       clientY: e.clientY,
       clientX: e.clientX,
     };
-    setVisible(true);
+    !disable && setVisible(true);
     e.stopPropagation();
   };
   useEffect(() => {

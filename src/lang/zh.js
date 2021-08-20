@@ -16,6 +16,7 @@ export default {
         alignment: '对齐',
         rect: '矩形',
         round: '圆角矩形',
+        polygon: '菱形',
         fontColor: '字体颜色',
         fillColor: '填充颜色',
         scale: '比例',

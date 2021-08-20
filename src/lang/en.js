@@ -16,6 +16,7 @@ export default {
         alignment: 'alignment',
         rect: 'rect',
         round: 'round',
+        polygon: 'polygon',
         fontColor: 'fontColor',
         fillColor: 'fitColor',
         scale: 'scale',

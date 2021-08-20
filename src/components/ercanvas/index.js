@@ -228,6 +228,11 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     height: 60,
     minHeight: 20,
   };
+  const defaultEditNodePolygonSize = {
+    width: 80,
+    height: 80,
+    minHeight: 20,
+  };
   const commonPort = {
     attrs: {
       fo: {
@@ -275,6 +280,32 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       {group: 'bottom', id: 'bottom'},
       {group: 'bottom', id: 'bottom2'},
       {group: 'bottom', id: 'bottom3'},
+    ],
+  };
+  const commonPolygonPorts = {
+    groups: {
+      in: {
+        ...commonPort,
+        position: { name: 'left' },
+      },
+      out: {
+        ...commonPort,
+        position: { name: 'right' },
+      },
+      top: {
+        ...commonPort,
+        position: { name: 'top' },
+      },
+      bottom: {
+        ...commonPort,
+        position: { name: 'bottom' },
+      },
+    },
+    items: [
+      {group: 'in', id: 'in'},
+      {group: 'out', id: 'out'},
+      {group: 'top', id: 'top'},
+      {group: 'bottom', id: 'bottom'},
     ],
   };
   const id = useMemo(() => `er-${Math.uuid()}`, []);
@@ -432,6 +463,13 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
              },
            }], { ignoreHistory : true, relation: true});
           }
+          if (c.shape === 'edit-node-polygon') {
+            if (key === 'fillColor') {
+              c.attr('body/fill', color.hex, { ignoreHistory : true});
+            } else {
+              c.attr('text/style/fill', color.hex, { ignoreHistory : true});
+            }
+          }
         });
     dataChange && dataChange(graphRef.current.toJSON({diff: true}));
   };
@@ -563,14 +601,15 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         enabled:  (node) => {
           return node.shape === 'edit-node' ||
               node.shape === 'edit-node-circle' ||
-              node.shape === 'group';
+              node.shape === 'group' || node.shape === 'edit-node-polygon';
         },
       },
       interacting: () => {
         if (interactingRef.current) {
           return {
             nodeMovable: ({cell}) => {
-              return !((cell.shape === 'edit-node' || cell.shape === 'group' || cell.shape === 'edit-node-circle')
+              return !((cell.shape === 'edit-node' || cell.shape === 'group'
+                  || cell.shape === 'edit-node-circle' || cell.shape === 'edit-node-polygon')
                 && cell.getProp('editable'));
             },
           };
@@ -766,7 +805,8 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             stroke: cell.shape === 'group' ? '#000000' : currentColor.current.border,
             strokeWidth: 2,
           }, { ignoreHistory : true});
-          if (cell.shape === 'edit-node' || cell.shape === 'edit-node-circle' || cell.shape === 'group') {
+          if (cell.shape === 'edit-node-polygon' ||
+            cell.shape === 'edit-node' || cell.shape === 'edit-node-circle' || cell.shape === 'group') {
             if (cell.shape === 'group') {
               // 暂时隐藏所有的子节点
               const cells = cell.getChildren();
@@ -775,6 +815,17 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                   c.show();
                 });
               }
+            }
+            if (cell.shape === 'edit-node-polygon') {
+              graph.batchUpdate(() => {
+                cell.removeTools();
+                cell.setProp('label', cell.attr('text/text'));
+                cell.attr('text/style/display', '');
+                cell.attr('body', {
+                  stroke: currentColor.current.border,
+                  strokeWidth: 1,
+                });
+              }, { ignoreHistory : true});
             }
             cell.setProp('editable', false, { ignoreHistory : true, relation: true});
           }
@@ -1106,7 +1157,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graph.on('cell:mousedown', ({e}) => {
       interactingRef.current = !(e.ctrlKey || e.metaKey);
     });
-    graph.on('node:dblclick', ({cell}) => {
+    graph.on('node:dblclick', ({cell, e}) => {
       if (cell.shape === 'table') {
         const cellData = cell.getData();
         const key = cell.getProp('originKey');
@@ -1194,6 +1245,18 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           }
         }
         cell.setProp('editable', true, { ignoreHistory : true});
+      } else if (cell.shape === 'edit-node-polygon') {
+        cell.setProp('editable', true, { ignoreHistory : true});
+        const p = graph.clientToGraph(e.clientX, e.clientY);
+        cell.addTools([
+          {
+            name: 'editableCell',
+            args: {
+              x: p.x,
+              y: p.y,
+            },
+          },
+        ]);
       }
       //openEntity(cell.getProp('originKey'), 'entity', null, 'entity.svg');
     });
@@ -1230,7 +1293,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graph.bindKey(['backspace', 'delete'], () => {
       const cells = graph.getSelectedCells();
       if (cells.length) {
-        graph.removeCells(cells.filter(c => !((c.shape === 'edit-node'
+        graph.removeCells(cells.filter(c => !((c.shape === 'edit-node' || (c.shape === 'edit-node-polygon')
             || c.shape === 'edit-node-circle' || c.shape === 'group') && (c.getProp('editable')))));
       }
     });
@@ -1293,6 +1356,15 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       });
       dndRef.current.start(node, e.nativeEvent);
     };
+    const startPolygonNodeDrag = (e) => {
+      const node =  graphRef.current.createNode({
+        shape: 'edit-node-polygon',
+        label: '',
+        size: defaultEditNodePolygonSize,
+        ports: commonPolygonPorts,
+      });
+      dndRef.current.start(node, e.nativeEvent);
+    };
     const zoomGraph = (factor, scale) => {
       if (scale) {
         graphRef.current.scale(factor);
@@ -1312,6 +1384,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       startDrag,
       startRemarkDrag,
       startGroupNodeDrag,
+      startPolygonNodeDrag,
       zoomGraph,
       validateScale,
       getScaleNumber,

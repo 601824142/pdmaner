@@ -85,6 +85,12 @@ export const img = (data, dataSource, needCalc = true, groups) => {
             return text !== 'NONE' && text !== 'ARROW';
         }));
       }
+      if (d.shape === 'edit-node-polygon') {
+        return {
+          ...d,
+          shape: `${d.shape}-img`,
+        };
+      }
       return {
         ..._.omit(d, ['attrs', 'component']),
         shape: `${d.shape}-img`,

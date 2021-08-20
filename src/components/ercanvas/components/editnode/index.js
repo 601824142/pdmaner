@@ -88,6 +88,26 @@ Graph.registerNode('edit-node-circle', {
   component: <EditNode/>,
 });
 
+Graph.registerNode('edit-node-polygon', {
+  inherit: 'polygon',
+  zIndex: 2,
+  attrs: {
+    body: {
+      stroke: '#DFE3EB',  // 边框颜色
+      strokeWidth: 1,
+      refPoints: '0,10 10,0 20,10 10,20',
+    },
+    text: {
+      style: {
+        fontSize: '12px',
+        fill: 'rgba(0, 0, 0, 0.65)',
+      },
+    },
+  },
+  portMarkup: [Markup.getForeignObjectMarkup()],
+});
+
+
 Graph.registerNode('group', {
   inherit: 'react-shape',
   zIndex: 1,

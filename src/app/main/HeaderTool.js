@@ -99,24 +99,26 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
         onMouseDown={e => iconClick(e, 'group')}
       />
       <GroupIcon
+        topStyle={{height: '24px'}}
         hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
+        dropType='icon'
+        groupKey='rect'
+        disable={activeTab?.type !== 'diagram'}
         title={FormatMessage.string({id: 'toolbar.rect'})}
+        icon='fa-square-o'
+        onClick={iconClick}
+        dropMenu={[
+          { key: 'round', name: FormatMessage.string({id: 'toolbar.round'})},
+        ]}/>
+      <GroupIcon
+        hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
+        title={FormatMessage.string({id: 'toolbar.polygon'})}
         style={{cursor: 'move'}}
         icon={<div className={`${currentPrefix}-head-rect`}>
           <span>{}</span>
         </div>}
         disable={activeTab?.type !== 'diagram'}
-        onMouseDown={e => iconClick(e, 'rect')}
-      />
-      <GroupIcon
-        hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
-        title={FormatMessage.string({id: 'toolbar.round'})}
-        style={{cursor: 'move'}}
-        icon={<div className={`${currentPrefix}-head-rect`}>
-          <Icon type='fa-square-o'/>
-        </div>}
-        disable={activeTab?.type !== 'diagram'}
-        onMouseDown={e => iconClick(e, 'round')}
+        onMouseDown={e => iconClick(e, 'polygon')}
       />
       <GroupIcon
         hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
