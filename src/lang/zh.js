@@ -443,6 +443,7 @@ export default {
         defaultDbError: '默认数据库只能有一个',
         nameError: '数据库或代码不能为空',
         defaultDb: '默认数据库',
+        defaultTemplate: '系统自带代码模板',
         defaultDbMessage: '(勾选此项，将会在数据表和关系图中显示默认数据库的数据类型)',
         codeType: {
             dbDDL: '数据库定义语句',

@@ -107,7 +107,23 @@ export default React.memo(({prefix, data, dataChange}) => {
     <div className={`${currentPrefix}-form-item`}>
       <span
         className={`${currentPrefix}-form-item-label`}
-        title={FormatMessage.string({id: 'database.defaultDb'})}
+        title={FormatMessage.string({id: 'database.defaultTemplate'})}
+        >
+        <span>
+          <FormatMessage id='database.defaultTemplate'/>
+        </span>
+      </span>
+      <span className={`${currentPrefix}-form-item-component`}>
+        <Checkbox
+          disable
+          defaultChecked={templateData.isDefault}
+        />
+      </span>
+    </div>
+    <div className={`${currentPrefix}-form-item`}>
+      <span
+        className={`${currentPrefix}-form-item-label`}
+        title={FormatMessage.string({id: 'database.templateEdit'})}
       >
         <span>
           <FormatMessage id='database.templateEdit'/>

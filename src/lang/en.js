@@ -443,6 +443,7 @@ export default {
         defaultDbError: 'Default database can only have one',
         nameError: 'Data name or Code cannot be empty',
         defaultDb: 'defaultDb',
+        defaultTemplate: 'defaultTemplate',
         defaultDbMessage: '(check this box to display the data type of the default database in the data table and diagram)',
         codeType: {
             dbDDL: 'dbDDL',
