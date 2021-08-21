@@ -993,6 +993,49 @@ export const getDemoTemplateData = (templateShow) => {
     },
     group: demoGroup,
   };
+  const demoDict =  {
+    dict: {
+      "defKey": "Gender",
+      "defName": "性别",
+      "intro": "",
+      "items": [
+        {
+          "defKey": "M",
+          "defName": "男",
+          "intro": "",
+          "parentKey": "",
+          "enabled": true,
+          "attr1": "",
+          "attr2": "",
+          "attr3": "",
+          "sort": "1"
+        },
+        {
+          "defKey": "F",
+          "defName": "女",
+          "intro": "",
+          "parentKey": "",
+          "enabled": true,
+          "attr1": "",
+          "attr2": "",
+          "attr3": "",
+          "sort": "2"
+        },
+        {
+          "defKey": "U",
+          "defName": "未知",
+          "intro": "",
+          "parentKey": "",
+          "enabled": true,
+          "attr1": "",
+          "attr2": "",
+          "attr3": "",
+          "sort": "3"
+        }
+      ]
+    },
+    group: demoGroup,
+  };
   switch (templateShow) {
     case 'content':
       data = JSON.stringify({...demoTable, separator: ';'}, null, 2);
@@ -1003,6 +1046,12 @@ export const getDemoTemplateData = (templateShow) => {
     case 'createIndex':
       data = JSON.stringify({
         ...demoTable,
+        separator: ';'
+      }, null, 2);
+      break;
+    case 'dictSQLTemplate':
+      data = JSON.stringify({
+        ...demoDict,
         separator: ';'
       }, null, 2);
       break;
@@ -1056,21 +1105,31 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
   };
   let sqlString = '';
   try {
-    const tempData = getFilterData('entities')
+    const tempData = code === 'dictSQLTemplate' ? getFilterData('dicts') : getFilterData('entities')
         .concat(getFilterData('views'));
     sqlString += tempData.map(e => {
       let tempData = '';
       let allData = {};
+      let data;
+      if (code === 'dictSQLTemplate') {
+        data = {
+          dict: _.omit(e, 'groupType'),
+        }
+      } else {
+        data = {
+          entity: {
+            ..._.omit(e, 'groupType'),
+            fields: (e.fields || []).map(field => {
+              return {
+                ...field,
+                type: getFieldType(datatype, domains, field, code, currentCode),
+              }
+            })
+          },
+        }
+      }
       const templateData = {
-        entity: {
-          ..._.omit(e, 'groupType'),
-          fields: (e.fields || []).map(field => {
-            return {
-              ...field,
-              type: getFieldType(datatype, domains, field, code, currentCode),
-            }
-          })
-        },
+        ...data,
         group: (dataSource.viewGroups || [])
             .filter(g => g[e.groupType].includes(e.defKey))
             .map(g => _.omit(g, ['defKey', 'defName'])),

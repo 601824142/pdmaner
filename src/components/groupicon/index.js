@@ -9,7 +9,7 @@ import {addBodyClick, removeBodyClick} from '../../lib/listener';
 
 const GroupIcon = React.memo(({prefix, title, onClick, icon, dropMenu, dropType = 'all',
                                 disable, hoverTitle, style, draggable, onMouseDown, groupKey,
-                                dropMenuStyle, className = ''}) => {
+                                topStyle = {}, dropMenuStyle, className = ''}) => {
   const id = useMemo(() => Math.uuid(), []);
   const menuContainerRef = useRef(null);
   const [status, setStatus] = useState(false);
@@ -62,7 +62,7 @@ const GroupIcon = React.memo(({prefix, title, onClick, icon, dropMenu, dropType 
         >
         <span>
           {
-          typeof icon === 'string' ? <span className={`${currentPrefix}-group-icon-top`}>
+          typeof icon === 'string' ? <span style={topStyle} className={`${currentPrefix}-group-icon-top`}>
             <Icon type={icon}/>
             {(dropMenu && dropType === 'icon') ?
               <DropDown
@@ -81,7 +81,7 @@ const GroupIcon = React.memo(({prefix, title, onClick, icon, dropMenu, dropType 
         </span>
         <span className={`${currentPrefix}-group-icon-title`}>{title}</span>
         {
-          status && <div style={{position: 'absolute', zIndex: '1', top: 56, left: -52}}>
+          status && <div style={{position: 'absolute', zIndex: '999', top: 56, left: -52}}>
             {dropType === 'all' && !disable && !Array.isArray(dropMenu) && dropMenu}
           </div>
         }

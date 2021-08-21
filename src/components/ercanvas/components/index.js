@@ -1,3 +1,4 @@
+import './tool';
 import './table';
 import './erdrelation';
 import './editnode';

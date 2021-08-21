@@ -91,11 +91,11 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
               group,
             };
           });
-          onOk(tempData);
+          onOk(tempData, dbData.defKey);
         }
       });
     } else {
-      onOk([]);
+      onOk([], dbData.defKey);
     }
   };
 

@@ -23,7 +23,7 @@ const CheckboxGroup = Checkbox.CheckboxGroup;
 const RadioGroup = Radio.RadioGroup;
 const Option = Select.Option;
 
-export default React.memo(({prefix, dataSource}) => {
+export default React.memo(({prefix, dataSource, templateType}) => {
   const entitySelectErf = useRef(null);
   const defaultTemplate = ['createTable', 'createIndex', 'content'];
   const templateRef = useRef(defaultTemplate);
@@ -56,12 +56,13 @@ export default React.memo(({prefix, dataSource}) => {
       modal.close();
     };
     modal = openModal(<EntitySelect
+      templateType={templateType}
       ref={entitySelectErf}
       prefix={currentPrefix}
       dataSource={dataSource}
       defaultCheckeds={selected}
     />, {
-      title: FormatMessage.string({id: 'exportSql.pickEntity'}),
+      title: FormatMessage.string({id: `exportSql.${templateType === 'dict' ? 'pickDict' : 'pickEntity'}`}),
       buttons: [
         <Button onClick={onOk} key='ok' type='primary'><FormatMessage id='button.ok'/></Button>,
         <Button onClick={onCancel} key='cancel'><FormatMessage id='button.cancel'/></Button>,
@@ -77,12 +78,12 @@ export default React.memo(({prefix, dataSource}) => {
         'application/sql', `${dataSource.name}-DDL-${moment().format('YYYYMDHHmmss')}.sql`);
   };
   const onPreview = () => {
-    const template = dataTypeSupport.type === 'appCode'
+    const template = (dataTypeSupport.type === 'appCode' || templateType === 'dict')
         ? ['content'] : templateRef.current.filter(t => t !== 'content');
     setCodeData(getAllDataSQLByFilter(
         dataSource,
-        dataTypeSupport.applyFor,
-        template,
+        templateType === 'dict' ? 'dictSQLTemplate' : dataTypeSupport.applyFor,
+      template,
         selected?.reduce((a, b) => {
           const tempA = {...a};
           const type = b.split(separator);
@@ -99,74 +100,82 @@ export default React.memo(({prefix, dataSource}) => {
   };
   return <div className={`${currentPrefix}-export-sql`}>
     <div className={`${currentPrefix}-export-sql-left`}>
-      <div className={`${currentPrefix}-form-item`}>
-        <span
-          className={`${currentPrefix}-form-item-label`}
-          title={FormatMessage.string({id: 'project.dataTypeSupport'})}
-      >
-          <FormatMessage id='project.dataTypeSupport'/>
-        </span>
-        <span className={`${currentPrefix}-form-item-component`}>
-          <Select
-            notAllowEmpty
-            allowClear={false}
-            defaultValue={defaultDb}
-            onChange={onChange}
+      {
+        templateType !== 'dict' && <div className={`${currentPrefix}-form-item`}>
+          <span
+            className={`${currentPrefix}-form-item-label`}
+            title={FormatMessage.string({id: 'project.dataTypeSupport'})}
+        >
+            <FormatMessage id='project.dataTypeSupport'/>
+          </span>
+          <span className={`${currentPrefix}-form-item-component`}>
+            <Select
+              notAllowEmpty
+              allowClear={false}
+              defaultValue={defaultDb}
+              onChange={onChange}
           >
-            {dataTypeSupports
+              {dataTypeSupports
               .map(type => (<Option
                 key={type}
                 value={type}
               >
                 {type}
               </Option>))}
-          </Select>
-        </span>
-      </div>
+            </Select>
+          </span>
+        </div>
+      }
       <div className={`${currentPrefix}-form-item`}>
         <span
           className={`${currentPrefix}-form-item-label`}
-          title={FormatMessage.string({id: 'exportSql.entity'})}
+          title={FormatMessage.string({id: `exportSql.${templateType === 'dict' ? 'dict' : 'entity'}`})}
         >
-          <FormatMessage id='exportSql.entity'/>
+          <FormatMessage id={`exportSql.${templateType === 'dict' ? 'dict' : 'entity'}`}/>
         </span>
         <span className={`${currentPrefix}-form-item-component`}>
           <span className={`${currentPrefix}-export-sql-pick`}>
             <span>
               {
               selected ? FormatMessage.string({
-                    id: 'exportSql.currentSelect',
+                    id: `exportSql.${templateType === 'dict' ? 'currentSelectDict' : 'currentSelectEntity'}`,
                     data: {count: selected.length},
                   })
-                  : FormatMessage.string({id: 'exportSql.exportEntityAll'})
+                  : FormatMessage.string({
+                  id: `exportSql.${templateType === 'dict' ? 'exportDictAll' : 'exportEntityAll'}`})
               }
             </span>
-            <span onClick={_pickEntity} title={FormatMessage.string({id: 'exportSql.pickEntity'})}>
+            <span
+              onClick={_pickEntity}
+              title={FormatMessage.string({
+              id: `exportSql.${templateType === 'dict' ? 'pickDict' : 'pickEntity'}`})}>
               <Icon type='fa-ellipsis-h'/>
             </span>
           </span>
         </span>
       </div>
-      <div className={`${currentPrefix}-form-item`}>
-        <span
-          className={`${currentPrefix}-form-item-label`}
-          title={FormatMessage.string({id: 'exportSql.exportData'})}
+      {
+        templateType !== 'dict' &&  <div className={`${currentPrefix}-form-item`}>
+          <span
+            className={`${currentPrefix}-form-item-label`}
+            title={FormatMessage.string({id: 'exportSql.exportData'})}
         >
-          <FormatMessage id='exportSql.exportData'/>
-        </span>
-        <span className={`${currentPrefix}-form-item-component`}>
-          <span>
-            <RadioGroup defaultValue='all' onChange={onTypeChange}>
-              <Radio value='customer'>
-                <FormatMessage id='exportSql.exportType[0]'/>
-              </Radio>
-              <Radio value='all'>
-                <FormatMessage id='exportSql.exportType[1]'/>
-              </Radio>
-            </RadioGroup>
+            <FormatMessage id='exportSql.exportData'/>
           </span>
-        </span>
-      </div>
+          <span className={`${currentPrefix}-form-item-component`}>
+            <span>
+              <RadioGroup defaultValue='all' onChange={onTypeChange}>
+                <Radio value='customer'>
+                  <FormatMessage id='exportSql.exportType[0]'/>
+                </Radio>
+                <Radio value='all'>
+                  <FormatMessage id='exportSql.exportType[1]'/>
+                </Radio>
+              </RadioGroup>
+            </span>
+          </span>
+        </div>
+      }
       {
         dataType === 'customer' && <div className={`${currentPrefix}-form-item`}>
           <span

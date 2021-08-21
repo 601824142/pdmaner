@@ -21,14 +21,33 @@ export const img = (data, dataSource, needCalc = true, groups) => {
       },
     });
     const cells = ((needCalc ? calcCellData(data, dataSource, null, groups) : data)).map((d) => {
-      const other = {}
+      const other = {
+        tools: {},
+      };
       if (d.shape === 'erdRelation') {
         const relation = d.relation.split(':');
+        other.attrs = {
+          ...(d.attrs || {}),
+          line: {
+            ..._.get(d, 'attrs.line'),
+            strokeWidth: 1,
+            stroke: d.fillColor || '#ACDAFC',
+            sourceMarker: {
+              ..._.get(d, 'attrs.line.sourceMarker'),
+              name: '',
+            },
+            targetMarker: {
+              ..._.get(d, 'attrs.line.targetMarker'),
+              name: (relation[1] && relation[1] === 'arrow') ? 'classic' : '',
+            },
+          }
+        }
         other.labels = (d.labels || []).map(l => {
           return {
             ...l,
             position: {
-              offset: {
+              ...l.position,
+              offset: l.position?.offset ?  l.position?.offset + 8 : {
                 x: 10,
                 y: 8,
               },
@@ -61,7 +80,16 @@ export const img = (data, dataSource, needCalc = true, groups) => {
                 y: 8,
               },
             },
-          }]);
+          }].filter(l => {
+            const text = _.get(l, 'attrs.text.text');
+            return text !== 'NONE' && text !== 'ARROW';
+        }));
+      }
+      if (d.shape === 'edit-node-polygon') {
+        return {
+          ...d,
+          shape: `${d.shape}-img`,
+        };
       }
       return {
         ..._.omit(d, ['attrs', 'component']),

@@ -52,6 +52,7 @@ module.exports = {
     modules: ['node_modules','config']
   },
   resolve: {
+    mainFields: ['browser', 'main'],
     alias: {
       'components': path.resolve(__dirname, '../src/components'),
       'style': path.resolve(__dirname, '../src/style/index.less')

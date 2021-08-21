@@ -175,7 +175,7 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
       a.click();
     }
   };
-  const reg = new RegExp((searchValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
+  const reg = new RegExp((searchValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
   return <div className={`${currentPrefix}-home-container`}>
     <div className={`${currentPrefix}-home-toolbar`}>
       <ToolBar resizeable title={FormatMessage.string({id: 'system.title'})}/>

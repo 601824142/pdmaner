@@ -35,7 +35,7 @@ import { getMenu, getMenus, dealMenuClick } from '../../lib/contextMenuUtil';
 import {
   validateKey,
   updateAllData,
-  allType, pdman2sino, getFullColumns, updateAllFieldsUiHint,
+  allType, pdman2sino, getFullColumns, updateAllFieldsUiHint, emptyDictSQLTemplate,
 } from '../../lib/datasource_util';
 import { setDataByTabId } from '../../lib/cache';
 import { Save } from '../../lib/event_tool';
@@ -53,8 +53,6 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                             ...restProps}) => {
   const [tabs, updateTabs] = useState([]);
   const autoSaveRef = useRef(null);
-  const menuNorWidth = 290;
-  const menuMinWidth = 50;
   const isResize = useRef({status: false});
   const resizeContainer = useRef(null);
   const resizeOther = useRef(null);
@@ -67,6 +65,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   tabsRef.current = tabs;
   const dataSourceRef = useRef({});
   dataSourceRef.current = restProps.dataSource;
+  const menuContainerWidth = 290;
+  const menuMinWidth = 50;
+  const menuNorWidth = parseFloat(dataSourceRef.current?.profile?.menuWidth)
+    || (menuContainerWidth - menuMinWidth);
   const configRef = useRef({});
   configRef.current = config;
   const [groupType, updateGroupType] = useState(restProps.dataSource?.profile?.modelType || 'modalAll');
@@ -349,6 +351,34 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     const cavRef = getCurrentCav();
     cavRef.exportImg();
   };
+  const calcDomain = (data = [], dbKey = '') => {
+    const dataTypeSupports = _.get(dataSourceRef.current, 'profile.dataTypeSupports', []);
+    const defaultDb = _.get(dataSourceRef.current, 'profile.default.db', dataTypeSupports[0]);
+    const mappings = _.get(dataSourceRef.current, 'dataTypeMapping.mappings', []);
+    const domains = _.get(dataSourceRef.current, 'domains', []);
+    const dbConn = dataSourceRef.current?.dbConn || [];
+    const currentDb = dbConn.filter(d => d.defKey === dbKey)[0]?.type || defaultDb;
+    return data.map((d) => {
+      return {
+        ...d,
+        fields: (d.fields || []).map((f) => {
+          const domainData = domains.map((domain) => {
+            const mapping = mappings.filter(m => m.defKey === domain.applyFor)[0];
+            return {
+              defKey: domain.defKey,
+              type: `${mapping[currentDb]}${domain.len}${domain.scale}`,
+            };
+          }).filter(domain => domain.type === `${f.type}${f.len}${f.scale}`)[0];
+          const domain = domainData?.defKey || '';
+          return {
+            ...f,
+            domain,
+            type: domain ? '' : f.type,
+          };
+        }),
+      };
+    });
+  };
   const injectDataSource = (dataSource, selectData, domains, modal) => {
     const allEntityKey = selectData.map(d => d.defKey);
     const currentDomains = dataSource.domains || [];
@@ -529,7 +559,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             const allEntities = importPdRef.current.getData()
                 .reduce((a, b) => a.concat((b.fields || [])
                     .map(f => ({...f, group: b.defKey}))), []);
-            injectDataSource(dataSourceRef.current, allEntities, result.body?.domains, modal);
+            injectDataSource(dataSourceRef.current,
+              calcDomain(allEntities), result.body?.domains, modal);
           };
           modal = openModal(<ImportPd
             data={result.body?.tables || []}
@@ -632,8 +663,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       const onClose = () => {
         modal && modal.close();
       };
-      const onOk = (data) => {
-        injectDataSource(dataSourceRef.current, data, [], modal);
+      const onOk = (data, dbKey) => {
+        injectDataSource(dataSourceRef.current, calcDomain(data, dbKey), [], modal);
       };
       modal = openModal(<DbReverseParse
         config={configRef.current}
@@ -646,13 +677,13 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       });
     }
   };
-  const exportSql = () => {
+  const exportSql = (type) => {
     let modal;
     const onClose = () => {
       modal && modal.close();
     };
-    modal = openModal(<ExportSql dataSource={dataSourceRef.current}/>, {
-      title: FormatMessage.string({id: 'toolbar.exportSql'}),
+    modal = openModal(<ExportSql templateType={type} dataSource={dataSourceRef.current}/>, {
+      title: FormatMessage.string({id: `toolbar.${type === 'dict' ? 'exportDict' : 'exportSql'}`}),
       bodyStyle: { width: '80%' },
       buttons: [
         <Button key='onClose' onClick={onClose}>
@@ -673,6 +704,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const createGroupNode = (e) => {
     const cavRef = getCurrentCav();
     cavRef?.startGroupNodeDrag(e);
+  };
+  const createPolygonNode = (e) => {
+    const cavRef = getCurrentCav();
+    cavRef?.startPolygonNodeDrag(e);
   };
   const domainMenu = useMemo(() => [
     {
@@ -938,7 +973,24 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             tempDataSource = updateAllFieldsUiHint(tempDataSource, changes);
           }
         }
-        filterData.splice(0, 0, 'uiHintChanges');
+        if ('dictSQLTemplate' in tempData) {
+          const path = 'profile.codeTemplates';
+          const codeTemplates = _.get(tempDataSource, path, []);
+          if (codeTemplates.findIndex(c => c.applyFor === 'dictSQLTemplate') < 0) {
+            codeTemplates.push(emptyDictSQLTemplate);
+          }
+          tempDataSource = _.set(tempDataSource, path, codeTemplates
+            .map((c) => {
+              if (c.applyFor === 'dictSQLTemplate') {
+                return {
+                  ...c,
+                  content: tempData.dictSQLTemplate || '',
+                };
+              }
+              return c;
+            }));
+        }
+        filterData.splice(0, 0, 'uiHintChanges', 'dictSQLTemplate');
         Object.keys(tempData).filter(f => !filterData.includes(f)).forEach((f) => {
           tempDataSource = _.set(tempDataSource, f,
             Array.isArray(tempData[f]) ? tempData[f].map(d => _.omit(d, '__key')) : tempData[f]);
@@ -1017,10 +1069,12 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       case 'redo': redo(); break;
       case 'img': exportImg(); break;
       case 'word': exportWord(); break;
-      case 'sql': exportSql(); break;
+      case 'sql': exportSql('sql'); break;
+      case 'dict': exportSql('dict'); break;
       case 'empty': createEmptyTable(e);break;
-      case 'rect': createNode(e, 'rect');break;
       case 'round': createNode(e, 'round');break;
+      case 'rect': createNode(e, 'rect');break;
+      case 'polygon': createPolygonNode(e);break;
       case 'group': createGroupNode(e);break;
       default: break;
     }
@@ -1074,8 +1128,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       currentMenu.current = menuDomainRef.current;
     }
     setMenuType(key);
-    resizeContainer.current.style.minWidth = `${menuNorWidth}px`;
-    resizeContainer.current.style.width = `${menuNorWidth}px`;
+    resizeContainer.current.style.minWidth = `${menuNorWidth + menuMinWidth}px`;
+    resizeContainer.current.style.width = `${menuNorWidth + menuMinWidth}px`;
   };
   const _jumpPosition = (d, key) => {
     setMenuType('1');
@@ -1109,7 +1163,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const onMouseMove = (e) => {
     if (isResize.current.status) {
       const width = isResize.current.width + (e.clientX - isResize.current.x);
-      if (width < (window.innerWidth - 10) && width > menuNorWidth) {
+      if (width < (window.innerWidth - 10) && width > menuContainerWidth) {
         resizeContainer.current.style.width = `${width}px`;
         resizeOther.current.style.width = `calc(100% - ${width}px)`;
         menuContainerModel.current.style.width = `${width - menuMinWidth}px`;
@@ -1118,6 +1172,15 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     }
   };
   const onMouseUp = () => {
+    if (isResize.current.status) {
+      restProps?.save({
+        ...dataSourceRef.current,
+        profile: {
+          ...dataSourceRef.current.profile,
+          menuWidth: menuContainerModel.current.style.width,
+        },
+      }, FormatMessage.string({id: 'saveProject'}), !projectInfoRef.current);
+    }
     isResize.current.status = false;
   };
   const fold = () => {
@@ -1186,7 +1249,12 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       jumpDetail={_jumpDetail}
     />
     <div className={`${currentPrefix}-home`}>
-      <div className={`${currentPrefix}-home-resize-container`} ref={resizeContainer}>
+      <div
+        className={`${currentPrefix}-home-resize-container`}
+        ref={resizeContainer}
+        style={{
+          width: menuNorWidth + menuMinWidth,
+        }}>
         {
           menuType !== '3' && <span
             onClick={fold}
@@ -1285,7 +1353,11 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           </div>
         }
       </div>
-      <div className={`${currentPrefix}-home-resize-other`} ref={resizeOther}>
+      <div
+        className={`${currentPrefix}-home-resize-other`}
+        ref={resizeOther}
+        style={{width: `calc(100% - ${menuNorWidth + menuMinWidth}px)`}}
+      >
         {
           tabs.length > 0 ?  <Tab
             menuClick={dropDownMenuClick}

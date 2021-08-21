@@ -61,6 +61,25 @@ Graph.registerNode('edit-node-circle-img', {
   component: <EditNode/>,
 });
 
+Graph.registerNode('edit-node-polygon-img', {
+  inherit: 'polygon',
+  zIndex: 2,
+  attrs: {
+    body: {
+      stroke: '#DFE3EB',
+      strokeWidth: 1,
+      refPoints: '0,10 10,0 20,10 10,20',
+    },
+    text: {
+      style: {
+        fontSize: '12px',
+        fill: 'rgba(0, 0, 0, 0.65)',
+      },
+    },
+  },
+  portMarkup: [Markup.getForeignObjectMarkup()],
+});
+
 Graph.registerNode('group-img', {
   inherit: 'react-shape',
   zIndex: 1,

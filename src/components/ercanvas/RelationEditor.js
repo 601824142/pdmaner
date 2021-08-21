@@ -17,6 +17,9 @@ export default React.memo(({ prefix, label, relationChange }) => {
       <Select allowClear={false} defaultValue={relationData[0]} onChange={e => onChange(e, 'form')} notAllowEmpty>
         <Option value='1' key='1'>1</Option>
         <Option value='n' key='n'>n</Option>
+        <Option value='none' key='none'>
+          <FormatMessage id='canvas.edge.none'/>
+        </Option>
       </Select>
     </span>:
     <span className={`${currentPrefix}-relation-editor-right`}>
@@ -24,6 +27,12 @@ export default React.memo(({ prefix, label, relationChange }) => {
       <Select allowClear={false} defaultValue={relationData[1]} onChange={e => onChange(e, 'to')} notAllowEmpty>
         <Option value='1' key='1'>1</Option>
         <Option value='n' key='n'>n</Option>
+        <Option value='arrow' key='arrow'>
+          <FormatMessage id='canvas.edge.arrow'/>
+        </Option>
+        <Option value='none' key='none'>
+          <FormatMessage id='canvas.edge.none'/>
+        </Option>
         {/*<Option value='0' key='0'>0</Option>
         <Option value='1' key='1'>1</Option>
         <Option value='0,1' key='0,1'>0,1</Option>

@@ -13,7 +13,7 @@ export default React.memo(({prefix, value, checkValues, children, onChange}) => 
     className={`${currentPrefix}-multiple-select-option ${currentPrefix}-multiple-select-option-${checkValues.includes(value) ? 'check' : 'default'}`}
     onClick={onClick}
   >
-    {children}
+    <span>{children}</span>
     <Icon type='fa-check'/>
   </span>;
 });

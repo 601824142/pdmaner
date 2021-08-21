@@ -12,6 +12,7 @@ Graph.registerMarker('relation', (args) => {
     1 : `M ${x + r + 1},${r + 1}L ${x + r + 1},${-r - 1} z`,
     '1,n' : `M ${x + r + 1},${r + 1}L ${x + r + 1},${-r - 1}M ${x + r + 1},${y}L ${y},-${r}M ${x + r + 1},${y}L ${y},${r} z`,
     0 : `M${x},${y - r}a ${r},${r},0,1,1,0,${2 * r}a ${r},${r},0,1,1,0,${-2 * r}`,
+    arrow: `M ${r * 2} -${r} 0 0 ${r * 2} ${r} Z`,
   };
   return {
     ...attrs, // 原样返回非特殊涵义的参数
@@ -31,6 +32,12 @@ Graph.registerEdge('erdRelation', {
     },
   },
   zIndex: 2,
+  connector: {
+    name: 'jumpover',
+    args: {
+      type: 'cubic',
+    },
+  },
   propHooks(metadata) {
     const { relation, fillColor, ...others } = metadata;
     if (relation) {

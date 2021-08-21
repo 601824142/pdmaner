@@ -49,6 +49,7 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
     const empty = {
       ...emptyDbConn,
       defKey: Math.uuid(),
+      type: defaultDb,
       properties: {
         driver_class_name: url[defaultDb?.toLocaleLowerCase()]?.driverClass || '',
         url: url[defaultDb?.toLocaleLowerCase()]?.url || '',
