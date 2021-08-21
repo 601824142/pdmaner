@@ -586,6 +586,8 @@ export default {
             postgresql: 'jdbc:postgresql://IP地址:端口号/数据库名',
             db2: 'jdbc:db2://IP地址:端口号/数据库名:progressiveStreaming=2',
             dm: 'jdbc:dm://IP地址:端口号/数据库名',
+            guassdb: 'jdbc:postgresql://IP地址:端口号/数据库名',
+            kingbase: 'jdbc:kingbase8://IP地址:端口号/数据库名',
         },
         configExample: '配置示例：',
         connectSuccess: '连接成功',

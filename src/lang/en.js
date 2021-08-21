@@ -586,6 +586,8 @@ export default {
             postgresql: 'jdbc:postgresql://ip:port/name',
             db2: 'jdbc:db2://ip:port/name:progressiveStreaming=2',
             dm: 'jdbc:dm://ip:port/name',
+            guassdb: 'jdbc:postgresql://ip:port/name',
+            kingbase: 'jdbc:kingbase8://ip:port/name',
         },
         configExample: 'config example:',
         connectSuccess: 'connectSuccess',

@@ -522,7 +522,17 @@ export const getDemoDbConnect = () => {
       defKey: 'DM(达梦)',
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.dm'}),
       driverClass: 'dm.jdbc.driver.DmDriver',
-    }
+    },
+    gaussdb: {
+      defKey: 'GuassDB',
+      driverClass: 'org.postgresql.Driver',
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.guassdb'}),
+    },
+    kingbase: {
+      defKey: 'Kingbase(人大金仓)',
+      driverClass: 'com.kingbase8.Driver',
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.kingbase'}),
+    },
   }
 };
 
