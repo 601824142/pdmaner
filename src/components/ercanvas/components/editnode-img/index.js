@@ -66,9 +66,31 @@ Graph.registerNode('edit-node-polygon-img', {
   zIndex: 2,
   attrs: {
     body: {
+      refX: 10,
+      refY: 8,
       stroke: '#DFE3EB',
       strokeWidth: 1,
       refPoints: '0,10 10,0 20,10 10,20',
+    },
+    text: {
+      style: {
+        fontSize: '12px',
+        fill: 'rgba(0, 0, 0, 0.65)',
+      },
+    },
+  },
+  portMarkup: [Markup.getForeignObjectMarkup()],
+});
+
+Graph.registerNode('edit-node-circle-svg-img', {
+  inherit: 'circle',
+  zIndex: 2,
+  attrs: {
+    body: {
+      refX: 10,
+      refY: 8,
+      stroke: '#DFE3EB',  // 边框颜色
+      strokeWidth: 1,
     },
     text: {
       style: {

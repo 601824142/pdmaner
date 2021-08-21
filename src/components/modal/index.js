@@ -11,7 +11,7 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 
 export const Modal = DragCom(React.memo(React.forwardRef(({prefix, title, onClose, focusFirst,
-                    children, small, status, buttons = [], closeable = true,
+                    children, small, status, buttons = [], closeable = true, onEnter,
                     fullScreen, bodyStyle = {}, modalStyle = {}, contentStyle = {},
                                                           }, forwardRef) => {
   const currentPrefix = getPrefix(prefix);
@@ -34,6 +34,9 @@ export const Modal = DragCom(React.memo(React.forwardRef(({prefix, title, onClos
     if (e.key === 'Escape' && closeable) {
       // 按了键盘的返回键
       onClose && onClose();
+    }
+    if (e.key === 'Enter') {
+      onEnter && onEnter();
     }
   };
   return (
@@ -83,7 +86,7 @@ export const openModal = (com, params) => {
   };
   const ModalCompose = () => {
     const { title, small, buttons, status, fullScreen, bodyStyle,
-      modalStyle, contentStyle, closeable, focusFirst } = params;
+      modalStyle, contentStyle, closeable, focusFirst, onEnter } = params;
     const _iconClose = () => {
       const { onClose } = params;
       onClose && onClose();
@@ -92,6 +95,7 @@ export const openModal = (com, params) => {
     return (
       <ConfigContent.Provider value={getMemoryCache(CONFIG)}>
         <Modal
+          onEnter={onEnter}
           closeable={closeable}
           modalStyle={modalStyle}
           bodyStyle={bodyStyle}

@@ -85,7 +85,7 @@ export const img = (data, dataSource, needCalc = true, groups) => {
             return text !== 'NONE' && text !== 'ARROW';
         }));
       }
-      if (d.shape === 'edit-node-polygon') {
+      if (d.shape === 'edit-node-polygon' || d.shape === 'edit-node-circle-svg') {
         return {
           ...d,
           shape: `${d.shape}-img`,

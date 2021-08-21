@@ -463,7 +463,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
              },
            }], { ignoreHistory : true, relation: true});
           }
-          if (c.shape === 'edit-node-polygon') {
+          if (c.shape === 'edit-node-polygon' || c.shape === 'edit-node-circle-svg') {
             if (key === 'fillColor') {
               c.attr('body/fill', color.hex, { ignoreHistory : true});
             } else {
@@ -601,7 +601,8 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         enabled:  (node) => {
           return node.shape === 'edit-node' ||
               node.shape === 'edit-node-circle' ||
-              node.shape === 'group' || node.shape === 'edit-node-polygon';
+              node.shape === 'group' || node.shape === 'edit-node-polygon'
+            || node.shape === 'edit-node-circle-svg';
         },
       },
       interacting: () => {
@@ -609,7 +610,9 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           return {
             nodeMovable: ({cell}) => {
               return !((cell.shape === 'edit-node' || cell.shape === 'group'
-                  || cell.shape === 'edit-node-circle' || cell.shape === 'edit-node-polygon')
+                  || cell.shape === 'edit-node-circle'
+                  || cell.shape === 'edit-node-polygon'
+                  || cell.shape === 'edit-node-circle-svg')
                 && cell.getProp('editable'));
             },
           };
@@ -805,7 +808,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             stroke: cell.shape === 'group' ? '#000000' : currentColor.current.border,
             strokeWidth: 2,
           }, { ignoreHistory : true});
-          if (cell.shape === 'edit-node-polygon' ||
+          if (cell.shape === 'edit-node-polygon' || cell.shape === 'edit-node-circle-svg' ||
             cell.shape === 'edit-node' || cell.shape === 'edit-node-circle' || cell.shape === 'group') {
             if (cell.shape === 'group') {
               // 暂时隐藏所有的子节点
@@ -816,7 +819,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                 });
               }
             }
-            if (cell.shape === 'edit-node-polygon') {
+            if (cell.shape === 'edit-node-polygon' || cell.shape === 'edit-node-circle-svg') {
               graph.batchUpdate(() => {
                 cell.removeTools();
                 cell.setProp('label', cell.attr('text/text'));
@@ -1245,7 +1248,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           }
         }
         cell.setProp('editable', true, { ignoreHistory : true});
-      } else if (cell.shape === 'edit-node-polygon') {
+      } else if (cell.shape === 'edit-node-polygon' || cell.shape === 'edit-node-circle-svg') {
         cell.setProp('editable', true, { ignoreHistory : true});
         const p = graph.clientToGraph(e.clientX, e.clientY);
         cell.addTools([
@@ -1293,7 +1296,8 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graph.bindKey(['backspace', 'delete'], () => {
       const cells = graph.getSelectedCells();
       if (cells.length) {
-        graph.removeCells(cells.filter(c => !((c.shape === 'edit-node' || (c.shape === 'edit-node-polygon')
+        graph.removeCells(cells.filter(c => !((c.shape === 'edit-node' ||
+          (c.shape === 'edit-node-circle-svg') || (c.shape === 'edit-node-polygon')
             || c.shape === 'edit-node-circle' || c.shape === 'group') && (c.getProp('editable')))));
       }
     });
@@ -1365,6 +1369,15 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       });
       dndRef.current.start(node, e.nativeEvent);
     };
+    const createCircleNode = (e) => {
+      const node =  graphRef.current.createNode({
+        shape: 'edit-node-circle-svg',
+        label: '',
+        size: defaultEditNodePolygonSize,
+        ports: commonPolygonPorts,
+      });
+      dndRef.current.start(node, e.nativeEvent);
+    };
     const zoomGraph = (factor, scale) => {
       if (scale) {
         graphRef.current.scale(factor);
@@ -1385,6 +1398,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       startRemarkDrag,
       startGroupNodeDrag,
       startPolygonNodeDrag,
+      createCircleNode,
       zoomGraph,
       validateScale,
       getScaleNumber,
@@ -1392,7 +1406,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       exportImg: () => {
         img(graph.toJSON().cells, null, false).then((dom) => {
           html2canvas(dom).then((canvas) => {
-            document.body.removeChild(dom.parentElement.parentElement);
+            //document.body.removeChild(dom.parentElement.parentElement);
             const diagram = (dataSourceRef.current?.diagrams || [])
                 .filter(d => d.defKey === diagramKey)[0] || {};
             DataUri.downloadDataUri(canvas.toDataURL('image/png'),

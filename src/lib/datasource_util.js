@@ -154,14 +154,15 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
                         'router'
                       ];
                       if (c.shape === 'edit-node' || c.shape === 'edit-node-circle'
-                        || c.shape === 'edit-node-polygon') {
+                        || c.shape === 'edit-node-polygon'
+                        || c.shape === 'edit-node-circle-svg') {
                         pickFields.push('size');
                         pickFields.push('ports');
                       } else if (c.shape === 'group') {
                         pickFields.push('size');
                         pickFields.push('children');
                       }
-                      if (c.shape === 'edit-node-polygon') {
+                      if (c.shape === 'edit-node-polygon' || c.shape === 'edit-node-circle-svg') {
                         otherData.label = c.label || c?.attrs?.text?.text || '';
                       }
                       return {
@@ -522,7 +523,17 @@ export const getDemoDbConnect = () => {
       defKey: 'DM(达梦)',
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.dm'}),
       driverClass: 'dm.jdbc.driver.DmDriver',
-    }
+    },
+    gaussdb: {
+      defKey: 'GuassDB',
+      driverClass: 'org.postgresql.Driver',
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.guassdb'}),
+    },
+    kingbase: {
+      defKey: 'Kingbase(人大金仓)',
+      driverClass: 'com.kingbase8.Driver',
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.kingbase'}),
+    },
   }
 };
 
@@ -1223,7 +1234,8 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
       size: n.size || (n.shape === 'edit-node' ? defaultEditNodeSize : defaultEditNodeCircleSize),
     };
   });
-  const polygon = cells.filter(c => c.shape === 'edit-node-polygon').map(c => {
+  const polygon = cells.filter(c => c.shape === 'edit-node-polygon'
+    || c.shape === 'edit-node-circle-svg').map(c => {
     return {
       ...c,
       attrs: {
@@ -1260,7 +1272,7 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
     }
     return nodeData;
   }).filter(n => !!n);
-  const allNodes = (nodes || []).concat(remarks);
+  const allNodes = (nodes || []).concat(remarks || []).concat(polygon || []);
   const edges = cells.filter(c => c.shape === 'erdRelation')
       .filter((e) => {
         return filterEdge(allNodes, e);
@@ -1295,9 +1307,9 @@ export const transformationData = (oldDataSource) => {
       };
     }
     tempDataSource = {
-      ...oldDataSource,
-      entities: (oldDataSource.entities || []).map(e => refactor(e)),
-      views: (oldDataSource.views || []).map(v => refactor(v)),
+      ...tempDataSource,
+      entities: (tempDataSource.entities || []).map(e => refactor(e)),
+      views: (tempDataSource.views || []).map(v => refactor(v)),
     };
   }
   // 2.处理新增的列
@@ -1316,14 +1328,30 @@ export const transformationData = (oldDataSource) => {
       return e;
     }
     tempDataSource = {
-      ...oldDataSource,
+      ...tempDataSource,
       profile: {
-        ...oldDataSource.profile,
-        uiHint: oldDataSource.profile?.uiHint || emptyProjectTemplate.profile.uiHint,
+        ...tempDataSource.profile,
+        uiHint: tempDataSource.profile?.uiHint || emptyProjectTemplate.profile.uiHint,
       },
-      entities: (oldDataSource.entities || []).map(e => refactor(e)),
-      views: (oldDataSource.views || []).map(v => refactor(v)),
+      entities: (tempDataSource.entities || []).map(e => refactor(e)),
+      views: (tempDataSource.views || []).map(v => refactor(v)),
     };
+  }
+  // 3.处理新增的数据字典模板
+  if (compareVersion('3.1.1', oldDataSource.version.split('.'))) {
+    const codeTemplates = _.get(tempDataSource, 'profile.codeTemplates', []);
+    if (!codeTemplates.some(t => {
+      return t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL'
+    })) {
+      tempDataSource = {
+        ...tempDataSource,
+        profile: {
+          ...tempDataSource.profile,
+          codeTemplates: _.get(oldDataSource, 'profile.codeTemplates', [])
+            .concat(emptyProjectTemplate.profile.codeTemplates.filter(t => t.applyFor === 'dictSQLTemplate'))
+        },
+      };
+    }
   }
   return tempDataSource;
 };
