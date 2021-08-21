@@ -53,8 +53,6 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                             ...restProps}) => {
   const [tabs, updateTabs] = useState([]);
   const autoSaveRef = useRef(null);
-  const menuNorWidth = 290;
-  const menuMinWidth = 50;
   const isResize = useRef({status: false});
   const resizeContainer = useRef(null);
   const resizeOther = useRef(null);
@@ -67,6 +65,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   tabsRef.current = tabs;
   const dataSourceRef = useRef({});
   dataSourceRef.current = restProps.dataSource;
+  const menuContainerWidth = 290;
+  const menuMinWidth = 50;
+  const menuNorWidth = parseFloat(dataSourceRef.current?.profile?.menuWidth)
+    || (menuContainerWidth - menuMinWidth);
   const configRef = useRef({});
   configRef.current = config;
   const [groupType, updateGroupType] = useState(restProps.dataSource?.profile?.modelType || 'modalAll');
@@ -1126,8 +1128,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       currentMenu.current = menuDomainRef.current;
     }
     setMenuType(key);
-    resizeContainer.current.style.minWidth = `${menuNorWidth}px`;
-    resizeContainer.current.style.width = `${menuNorWidth}px`;
+    resizeContainer.current.style.minWidth = `${menuNorWidth + menuMinWidth}px`;
+    resizeContainer.current.style.width = `${menuNorWidth + menuMinWidth}px`;
   };
   const _jumpPosition = (d, key) => {
     setMenuType('1');
@@ -1161,7 +1163,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const onMouseMove = (e) => {
     if (isResize.current.status) {
       const width = isResize.current.width + (e.clientX - isResize.current.x);
-      if (width < (window.innerWidth - 10) && width > menuNorWidth) {
+      if (width < (window.innerWidth - 10) && width > menuContainerWidth) {
         resizeContainer.current.style.width = `${width}px`;
         resizeOther.current.style.width = `calc(100% - ${width}px)`;
         menuContainerModel.current.style.width = `${width - menuMinWidth}px`;
@@ -1170,6 +1172,15 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     }
   };
   const onMouseUp = () => {
+    if (isResize.current.status) {
+      restProps?.save({
+        ...dataSourceRef.current,
+        profile: {
+          ...dataSourceRef.current.profile,
+          menuWidth: menuContainerModel.current.style.width,
+        },
+      }, FormatMessage.string({id: 'saveProject'}), !projectInfoRef.current);
+    }
     isResize.current.status = false;
   };
   const fold = () => {
@@ -1238,7 +1249,12 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       jumpDetail={_jumpDetail}
     />
     <div className={`${currentPrefix}-home`}>
-      <div className={`${currentPrefix}-home-resize-container`} ref={resizeContainer}>
+      <div
+        className={`${currentPrefix}-home-resize-container`}
+        ref={resizeContainer}
+        style={{
+          width: menuNorWidth + menuMinWidth,
+        }}>
         {
           menuType !== '3' && <span
             onClick={fold}
@@ -1337,7 +1353,11 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           </div>
         }
       </div>
-      <div className={`${currentPrefix}-home-resize-other`} ref={resizeOther}>
+      <div
+        className={`${currentPrefix}-home-resize-other`}
+        ref={resizeOther}
+        style={{width: `calc(100% - ${menuNorWidth + menuMinWidth}px)`}}
+      >
         {
           tabs.length > 0 ?  <Tab
             menuClick={dropDownMenuClick}

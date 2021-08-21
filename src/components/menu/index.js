@@ -204,7 +204,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
             <span
               className={`${currentPrefix}-menu-container-fold-item-name ${currentPrefix}-menu-container-fold-item-name-parent`}
           >
-              {getName && getName(menu) || menu[defName]}({menu[children].length})
+              {getName && getName(menu) || menu[defName]}{menu.type !== 'groups' && `(${menu[children].length})`}
             </span>
           </span>
           <Icon
