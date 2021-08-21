@@ -604,6 +604,9 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
               node.shape === 'group' || node.shape === 'edit-node-polygon'
             || node.shape === 'edit-node-circle-svg';
         },
+        preserveAspectRatio: (node) => {
+          return node.shape === 'edit-node-circle-svg';
+        },
       },
       interacting: () => {
         if (interactingRef.current) {
@@ -690,10 +693,12 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         }),
       };
     };
-    graph.bindKey(['ctrl+c','command+c'], () => {
+    graph.bindKey(['ctrl+c','command+c'], (e) => {
       const cells = graph.getSelectedCells();
-      if (cells && cells.length) {
+      if (e.target.tagName !== 'TEXTAREA' && cells && cells.length) {
         graph.copy(cells);
+      } else {
+        graph.cleanClipboard();
       }
     });
     graph.bindKey(['ctrl+m','command+m'], () => {

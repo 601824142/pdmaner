@@ -1246,6 +1246,7 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
           style: {
             fill: c.fontColor,
           },
+          text: c.label || c.attrs?.text?.text || ''
         },
       },
     }
