@@ -154,14 +154,15 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
                         'router'
                       ];
                       if (c.shape === 'edit-node' || c.shape === 'edit-node-circle'
-                        || c.shape === 'edit-node-polygon') {
+                        || c.shape === 'edit-node-polygon'
+                        || c.shape === 'edit-node-circle-svg') {
                         pickFields.push('size');
                         pickFields.push('ports');
                       } else if (c.shape === 'group') {
                         pickFields.push('size');
                         pickFields.push('children');
                       }
-                      if (c.shape === 'edit-node-polygon') {
+                      if (c.shape === 'edit-node-polygon' || c.shape === 'edit-node-circle-svg') {
                         otherData.label = c.label || c?.attrs?.text?.text || '';
                       }
                       return {
@@ -1233,7 +1234,8 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
       size: n.size || (n.shape === 'edit-node' ? defaultEditNodeSize : defaultEditNodeCircleSize),
     };
   });
-  const polygon = cells.filter(c => c.shape === 'edit-node-polygon').map(c => {
+  const polygon = cells.filter(c => c.shape === 'edit-node-polygon'
+    || c.shape === 'edit-node-circle-svg').map(c => {
     return {
       ...c,
       attrs: {
@@ -1270,7 +1272,7 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
     }
     return nodeData;
   }).filter(n => !!n);
-  const allNodes = (nodes || []).concat(remarks);
+  const allNodes = (nodes || []).concat(remarks || []).concat(polygon || []);
   const edges = cells.filter(c => c.shape === 'erdRelation')
       .filter((e) => {
         return filterEdge(allNodes, e);

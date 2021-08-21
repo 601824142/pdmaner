@@ -709,6 +709,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     const cavRef = getCurrentCav();
     cavRef?.startPolygonNodeDrag(e);
   };
+  const createCircleNode = (e) => {
+    const cavRef = getCurrentCav();
+    cavRef?.createCircleNode(e);
+  };
   const domainMenu = useMemo(() => [
     {
       defKey: 'dataTypeMapping',
@@ -1073,6 +1077,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       case 'dict': exportSql('dict'); break;
       case 'empty': createEmptyTable(e);break;
       case 'round': createNode(e, 'round');break;
+      case 'circle': createCircleNode(e);break;
       case 'rect': createNode(e, 'rect');break;
       case 'polygon': createPolygonNode(e);break;
       case 'group': createGroupNode(e);break;

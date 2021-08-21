@@ -86,17 +86,21 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
         title={FormatMessage.string({id: 'toolbar.emptyEntity'})}
         icon='icon-kongbiao'
         disable={activeTab?.type !== 'diagram'}
-        style={{cursor: 'move'}}
-        onMouseDown={e => iconClick(e, 'empty')}
+        //style={{cursor: 'move'}}
+        onClick={iconClick}
+        groupKey='empty'
+        //onMouseDown={e => iconClick(e, 'empty')}
       />
       <GroupIcon
         className={`${currentPrefix}-head-db`}
         hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
         title={FormatMessage.string({id: 'toolbar.group'})}
         icon='fa-object-group'
-        style={{cursor: 'move'}}
+        //style={{cursor: 'move'}}
+        onClick={iconClick}
+        groupKey='group'
         disable={activeTab?.type !== 'diagram'}
-        onMouseDown={e => iconClick(e, 'group')}
+        //onMouseDown={e => iconClick(e, 'group')}
       />
       <GroupIcon
         topStyle={{height: '24px'}}
@@ -109,16 +113,19 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
         onClick={iconClick}
         dropMenu={[
           { key: 'round', name: FormatMessage.string({id: 'toolbar.round'})},
+          { key: 'circle', name: FormatMessage.string({id: 'toolbar.circle'})},
         ]}/>
       <GroupIcon
         hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}
         title={FormatMessage.string({id: 'toolbar.polygon'})}
-        style={{cursor: 'move'}}
+        //style={{cursor: 'move'}}
         icon={<div className={`${currentPrefix}-head-rect`}>
           <span>{}</span>
         </div>}
+        groupKey='polygon'
+        onClick={iconClick}
         disable={activeTab?.type !== 'diagram'}
-        onMouseDown={e => iconClick(e, 'polygon')}
+        //onMouseDown={e => iconClick(e, 'polygon')}
       />
       <GroupIcon
         hoverTitle={activeTab?.type !== 'diagram' ? FormatMessage.string({id: 'toolbar.relationEnableTitle'}) : ''}

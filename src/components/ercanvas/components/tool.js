@@ -16,10 +16,10 @@ class EditableCellTool extends ToolItem {
     const size = cell.size();
     const pos = this.graph.localToGraph(position);
     const zoom = this.graph.zoom();
-    width = size.width * zoom / 2;
-    height = size.height * zoom / 2;
-    x = pos.x + width / 2;
-    y = pos.y + height / 2;
+    width = size.width * zoom;
+    height = size.height * zoom;
+    x = pos.x;
+    y = pos.y;
 
     const editorParent = ToolsView.createElement('div', false);
     editorParent.setAttribute('class', `${prefix}-er-editnode`);
