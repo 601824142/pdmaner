@@ -36,20 +36,22 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
         <FormatMessage id='database.preview.demoData'/>
       </span>
       <CodeHighlight data={demoData} style={style} mode='json'/></div>
-    <div className={`${currentPrefix}-preview-center`}>
-      <span className={`${currentPrefix}-preview-center-title`}>
-        <span>
-          <FormatMessage id='database.preview.templateEdit'/>
+    <div className={`${currentPrefix}-preview-data`}>
+      <div className={`${currentPrefix}-preview-center`}>
+        <span className={`${currentPrefix}-preview-center-title`}>
+          <span>
+            <FormatMessage id='database.preview.templateEdit'/>
+          </span>
+          <a onClick={openDotHelp}>
+            <FormatMessage id='database.preview.dot'/>
+          </a>
         </span>
-        <a onClick={openDotHelp}>
-          <FormatMessage id='database.preview.dot'/>
-        </a>
-      </span>
-      <CodeEditor value={templateData} width='auto' height={style.height} onChange={e => _updateTemplate(e.target.value)}/></div>
-    <div className={`${currentPrefix}-preview-right`}>
-      <span className={`${currentPrefix}-preview-right-title`}>
-        <FormatMessage id='database.preview.result'/>
-      </span>
-      <CodeHighlight data={demoCode} style={style} mode={mode}/></div>
+        <CodeEditor value={templateData} width='auto' height='calc(50vh - 50px)' onChange={e => _updateTemplate(e.target.value)}/></div>
+      <div className={`${currentPrefix}-preview-right`}>
+        <span className={`${currentPrefix}-preview-right-title`}>
+          <FormatMessage id='database.preview.result'/>
+        </span>
+        <CodeHighlight data={demoCode} style={{height: 'calc(50vh - 50px)'}} mode={mode}/></div>
+    </div>
   </div>;
 });

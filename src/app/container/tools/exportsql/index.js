@@ -34,7 +34,8 @@ export default React.memo(({prefix, dataSource, templateType}) => {
   const defaultDb = _.get(dataSource, 'profile.default.db', dataTypeSupports[0]);
   const codeTemplates = _.get(dataSource, 'profile.codeTemplates', []);
   const [codeData, setCodeData] = useState(() => {
-    return getAllDataSQLByFilter(dataSource, defaultDb, templateRef.current);
+    return getAllDataSQLByFilter(dataSource,
+      templateType === 'dict' ? 'dictSQLTemplate' : defaultDb, templateRef.current);
   });
   const [dataTypeSupport, setDataTypeSupport] = useState(() => {
     return codeTemplates.filter(c => c.applyFor === defaultDb)[0];
