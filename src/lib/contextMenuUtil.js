@@ -373,6 +373,9 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
       title: title || modalData.title,
       buttons,
       focusFirst: realType !== 'views',
+      onEnter: () => {
+        modalData.refName !== 'refViews' && onOK();
+      }
     }
   )
 };
