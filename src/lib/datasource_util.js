@@ -1339,7 +1339,7 @@ export const transformationData = (oldDataSource) => {
     };
   }
   // 3.处理新增的数据字典模板
-  if (compareVersion('3.1.1', oldDataSource.version.split('.'))) {
+  if (compareVersion('3.2.0', oldDataSource.version.split('.'))) {
     const codeTemplates = _.get(tempDataSource, 'profile.codeTemplates', []);
     if (!codeTemplates.some(t => {
       return t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL'
