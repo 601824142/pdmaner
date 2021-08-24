@@ -194,17 +194,17 @@ export const saveProject = (data, saveAs, callback) => {
       return name.split('.')[0];
     };
     if (saveAs) {
-      saveJsonPromiseAs(data, (d, f) => {
+      saveJsonPromiseAs(tempData, (d, f) => {
         const oldData = JSON.parse(d.toString().replace(/^\uFEFF/, ''));
         oldData.name = getName(f);
         return JSON.stringify(oldData, null, 2);
       }).then((path) => {
         const name = getName(path);
-        validateSaveProject({path}, {...data, name}).then(() => {
+        validateSaveProject({path}, {...tempData, name}).then(() => {
           addHistory({
-            describe: data.describe || '',
+            describe: tempData.describe || '',
             name,
-            avatar: data.avatar || '',
+            avatar: tempData.avatar || '',
             path,
           }, (err) => {
             if (!err) {

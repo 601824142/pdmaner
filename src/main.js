@@ -1,5 +1,6 @@
 /* eslint-disable */
-const {app, BrowserWindow, Menu, nativeImage, ipcMain} = require('electron');
+const {app, BrowserWindow, Menu, nativeImage, ipcMain, dialog} = require('electron');
+const fs = require('fs');
 const path = require('path');
 const url = require('url');
 require('@electron/remote/main').initialize();
@@ -49,7 +50,40 @@ function createWindow() {
         )
     );
   }
+  let dataCache = {};
+  const sendMessage = () => {
+    if (dataCache.data && dataCache.info) {
+      const dir = path.dirname(dataCache.info);
+      const baseName = path.basename(dataCache.info, '.json');
+      const time = dataCache.data.updatedTime
+        .replaceAll(' ', '-')
+        .replaceAll(':', '-');
+      fs.writeFile(path.join(dir, `/${baseName}-backup-${time}.json`), JSON.stringify(dataCache.data, null, 2), () => {
+        dialog.showMessageBox({message: '检测到系统异常，已为您自动备份项目', title: '系统异常' }).then(() => {
+          app.quit();
+        });
+      });
+    }
+  }
+  ipcMain.on('data', (e, args ) => {
+    try {
+      const argData = JSON.parse(args);
+      if (argData.next && argData.next.core) {
+        dataCache = argData.next.core;
+      } else if (argData.pre && argData.pre.core) {
+        dataCache = argData.pre.core;
+      }
+    } catch (e) {
 
+    }
+  });
+  // 监听进程崩溃 或者网页无响应时
+  win.webContents.on('render-process-gone', (event, details ) => {
+    sendMessage();
+  });
+  win.webContents.on('unresponsive', () => {
+    sendMessage();
+  });
 
   // 当 window 被关闭，这个事件会被触发。
   win.on('closed', () => {

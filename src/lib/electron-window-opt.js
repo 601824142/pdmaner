@@ -76,3 +76,8 @@ export const maximizeChange = (enter, leave) => {
     enter && enter();
   });
 };
+
+// 8.向主进程发送消息
+export const sendMessage = (pre, next) => {
+  require('electron').ipcRenderer.send('data', JSON.stringify({ pre, next }));
+};
