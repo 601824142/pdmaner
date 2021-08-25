@@ -894,7 +894,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     const onOk = () => {
       if (Object.keys(tempData).length !== 0) {
         let tempDataSource = getDataSource();
-        const filterData = ['lang', 'javaHome', 'autoSave', 'jvm'];
+        const filterData = ['lang', 'javaHome', 'autoSave', 'jvm', 'autoBackup'];
         if (name === 'dbreverse') {
           const { value = [], realData : { entities = [], viewGroups = [] } = {} }
               = tempData?.dbreverse || {};

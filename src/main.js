@@ -51,15 +51,15 @@ function createWindow() {
     );
   }
   let dataCache = {};
-  const sendMessage = () => {
+  const sendMessage = (reason) => {
     if (dataCache.data && dataCache.info) {
       const dir = path.dirname(dataCache.info);
-      const baseName = path.basename(dataCache.info, '.json');
-      const time = dataCache.data.updatedTime
-        .replaceAll(' ', '-')
-        .replaceAll(':', '-');
-      fs.writeFile(path.join(dir, `/${baseName}-backup-${time}.json`), JSON.stringify(dataCache.data, null, 2), () => {
-        dialog.showMessageBox({message: '检测到系统异常，已为您自动备份项目', title: '系统异常' }).then(() => {
+      const time = new Date(+ new Date() + 8 * 3600 * 1000 ).toJSON()
+        .substr(0,19).replace("T","")
+        .replaceAll('-', '')
+        .replaceAll(':', '');
+      fs.writeFile(path.join(dir, `/${dataCache.data.name}-backup-${time}.chnr.json`), JSON.stringify(dataCache.data, null, 2), () => {
+        dialog.showMessageBox({message: `检测到系统异常，已为您自动备份项目,异常原因:${reason}`, title: '系统异常' }).then(() => {
           app.quit();
         });
       });
@@ -79,10 +79,10 @@ function createWindow() {
   });
   // 监听进程崩溃 或者网页无响应时
   win.webContents.on('render-process-gone', (event, details ) => {
-    sendMessage();
+    sendMessage(details.reason);
   });
   win.webContents.on('unresponsive', () => {
-    sendMessage();
+    sendMessage('unresponsive');
   });
 
   // 当 window 被关闭，这个事件会被触发。
