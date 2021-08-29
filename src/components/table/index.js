@@ -78,7 +78,9 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   if (preData !== data) {
     // 如果上一次的数据源和当前的数据源不相同 则需要更新
     updatePreData(data);
-    updateTableData(getInitState(fields));
+    const initState = getInitState(fields);
+    updateTableData(initState);
+    tableDataChange && tableDataChange(initState.fields, 'fields');
   }
   const [selectedFields, updateSelectedFields] = useState([]);
   const [selectedColumns, updateSelectedColumns] = useState([]);

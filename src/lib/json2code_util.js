@@ -20,23 +20,24 @@ const mapDataSourceEntities = (dataSource, datatype, domains, code, currentCode,
       fields: (entity.fields || []).map(field => {
         return {
           ...field,
-          type: getFieldType(datatype, domains, field, code, currentCode),
+          ...getFieldData(datatype, domains, field, code),
         }
       })
     }
   });
 };
 // 根据数据库类型 返回真实的数据类型
-const getFieldType = (datatype, domains, field, code, currentCode) => {
+const getFieldData = (datatype, domains, field, code) => {
   const domain = domains.filter(d => d.defKey === field.domain)[0];
   if (domain) {
     const type = datatype.filter(d => d.defKey === domain.applyFor)[0];
-    if (type) {
-      return type[code] || field.type;
-    }
-    return field.type;
+    return {
+      type: type?.[code] || field.type,
+      len: domain.len,
+      scale: domain.scale,
+    };
   }
-  return field.type;
+  return {};
 };
 // 根据模板数据生成代码
 const getTemplateString = (template, templateData) => {
@@ -198,7 +199,7 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
     fields: (dataTable.fields || []).map(field => {
       return {
         ...field,
-        type: getFieldType(datatype, domains, field, code, currentCode),
+        ...getFieldData(datatype, domains, field, code),
       }
     })
   };
@@ -244,7 +245,7 @@ const generateUpdateSql = (dataSource, changesData = [], code, oldDataSource) =>
       fields: (entity.fields || []).map(field => {
         return {
           ...field,
-          type: getFieldType(datatype, domains, field, code, currentCode),
+          ...getFieldData(datatype, domains, field, code),
         }
       })
     }
@@ -1122,7 +1123,7 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
             fields: (e.fields || []).map(field => {
               return {
                 ...field,
-                type: getFieldType(datatype, domains, field, code, currentCode),
+                ...getFieldData(datatype, domains, field, code)
               }
             })
           },
