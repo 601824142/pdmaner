@@ -131,6 +131,7 @@ export default {
     uniqueKeyError: 'This field is not repeatable, please modify',
     emptyField: '<empty filed>',
     entityUniqueKeyError: 'The data table contains duplicate fields, please modify,The overrun data entity has[{entities}]',
+    entityUniqueDefKeyError: 'The data table/view already exists, please modify it. The duplicate data table/view has [{entities}]',
     entityHideInGraphSizeError: 'Please select the typical attribute fields that can represent the business meaning of this table, and limit them to [{size}], The overrun data entity has[{entities}],If you need to modify it, please modify it through "Settings > SystemParameter > relation show field size"',
     formValidateMessage: 'Asterisk is required, cannot be empty!',
     entityAndViewUniquenessCheck: 'required cannot be duplicate!',

@@ -990,7 +990,8 @@ export const getDemoTemplateData = (templateShow) => {
             }
           ]
         }
-      ]
+      ],
+      "refEntities": ["SIMS_STUDENT"],
     },
     group: demoGroup,
   };

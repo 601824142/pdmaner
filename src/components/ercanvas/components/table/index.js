@@ -27,12 +27,18 @@ const Table = forwardRef(({node}, ref) => {
         || sourcePort === fieldSourcePort;
   };
   const calcFKPKShow = (f, h) => {
+   // console.log(f, h);
     if (h.refKey === 'primaryKey') {
       if (f[h.refKey]) {
         return '<PK>';
       } else if (allFk.includes(f.defKey)) {
         return '<FK>';
       }
+    } else if (h.refKey === 'notNull') {
+      if (f[h.refKey]) {
+        return '<NOTNULL>';
+      }
+      return '';
     }
     return f[h.refKey];
   };
