@@ -27,7 +27,7 @@ function createWindow() {
   });
 
   // 然后加载应用的 index.html。
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.CHINER_NODE_ENV === 'development') {
     var profile = require('../profile');
     win.loadURL(`http://${profile.host}:${profile.port}/index.html`);
     // 打开开发者工具。
@@ -94,7 +94,7 @@ function createWindow() {
   });
   ipcMain.on("jarPath", (event) => {
     let jarPath = '';
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.CHINER_NODE_ENV === 'development') {
       jarPath = path.join(__dirname, '../public/jar/chiner-java.jar');
     } else {
       jarPath = path.join(__dirname, '../../app.asar.unpacked/build/jar/chiner-java.jar')
@@ -103,7 +103,7 @@ function createWindow() {
   });
   ipcMain.on("docx", (event) => {
     let docx = '';
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.CHINER_NODE_ENV === 'development') {
       docx = path.join(__dirname, '../public/file/chiner-docx-tpl.docx');
     } else {
       docx = path.join(__dirname, '../../app.asar.unpacked/build/file/chiner-docx-tpl.docx')

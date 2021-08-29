@@ -85,7 +85,7 @@ export default React.memo(({prefix}) => {
               <th>lowerCase</th>
               <th><FormatMessage id='database.dot.lowerCase.name'/></th>
               <th><FormatMessage id='database.dot.lowerCase.param'/></th>
-              <th>{"('USERNAME') => 'useranem'"}</th>
+              <th>{"('USERNAME') => 'username'"}</th>
             </tr>
             <tr>
               <th>join</th>

@@ -190,6 +190,7 @@ import Entity from '../../app/container/entity';
 import {getPrefix} from '../../lib/prefixUtil';
 import { img } from '../../lib/generatefile/img';
 import LabelEditor from './LabelEditor';
+import FindEntity from './FindEntity';
 
 const { Dnd } = Addon;
 
@@ -198,6 +199,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                   changes, versionsData, save, getDataSource, openDict, selectionChanged,
                   jumpEntity, diagramKey, ...restProps}) => {
   const currentPrefix = getPrefix(prefix);
+  const findRef = useRef(null);
   const needRender = useRef(false);
   const graphRef = useRef(null);
   const dndRef = useRef(null);
@@ -710,6 +712,17 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         } else {
           minimapContainer.style.opacity = '0';
           minimapContainer.style.pointerEvents = 'none';
+        }
+      }
+    });
+    graph.bindKey(['ctrl+f','command+f'], () => {
+      const ersearchContainer = document.getElementById(`${id}ersearch`);
+      if (ersearchContainer) {
+        if (ersearchContainer.style.display === 'none') {
+          ersearchContainer.style.display = 'block';
+          findRef.current?.focus();
+        } else {
+          ersearchContainer.style.display = 'none';
         }
       }
     });
@@ -1430,7 +1443,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
   }, [data, dataSource]);
   useEffect(() => {
     const dom = document.getElementById(id);
-    if (dom.clientWidth > 0) {
+    if (dom?.clientWidth > 0) {
       graphRef.current.resize(restProps.width, restProps.height);
     }
   }, [restProps.width, restProps.height]);
@@ -1440,11 +1453,23 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       needRender.current = false;
     }
   }, [activeKey]);
+  const getGraph = () => {
+    return graphRef?.current;
+  };
   return <>
     <div
       id={id}
       style={{height: '100%'}}
     >{}</div>
-    <div style={{opacity: 0, pointerEvents: 'none'}} className='minimapContainer' id={`${id}minimapContainer`}>{}</div>
+    <div style={{display: 'none'}} className={`${currentPrefix}-er-search`} id={`${id}ersearch`}>
+      <FindEntity ref={findRef} prefix={currentPrefix} getGraph={getGraph} dataSource={dataSource}/>
+    </div>
+    <div
+      style={{opacity: 0, pointerEvents: 'none'}}
+      className={`${currentPrefix}-er-minimapContainer`}
+      id={`${id}minimapContainer`}
+    >
+      {}
+    </div>
   </>;
 };
