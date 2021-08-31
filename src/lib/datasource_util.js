@@ -561,6 +561,11 @@ export const getDemoDbConnect = () => {
       driverClass: 'com.kingbase8.Driver',
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.kingbase'}),
     },
+    maxcompute: {
+      defKey: 'MaxCompute',
+      driverClass: 'com.aliyun.odps.jdbc.OdpsDriver',
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.maxcompute'}),
+    },
   }
 };
 

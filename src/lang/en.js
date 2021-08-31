@@ -592,6 +592,7 @@ export default {
             dm: 'jdbc:dm://ip:port/name',
             guassdb: 'jdbc:postgresql://ip:port/name',
             kingbase: 'jdbc:kingbase8://ip:port/name',
+            maxcompute: 'jdbc:odps:http://ip/api?project=name&accessId=ACCESS_ID&accessKey=ACCESS_KEY',
         },
         configExample: 'config example:',
         connectSuccess: 'connectSuccess',

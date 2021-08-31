@@ -98,7 +98,9 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
     });
   };
   const test = useCallback((e, btn) => {
-    if (Object.keys(propertiesRef.current).filter(p => p !== 'customer_driver').some(p => !propertiesRef.current[p])) {
+    const names = ['customer_driver', 'username', 'password'];
+    if (Object.keys(propertiesRef.current)
+      .filter(p => !names.includes(p)).some(p => !propertiesRef.current[p])) {
       Modal.error({
         title: FormatMessage.string({id: 'optFail'}),
         message: FormatMessage.string({id: 'formValidateMessage'}),
@@ -293,7 +295,6 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
             className={`${currentPrefix}-form-item-label`}
             title={FormatMessage.string({id: 'dbConnect.username'})}
           >
-            <span className={`${currentPrefix}-form-item-label-require`}>{}</span>
             <FormatMessage id='dbConnect.username'/>
           </span>
           <span className={`${currentPrefix}-form-item-component`}>
@@ -309,7 +310,6 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
             className={`${currentPrefix}-form-item-label`}
             title={FormatMessage.string({id: 'dbConnect.password'})}
           >
-            <span className={`${currentPrefix}-form-item-label-require`}>{}</span>
             <FormatMessage id='dbConnect.password'/>
           </span>
           <span className={`${currentPrefix}-form-item-component`}>

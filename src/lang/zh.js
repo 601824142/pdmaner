@@ -601,6 +601,7 @@ export default {
             dm: 'jdbc:dm://IP地址:端口号/数据库名',
             guassdb: 'jdbc:postgresql://IP地址:端口号/数据库名',
             kingbase: 'jdbc:kingbase8://IP地址:端口号/数据库名',
+            maxcompute: 'jdbc:odps:http://地址/api?project=数据库名&accessId=ACCESS_ID&accessKey=ACCESS_KEY',
         },
         configExample: '配置示例：',
         connectSuccess: '连接成功',
