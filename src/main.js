@@ -1,5 +1,6 @@
 /* eslint-disable */
-const {app, BrowserWindow, Menu, nativeImage, ipcMain} = require('electron');
+const {app, BrowserWindow, Menu, nativeImage, ipcMain, dialog} = require('electron');
+const fs = require('fs');
 const path = require('path');
 const url = require('url');
 require('@electron/remote/main').initialize();
@@ -26,7 +27,7 @@ function createWindow() {
   });
 
   // 然后加载应用的 index.html。
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.CHINER_NODE_ENV === 'development') {
     var profile = require('../profile');
     win.loadURL(`http://${profile.host}:${profile.port}/index.html`);
     // 打开开发者工具。
@@ -49,7 +50,40 @@ function createWindow() {
         )
     );
   }
+  let dataCache = {};
+  const sendMessage = (reason) => {
+    if (dataCache.data && dataCache.info) {
+      const dir = path.dirname(dataCache.info);
+      const time = new Date(+ new Date() + 8 * 3600 * 1000 ).toJSON()
+        .substr(0,19).replace("T","")
+        .replaceAll('-', '')
+        .replaceAll(':', '');
+      fs.writeFile(path.join(dir, `/${dataCache.data.name}-backup-${time}.chnr.json`), JSON.stringify(dataCache.data, null, 2), () => {
+        dialog.showMessageBox({message: `检测到系统异常，已为您自动备份项目,异常原因:${reason}`, title: '系统异常' }).then(() => {
+          app.quit();
+        });
+      });
+    }
+  }
+  ipcMain.on('data', (e, args ) => {
+    try {
+      const argData = JSON.parse(args);
+      if (argData.next && argData.next.core) {
+        dataCache = argData.next.core;
+      } else if (argData.pre && argData.pre.core) {
+        dataCache = argData.pre.core;
+      }
+    } catch (e) {
 
+    }
+  });
+  // 监听进程崩溃 或者网页无响应时
+  win.webContents.on('render-process-gone', (event, details ) => {
+    sendMessage(details.reason);
+  });
+  win.webContents.on('unresponsive', () => {
+    sendMessage('unresponsive');
+  });
 
   // 当 window 被关闭，这个事件会被触发。
   win.on('closed', () => {
@@ -60,7 +94,7 @@ function createWindow() {
   });
   ipcMain.on("jarPath", (event) => {
     let jarPath = '';
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.CHINER_NODE_ENV === 'development') {
       jarPath = path.join(__dirname, '../public/jar/chiner-java.jar');
     } else {
       jarPath = path.join(__dirname, '../../app.asar.unpacked/build/jar/chiner-java.jar')
@@ -69,7 +103,7 @@ function createWindow() {
   });
   ipcMain.on("docx", (event) => {
     let docx = '';
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.CHINER_NODE_ENV === 'development') {
       docx = path.join(__dirname, '../public/file/chiner-docx-tpl.docx');
     } else {
       docx = path.join(__dirname, '../../app.asar.unpacked/build/file/chiner-docx-tpl.docx')

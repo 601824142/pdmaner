@@ -20,23 +20,24 @@ const mapDataSourceEntities = (dataSource, datatype, domains, code, currentCode,
       fields: (entity.fields || []).map(field => {
         return {
           ...field,
-          type: getFieldType(datatype, domains, field, code, currentCode),
+          ...getFieldData(datatype, domains, field, code),
         }
       })
     }
   });
 };
 // 根据数据库类型 返回真实的数据类型
-const getFieldType = (datatype, domains, field, code, currentCode) => {
+export const getFieldData = (datatype, domains, field, code) => {
   const domain = domains.filter(d => d.defKey === field.domain)[0];
   if (domain) {
     const type = datatype.filter(d => d.defKey === domain.applyFor)[0];
-    if (type) {
-      return type[code] || field.type;
-    }
-    return field.type;
+    return {
+      type: type?.[code] || field.type,
+      len: domain.len,
+      scale: domain.scale,
+    };
   }
-  return field.type;
+  return {};
 };
 // 根据模板数据生成代码
 const getTemplateString = (template, templateData) => {
@@ -185,7 +186,6 @@ const getTemplateString = (template, templateData) => {
 };
 // 生成增量代码数据
 const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) => {
-  const currentCode = _.get(dataSource, 'profile.default.db', '');
   const datatype = _.get(dataSource, 'dataTypeMapping.mappings', []);
   const domains = _.get(dataSource, 'domains', []);
   // 获取该数据库下的模板信息
@@ -198,12 +198,13 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
     fields: (dataTable.fields || []).map(field => {
       return {
         ...field,
-        type: getFieldType(datatype, domains, field, code, currentCode),
+        ...getFieldData(datatype, domains, field, code),
       }
     })
   };
+  const name = templateShow === 'createView' ? 'view' : 'entity';
   const templateData = {
-    entity: tempDataTable,
+    [name]: tempDataTable,
     group,
     separator: sqlSeparator
   };
@@ -244,7 +245,7 @@ const generateUpdateSql = (dataSource, changesData = [], code, oldDataSource) =>
       fields: (entity.fields || []).map(field => {
         return {
           ...field,
-          type: getFieldType(datatype, domains, field, code, currentCode),
+          ...getFieldData(datatype, domains, field, code),
         }
       })
     }
@@ -989,7 +990,8 @@ export const getDemoTemplateData = (templateShow) => {
             }
           ]
         }
-      ]
+      ],
+      "refEntities": ["SIMS_STUDENT"],
     },
     group: demoGroup,
   };
@@ -1036,12 +1038,307 @@ export const getDemoTemplateData = (templateShow) => {
     },
     group: demoGroup,
   };
+  const demoView = {
+    view: {
+      "defKey": "V_CLASS_STUDENT",
+      "defName": "班级学生",
+      "comment": "",
+      "properties": {},
+      "nameTemplate": "{defKey}[{defName}]",
+      "headers": [
+        {
+          "refKey": "hideInGraph",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "defKey",
+          "hideInGraph": false
+        },
+        {
+          "refKey": "refEntity",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "defName",
+          "hideInGraph": false
+        },
+        {
+          "refKey": "primaryKey",
+          "hideInGraph": false
+        },
+        {
+          "refKey": "notNull",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "autoIncrement",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "domain",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "type",
+          "hideInGraph": false
+        },
+        {
+          "refKey": "len",
+          "hideInGraph": false
+        },
+        {
+          "refKey": "scale",
+          "hideInGraph": false
+        },
+        {
+          "refKey": "comment",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "refDict",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "defaultValue",
+          "hideInGraph": true
+        },
+        {
+          "refKey": "isStandard",
+          "hideInGraph": false
+        },
+        {
+          "freeze": false,
+          "refKey": "uiHint",
+          "hideInGraph": true
+        }
+      ],
+      "fields": [
+        {
+          "defKey": "CLASS_NAME",
+          "defName": "班级名称",
+          "comment": "",
+          "len": 90,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "Name",
+          "type": "VARCHAR",
+          "refEntity": "SIMS_CLASS",
+          "refEntityField": "CLASS_NAME"
+        },
+        {
+          "defKey": "ENG_NAME",
+          "defName": "英文名",
+          "comment": "",
+          "len": 90,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "Name",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "ENG_NAME"
+        },
+        {
+          "defKey": "STUDENT_NAME",
+          "defName": "学生姓名",
+          "comment": "",
+          "len": 90,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "Name",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "STUDENT_NAME"
+        },
+        {
+          "defKey": "STUDENT_ID",
+          "defName": "学生ID",
+          "comment": "",
+          "len": 32,
+          "scale": "",
+          "primaryKey": true,
+          "notNull": true,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "IdOrKey",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "STUDENT_ID"
+        },
+        {
+          "defKey": "CLASS_ID",
+          "defName": "所在班级ID",
+          "comment": "",
+          "len": 32,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": true,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "IdOrKey",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "CLASS_ID"
+        },
+        {
+          "defKey": "COLLEGE_ID",
+          "defName": "所在学院ID",
+          "comment": "",
+          "len": 32,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": true,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "IdOrKey",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "COLLEGE_ID"
+        },
+        {
+          "defKey": "ADVISER",
+          "defName": "辅导员",
+          "comment": "",
+          "len": 90,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "Name",
+          "type": "VARCHAR",
+          "refEntity": "SIMS_CLASS",
+          "refEntityField": "ADVISER"
+        },
+        {
+          "defKey": "ID_CARD_NO",
+          "defName": "身份证号",
+          "comment": "",
+          "len": "60",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "DefaultString",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "ID_CARD_NO"
+        },
+        {
+          "defKey": "MOBILE_PHONE",
+          "defName": "手机号",
+          "comment": "",
+          "len": "60",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "DefaultString",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "MOBILE_PHONE"
+        },
+        {
+          "defKey": "GENDER",
+          "defName": "性别",
+          "comment": "",
+          "len": "32",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "'M'",
+          "hideInGraph": false,
+          "domain": "Dict",
+          "refDict": "Gender",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "GENDER"
+        },
+        {
+          "defKey": "MARITAL",
+          "defName": "婚姻状况",
+          "comment": "",
+          "len": "32",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "'UNMARRIED'",
+          "hideInGraph": true,
+          "domain": "Dict",
+          "refDict": "Marital",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "MARITAL"
+        },
+        {
+          "defKey": "POLITICAL",
+          "defName": "政治面貌",
+          "comment": "",
+          "len": "32",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "Dict",
+          "refDict": "Political",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "POLITICAL"
+        },
+        {
+          "defKey": "BIRTH",
+          "defName": "出生日期",
+          "comment": "",
+          "len": "",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "DateTime",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "BIRTH"
+        }
+      ],
+      "correlations": [],
+      "indexes": []
+    },
+    group: demoGroup,
+  }
   switch (templateShow) {
     case 'content':
       data = JSON.stringify({...demoTable, separator: ';'}, null, 2);
       break;
     case 'createTable':
       data = JSON.stringify({...demoTable, separator: ';'}, null, 2);
+      break;
+    case 'createView':
+      data = JSON.stringify({...demoView, separator: ';'}, null, 2);
       break;
     case 'createIndex':
       data = JSON.stringify({
@@ -1088,7 +1385,6 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
   // 获取全量脚本（删表，建表，建索引，表注释）
   const { dataSource, datatype, allTemplate, sqlSeparator } = getDataSourceProfile(data);
   const domains = _.get(dataSource, 'domains', []);
-  const currentCode = _.get(dataSource, 'profile.default.db', '');
   const getTemplate = (templateShow) => {
     return allTemplate.filter(t => t.applyFor === code)[0]?.[templateShow] || '';
   };
@@ -1100,6 +1396,7 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
       return true;
     }).map(e => ({
       ...e,
+      datatype: name,
       groupType: `ref${firstUp(name)}`
     }));
   };
@@ -1108,24 +1405,27 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
     const tempData = code === 'dictSQLTemplate' ? getFilterData('dicts') : getFilterData('entities')
         .concat(getFilterData('views'));
     sqlString += tempData.map(e => {
+      const tempTemplate = [...filterTemplate];
       let tempData = '';
-      let allData = {};
       let data;
       if (code === 'dictSQLTemplate') {
         data = {
-          dict: _.omit(e, 'groupType'),
+          dict: _.omit(e, ['groupType', 'datatype']),
         }
       } else {
+        const name = e.datatype === 'entities' ? 'entity' : 'view';
+        const childData = {
+          ..._.omit(e, ['groupType', 'datatype']),
+          fields: (e.fields || []).map(field => {
+            return {
+              ...field,
+              ...getFieldData(datatype, domains, field, code)
+            }
+          })
+        };
         data = {
-          entity: {
-            ..._.omit(e, 'groupType'),
-            fields: (e.fields || []).map(field => {
-              return {
-                ...field,
-                type: getFieldType(datatype, domains, field, code, currentCode),
-              }
-            })
-          },
+          entity: childData,
+          view: childData,
         }
       }
       const templateData = {
@@ -1135,11 +1435,17 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
             .map(g => _.omit(g, ['defKey', 'defName'])),
         separator: sqlSeparator
       };
-      allData.createIndex = `${getTemplateString(getTemplate('createIndex'), templateData)}`;
-      allData.createTable = `${getTemplateString(getTemplate('createTable'), templateData)}`;
-      allData.content = `${getTemplateString(getTemplate('content'), templateData)}`;
-      filterTemplate.forEach(f => {
-        tempData += allData[f] ? `${allData[f]}\n` : '';
+      if (tempTemplate.includes('createTable')) {
+        tempTemplate.push('createView');
+      }
+      tempTemplate.filter(t => {
+        if (e.datatype === 'entities') {
+          return t !== 'createView';
+        }
+        return t !== 'createTable';
+      }).forEach(f => {
+        const code = `${getTemplateString(getTemplate(f), templateData)}`;
+        tempData += code ? `${code}\n` : '';
       });
       return tempData;
     }).join('');

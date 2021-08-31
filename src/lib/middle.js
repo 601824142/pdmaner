@@ -31,6 +31,7 @@ const showItemInFolder = json.showItemInFolder;
 const getLogPath = json.getLogPath;
 const showErrorLogFolder = json.showErrorLogFolder;
 const basename = json.basename;
+const getBackupAllFile = json.getBackupAllFile;
 
 export {
   saveJsonPromise,
@@ -62,5 +63,6 @@ export {
   getLogPath,
   showErrorLogFolder,
   basename,
+  getBackupAllFile,
 };
 

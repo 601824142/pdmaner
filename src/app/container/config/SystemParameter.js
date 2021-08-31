@@ -7,6 +7,7 @@ import Language from './Language';
 import Model from './Model';
 import RelationFieldSize from './RelationFieldSize';
 import AutoSave from './AutoSave';
+import AutoBackup from './AutoBackup';
 import Jvm from './JVM';
 import { platform } from '../../../lib/middle';
 
@@ -18,6 +19,7 @@ export default React.memo(({prefix, ...restProps}) => {
       <Jvm {...restProps}/>
     </>}
     <AutoSave {...restProps}/>
+    <AutoBackup {...restProps}/>
     <SqlDelimiter {...restProps}/>
     <DocTemplate {...restProps}/>
     <Language {...restProps}/>

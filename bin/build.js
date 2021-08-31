@@ -1,4 +1,4 @@
-process.env.NODE_ENV = 'production';
+process.env.CHINER_NODE_ENV = 'production';
 var webpack = require('webpack');
 var config = require('../config/webpack.pro.config.js');
 

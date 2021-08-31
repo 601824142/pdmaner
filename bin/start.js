@@ -1,4 +1,4 @@
-process.env.NODE_ENV = 'development';
+process.env.CHINER_NODE_ENV = 'development';
 var path = require('path');
 var childProcess = require('child_process');
 var webpack = require('webpack');

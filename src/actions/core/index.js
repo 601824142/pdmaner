@@ -1,12 +1,12 @@
 import moment from 'moment';
 import _ from 'lodash/object';
-import crypto from 'crypto';
+//import crypto from 'crypto';
 
 import {
   saveJsonPromise, readJsonPromise, saveJsonPromiseAs, openProjectFilePath,
   saveVersionProject, removeVersionProject,
   removeAllVersionProject, openFileOrDirPath, ensureDirectoryExistence,
-  dirSplicing, fileExists, deleteFile, basename, writeLog,
+  dirSplicing, fileExists, deleteFile, basename, writeLog, getBackupAllFile,
 } from '../../lib/middle';
 import { openLoading, closeLoading, optReset, STATUS } from '../common';
 //import { pdman2sino, version2sino } from '../../lib/datasource_util';
@@ -136,25 +136,6 @@ export const updateProjectInfo = (info) => {
   };
 };
 
-export const validateSaveProject = (info, data) => {
-  return new Promise((res, rej) => {
-    // 创建保存前的hash
-    const saveData = typeof data !== 'string' ? JSON.stringify(data, null, 2) : data;
-    const hashOldRead = crypto.createHash('md5');
-    hashOldRead.update(saveData);
-    readJsonPromise(info.path).then((newData) => {
-      const hashNewRead = crypto.createHash('md5');
-      const newDataStr = typeof newData !== 'string' ? JSON.stringify(newData, null, 2) : newData;
-      hashNewRead.update(`${newDataStr}`);
-      if (hashOldRead.digest('hex') === hashNewRead.digest('hex')) {
-        res();
-      } else {
-        rej(new Error('error'));
-      }
-    });
-  });
-};
-
 export const autoSaveProject = (data) => {
   // 此处为异步操作
   const time = moment().format('YYYY-M-D HH:mm:ss');
@@ -165,15 +146,12 @@ export const autoSaveProject = (data) => {
   };
   return (dispatch, getState) => {
     const info = getState()?.core?.info;
-    saveJsonPromise(info, tempData)
-      .then(() => {
-        validateSaveProject({path: info}, tempData).catch((err) => {
+    getBackupAllFile(getState(), () => {
+      saveJsonPromise(info, tempData)
+        .catch((err) => {
           writeLog(err);
         });
-      })
-      .catch((err) => {
-        writeLog(err);
-      });
+    });
   };
 };
 
@@ -194,34 +172,29 @@ export const saveProject = (data, saveAs, callback) => {
       return name.split('.')[0];
     };
     if (saveAs) {
-      saveJsonPromiseAs(data, (d, f) => {
+      saveJsonPromiseAs(tempData, (d, f) => {
         const oldData = JSON.parse(d.toString().replace(/^\uFEFF/, ''));
         oldData.name = getName(f);
         return JSON.stringify(oldData, null, 2);
       }).then((path) => {
         const name = getName(path);
-        validateSaveProject({path}, {...data, name}).then(() => {
-          addHistory({
-            describe: data.describe || '',
-            name,
-            avatar: data.avatar || '',
-            path,
-          }, (err) => {
-            if (!err) {
-              tempData.name = name;
-              setMemoryCache('data', tempData);
-              callback && callback();
-              dispatch(saveProjectSuccess(tempData));
-              dispatch(updateProjectInfo(path));
-            } else {
-              callback && callback(err);
-              dispatch(saveProjectFail(err));
-            }
-          })(dispatch, getState);
-        }).catch((err) => {
-          callback && callback(err);
-          dispatch(saveProjectFail(err));
-        });
+        addHistory({
+          describe: tempData.describe || '',
+          name,
+          avatar: tempData.avatar || '',
+          path,
+        }, (err) => {
+          if (!err) {
+            tempData.name = name;
+            setMemoryCache('data', tempData);
+            callback && callback();
+            dispatch(saveProjectSuccess(tempData));
+            dispatch(updateProjectInfo(path));
+          } else {
+            callback && callback(err);
+            dispatch(saveProjectFail(err));
+          }
+        })(dispatch, getState);
       })
         .catch((err) => {
           callback && callback(err);
@@ -230,13 +203,10 @@ export const saveProject = (data, saveAs, callback) => {
     } else {
       saveJsonPromise(info, tempData)
         .then(() => {
-          validateSaveProject({path: info}, tempData).then(() => {
+          getBackupAllFile(getState(), () => {
             setMemoryCache('data', tempData);
             callback && callback();
             dispatch(saveProjectSuccess(tempData));
-          }).catch((err) => {
-            callback && callback(err);
-            dispatch(saveProjectFail(err));
           });
         })
         .catch((err) => {

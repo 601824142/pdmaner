@@ -8,5 +8,6 @@ export default React.memo(({prefix}) => {
     <div><span>Ctrl/Command + Shift + U</span><span><FormatMessage id='quick.toggleCase'/></span></div>
     <div><FormatMessage id='quick.minimap'/></div>
     <div><FormatMessage id='quick.drag'/></div>
+    <div><FormatMessage id='quick.find'/></div>
   </div>;
 });

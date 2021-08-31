@@ -495,3 +495,27 @@ export const showErrorLogFolder = (file) => {
 export const basename = (fileName, extension) => {
   return path.basename(fileName, extension);
 }
+
+export const getBackupAllFile = ({core, config}, callback) => {
+  if (core.info) {
+    const dir = path.dirname(core.info);
+    // 文件名-backup-${年月日时分秒}.chnr.json
+    //const name = basename(core.info, '.json');
+    const reg = new RegExp(`${core.data.name}-backup-\(\\d)+.chnr.json`);
+    fs.readdir(dir, (error, files) => {
+      if (!error) {
+        const allFiles = files.filter(f => reg.test(f)).sort((a, b) => {
+          return moment(a.match(/(\d)+/)[0]).isAfter(b.match(/(\d)+/)[0]);
+        });
+        if (allFiles.length === config.autoBackup) {
+          // 删除最旧的
+          fs.unlinkSync(path.join(dir, allFiles[0]));
+        }
+        const fileName = `${core.data.name}-backup-${moment().format('YYYYMDHHmmss')}.chnr.json`;
+        fs.writeFile(path.join(dir, fileName), JSON.stringify(core.data, null, 2), () => {
+          callback && callback();
+        })
+      }
+    });
+  }
+};

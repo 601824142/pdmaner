@@ -2,9 +2,9 @@
   "name": "教学管理系统",
   "describe": "教学管理系统参考案例",
   "avatar": "",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "createdTime": "2021-8-18 08:23:53",
-  "updatedTime": "2021-8-19 07:07:00",
+  "updatedTime": "2021-8-31 10:20:43",
   "dbConns": [],
   "profile": {
     "default": {
@@ -118,74 +118,65 @@
       "DM",
       "GaussDB",
       "Kingbase",
+      "MaxCompute",
       "JAVA",
       "C#"
     ],
     "codeTemplates": [
       {
         "type": "dbDDL",
-        "isDefault": true,
         "applyFor": "MYSQL",
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}} {{= field.notNull ? 'NOT NULL' : '' }} {{= field.autoIncrement ? 'AUTO_INCREMENT' : '' }} {{= field.defaultValue ? it.func.join('DEFAULT',field.defaultValue,' ') : '' }} COMMENT '{{=it.func.join(field.defName,field.comment,';')}}' {{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n)  COMMENT = '{{=it.func.join(it.entity.defName,it.entity.comment,';') }}';\n$blankline\n",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}"
       },
       {
         "type": "dbDDL",
-        "isDefault": true,
         "applyFor": "ORACLE",
         "createTable": "CREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? '' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}"
       },
       {
         "type": "dbDDL",
-        "isDefault": true,
         "applyFor": "SQLServer",
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' IDENTITY(1,1)' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n){{=it.separator}}\n$blankline\n{{? it.entity.defKey || it.entity.defName}}EXEC sp_addextendedproperty 'MS_Description', '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}', 'SCHEMA', dbo, 'table', {{=it.entity.defKey}}, null, null;{{?}}\n{{~it.entity.fields:field:index}}\nEXEC sp_addextendedproperty 'MS_Description', '{{=it.func.join(field.defName,field.comment,';')}}', 'SCHEMA', dbo, 'table', {{=it.entity.defKey}}, 'column', {{=field.defKey}};\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}"
       },
       {
         "type": "dbDDL",
-        "isDefault": true,
         "applyFor": "PostgreSQL",
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' AUTO_INCREMENT' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}"
       },
       {
         "type": "appCode",
-        "isDefault": true,
         "applyFor": "JAVA",
-        "content": "package cn.com.chiner.entity;\n$blankline\nimport javax.persistence.*;\nimport java.io.Serializable;\nimport java.util.Date;\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n /**\n * @author : http://www.chiner.pro\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\n@Table(name=\"{{=it.entity.defKey}}\")\npublic class {{=it.func.camel(it.entity.defKey,true) }} implements Serializable,Cloneable{\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    {{? field.primaryKey }}\n    @Id\n    @GeneratedValue\n    {{?}}\n    private {{=field.type}} {{=it.func.camel(field.defKey,false)}} ;\n{{~}}\n$blankline\n\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public {{=field.type}} get{{=it.func.camel(field.defKey,true)}}(){\n        return this.{{=it.func.camel(field.defKey,false)}};\n    }\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public void set{{=it.func.camel(field.defKey,true)}}({{=field.type}} {{= it.func.camel(field.defKey,false) }}){\n        return this.{{=it.func.camel(field.defKey,false)}}={{=it.func.camel(field.defKey,false)}};\n    }\n{{~}}\n}"
+        "content": "package cn.com.chiner.entity;\n$blankline\nimport javax.persistence.*;\nimport java.io.Serializable;\nimport java.util.Date;\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n /**\n * @author : http://www.chiner.pro\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\n@Table(name=\"{{=it.entity.defKey}}\")\npublic class {{=it.func.camel(it.entity.defKey,true) }} implements Serializable,Cloneable{\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    {{? field.primaryKey }}\n    @Id\n    @GeneratedValue\n    {{?}}\n    private {{=field.type}} {{=it.func.camel(field.defKey,false)}} ;\n{{~}}\n$blankline\n\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public {{=field.type}} get{{=it.func.camel(field.defKey,true)}}(){\n        return this.{{=it.func.camel(field.defKey,false)}};\n    }\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public void set{{=it.func.camel(field.defKey,true)}}({{=field.type}} {{= it.func.camel(field.defKey,false) }}){\n        this.{{=it.func.camel(field.defKey,false)}}={{=it.func.camel(field.defKey,false)}};\n    }\n{{~}}\n}"
       },
       {
         "type": "dbDDL",
-        "isDefault": true,
         "applyFor": "DB2",
         "createTable": "CREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? '' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}"
       },
       {
         "type": "dbDDL",
-        "isDefault": true,
         "applyFor": "DM",
         "createTable": "CREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? '' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ','('+field.defaultValue+')',' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}"
       },
       {
         "type": "appCode",
-        "isDefault": true,
         "applyFor": "C#",
         "content": "using System;\nusing System.Collections.Generic;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n/*\n * @author : http://www.chiner.com.cn\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace Chiner.Application\n{\n    public partial class {{=it.func.camel(it.entity.defKey,true) }}\n    {\n    \n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}} { get; set; }\n        $blankline\n        {{~}}\n        \n    }\n}"
       },
       {
         "type": "dbDDL",
-        "isDefault": true,
         "applyFor": "GaussDB",
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' AUTO_INCREMENT' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}"
       },
       {
         "type": "dbDDL",
-        "isDefault": true,
         "applyFor": "Kingbase",
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' AUTO_INCREMENT' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}"
@@ -194,6 +185,12 @@
         "type": "dbDDL",
         "applyFor": "dictSQLTemplate",
         "content": "/* 插入字典总表[{{=it.dict.defKey}}-{{=it.dict.defName}}] */\nINSERT INTO SYS_DICT(KEY_,LABEL,INTRO,REVISION) VALUES('{{=it.dict.defKey}}','{{=it.dict.defName}}','{{=it.dict.intro}}',1);\n/* 插入字典明细表 */\n{{~it.dict.items:item:index}}\nINSERT INTO SYS_DICT_ITEM(DICT_KEY,KEY_,LABEL,SORT_,INTRO,REVISION) VALUES('{{=it.dict.defKey}}','{{=item.defKey}}','{{=item.defName}}','{{=item.sort}}','{{=item.intro}}',1);\n{{~}}"
+      },
+      {
+        "type": "dbDDL",
+        "applyFor": "MaxCompute",
+        "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}} {{= field.notNull ? 'NOT NULL' : '' }} {{= field.autoIncrement ? 'AUTO_INCREMENT' : '' }} {{= field.defaultValue ? it.func.join('DEFAULT',field.defaultValue,' ') : '' }} COMMENT '{{=it.func.join(field.defName,field.comment,';')}}' {{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n)  COMMENT = '{{=it.func.join(it.entity.defName,it.entity.comment,';') }}';\n$blankline\n",
+        "createIndex": ""
       }
     ],
     "generatorDoc": {
@@ -210,14 +207,26 @@
         "defName": "下拉输入框"
       },
       {
+        "data": [
+          "",
+          ""
+        ],
         "defKey": "CheckBox",
         "defName": "复选框"
       },
       {
+        "data": [
+          "",
+          ""
+        ],
         "defKey": "RadioBox",
         "defName": "单选框"
       },
       {
+        "data": [
+          "",
+          ""
+        ],
         "defKey": "Double",
         "defName": "小数输入"
       },
@@ -238,10 +247,18 @@
         "defName": "年月输入"
       },
       {
+        "data": [
+          "",
+          ""
+        ],
         "defKey": "Text",
         "defName": "长文本输入"
       },
       {
+        "data": [
+          "",
+          ""
+        ],
         "defKey": "RichText",
         "defName": "富文本输入"
       }
@@ -1207,7 +1224,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "IdOrKey",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "CLASS_ID",
@@ -1221,7 +1238,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "IdOrKey",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "STUDENT_ID",
@@ -1235,7 +1252,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "IdOrKey",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "STUDENT_NAME",
@@ -1249,7 +1266,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Name",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "ENG_NAME",
@@ -1263,7 +1280,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Name",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "ID_CARD_NO",
@@ -1277,7 +1294,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "DefaultString",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -1291,7 +1308,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "DefaultString",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "GENDER",
@@ -1306,7 +1323,7 @@
           "hideInGraph": false,
           "domain": "Dict",
           "refDict": "Gender",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "MONTHLY_SALARY",
@@ -1320,7 +1337,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Money",
-          "type": ""
+          "type": "DECIMAL"
         },
         {
           "defKey": "BIRTH",
@@ -1334,7 +1351,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "DateTime",
-          "type": ""
+          "type": "DATETIME"
         },
         {
           "defKey": "AVATAR",
@@ -1348,7 +1365,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Int",
-          "type": ""
+          "type": "INT"
         },
         {
           "defKey": "HEIGHT",
@@ -1362,7 +1379,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Int",
-          "type": ""
+          "type": "INT"
         },
         {
           "defKey": "WEIGHT",
@@ -1376,7 +1393,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Int",
-          "type": ""
+          "type": "INT"
         },
         {
           "defKey": "NATION",
@@ -1391,7 +1408,7 @@
           "hideInGraph": false,
           "domain": "Dict",
           "refDict": "GBNation",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "POLITICAL",
@@ -1406,7 +1423,7 @@
           "hideInGraph": false,
           "domain": "Dict",
           "refDict": "Political",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "MARITAL",
@@ -1421,7 +1438,7 @@
           "hideInGraph": true,
           "domain": "Dict",
           "refDict": "Marital",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "DOMICILE_PLACE_PROVINCE",
@@ -1435,7 +1452,7 @@
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "DOMICILE_PLACE_CITY",
@@ -1449,7 +1466,7 @@
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "DOMICILE_PLACE_ADDRESS",
@@ -1463,7 +1480,7 @@
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "HOBBY",
@@ -1477,7 +1494,7 @@
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "INTRO",
@@ -1491,7 +1508,7 @@
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DescText",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "PRESENT_ADDRESS",
@@ -1505,7 +1522,7 @@
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "EMAIL",
@@ -1519,7 +1536,7 @@
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "ENTRY_DATE",
@@ -1533,7 +1550,7 @@
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DateTime",
-          "type": ""
+          "type": "DATETIME"
         },
         {
           "defKey": "STATUS",
@@ -1548,7 +1565,7 @@
           "hideInGraph": true,
           "domain": "Dict",
           "refDict": "StudentStatus",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "TENANT_ID",
@@ -1562,7 +1579,7 @@
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "IdOrKey",
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "REVISION",
@@ -1576,7 +1593,7 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": ""
+          "type": "INT"
         },
         {
           "defKey": "CREATED_BY",
@@ -1590,7 +1607,7 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "CREATED_TIME",
@@ -1604,7 +1621,7 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": ""
+          "type": "DATETIME"
         },
         {
           "defKey": "UPDATED_BY",
@@ -1618,7 +1635,7 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": ""
+          "type": "VARCHAR"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -1632,7 +1649,7 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": ""
+          "type": "DATETIME"
         }
       ],
       "correlations": [
@@ -2909,21 +2926,6 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true
-        },
-        {
-          "defKey": "",
-          "defName": "",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "domain": "DefaultString"
         }
       ],
       "correlations": [],
@@ -3342,7 +3344,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Name",
-          "type": "VARCHAR",
+          "type": "",
           "refEntity": "SIMS_STUDENT",
           "refEntityField": "ENG_NAME"
         },
@@ -3358,7 +3360,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Name",
-          "type": "VARCHAR",
+          "type": "",
           "refEntity": "SIMS_STUDENT",
           "refEntityField": "STUDENT_NAME"
         },
@@ -3374,7 +3376,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "IdOrKey",
-          "type": "VARCHAR",
+          "type": "",
           "refEntity": "SIMS_STUDENT",
           "refEntityField": "STUDENT_ID"
         },
@@ -3390,7 +3392,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "IdOrKey",
-          "type": "VARCHAR",
+          "type": "",
           "refEntity": "SIMS_STUDENT",
           "refEntityField": "CLASS_ID"
         },
@@ -3406,7 +3408,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "IdOrKey",
-          "type": "VARCHAR",
+          "type": "",
           "refEntity": "SIMS_STUDENT",
           "refEntityField": "COLLEGE_ID"
         },
@@ -3427,22 +3429,6 @@
           "refEntityField": "ADVISER"
         },
         {
-          "defKey": "CLASS_ID1",
-          "defName": "班级ID",
-          "comment": "",
-          "len": 32,
-          "scale": "",
-          "primaryKey": true,
-          "notNull": true,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR",
-          "refEntity": "SIMS_CLASS",
-          "refEntityField": "CLASS_ID"
-        },
-        {
           "defKey": "ID_CARD_NO",
           "defName": "身份证号",
           "comment": "",
@@ -3454,7 +3440,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "DefaultString",
-          "type": "VARCHAR",
+          "type": "",
           "refEntity": "SIMS_STUDENT",
           "refEntityField": "ID_CARD_NO"
         },
@@ -3470,7 +3456,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "DefaultString",
-          "type": "VARCHAR",
+          "type": "",
           "refEntity": "SIMS_STUDENT",
           "refEntityField": "MOBILE_PHONE"
         },
@@ -3487,114 +3473,59 @@
           "hideInGraph": false,
           "domain": "Dict",
           "refDict": "Gender",
-          "type": "VARCHAR",
+          "type": "",
           "refEntity": "SIMS_STUDENT",
           "refEntityField": "GENDER"
         },
         {
-          "defKey": "",
-          "defName": "",
+          "defKey": "MARITAL",
+          "defName": "婚姻状况",
           "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
+          "len": "32",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "domain": "DefaultString"
+          "defaultValue": "'UNMARRIED'",
+          "hideInGraph": true,
+          "domain": "Dict",
+          "refDict": "Marital",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "MARITAL"
         },
         {
-          "defKey": "",
-          "defName": "",
+          "defKey": "POLITICAL",
+          "defName": "政治面貌",
           "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
+          "len": "32",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "refDict": "",
-          "domain": "DefaultString"
+          "domain": "Dict",
+          "refDict": "Political",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "POLITICAL"
         },
         {
-          "defKey": "",
-          "defName": "",
+          "defKey": "BIRTH",
+          "defName": "出生日期",
           "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "refDict": "",
-          "domain": "DefaultString"
-        },
-        {
-          "defKey": "",
-          "defName": "",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "domain": "DefaultString"
-        },
-        {
-          "defKey": "",
-          "defName": "",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "domain": "DefaultString"
-        },
-        {
-          "defKey": "",
-          "defName": "",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "domain": "DefaultString"
-        },
-        {
-          "defKey": "",
-          "defName": "",
-          "comment": "",
-          "type": "VARCHAR",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "refDict": "",
-          "domain": "DefaultString"
+          "domain": "DateTime",
+          "type": "",
+          "refEntity": "SIMS_STUDENT",
+          "refEntityField": "BIRTH"
         }
       ],
       "correlations": [],
@@ -3957,7 +3888,8 @@
         "DM": "VARCHAR2",
         "C#": "string",
         "GaussDB": "VARCHAR",
-        "Kingbase": "VARCHAR"
+        "Kingbase": "VARCHAR",
+        "MaxCompute": "STRING"
       },
       {
         "defKey": "double",
@@ -3971,7 +3903,8 @@
         "DM": "DECIMAL",
         "C#": "float",
         "GaussDB": "NUMERIC",
-        "Kingbase": "NUMERIC"
+        "Kingbase": "NUMERIC",
+        "MaxCompute": "DOUBLE"
       },
       {
         "defKey": "int",
@@ -3985,7 +3918,8 @@
         "DM": "INTEGER",
         "C#": "float",
         "GaussDB": "INTEGER",
-        "Kingbase": "INT4"
+        "Kingbase": "INT4",
+        "MaxCompute": "INT"
       },
       {
         "defKey": "date",
@@ -3999,7 +3933,8 @@
         "DM": "DATE",
         "C#": "date",
         "GaussDB": "DATE",
-        "Kingbase": "DATE"
+        "Kingbase": "DATE",
+        "MaxCompute": "DATETIME"
       },
       {
         "defKey": "bytes",
@@ -4013,7 +3948,8 @@
         "DM": "BLOB",
         "C#": "binary",
         "GaussDB": "BYTEA",
-        "Kingbase": "BYTEA"
+        "Kingbase": "BYTEA",
+        "MaxCompute": "BINARY"
       },
       {
         "defKey": "largeText",
@@ -4027,7 +3963,8 @@
         "DM": "CLOB",
         "C#": "string",
         "GaussDB": "TEXT",
-        "Kingbase": "TEXT"
+        "Kingbase": "TEXT",
+        "MaxCompute": "STRING"
       }
     ]
   },

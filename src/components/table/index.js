@@ -20,7 +20,8 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                                className, expand, otherOpt = true, disableHeaderReset,
                                updateDataSource, disableAddStandard, ready, twinkle, getDataSource,
                                disableDragRow = true, freeze = false, reading = false,
-                               fixHeader = true, openDict, defaultGroups}, refInstance) => {
+                               fixHeader = true, openDict, defaultGroups, forceUpdate = false},
+                                     refInstance) => {
   const inputRef = useRef({});
   const currentPrefix = getPrefix(prefix);
   const [expands, setExpands] = useState([]);
@@ -78,7 +79,9 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   if (preData !== data) {
     // 如果上一次的数据源和当前的数据源不相同 则需要更新
     updatePreData(data);
-    updateTableData(getInitState(fields));
+    const initState = getInitState(fields);
+    updateTableData(initState);
+    forceUpdate && tableDataChange && tableDataChange(initState.fields, 'fields');
   }
   const [selectedFields, updateSelectedFields] = useState([]);
   const [selectedColumns, updateSelectedColumns] = useState([]);

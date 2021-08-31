@@ -52,6 +52,11 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
   // 需要校验数据表展示在关系图上的字段是否超过限制
   let sizeError = [];
   let repeatError = [];
+  let entityRepeatError = [];
+  let currentDefKey = {
+    entity: [],
+    view: [],
+  };
   const size = _.get(dataSource, 'profile.relationFieldSize', 15);
   tabs.map(t => {
     return {
@@ -62,7 +67,7 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
           || []
     }
   }).forEach(t => {
-    if (t.type === 'entity') {
+    if (t.type === 'entity' || t.type === 'view') {
       const keys = (t.data?.fields || []).map(f => f.defKey);
       if(!(t.data.fields.filter(f => !f.hideInGraph).length <= size)) {
         sizeError.push(t.data.defKey);
@@ -77,8 +82,30 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
         }, []).join('|');
         repeatError.push(`${t.data.defKey}=>[${repeat}]`);
       }
+      // 判断数据表或者视图重复
+      const newDefKey = t.data?.defKey;
+      if (newDefKey !== t.key.split(separator)[0]) {
+        // 不能跟当前打开的TAB的key重复
+        // 不能跟已经存在的key重复
+        if (!currentDefKey[t.type].includes(newDefKey)) {
+          currentDefKey[t.type].push(newDefKey);
+        } else {
+          entityRepeatError.push(newDefKey);
+        }
+        if (dataSource[t.type === 'view' ? 'views' : 'entities']?.filter(e => e.defKey === newDefKey).length > 0) {
+          entityRepeatError.push(newDefKey);
+        }
+      }
     }
   })
+  if (entityRepeatError.length > 0) {
+    message += FormatMessage.string({
+      id: 'entityUniqueDefKeyError',
+      data: {
+        size,
+        entities: entityRepeatError.join(','),
+      }}) + ';';
+  }
   if (sizeError.length > 0) {
     // 字段关系图显示超限
     message += FormatMessage.string({
@@ -534,6 +561,11 @@ export const getDemoDbConnect = () => {
       driverClass: 'com.kingbase8.Driver',
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.kingbase'}),
     },
+    maxcompute: {
+      defKey: 'MaxCompute',
+      driverClass: 'com.aliyun.odps.jdbc.OdpsDriver',
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.maxcompute'}),
+    },
   }
 };
 
@@ -851,7 +883,7 @@ export const emptyDiagram = {
 };
 
 export const defaultTemplate = {
-  dbDDLTemplate: ['createTable', 'createIndex'],
+  dbDDLTemplate: ['createTable', 'createIndex', 'createView'],
   appCodeTemplate: ['content'],
 };
 
@@ -1135,14 +1167,16 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
       12, 'bold') + 20;
   // 计算每一列最长的内容
   const maxWidth = {};
-  const fkOrPkWidth = 30; // 主键和外键的默认宽度
+  const defaultWidth = {
+    primaryKey: 30,// 主键和外键的默认宽度
+    notNull: 70,// 非空默认宽度
+  }
   fields.forEach((f) => {
     Object.keys(f).forEach((fName) => {
       if (!maxWidth[fName]) {
         maxWidth[fName] = 0;
       }
-      const fieldWidth = fName === 'primaryKey' ? fkOrPkWidth :
-          getTextWidth((f[fName] || '').toString(), 12);
+      const fieldWidth = defaultWidth[fName] || getTextWidth((f[fName] || '').toString(), 12);
       if (maxWidth[fName] < fieldWidth) {
         maxWidth[fName] = fieldWidth;
       }
@@ -1367,7 +1401,7 @@ export const validateNeedSave = (dataSource) => {
   return false;
 };
 
-export const defaultJVM = '-Xms1024m -Xmx8192m -XX:MaxPermSize=256m -XX:-UseGCOverheadLimit';
+export const defaultJVM = '-Xms512m -Xmx2048m -XX:MaxPermSize=256m -XX:-UseGCOverheadLimit';
 
 export const emptyDictSQLTemplate =  {
   type: "dbDDL",

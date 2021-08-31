@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import {CodeHighlight, CodeEditor, FormatMessage, openModal, Button} from 'components';
+import _ from 'lodash/object';
 
-import { getDemoTemplateData, getDataByTemplate } from '../../../lib/json2code_util';
+
+import {getDemoTemplateData, getDataByTemplate, getFieldData} from '../../../lib/json2code_util';
 import './style/index.less';
 import {getPrefix} from '../../../lib/prefixUtil';
 import DotHelp from './DotHelp';
 
-export default React.memo(({prefix, template, mode, templateShow = 'createTable', templateChange}) => {
+export default React.memo(({prefix, template, mode, templateShow = 'createTable', dataSource, templateChange}) => {
   const style = {width: 'auto', height: 'calc(100vh - 80px)'};
   const openDotHelp = () => {
     let modal;
@@ -22,13 +24,32 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
         </Button>],
     });
   };
-  const demoData = getDemoTemplateData(templateShow);
+  let demoData = getDemoTemplateData(templateShow);
   const [templateData, updateTemplate] = useState(template);
   const _updateTemplate = (value) => {
     updateTemplate(value);
     templateChange && templateChange(value);
   };
-  const demoCode = getDataByTemplate(JSON.parse(demoData), templateData || '');
+  let jsonData = JSON.parse(demoData);
+  if ('view' in jsonData || 'entity' in jsonData) {
+    const name = 'view' in jsonData ? 'view' : 'entity';
+    const currentCode = _.get(dataSource, 'profile.default.db', '');
+    const datatype = _.get(dataSource, 'dataTypeMapping.mappings', []);
+    const domains = _.get(dataSource, 'domains', []);
+    jsonData = {
+      ...jsonData,
+      [name]: {
+        ...jsonData[name],
+        fields: (jsonData[name].fields || []).map((f) => {
+          return {
+            ...f,
+            ...getFieldData(datatype, domains, f, currentCode),
+          };
+        }),
+      },
+    };
+  }
+  const demoCode = getDataByTemplate(jsonData, templateData || '');
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-preview`}>
     <div className={`${currentPrefix}-preview-left`}>

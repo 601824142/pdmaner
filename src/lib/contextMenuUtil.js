@@ -130,7 +130,7 @@ const validate = (require, data) => {
 const calcDefaultDb = (newData, oldData) => {
   if (typeof newData.defaultDb === 'boolean' && newData.defaultDb && (newData.type === 'dbDDL')) {
     return newData.dataTypeSupport;
-  } else if (oldData.defaultDb === oldData.dataTypeSupport) {
+  } else if (oldData.defaultDb !== newData.defaultDb) {
     Message.success({
       title: FormatMessage.string({id: 'dataType.defaultDbInfo'})
     });
