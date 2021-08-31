@@ -1385,7 +1385,6 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
   // 获取全量脚本（删表，建表，建索引，表注释）
   const { dataSource, datatype, allTemplate, sqlSeparator } = getDataSourceProfile(data);
   const domains = _.get(dataSource, 'domains', []);
-  const currentCode = _.get(dataSource, 'profile.default.db', '');
   const getTemplate = (templateShow) => {
     return allTemplate.filter(t => t.applyFor === code)[0]?.[templateShow] || '';
   };
@@ -1397,6 +1396,7 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
       return true;
     }).map(e => ({
       ...e,
+      datatype: name,
       groupType: `ref${firstUp(name)}`
     }));
   };
@@ -1405,24 +1405,27 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
     const tempData = code === 'dictSQLTemplate' ? getFilterData('dicts') : getFilterData('entities')
         .concat(getFilterData('views'));
     sqlString += tempData.map(e => {
+      const tempTemplate = [...filterTemplate];
       let tempData = '';
-      let allData = {};
       let data;
       if (code === 'dictSQLTemplate') {
         data = {
-          dict: _.omit(e, 'groupType'),
+          dict: _.omit(e, ['groupType', 'datatype']),
         }
       } else {
+        const name = e.datatype === 'entities' ? 'entity' : 'view';
+        const childData = {
+          ..._.omit(e, ['groupType', 'datatype']),
+          fields: (e.fields || []).map(field => {
+            return {
+              ...field,
+              ...getFieldData(datatype, domains, field, code)
+            }
+          })
+        };
         data = {
-          entity: {
-            ..._.omit(e, 'groupType'),
-            fields: (e.fields || []).map(field => {
-              return {
-                ...field,
-                ...getFieldData(datatype, domains, field, code)
-              }
-            })
-          },
+          entity: childData,
+          view: childData,
         }
       }
       const templateData = {
@@ -1432,11 +1435,17 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
             .map(g => _.omit(g, ['defKey', 'defName'])),
         separator: sqlSeparator
       };
-      allData.createIndex = `${getTemplateString(getTemplate('createIndex'), templateData)}`;
-      allData.createTable = `${getTemplateString(getTemplate('createTable'), templateData)}`;
-      allData.content = `${getTemplateString(getTemplate('content'), templateData)}`;
-      filterTemplate.forEach(f => {
-        tempData += allData[f] ? `${allData[f]}\n` : '';
+      if (tempTemplate.includes('createTable')) {
+        tempTemplate.push('createView');
+      }
+      tempTemplate.filter(t => {
+        if (e.datatype === 'entities') {
+          return t !== 'createView';
+        }
+        return t !== 'createTable';
+      }).forEach(f => {
+        const code = `${getTemplateString(getTemplate(f), templateData)}`;
+        tempData += code ? `${code}\n` : '';
       });
       return tempData;
     }).join('');

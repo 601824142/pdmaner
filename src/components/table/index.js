@@ -20,7 +20,8 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                                className, expand, otherOpt = true, disableHeaderReset,
                                updateDataSource, disableAddStandard, ready, twinkle, getDataSource,
                                disableDragRow = true, freeze = false, reading = false,
-                               fixHeader = true, openDict, defaultGroups}, refInstance) => {
+                               fixHeader = true, openDict, defaultGroups, forceUpdate = false},
+                                     refInstance) => {
   const inputRef = useRef({});
   const currentPrefix = getPrefix(prefix);
   const [expands, setExpands] = useState([]);
@@ -80,7 +81,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     updatePreData(data);
     const initState = getInitState(fields);
     updateTableData(initState);
-    tableDataChange && tableDataChange(initState.fields, 'fields');
+    forceUpdate && tableDataChange && tableDataChange(initState.fields, 'fields');
   }
   const [selectedFields, updateSelectedFields] = useState([]);
   const [selectedColumns, updateSelectedColumns] = useState([]);

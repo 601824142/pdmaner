@@ -46,6 +46,9 @@ export default React.memo(({prefix, dataSource, templateType}) => {
   };
   const onTypeChange = (e) => {
     setDataType(e.target.value);
+    if (e.target.value === 'all') {
+      templateRef.current = [...defaultTemplate];
+    }
   };
   const _pickEntity = () => {
     let modal;
