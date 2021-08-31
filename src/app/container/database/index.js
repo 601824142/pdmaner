@@ -15,7 +15,7 @@ import {getPrefix} from '../../../lib/prefixUtil';
 
 const RadioGroup = Radio.RadioGroup;
 
-export default React.memo(({prefix, data, dataChange}) => {
+export default React.memo(({prefix, data, dataChange, dataSource}) => {
   const { templateData = {}, defaultDb = '' } = data;
   const [allTemplate, setAllTemplate] = useState(() => {
     return defaultTemplate[`${templateData.type || 'dbDDL'}Template`];
@@ -136,6 +136,7 @@ export default React.memo(({prefix, data, dataChange}) => {
                  key: d,
                  title: FormatMessage.string({id: `tableTemplate.${d}`}) || d,
                  content: <CodeEditorContent
+                   dataSource={dataSource}
                    prefix={currentPrefix}
                    value={templateData.type === 'appCode' ? templateData.content : templateData[d]}
                    width='auto'

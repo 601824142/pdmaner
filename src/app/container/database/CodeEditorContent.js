@@ -5,7 +5,7 @@ import Preview from './Preview';
 import {platform} from '../../../lib/middle';
 
 export default ({prefix, onChange, value, templateShow,
-                             templateType, dataTypeSupport, ...restProps}) => {
+                             templateType, dataTypeSupport, dataSource, ...restProps}) => {
   const [codeData, updateCodeData] = useState(value);
   const codeChange = (e) => {
     onChange && onChange(e);
@@ -29,6 +29,7 @@ export default ({prefix, onChange, value, templateShow,
     };
     if (type === 'previewEdit') {
       modal = openModal(<Preview
+        dataSource={dataSource}
         template={codeData}
         mode={templateType === 'appCode' ? dataTypeSupport : 'SQL'}
         templateShow={templateShow}
