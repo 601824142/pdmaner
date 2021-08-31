@@ -379,6 +379,7 @@ export default {
     tableTemplate: {
         content: '基本代码',
         createTable: '新建数据表代码',
+        createView: '新建视图',
         createIndex: '新建索引代码',
     },
     domain: {

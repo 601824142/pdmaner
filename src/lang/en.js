@@ -379,6 +379,7 @@ export default {
     tableTemplate: {
         content: 'content',
         createTable: 'createTable',
+        createView: 'createView',
         createIndex: 'createIndex',
     },
     domain: {

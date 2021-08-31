@@ -11,7 +11,7 @@ import { removeDataByTabId } from '../../../lib/cache';
 import {getPrefix} from '../../../lib/prefixUtil';
 
 const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
-                             group, BaseExtraCom, customerHeaders,
+                             group, BaseExtraCom, customerHeaders, type,
                              FieldsExtraOpt, updateDataSource, param, hasRender, hasDestory,
                              getDataSource, openDict}) => {
   const iniData = getEntityOrViewByName(dataSource, entity) || {};
@@ -68,6 +68,7 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
             key: 'code',
             title: FormatMessage.string({id: 'tableEdit.codes'}),
             content: <EntityCode
+              type={type}
               group={group}
               data={data} // 数据发生变化时需要更新
               dataSource={dataSource}

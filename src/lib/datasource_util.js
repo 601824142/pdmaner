@@ -883,7 +883,7 @@ export const emptyDiagram = {
 };
 
 export const defaultTemplate = {
-  dbDDLTemplate: ['createTable', 'createIndex'],
+  dbDDLTemplate: ['createTable', 'createIndex', 'createView'],
   appCodeTemplate: ['content'],
 };
 

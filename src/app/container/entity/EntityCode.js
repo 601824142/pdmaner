@@ -6,9 +6,15 @@ import { SimpleTab, CodeHighlight, FormatMessage } from 'components';
 import { getCodeByDataTable, packageDataSource } from '../../../lib/json2code_util';
 import {getPrefix} from '../../../lib/prefixUtil';
 
-const CodeContent = React.memo(({ data, dataSource, group, type }) => {
+const CodeContent = React.memo(({ data, dataSource, group, type, dataType }) => {
   const codeTemplate = _.get(dataSource, 'profile.codeTemplates', []).filter(t => t.applyFor === type)[0];
-  const template = Object.keys(_.pick(codeTemplate, ['createTable', 'createIndex', 'content'], {}));
+  const template = Object.keys(_.pick(codeTemplate,
+    ['createTable', 'createIndex', 'createView', 'content'].filter((t) => {
+      if (dataType === 'view') {
+        return t !== 'createTable';
+      }
+      return t !== 'createView';
+    }), {}));
   return <SimpleTab
     type='left'
     options={template
@@ -26,7 +32,7 @@ const CodeContent = React.memo(({ data, dataSource, group, type }) => {
   />;
 });
 
-export default React.memo(({ dataSource, data, prefix, ...restProps }) => {
+export default React.memo(({ dataSource, data, prefix, type, ...restProps }) => {
   const dataTypeSupport = _.get(dataSource, 'profile.dataTypeSupports', []);
  /* // 过滤当前的实体变更信息
   const currentChanges = changes.filter(c => c.name.split(separator)[0] === data.defKey);*/
@@ -40,6 +46,7 @@ export default React.memo(({ dataSource, data, prefix, ...restProps }) => {
           key: d,
           title: d,
           content: <CodeContent
+            dataType={type}
             type={d}
             data={data}
             dataSource={newDataSource}

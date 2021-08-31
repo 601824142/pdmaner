@@ -202,8 +202,9 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
       }
     })
   };
+  const name = templateShow === 'createView' ? 'view' : 'entity';
   const templateData = {
-    entity: tempDataTable,
+    [name]: tempDataTable,
     group,
     separator: sqlSeparator
   };

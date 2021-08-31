@@ -822,6 +822,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     if (type === 'entity') {
       return (
         <Entity
+          type={type}
           getDataSource={getDataSource}
           hasRender={instance => hasRender(t.tabKey, instance)}
           hasDestory={() => hasDestroy(t.tabKey)}
@@ -838,6 +839,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           />);
     } else if (type === 'view') {
       return <View
+        type={type}
         getDataSource={getDataSource}
         updateDataSource={restProps?.update}
         hasRender={instance => hasRender(t.tabKey, instance)}
