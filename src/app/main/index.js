@@ -410,10 +410,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     Message.success({title: FormatMessage.string({id: 'optSuccess'})});
     modal && modal.close();
   };
-  const importFromPDMan = () => {
+  const importFromPDMan = (type) => {
     Upload('application/json', (data, file) => {
       try {
-        const newData = pdman2sino(JSON.parse(data), file.name);
+        const newData = type === 'chiner' ? JSON.parse(data) : pdman2sino(JSON.parse(data), file.name);
         let modal;
         const onCancel = () => {
           modal.close();
@@ -490,6 +490,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           updateGroupType('modalGroup');
           injectDataSource(newDataSource, allEntities, newData.domains || [], modal);
         };
+        const allRefEntities = newData.viewGroups.reduce((a, b) => a.concat(b.refEntities), []);
         modal = openModal(<ImportPd
           defaultSelected={newData.diagrams.reduce((a, b) => a
               .concat((b.canvasData?.cells || []).map(c => c.originKey)
@@ -501,6 +502,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                   .filter(e => (g.refEntities || [])
                       .includes(e.defKey)),
             };
+          }).concat({
+            defKey: '',
+            defName: FormatMessage.string({id: 'components.select.empty'}),
+            fields: newData.entities.filter(e => !allRefEntities.includes(e.defKey)),
           })}
           ref={importPdRef}
           dataSource={dataSourceRef.current}
@@ -518,11 +523,11 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         });
       }
     }, (file) => {
-      const result = file.name.endsWith('.pdman.json');
+      const result = type === 'chiner' ? file.name.endsWith('.chnr.json') : file.name.endsWith('.pdman.json');
       if (!result) {
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),
-          message: FormatMessage.string({id: 'invalidPDManFile'}),
+          message: FormatMessage.string({id: type === 'chiner' ? 'invalidCHNRFile' : 'invalidPDManFile'}),
         });
       }
       return result;
@@ -1066,7 +1071,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     switch (key) {
       case 'save': saveProject();break;
       case 'saveAs': saveProject(true);break;
-      case 'pdman': importFromPDMan();break;
+      case 'pdman': importFromPDMan('pdman');break;
+      case 'chiner': importFromPDMan('chiner');break;
       case 'powerdesigner': importFromPb();break;
       case 'db': importFromDb();break;
       case 'domains': importDomains();break;
