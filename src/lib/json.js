@@ -364,12 +364,12 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
       if (p !== 'customer_driver') {
         const param = params[p] || '';
         const value = param.includes(' ') ? `"${param}"` : param;
-        paramArray.push(`${p}=${value}`);
+        paramArray.push(`${p}='${value}'`);
       } if (p === 'driver') {
-        paramArray.push(`driver_class_name=${params[p]}`);
+        paramArray.push(`driver_class_name='${params[p]}'`);
       }
     });
-    return paramArray.concat(`out=${outFile}`);
+    return paramArray.concat(`out='${outFile}'`);
   };
   const javaHome = config?.javaHome || _.get(dataSource, 'profile.javaHome', '');
   const jvm = ('jvm' in (config || {})) ? config.jvm : defaultJVM;
