@@ -1039,11 +1039,13 @@ export const getDemoTemplateData = (templateShow) => {
     group: demoGroup,
   };
   const demoView = {
-    view: {
-      "defKey": "V_CLASS_STUDENT",
-      "defName": "班级学生",
+    view:     {
+      "defKey": "SMIS_STUDENT_EXAM",
+      "defName": "学生考试",
       "comment": "",
-      "properties": {},
+      "properties": {
+        "partitionBy": ""
+      },
       "nameTemplate": "{defKey}[{defName}]",
       "headers": [
         {
@@ -1076,22 +1078,22 @@ export const getDemoTemplateData = (templateShow) => {
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": false
         },
         {
           "refKey": "type",
-          "hideInGraph": false
+          "hideInGraph": true
         },
         {
           "refKey": "len",
-          "hideInGraph": false
+          "hideInGraph": true
         },
         {
           "refKey": "scale",
-          "hideInGraph": false
+          "hideInGraph": true
         },
         {
-          "refKey": "comment",
+          "refKey": "remark",
           "hideInGraph": true
         },
         {
@@ -1114,36 +1116,20 @@ export const getDemoTemplateData = (templateShow) => {
       ],
       "fields": [
         {
-          "defKey": "CLASS_NAME",
-          "defName": "班级名称",
+          "defKey": "STUDENT_ID",
+          "defName": "学生ID",
           "comment": "",
-          "len": 90,
+          "len": 32,
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR",
-          "refEntity": "SIMS_CLASS",
-          "refEntityField": "CLASS_NAME"
-        },
-        {
-          "defKey": "ENG_NAME",
-          "defName": "英文名",
-          "comment": "",
-          "len": 90,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "Name",
-          "type": "",
+          "domain": "IdOrKey",
           "refEntity": "SIMS_STUDENT",
-          "refEntityField": "ENG_NAME"
+          "refEntityField": "STUDENT_ID",
+          "type": "VARCHAR"
         },
         {
           "defKey": "STUDENT_NAME",
@@ -1157,89 +1143,9 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Name",
-          "type": "",
           "refEntity": "SIMS_STUDENT",
-          "refEntityField": "STUDENT_NAME"
-        },
-        {
-          "defKey": "STUDENT_ID",
-          "defName": "学生ID",
-          "comment": "",
-          "len": 32,
-          "scale": "",
-          "primaryKey": true,
-          "notNull": true,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "STUDENT_ID"
-        },
-        {
-          "defKey": "CLASS_ID",
-          "defName": "所在班级ID",
-          "comment": "",
-          "len": 32,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": true,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "CLASS_ID"
-        },
-        {
-          "defKey": "COLLEGE_ID",
-          "defName": "所在学院ID",
-          "comment": "",
-          "len": 32,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": true,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "COLLEGE_ID"
-        },
-        {
-          "defKey": "ADVISER",
-          "defName": "辅导员",
-          "comment": "",
-          "len": 90,
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR",
-          "refEntity": "SIMS_CLASS",
-          "refEntityField": "ADVISER"
-        },
-        {
-          "defKey": "ID_CARD_NO",
-          "defName": "身份证号",
-          "comment": "",
-          "len": "60",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "",
-          "hideInGraph": false,
-          "domain": "DefaultString",
-          "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "ID_CARD_NO"
+          "refEntityField": "STUDENT_NAME",
+          "type": "VARCHAR"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -1253,9 +1159,9 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "DefaultString",
-          "type": "",
           "refEntity": "SIMS_STUDENT",
-          "refEntityField": "MOBILE_PHONE"
+          "refEntityField": "MOBILE_PHONE",
+          "type": "VARCHAR"
         },
         {
           "defKey": "GENDER",
@@ -1266,51 +1172,49 @@ export const getDemoTemplateData = (templateShow) => {
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "'M'",
+          "defaultValue": "",
           "hideInGraph": false,
           "domain": "Dict",
           "refDict": "Gender",
-          "type": "",
           "refEntity": "SIMS_STUDENT",
-          "refEntityField": "GENDER"
+          "refEntityField": "GENDER",
+          "type": "VARCHAR"
         },
         {
-          "defKey": "MARITAL",
-          "defName": "婚姻状况",
+          "defKey": "LESSON_NAME",
+          "defName": "课程名",
           "comment": "",
-          "len": "32",
-          "scale": "",
-          "primaryKey": false,
-          "notNull": false,
-          "autoIncrement": false,
-          "defaultValue": "'UNMARRIED'",
-          "hideInGraph": true,
-          "domain": "Dict",
-          "refDict": "Marital",
-          "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "MARITAL"
-        },
-        {
-          "defKey": "POLITICAL",
-          "defName": "政治面貌",
-          "comment": "",
-          "len": "32",
+          "len": 90,
           "scale": "",
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Political",
-          "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "POLITICAL"
+          "domain": "Name",
+          "refEntity": "SIMS_LESSON",
+          "refEntityField": "LESSON_NAME",
+          "type": "VARCHAR"
         },
         {
-          "defKey": "BIRTH",
-          "defName": "出生日期",
+          "defKey": "LESSON_ID",
+          "defName": "课程ID",
+          "comment": "",
+          "len": 32,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "IdOrKey",
+          "refEntity": "SIMS_LESSON",
+          "refEntityField": "LESSON_ID",
+          "type": "VARCHAR"
+        },
+        {
+          "defKey": "EXAM_DATE",
+          "defName": "考试日期",
           "comment": "",
           "len": "",
           "scale": "",
@@ -1320,13 +1224,129 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "DateTime",
-          "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "BIRTH"
+          "refEntity": "SIMS_EXAM",
+          "refEntityField": "EXAM_DATE",
+          "type": "DATETIME"
+        },
+        {
+          "defKey": "EXAM_SCORE",
+          "defName": "考试分数",
+          "comment": "",
+          "len": 24,
+          "scale": "8",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": false,
+          "domain": "Double",
+          "refEntity": "SIMS_EXAM",
+          "refEntityField": "EXAM_SCORE",
+          "type": "DECIMAL"
+        },
+        {
+          "defKey": "TENANT_ID",
+          "defName": "租户号",
+          "comment": "",
+          "len": 32,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": true,
+          "domain": "IdOrKey",
+          "refEntity": "SIMS_EXAM",
+          "refEntityField": "TENANT_ID",
+          "type": "VARCHAR"
+        },
+        {
+          "defKey": "REVISION",
+          "defName": "乐观锁",
+          "comment": "",
+          "domain": "Int",
+          "len": "",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": true,
+          "refEntity": "SIMS_EXAM",
+          "refEntityField": "REVISION",
+          "type": "INT"
+        },
+        {
+          "defKey": "CREATED_BY",
+          "defName": "创建人",
+          "comment": "",
+          "domain": "IdOrKey",
+          "len": 32,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": true,
+          "refEntity": "SIMS_EXAM",
+          "refEntityField": "CREATED_BY",
+          "type": "VARCHAR"
+        },
+        {
+          "defKey": "CREATED_TIME",
+          "defName": "创建时间",
+          "comment": "",
+          "domain": "DateTime",
+          "len": "",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": true,
+          "refEntity": "SIMS_EXAM",
+          "refEntityField": "CREATED_TIME",
+          "type": "DATETIME"
+        },
+        {
+          "defKey": "UPDATED_BY",
+          "defName": "更新人",
+          "comment": "",
+          "domain": "IdOrKey",
+          "len": 32,
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": true,
+          "refEntity": "SIMS_EXAM",
+          "refEntityField": "UPDATED_BY",
+          "type": "VARCHAR"
+        },
+        {
+          "defKey": "UPDATED_TIME",
+          "defName": "更新时间",
+          "comment": "",
+          "domain": "DateTime",
+          "len": "",
+          "scale": "",
+          "primaryKey": false,
+          "notNull": false,
+          "autoIncrement": false,
+          "defaultValue": "",
+          "hideInGraph": true,
+          "refEntity": "SIMS_EXAM",
+          "refEntityField": "UPDATED_TIME",
+          "type": "DATETIME"
         }
       ],
       "correlations": [],
-      "indexes": []
+      "refEntities": [
+        "SIMS_STUDENT",
+        "SIMS_EXAM",
+        "SIMS_LESSON"
+      ]
     },
     group: demoGroup,
   }
