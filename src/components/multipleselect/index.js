@@ -168,6 +168,9 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
       >
         {restProps.placeholder || ''}
       </span>
+      <span className={`${currentPrefix}-multiple-select-data-input-icon`}>
+        <Icon type='fa-angle-down'/>
+      </span>
       <input
         onKeyDown={onKeyDown}
         ref={inputRef}

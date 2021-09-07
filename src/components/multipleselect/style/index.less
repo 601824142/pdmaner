@@ -4,6 +4,14 @@
   display: inline-block;
   cursor: text;
   position: relative;
+  &:hover {
+    .@{prefix}-multiple-select-data-item-simple-clear {
+      display: block;
+    }
+    .@{prefix}-multiple-select-data-input-icon {
+      //display: none;
+    }
+  }
   &-data {
     position: relative;
     overflow: hidden;
@@ -55,13 +63,20 @@
     }
     &-simple-input {
       height: 100%;
-      width: calc(100% - 10px) !important;
+      width: calc(100% - 18px) !important;
       position: absolute;
       left: 3px;
       top: 0;
       background: transparent;
       border-width: 0;
       outline: 0;
+    }
+    &-input-icon {
+      position: absolute;
+      pointer-events: none;
+      right: 3px;
+      top: 0;
+      //z-index: 1;
     }
     &-input-placeholder {
       position: absolute;
@@ -91,11 +106,13 @@
         width: 100%;
         z-index: 1;
         &-clear {
+          display: none;
           pointer-events: auto;
           position: absolute;
           right: 3px;
           top: 0;
-          z-index: 1;
+          background: #FFFFFF;
+          z-index: 3;
           cursor: pointer;
         }
       }
