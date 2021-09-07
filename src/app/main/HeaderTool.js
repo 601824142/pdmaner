@@ -197,6 +197,7 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
         icon={<Icon type='icon-daoru'/>}
         dropMenu={[
             { key: 'pdman', name: FormatMessage.string({id: 'toolbar.importPDMan'}) },
+            { key: 'chiner', name: FormatMessage.string({id: 'toolbar.importCHNR'}) },
             { key: 'powerdesigner', name: FormatMessage.string({id: 'toolbar.importPowerDesigner'}) },
             { key: 'db', name: FormatMessage.string({id: 'toolbar.importDb'}) },
             { key: 'domains', name: FormatMessage.string({id: 'toolbar.importDomains'}) },
