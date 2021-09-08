@@ -25,7 +25,7 @@ export const img = (data, dataSource, needCalc = true, groups) => {
         tools: {},
       };
       if (d.shape === 'erdRelation') {
-        const relation = d.relation.split(':');
+        const relation = d.relation?.split(':') || [];
         other.attrs = {
           ...(d.attrs || {}),
           line: {
