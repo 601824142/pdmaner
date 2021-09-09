@@ -607,7 +607,8 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             || node.shape === 'edit-node-circle-svg';
         },
         preserveAspectRatio: (node) => {
-          return node.shape === 'edit-node-circle-svg';
+          return node.shape === 'edit-node-circle-svg'
+            || node.shape === 'edit-node-polygon';
         },
       },
       interacting: () => {
@@ -1424,7 +1425,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       exportImg: () => {
         img(graph.toJSON().cells, null, false).then((dom) => {
           html2canvas(dom).then((canvas) => {
-            //document.body.removeChild(dom.parentElement.parentElement);
+            document.body.removeChild(dom.parentElement.parentElement);
             const diagram = (dataSourceRef.current?.diagrams || [])
                 .filter(d => d.defKey === diagramKey)[0] || {};
             DataUri.downloadDataUri(canvas.toDataURL('image/png'),
