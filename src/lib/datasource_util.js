@@ -41,7 +41,7 @@ export const filterEdge = (allNodes, c) => {
   }).length === 2
 };
 
-export const updateAllData = (dataSource, tabs, needClear = true) => {
+export const updateAllData = (dataSource, tabs) => {
   // 整理项目中所有的关系图数据 去除无效的关系图数据 更新所有的tab数据
   const needReplace = [];
   let tempData = {...dataSource};
@@ -59,11 +59,12 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
   };
   const size = _.get(dataSource, 'profile.relationFieldSize', 15);
   tabs.map(t => {
+    const typeName = t.type === 'entity' ? 'entities' : 'views';
     return {
       type: t.type,
       key: t.tabKey,
       data: getDataByTabId(t.tabKey)?.data
-          || tempData.entities.filter(e => e.defKey === t.tabKey.split(separator)[0])[0]
+          || tempData[typeName].filter(e => e.defKey === t.tabKey.split(separator)[0])[0]
           || []
     }
   }).forEach(t => {
@@ -229,7 +230,6 @@ export const updateAllData = (dataSource, tabs, needClear = true) => {
       }
     });
     if (flag) {
-      needClear && clearAllTabData();
       return {
         dataSource: {
           ...updateAllEntity(updateAllViewFiledRefEntity(updateAllDiagrams(tempData, needReplace), needReplace), needReplace),

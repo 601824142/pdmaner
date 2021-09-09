@@ -37,7 +37,7 @@ import {
   updateAllData,
   allType, pdman2sino, getFullColumns, updateAllFieldsUiHint, emptyDictSQLTemplate,
 } from '../../lib/datasource_util';
-import { setDataByTabId } from '../../lib/cache';
+import {clearAllTabData, setDataByTabId} from '../../lib/cache';
 import { Save } from '../../lib/event_tool';
 
 import './style/index.less';
@@ -93,7 +93,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const saveProject = (saveAs, callback) => {
     const isSaveAs = saveAs || !projectInfoRef.current;
     const newData = updateAllData(dataSourceRef.current,
-        injectTempTabs.current.concat(tabsRef.current), true);
+        injectTempTabs.current.concat(tabsRef.current));
     if (newData.result.status) {
       replace.splice(0, replace.length - 1, ...newData.replace); // 重置数组
       restProps.save(newData.dataSource, FormatMessage.string({id: 'saveProject'}), isSaveAs, (err) => {
@@ -103,6 +103,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           }
           Message.success({title: FormatMessage.string({id: 'saveSuccess'})});
           injectTempTabs.current = [];
+          clearAllTabData();
           callback && callback(false);
         } else {
           callback && callback(true);
@@ -1224,7 +1225,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       autoSaveRef.current = setInterval(() => {
         console.log('autoSave');
         const newData = updateAllData(dataSourceRef.current,
-          injectTempTabs.current.concat(tabsRef.current), false);
+          injectTempTabs.current.concat(tabsRef.current));
         if (newData.result.status) {
           restProps.autoSave(newData.dataSource);
         } else {
