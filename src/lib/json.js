@@ -497,7 +497,7 @@ export const basename = (fileName, extension) => {
 }
 
 export const getBackupAllFile = ({core, config}, callback) => {
-  if (core.info) {
+  if (core.info && config.autoBackup) {
     const dir = path.dirname(core.info);
     // 文件名-backup-${年月日时分秒}.chnr.json
     //const name = basename(core.info, '.json');
@@ -517,5 +517,7 @@ export const getBackupAllFile = ({core, config}, callback) => {
         })
       }
     });
+  } else {
+    callback && callback();
   }
 };
