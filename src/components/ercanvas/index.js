@@ -727,8 +727,8 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         }
       }
     });
-    graph.bindKey(['ctrl+v','command+v'], () => {
-      if (!graph.isClipboardEmpty()) {
+    graph.bindKey(['ctrl+v','command+v'], (e) => {
+      if (!graph.isClipboardEmpty() && e.target.tagName !== 'TEXTAREA') {
         graph.resetSelection();
         const cells = graph.paste();
         const keys = [];
