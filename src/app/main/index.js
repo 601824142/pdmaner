@@ -593,11 +593,58 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       return result;
     }, false);
   };
+  const configFields = ['profile.default.entityInitFields',
+    'profile.default.entityInitProperties', 'profile.sql.delimiter', 'profile.generatorDoc.docTemplate',
+  'profile.relationFieldSize', 'profile.uiHint', 'profile.modelType'];
+  const importConfig = () => {
+    Upload('application/json', (d) => {
+      const data = JSON.parse(d);
+      const codeTemplates = _.get(dataSourceRef.current, 'profile.codeTemplates', []);
+      let tempData = dataSourceRef.current;
+      configFields.forEach((f) => {
+        tempData = _.set(tempData, f, _.get(data, f, _.get(tempData, f)));
+      });
+      restProps?.update({
+        ...tempData,
+        profile: {
+          ...tempData.profile,
+          codeTemplates: 'dictSQLTemplate' in data ? codeTemplates.map((t) => {
+            if (t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL') {
+              return data.dictSQLTemplate;
+            }
+            return t;
+          }) : codeTemplates,
+        },
+      });
+      Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+    }, (file) => {
+      const result = file.name.endsWith('.json');
+      if (!result) {
+        Modal.error({
+          title: FormatMessage.string({id: 'optFail'}),
+          message: FormatMessage.string({id: 'invalidConfigFile'}),
+        });
+      }
+      return result;
+    });
+  };
+  const exportConfig = () => {
+    Download(
+      [JSON.stringify({
+        ..._.pick(dataSourceRef.current, configFields),
+        dictSQLTemplate: _.get(dataSourceRef.current, 'profile.codeTemplates', [])
+          .filter(t => t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')[0],
+      }, null, 2)],
+      'application/json',
+      `${dataSourceRef.current.name}-${FormatMessage.string({id: 'toolbar.setting'})}-${moment().format('YYYYMDHHmmss')}.json`);
+
+  };
   const exportDomains = () => {
     Download(
       [JSON.stringify({
+        codeTemplates: _.get(dataSourceRef.current, 'profile.codeTemplates', [])
+          .filter(t => !(t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')),
         dataTypeSupports: _.get(dataSourceRef.current, 'profile.dataTypeSupports', []),
-        codeTemplates: _.get(dataSourceRef.current, 'profile.codeTemplates', []),
         dataTypeMapping:  _.get(dataSourceRef.current, 'dataTypeMapping', []),
         domains: _.get(dataSourceRef.current, 'domains', []),
       }, null, 2)],
@@ -631,7 +678,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
               _.get(data, 'dataTypeSupports', [])),
             codeTemplates: calcData(
               _.get(dataSourceRef.current, 'profile.codeTemplates', []),
-              _.get(data, 'codeTemplates', []), 'applyFor'),
+              _.get(data, 'codeTemplates', [])
+                .filter(t => !(t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')), 'applyFor'),
           },
           dataTypeMapping: {
             ...dataSourceRef.current?.dataTypeMapping,
@@ -1078,6 +1126,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       case 'db': importFromDb();break;
       case 'domains': importDomains();break;
       case 'exportDomains': exportDomains();break;
+      case 'importConfig': importConfig();break;
+      case 'exportConfig': exportConfig();break;
       case 'undo': undo(); break;
       case 'redo': redo(); break;
       case 'img': exportImg(); break;
