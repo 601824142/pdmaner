@@ -190,6 +190,9 @@ export const updateAllData = (dataSource, tabs) => {
                         pickFields.push('size');
                         pickFields.push('children');
                       }
+                      if (d.relationType === 'entity') {
+                        pickFields.push('ports');
+                      }
                       if (c.shape === 'edit-node-polygon' || c.shape === 'edit-node-circle-svg') {
                         otherData.label = c.label || c?.attrs?.text?.text || '';
                       }
@@ -652,6 +655,7 @@ export const emptyDictItem = {
 export const emptyRelation = {
   defKey: '',
   defName: '',
+  relationType: 'field',
   canvasData: {}
 };
 
@@ -1248,7 +1252,8 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
   };
 };
 
-export const calcCellData = (cells = [], dataSource, updateFields, groups, commonPorts) => {
+export const calcCellData = (cells = [], dataSource, updateFields, groups, commonPorts,
+                             relationType, commonEntityPorts) => {
   const defaultEditNodeSize = {
     width: 80,
     height: 60,
@@ -1295,7 +1300,7 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
           width,
           height,
         },
-        ports,
+        ports: relationType === 'entity' ? (n.ports || commonEntityPorts) : ports,
         updateFields,
         data: {
           ...nodeData,

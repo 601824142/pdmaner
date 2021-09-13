@@ -180,7 +180,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
       uniqueKeyNamePath: 'relation.defKey',
       refName: 'refDiagrams',
       empty: emptyRelation,
-      dataPick: commonPick,
+      dataPick: commonPick.concat('relationType'),
       component: NewRelation,
       title: FormatMessage.string({id: 'menus.add.newRelation'}),
       allKeys: (dataSource?.diagrams || []).map(d => d.defKey),

@@ -197,7 +197,7 @@ const { Dnd } = Addon;
 export default ({data, dataSource, renderReady, updateDataSource, validateTableStatus, prefix,
                   dataChange, openEntity, tabKey, activeKey, scaleChange, common, tabDataChange,
                   changes, versionsData, save, getDataSource, openDict, selectionChanged,
-                  jumpEntity, diagramKey, ...restProps}) => {
+                  jumpEntity, diagramKey, relationType, ...restProps}) => {
   const currentPrefix = getPrefix(prefix);
   const findRef = useRef(null);
   const needRender = useRef(false);
@@ -308,6 +308,85 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       {group: 'out', id: 'out'},
       {group: 'top', id: 'top'},
       {group: 'bottom', id: 'bottom'},
+    ],
+  };
+  const commonEntityPorts = {
+    groups: {
+      in: {
+        attrs: {
+          circle: {
+            r: 4,
+            magnet: true,
+            stroke: currentColor.current.selected,
+            fill: currentColor.current.circleFill,
+            strokeWidth: 1,
+            style: {
+              visibility: 'hidden',
+            },
+          },
+        },
+        zIndex: 3,
+        position: { name: 'left' },
+      },
+      out: {
+        attrs: {
+          circle: {
+            r: 4,
+            magnet: true,
+            stroke: currentColor.current.selected,
+            fill: currentColor.current.circleFill,
+            strokeWidth: 1,
+            style: {
+              visibility: 'hidden',
+            },
+          },
+        },
+        position: { name: 'right' },
+      },
+      top: {
+        attrs: {
+          circle: {
+            r: 4,
+            magnet: true,
+            stroke: currentColor.current.selected,
+            fill: currentColor.current.circleFill,
+            strokeWidth: 1,
+            style: {
+              visibility: 'hidden',
+            },
+          },
+        },
+        position: { name: 'top' },
+      },
+      bottom: {
+        attrs: {
+          circle: {
+            r: 4,
+            magnet: true,
+            stroke: currentColor.current.selected,
+            fill: currentColor.current.circleFill,
+            strokeWidth: 1,
+            style: {
+              visibility: 'hidden',
+            },
+          },
+        },
+        position: { name: 'bottom' },
+      },
+    },
+    items: [
+      {group: 'in', id: 'in'},
+      {group: 'in', id: 'in2'},
+      {group: 'in', id: 'in3'},
+      {group: 'out', id: 'out'},
+      {group: 'out', id: 'out2'},
+      {group: 'out', id: 'out3'},
+      {group: 'top', id: 'top'},
+      {group: 'top', id: 'top2'},
+      {group: 'top', id: 'top3'},
+      {group: 'bottom', id: 'bottom'},
+      {group: 'bottom', id: 'bottom2'},
+      {group: 'bottom', id: 'bottom3'},
     ],
   };
   const id = useMemo(() => `er-${Math.uuid()}`, []);
@@ -485,7 +564,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graphRef.current.resetSelection();
     graphRef.current.fromJSON({
       cells: calcCellData(dataRef.current.cells, dataSourceRef.current, updateFields,
-          getTableGroup(), commonPorts),
+          getTableGroup(), commonPorts, relationType, commonEntityPorts),
     });
   };
   useEffect(() => {
@@ -962,11 +1041,11 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           });
         }
       };
-      if (node.shape === 'edit-node') {
+      if (node.shape === 'edit-node' || (relationType === 'entity' && node.shape === 'table')) {
         // 判断输入锚点是否已经用完
         calcPorts(edge.target.port, node);
       }
-      if (sourceNode.shape === 'edit-node') {
+      if (sourceNode.shape === 'edit-node' || (relationType === 'entity' && node.shape === 'table')) {
         // 判断输出锚点是否已经用完
         calcPorts(edge.source.port, sourceNode);
       }
@@ -1347,7 +1426,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           height,
         },
         shape: 'table',
-        ports,
+        ports: relationType === 'entity' ? commonEntityPorts : ports,
         originKey: empty.defKey,
         count,
         updateFields,
@@ -1423,7 +1502,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       getScaleNumber,
       updateColor,
       exportImg: () => {
-        img(graph.toJSON().cells, null, false).then((dom) => {
+        img(graph.toJSON().cells, relationType,null, false).then((dom) => {
           html2canvas(dom).then((canvas) => {
             document.body.removeChild(dom.parentElement.parentElement);
             const diagram = (dataSourceRef.current?.diagrams || [])
