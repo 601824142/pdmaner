@@ -23,31 +23,6 @@ export default React.memo(({prefix, dataSource, dataChange, data}) => {
           <Input defaultValue={data?.defKey} onChange={e => dataChange(e.target.value, 'defKey')}/>
         </span>
       </div>
-      {
-        !data.defKey && <div className={`${currentPrefix}-form-item`}>
-          <span
-            className={`${currentPrefix}-form-item-label`}
-            title={FormatMessage.string({id: 'relation.relationType'})}
-        >
-            <FormatMessage id='relation.relationType'/>
-          </span>
-          <span className={`${currentPrefix}-form-item-component`}>
-            <Select
-              allowClear={false}
-              notAllowEmpty
-              onChange={e => dataChange(e.target.value, 'relationType')}
-              defaultValue={data.relationType || relationType || 'field'}
-          >
-              <Option key='entity' value='entity'>
-                <FormatMessage id='relation.relationEntity'/>
-              </Option>
-              <Option key='field' value='field'>
-                <FormatMessage id='relation.relationField'/>
-              </Option>
-            </Select>
-          </span>
-        </div>
-      }
       <div className={`${currentPrefix}-form-item`}>
         <span
           className={`${currentPrefix}-form-item-label`}
@@ -59,6 +34,31 @@ export default React.memo(({prefix, dataSource, dataChange, data}) => {
           <Input defaultValue={data?.defName} onChange={e => dataChange(e.target.value, 'defName')}/>
         </span>
       </div>
+      {
+        !data.defKey && <div className={`${currentPrefix}-form-item`}>
+          <span
+            className={`${currentPrefix}-form-item-label`}
+            title={FormatMessage.string({id: 'relation.relationType'})}
+          >
+            <FormatMessage id='relation.relationType'/>
+          </span>
+          <span className={`${currentPrefix}-form-item-component`}>
+            <Select
+              allowClear={false}
+              notAllowEmpty
+              onChange={e => dataChange(e.target.value, 'relationType')}
+              defaultValue={data.relationType || relationType || 'field'}
+            >
+              <Option key='entity' value='entity'>
+                <FormatMessage id='relation.relationEntity'/>
+              </Option>
+              <Option key='field' value='field'>
+                <FormatMessage id='relation.relationField'/>
+              </Option>
+            </Select>
+          </span>
+        </div>
+      }
       <div className={`${currentPrefix}-form-item`}>
         <span
           className={`${currentPrefix}-form-item-label`}

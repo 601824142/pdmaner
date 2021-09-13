@@ -534,12 +534,12 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       return result;
     });
   };
-  const importFromPb = () => {
-    Upload('', (data) => {
+  const importFromPb = (type) => {
+    Upload(type === 'PD' ? '' : 'text/x-sql', (data) => {
       restProps.openLoading();
       connectDB(dataSourceRef.current, configRef.current, {
-        pdmFile: data.path,
-      }, 'ParsePDMFile', (result) => {
+        [type === 'PD' ? 'pdmFile' : 'ddlFile']: data.path,
+      }, type === 'PD' ? 'ParsePDMFile' : 'ParseDDLToTableImpl', (result) => {
         if (result.status === 'FAILED') {
           const termReady = (term) => {
             term.write(typeof result.body === 'object' ? JSON.stringify(result.body, null, 2)
@@ -566,10 +566,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                 .reduce((a, b) => a.concat((b.fields || [])
                     .map(f => ({...f, group: b.defKey}))), []);
             injectDataSource(dataSourceRef.current,
-              calcDomain(allEntities), result.body?.domains, modal);
+              calcDomain(allEntities), result.body?.domains || [], modal);
           };
           modal = openModal(<ImportPd
-            data={result.body?.tables || []}
+            data={(type === 'PD' ? result.body?.tables : result.body) || []}
             ref={importPdRef}
             dataSource={dataSourceRef.current}
           />, {
@@ -577,17 +577,17 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             buttons: [
               <Button type='primary' key='ok' onClick={onOk}><FormatMessage id='button.ok'/></Button>,
               <Button key='cancel' onClick={onCancel}><FormatMessage id='button.cancel'/></Button>],
-            title: FormatMessage.string({id: 'toolbar.importPowerDesigner'}),
+            title: FormatMessage.string({id: `toolbar.${type === 'PD' ? 'importPowerDesigner' : 'importDDL'}`}),
           });
         }
       });
       //console.log(data);
     }, (file) => {
-      const result = file.name.endsWith('.pdm') || file.name.endsWith('.PDM');
+      const result = type === 'PD' ? (file.name.endsWith('.pdm') || file.name.endsWith('.PDM')) : file.name.endsWith('.sql');
       if (!result) {
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),
-          message: FormatMessage.string({id: 'invalidPdmFile'}),
+          message: FormatMessage.string({id: type === 'PD' ? 'invalidPdmFile' : 'invalidDDLFile'}),
         });
       }
       return result;
@@ -1124,8 +1124,9 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       case 'save': saveProject();break;
       case 'saveAs': saveProject(true);break;
       case 'pdman': importFromPDMan('pdman');break;
+      case 'importDDL': importFromPb('DDL');break;
       case 'chiner': importFromPDMan('chiner');break;
-      case 'powerdesigner': importFromPb();break;
+      case 'powerdesigner': importFromPb('PD');break;
       case 'db': importFromDb();break;
       case 'domains': importDomains();break;
       case 'exportDomains': exportDomains();break;

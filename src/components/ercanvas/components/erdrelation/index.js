@@ -35,7 +35,8 @@ Graph.registerEdge('erdRelation', {
   connector: {
     name: 'jumpover',
     args: {
-      type: 'cubic',
+      type: 'gap',
+      size: 2,
     },
   },
   propHooks(metadata) {

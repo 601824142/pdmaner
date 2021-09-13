@@ -202,6 +202,7 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
             { key: 'db', name: FormatMessage.string({id: 'toolbar.importDb'}) },
             { key: 'domains', name: FormatMessage.string({id: 'toolbar.importDomains'}) },
             { key: 'importConfig', name: FormatMessage.string({id: 'toolbar.importConfig'}) },
+            { key: 'importDDL', name: FormatMessage.string({id: 'toolbar.importDDL'}) },
         ]}
       />
       <GroupIcon

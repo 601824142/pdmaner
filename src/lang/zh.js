@@ -31,6 +31,7 @@ export default {
         export: '导出',
         exportConfig: '导出设置内容',
         importConfig: '导入设置内容',
+        importDDL: '导入DDL',
         exportImg: '导出当前画布为图片',
         exportSql: '导出DDL',
         exportDict: '导出数据字典SQL',
@@ -54,6 +55,7 @@ export default {
     invalidProjectFile: '无效的项目文件',
     invalidProjectData: '无效的chnr文件，请先新建项目再执行导入操作！请勿直接修改项目后缀！',
     invalidPdmFile: '无效的pdm文件',
+    invalidDDLFile: '无效的DDL文件',
     invalidDomainsFile: '无效的数据域文件',
     invalidConfigFile: '无效的设置文件',
     invalidPDManFile: '无效的PDMan文件',
@@ -443,7 +445,7 @@ export default {
     },
     relation: {
         defKey: '关系图代码',
-        relationType: '连线类型',
+        relationType: '连线对象',
         relationEntity: '数据表',
         relationField: '属性',
         defName: '关系图名称',
@@ -584,7 +586,7 @@ export default {
         ModelLabel: '模型默认显示模式',
         ModelLabelMessage: '(重启或重新打开项目后生效)',
         relationFieldSize: '关系图最大展示字段数',
-        relationType: '关系图连线类型',
+        relationType: '关系图连线对象',
     },
     dbConnect: {
         log: '请查看日志文件,位于：',
