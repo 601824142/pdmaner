@@ -242,6 +242,7 @@ export default React.memo(({placeholder, prefix, dataSource,
         className={`${currentPrefix}-search-suggest-list`}
         ref={listRef}
         style={{
+            maxWidth: 'calc(100% - 10px)',
             maxHeight: window.innerHeight - suggestRect.bottom - 2,
             right: 5,
             top: suggestRect.bottom + 2,
