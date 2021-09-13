@@ -73,6 +73,8 @@ Graph.registerNode('edit-node-polygon-img', {
       refPoints: '0,10 10,0 20,10 10,20',
     },
     text: {
+      refX2: 10,
+      refY2: 8,
       style: {
         fontSize: '12px',
         fill: 'rgba(0, 0, 0, 0.65)',

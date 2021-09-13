@@ -37,7 +37,7 @@ import {
   updateAllData,
   allType, pdman2sino, getFullColumns, updateAllFieldsUiHint, emptyDictSQLTemplate,
 } from '../../lib/datasource_util';
-import { setDataByTabId } from '../../lib/cache';
+import {clearAllTabData, setDataByTabId} from '../../lib/cache';
 import { Save } from '../../lib/event_tool';
 
 import './style/index.less';
@@ -93,7 +93,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const saveProject = (saveAs, callback) => {
     const isSaveAs = saveAs || !projectInfoRef.current;
     const newData = updateAllData(dataSourceRef.current,
-        injectTempTabs.current.concat(tabsRef.current), true);
+        injectTempTabs.current.concat(tabsRef.current));
     if (newData.result.status) {
       replace.splice(0, replace.length - 1, ...newData.replace); // 重置数组
       restProps.save(newData.dataSource, FormatMessage.string({id: 'saveProject'}), isSaveAs, (err) => {
@@ -103,6 +103,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           }
           Message.success({title: FormatMessage.string({id: 'saveSuccess'})});
           injectTempTabs.current = [];
+          clearAllTabData();
           callback && callback(false);
         } else {
           callback && callback(true);
@@ -533,12 +534,12 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       return result;
     });
   };
-  const importFromPb = () => {
-    Upload('', (data) => {
+  const importFromPb = (type) => {
+    Upload(type === 'PD' ? '' : 'text/x-sql', (data) => {
       restProps.openLoading();
       connectDB(dataSourceRef.current, configRef.current, {
-        pdmFile: data.path,
-      }, 'ParsePDMFile', (result) => {
+        [type === 'PD' ? 'pdmFile' : 'ddlFile']: data.path,
+      }, type === 'PD' ? 'ParsePDMFile' : 'ParseDDLToTableImpl', (result) => {
         if (result.status === 'FAILED') {
           const termReady = (term) => {
             term.write(typeof result.body === 'object' ? JSON.stringify(result.body, null, 2)
@@ -565,10 +566,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                 .reduce((a, b) => a.concat((b.fields || [])
                     .map(f => ({...f, group: b.defKey}))), []);
             injectDataSource(dataSourceRef.current,
-              calcDomain(allEntities), result.body?.domains, modal);
+              calcDomain(allEntities), result.body?.domains || [], modal);
           };
           modal = openModal(<ImportPd
-            data={result.body?.tables || []}
+            data={(type === 'PD' ? result.body?.tables : result.body) || []}
             ref={importPdRef}
             dataSource={dataSourceRef.current}
           />, {
@@ -576,27 +577,74 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             buttons: [
               <Button type='primary' key='ok' onClick={onOk}><FormatMessage id='button.ok'/></Button>,
               <Button key='cancel' onClick={onCancel}><FormatMessage id='button.cancel'/></Button>],
-            title: FormatMessage.string({id: 'toolbar.importPowerDesigner'}),
+            title: FormatMessage.string({id: `toolbar.${type === 'PD' ? 'importPowerDesigner' : 'importDDL'}`}),
           });
         }
       });
       //console.log(data);
     }, (file) => {
-      const result = file.name.endsWith('.pdm') || file.name.endsWith('.PDM');
+      const result = type === 'PD' ? (file.name.endsWith('.pdm') || file.name.endsWith('.PDM')) : file.name.endsWith('.sql');
       if (!result) {
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),
-          message: FormatMessage.string({id: 'invalidPdmFile'}),
+          message: FormatMessage.string({id: type === 'PD' ? 'invalidPdmFile' : 'invalidDDLFile'}),
         });
       }
       return result;
     }, false);
   };
+  const configFields = ['profile.default.entityInitFields',
+    'profile.default.entityInitProperties', 'profile.sql.delimiter', 'profile.generatorDoc.docTemplate',
+  'profile.relationFieldSize', 'profile.uiHint', 'profile.modelType', 'profile.relationType'];
+  const importConfig = () => {
+    Upload('application/json', (d) => {
+      const data = JSON.parse(d);
+      const codeTemplates = _.get(dataSourceRef.current, 'profile.codeTemplates', []);
+      let tempData = dataSourceRef.current;
+      configFields.forEach((f) => {
+        tempData = _.set(tempData, f, _.get(data, f, _.get(tempData, f)));
+      });
+      restProps?.update({
+        ...tempData,
+        profile: {
+          ...tempData.profile,
+          codeTemplates: 'dictSQLTemplate' in data ? codeTemplates.map((t) => {
+            if (t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL') {
+              return data.dictSQLTemplate;
+            }
+            return t;
+          }) : codeTemplates,
+        },
+      });
+      Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+    }, (file) => {
+      const result = file.name.endsWith('.json');
+      if (!result) {
+        Modal.error({
+          title: FormatMessage.string({id: 'optFail'}),
+          message: FormatMessage.string({id: 'invalidConfigFile'}),
+        });
+      }
+      return result;
+    });
+  };
+  const exportConfig = () => {
+    Download(
+      [JSON.stringify({
+        ..._.pick(dataSourceRef.current, configFields),
+        dictSQLTemplate: _.get(dataSourceRef.current, 'profile.codeTemplates', [])
+          .filter(t => t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')[0],
+      }, null, 2)],
+      'application/json',
+      `${dataSourceRef.current.name}-${FormatMessage.string({id: 'toolbar.setting'})}-${moment().format('YYYYMDHHmmss')}.json`);
+
+  };
   const exportDomains = () => {
     Download(
       [JSON.stringify({
+        codeTemplates: _.get(dataSourceRef.current, 'profile.codeTemplates', [])
+          .filter(t => !(t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')),
         dataTypeSupports: _.get(dataSourceRef.current, 'profile.dataTypeSupports', []),
-        codeTemplates: _.get(dataSourceRef.current, 'profile.codeTemplates', []),
         dataTypeMapping:  _.get(dataSourceRef.current, 'dataTypeMapping', []),
         domains: _.get(dataSourceRef.current, 'domains', []),
       }, null, 2)],
@@ -630,7 +678,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
               _.get(data, 'dataTypeSupports', [])),
             codeTemplates: calcData(
               _.get(dataSourceRef.current, 'profile.codeTemplates', []),
-              _.get(data, 'codeTemplates', []), 'applyFor'),
+              _.get(data, 'codeTemplates', [])
+                .filter(t => !(t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')), 'applyFor'),
           },
           dataTypeMapping: {
             ...dataSourceRef.current?.dataTypeMapping,
@@ -1051,13 +1100,16 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     return m.defName || m.defKey;
   };
   const getName = (m) => {
-    if (m.type === 'groups'){
-      return `${m.defKey}-${m.defName || m.defKey}`;
-    } else if (m.type === 'entity' || m.type === 'view' || m.type === 'diagram' || m.type === 'dict'){
-      const tempDisplayMode = m.nameTemplate || '{defKey}[{defName}]';
-      return tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
-        return m[word] || m.defKey || '';
-      });
+    if (m.defKey !== m.defName) {
+      if (m.type === 'groups'){
+        return `${m.defKey}-${m.defName || m.defKey}`;
+      } else if (m.type === 'entity' || m.type === 'view' || m.type === 'diagram' || m.type === 'dict'){
+        const tempDisplayMode = m.nameTemplate || '{defKey}[{defName}]';
+        return tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
+          return m[word] || m.defKey || '';
+        });
+      }
+      return m.defName;
     }
     return m.defName;
   };
@@ -1072,11 +1124,14 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       case 'save': saveProject();break;
       case 'saveAs': saveProject(true);break;
       case 'pdman': importFromPDMan('pdman');break;
+      case 'importDDL': importFromPb('DDL');break;
       case 'chiner': importFromPDMan('chiner');break;
-      case 'powerdesigner': importFromPb();break;
+      case 'powerdesigner': importFromPb('PD');break;
       case 'db': importFromDb();break;
       case 'domains': importDomains();break;
       case 'exportDomains': exportDomains();break;
+      case 'importConfig': importConfig();break;
+      case 'exportConfig': exportConfig();break;
       case 'undo': undo(); break;
       case 'redo': redo(); break;
       case 'img': exportImg(); break;
@@ -1224,7 +1279,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       autoSaveRef.current = setInterval(() => {
         console.log('autoSave');
         const newData = updateAllData(dataSourceRef.current,
-          injectTempTabs.current.concat(tabsRef.current), false);
+          injectTempTabs.current.concat(tabsRef.current));
         if (newData.result.status) {
           restProps.autoSave(newData.dataSource);
         } else {

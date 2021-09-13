@@ -12,12 +12,14 @@ const Relation = React.memo(({dataSource, renderReady, diagramKey, validateTable
   const offsetWidth = 305;
   const offsetHeight = 148;
   const [id] = useState(Math.uuid());
+  const currentRelation = useMemo(() =>
+    (dataSource?.diagrams || []).filter(d => d.defKey === diagramKey)[0], [dataSource]);
   const data = useMemo(() => {
     const tabData = getDataByTabId(tabKey);
     if (tabData) {
       return tabData.data;
     } else {
-      return (dataSource?.diagrams || []).filter(d => d.defKey === diagramKey)[0]?.canvasData;
+      return currentRelation?.canvasData;
     }
   }, [dataSource]);
   const getCurrentSize = () => {
@@ -67,6 +69,7 @@ const Relation = React.memo(({dataSource, renderReady, diagramKey, validateTable
       changes={changes}
       versionsData={versionsData}
       save={save}
+      relationType={currentRelation?.relationType}
       getDataSource={getDataSource}
       openDict={openDict}
       selectionChanged={selectionChanged}

@@ -5,7 +5,7 @@ import { calcCellData } from '../datasource_util';
 import html2canvas from 'html2canvas';
 import { saveTempImages } from '../middle';
 
-export const img = (data, dataSource, needCalc = true, groups) => {
+export const img = (data, relationType, dataSource, needCalc = true, groups) => {
   return new Promise((res) => {
     const dom = document.createElement('div');
     dom.style.width = `${300}px`;
@@ -20,12 +20,12 @@ export const img = (data, dataSource, needCalc = true, groups) => {
         enabled: true,
       },
     });
-    const cells = ((needCalc ? calcCellData(data, dataSource, null, groups) : data)).map((d) => {
+    const cells = ((needCalc ? calcCellData(data, dataSource, null, groups, null, relationType, null) : data)).map((d) => {
       const other = {
         tools: {},
       };
       if (d.shape === 'erdRelation') {
-        const relation = d.relation.split(':');
+        const relation = d.relation?.split(':') || [];
         other.attrs = {
           ...(d.attrs || {}),
           line: {
@@ -133,7 +133,7 @@ export const imgAll = (dataSource) => {
           position: { name: 'absolute' },
           zIndex: 3,
         };
-        img(d.canvasData.cells, dataSource, true, {
+        img(d.canvasData.cells, d.relationType, dataSource, true, {
           in: {
             ...hiddenPort,
           },

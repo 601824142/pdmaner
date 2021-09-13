@@ -842,16 +842,23 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     updateTableDataByHeader(...args);
   };
   const exchangeHeader = () => {
+    let status = 0;
     let tempFields = [...(fieldsRef.current || [])].map((f) => {
       return {
         ...f,
         ...selectedColumns.reduce((a, b) => {
-          return {
-            ...a,
-            // eslint-disable-next-line no-nested-ternary
-            [b]: typeof f[b] === 'string' ? (f[b].toLocaleUpperCase() === f[b]
-                ? f[b].toLocaleLowerCase() : f[b].toLocaleUpperCase()) : f[b],
-          };
+          if (typeof f[b] === 'string') {
+            if (status === 0) {
+              status = f[b].toLocaleUpperCase() === f[b] ? 1 : 2;
+            }
+            return {
+              ...a,
+              // eslint-disable-next-line no-nested-ternary
+              [b]: status !== 0 ? (status === 1 ? f[b].toLocaleLowerCase()
+                : f[b].toLocaleUpperCase()) : f[b],
+            };
+          }
+          return a;
         }, {}),
       };
     });
