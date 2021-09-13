@@ -443,6 +443,9 @@ export default {
     },
     relation: {
         defKey: '关系图代码',
+        relationType: '连线类型',
+        relationEntity: '数据表',
+        relationField: '属性',
         defName: '关系图名称',
         graphCanvas: '关系图',
     },
@@ -581,6 +584,7 @@ export default {
         ModelLabel: '模型默认显示模式',
         ModelLabelMessage: '(重启或重新打开项目后生效)',
         relationFieldSize: '关系图最大展示字段数',
+        relationType: '关系图连线类型',
     },
     dbConnect: {
         log: '请查看日志文件,位于：',

@@ -443,6 +443,9 @@ export default {
     },
     relation: {
         defKey: 'Relation Code',
+        relationType: 'Relation Type',
+        relationEntity: 'entity',
+        relationField: 'field',
         defName: 'Relation Name',
         graphCanvas: 'graphCanvas',
     },
@@ -572,6 +575,7 @@ export default {
         ModelLabel: 'default display label',
         ModelLabelMessage: '(Take effect after restarting or reopening the project)',
         relationFieldSize: 'relation show field size',
+        relationType: 'relation type',
     },
     dbConnect: {
         log: 'Check the log file at:',
