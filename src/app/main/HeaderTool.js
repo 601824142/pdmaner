@@ -200,7 +200,10 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
             { key: 'chiner', name: FormatMessage.string({id: 'toolbar.importCHNR'}) },
             { key: 'powerdesigner', name: FormatMessage.string({id: 'toolbar.importPowerDesigner'}) },
             { key: 'db', name: FormatMessage.string({id: 'toolbar.importDb'}) },
-            { key: 'domains', name: FormatMessage.string({id: 'toolbar.importDomains'}) },
+            { style: { borderTop: '1px solid #DFE3EB' },
+              key: 'domains',
+              name: FormatMessage.string({id: 'toolbar.importDomains'}),
+            },
             { key: 'importConfig', name: FormatMessage.string({id: 'toolbar.importConfig'}) },
             { key: 'importDDL', name: FormatMessage.string({id: 'toolbar.importDDL'}) },
         ]}
@@ -213,7 +216,11 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
             {key: 'word', name: FormatMessage.string({id: 'toolbar.exportWord'})},
             {key: 'sql', name: FormatMessage.string({id: 'toolbar.exportSql'})},
             {key: 'dict', name: FormatMessage.string({id: 'toolbar.exportDict'})},
-            { key: 'exportDomains', name: FormatMessage.string({id: 'toolbar.exportDomains'}) },
+            {
+              style: { borderTop: '1px solid #DFE3EB' },
+              key: 'exportDomains',
+              name: FormatMessage.string({id: 'toolbar.exportDomains'}),
+            },
             { key: 'exportConfig', name: FormatMessage.string({id: 'toolbar.exportConfig'}) },
             {
               key: 'img',

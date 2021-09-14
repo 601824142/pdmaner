@@ -61,6 +61,7 @@ export default React.memo(({children, trigger, prefix, menus, disable,
             return m;
           }).map((m) => {
             return <div
+              style={m.style}
               key={m.name}
               className={`${currentPrefix}-dropdown-item ${currentPrefix}-dropdown-item-${m.disable ? 'disable' : 'normal'}`}
               onClick={e => onMenuClick(m, e)}

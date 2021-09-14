@@ -59,9 +59,9 @@ function createWindow() {
         .replaceAll('-', '')
         .replaceAll(':', '');
       fs.writeFile(path.join(dir, `/${dataCache.data.name}-backup-${time}.chnr.json`), JSON.stringify(dataCache.data, null, 2), () => {
-        dialog.showMessageBox({message: `检测到系统异常，已为您自动备份项目,异常原因:${reason}`, title: '系统异常' }).then(() => {
+        /*dialog.showMessageBox({message: `检测到系统异常，已为您自动备份项目,异常原因:${reason}`, title: '系统异常' }).then(() => {
           app.quit();
-        });
+        });*/
       });
     }
   }
