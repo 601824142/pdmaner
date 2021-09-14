@@ -55,7 +55,7 @@ export default {
     invalidProjectFile: '无效的项目文件',
     invalidProjectData: '无效的chnr文件，请先新建项目再执行导入操作！请勿直接修改项目后缀！',
     invalidPdmFile: '无效的pdm文件',
-    invalidDDLFile: '无效的DDL文件',
+    invalidDDLFile: '无效的sql文件',
     invalidDomainsFile: '无效的数据域文件',
     invalidConfigFile: '无效的设置文件',
     invalidPDManFile: '无效的PDMan文件',
