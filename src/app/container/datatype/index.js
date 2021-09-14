@@ -40,15 +40,15 @@ export default React.memo(({prefix, dataSource, data, dataChange}) => {
     </div>
     {
       dataTypeSupport.map(d => (
-        <div className={`${currentPrefix}-form-item`} key={d}>
+        <div className={`${currentPrefix}-form-item`} key={d.id}>
           <span
             className={`${currentPrefix}-form-item-label`}
-            title={d}
+            title={d.defKey}
           >
-            {`${d}${db === d ? FormatMessage.string({id: 'dataType.defaultDb'}) : ''}`}
+            {`${d.defKey}${db === d.id ? FormatMessage.string({id: 'dataType.defaultDb'}) : ''}`}
           </span>
           <span className={`${currentPrefix}-form-item-component`}>
-            <Input onChange={e => onChange(e, d)} defaultValue={data[d] || ''}/>
+            <Input onChange={e => onChange(e, d.id)} defaultValue={data[d.id] || ''}/>
           </span>
         </div>
       ))

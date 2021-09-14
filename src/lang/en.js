@@ -454,7 +454,7 @@ export default {
     database: {
         templateError: 'Database template error, please refer to dot.js configuration template information',
         templateEdit: 'template edit',
-        applyFor: 'name',
+        defKey: 'defKey',
         type: 'type',
         defaultDbError: 'Default database can only have one',
         nameError: 'Data name or Code cannot be empty',

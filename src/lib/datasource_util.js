@@ -620,12 +620,17 @@ export const emptyDomain = {
   len: '',
   scale: '',
   uiHint: '',
+  id: ''
 };
 
 export const emptyDataType = {
   defKey: '',
   defName: '',
 };
+
+export const emptyDataTypeSupport = {
+  defKey: '',
+}
 
 export const emptyCodeTemplate = {
   applyFor: '',
@@ -729,9 +734,9 @@ export const validateFields = (fields) => {
 };
 
 export const getEntityOrViewByName = (dataSource, name) => {
-  const entity = (dataSource?.entities || []).filter(e => e.defKey === name)[0];
+  const entity = (dataSource?.entities || []).filter(e => e.id === name)[0];
   if (!entity) {
-    return (dataSource?.views || []).filter(e => e.defKey === name)[0];
+    return (dataSource?.views || []).filter(e => e.id === name)[0];
   }
   return entity;
 };
@@ -842,6 +847,7 @@ export const getViewColumn = () => {
 
 export const getEmptyEntity = (fields = [], properties = {}) => {
   return {
+    id: Math.uuid(),
     defKey: '',
     defName: '',
     comment: '',

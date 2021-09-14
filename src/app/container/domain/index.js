@@ -77,7 +77,7 @@ export default React.memo(({prefix, dataSource, data, dataChange}) => {
       <span className={`${currentPrefix}-form-item-component`}>
         <Select onChange={e => onChange(e, 'applyFor')} defaultValue={data.applyFor || ''}>
           {
-            mapping.map(m => (<Option key={m.defKey} value={m.defKey}>{m.defName}</Option>))
+            mapping.map(m => (<Option key={m.id} value={m.id}>{m.defName || m.defKey}</Option>))
           }
         </Select>
       </span>

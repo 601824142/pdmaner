@@ -454,7 +454,7 @@ export default {
     database: {
         templateError: '数据库模板出错，请参考Dot.js配置模板信息',
         templateEdit: '模板配置',
-        applyFor: '数据库或代码',
+        defKey: '数据库或代码',
         type: '类型',
         defaultDbError: '默认数据库只能有一个',
         nameError: '数据库或代码不能为空',

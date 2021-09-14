@@ -13,7 +13,7 @@ const Relation = React.memo(({dataSource, renderReady, diagramKey, validateTable
   const offsetHeight = 148;
   const [id] = useState(Math.uuid());
   const currentRelation = useMemo(() =>
-    (dataSource?.diagrams || []).filter(d => d.defKey === diagramKey)[0], [dataSource]);
+    (dataSource?.diagrams || []).filter(d => d.id === diagramKey)[0], [dataSource]);
   const data = useMemo(() => {
     const tabData = getDataByTabId(tabKey);
     if (tabData) {

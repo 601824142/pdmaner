@@ -357,7 +357,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
 Menu.defaultProps = {
   fieldNames: {
     icon: 'icon',
-    defKey: 'defKey',
+    defKey: 'id',
     defName: 'defName',
     children: 'children',
   },

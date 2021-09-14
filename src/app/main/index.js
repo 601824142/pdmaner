@@ -769,6 +769,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   };
   const domainMenu = useMemo(() => [
     {
+      id: 'dataTypeMapping',
       defKey: 'dataTypeMapping',
       type: 'dataTypeMapping',
       icon: 'fa-cube',
@@ -776,6 +777,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       children: (restProps.dataSource?.dataTypeMapping?.mappings || []).map(d => ({...d, type: 'mapping'})),
     },
     {
+      id: 'domains',
       defKey: 'domains',
       type: 'domains',
       icon: 'fa-key',
@@ -783,15 +785,17 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       children: (restProps.dataSource?.domains || []).map(d => ({...d, type: 'domain'})),
     },
     {
+      id: 'dataTypeSupports',
       defKey: 'dataTypeSupports',
       type: 'dataTypeSupport',
       icon: 'fa-database',
       defName: FormatMessage.string({id: 'project.dataTypeSupport'}),
-      children: (restProps.dataSource?.profile?.dataTypeSupports || []).map(d => ({defKey: d, type: 'dataType'})),
+      children: (restProps.dataSource?.profile?.dataTypeSupports || []).map(d => ({...d, type: 'dataType'})),
     },
   ], [restProps.dataSource, config]);
   const simpleMenu = useMemo(() => [
     {
+      id: 'entities',
       defKey: 'entities',
       type: 'entities',
       icon: 'fa-table',
@@ -799,6 +803,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       children: (restProps.dataSource?.entities || []).map(e => ({...e, type: 'entity'})),
     },
     {
+      id: 'views',
       defKey: 'views',
       type: 'views',
       icon: 'icon-shitu',
@@ -806,6 +811,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       children: (restProps.dataSource?.views || []).map(v => ({...v, type: 'view'})),
     },
     {
+      id: 'diagrams',
       defKey: 'diagrams',
       type: 'diagrams',
       icon: 'icon-guanxitu',
@@ -813,6 +819,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       children: (restProps.dataSource?.diagrams || []).map(d => ({...d, type: 'diagram'})),
     },
     {
+      id: 'dicts',
       defKey: 'dicts',
       type: 'dicts',
       icon: 'icon-shujuzidian',
@@ -1093,8 +1100,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   };
   const domainGetName = (m) => {
     const dataTypeSupports = _.get(restProps, 'dataSource.profile.dataTypeSupports', []);
-    const defaultDb = _.get(restProps, 'dataSource.profile.default.db', dataTypeSupports[0]);
-    if (defaultDb === m.defKey) {
+    const defaultDb = _.get(restProps, 'dataSource.profile.default.db', dataTypeSupports[0]?.id);
+    if (defaultDb === m.id) {
       return `${m.defName || m.defKey}(${FormatMessage.string({id: 'project.default'})})`;
     }
     return m.defName || m.defKey;
@@ -1104,10 +1111,13 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       if (m.type === 'groups'){
         return `${m.defKey}-${m.defName || m.defKey}`;
       } else if (m.type === 'entity' || m.type === 'view' || m.type === 'diagram' || m.type === 'dict'){
-        const tempDisplayMode = m.nameTemplate || '{defKey}[{defName}]';
-        return tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
-          return m[word] || m.defKey || '';
-        });
+        if (m.defName) {
+          const tempDisplayMode = m.nameTemplate || '{defKey}[{defName}]';
+          return tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
+            return m[word] || m.defKey || '';
+          });
+        }
+        return m.defKey;
       }
       return m.defName;
     }
@@ -1153,10 +1163,10 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const getTabTitle = (t) => {
     const currentType = allType.filter(a => a.type === t.type)[0];
     const currentData = restProps?.dataSource[currentType.name]?.
-    filter(d => d[currentType.defKey] === t.menuKey)[0];
+    filter(d => d.id === t.menuKey)[0];
     const tempDisplayMode = currentData?.nameTemplate || '{defKey}[{defName}]';
     return {
-      title: currentData?.defName || t.menuKey,
+      title: currentData?.defName || currentData.defKey,
       tooltip: tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
         return currentData?.[word] || currentData?.defKey || '';
       }),

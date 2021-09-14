@@ -15,7 +15,7 @@ import DataType from '../app/container/datatype';
 import Domain from '../app/container/domain';
 import Preview from '../app/container/database';
 import { getEmptyEntity, getEmptyView, emptyRelation, emptyGroup, emptyDomain, emptyDataType, emptyCodeTemplate,
-  emptyDict, validateItem, validateKey, emptyDiagram, defaultTemplate, validateItemInclude,
+  emptyDict, validateItem, validateKey, emptyDiagram, defaultTemplate, validateItemInclude, emptyDataTypeSupport,
 updateAllFieldsType } from './datasource_util';
 // 专门处理左侧菜单 右键菜单数据
 import { separator } from '../../profile';
@@ -127,16 +127,18 @@ const validate = (require, data) => {
   return !require.some(r => !data[r]);
 };
 
-const calcDefaultDb = (newData, oldData) => {
-  if (typeof newData.defaultDb === 'boolean' && newData.defaultDb && (newData.type === 'dbDDL')) {
-    return newData.dataTypeSupport;
-  } else if (oldData.defaultDb !== newData.defaultDb) {
-    Message.success({
-      title: FormatMessage.string({id: 'dataType.defaultDbInfo'})
-    });
-    return newData.dataTypeSupport;
+const calcDefaultDb = (newData, oldData, db) => {
+  if (newData.type === 'dbDDL') {
+    if (newData.defaultDb) {
+      return newData.applyFor;
+    } else if (oldData.defaultDb && !newData.defaultDb) {
+      Message.success({
+        title: FormatMessage.string({id: 'dataType.defaultDbInfo'})
+      });
+      return newData.applyFor;
+    }
   }
-  return oldData.defaultDb;
+  return db;
 }
 
 const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, customerDealData, callback) => {
@@ -179,7 +181,10 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
       uniqueKey: 'defKey',
       uniqueKeyNamePath: 'relation.defKey',
       refName: 'refDiagrams',
-      empty: emptyRelation,
+      empty: {
+        ...emptyRelation,
+        id: Math.uuid(),
+      },
       dataPick: commonPick.concat('relationType'),
       component: NewRelation,
       title: FormatMessage.string({id: 'menus.add.newRelation'}),
@@ -190,7 +195,10 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
       uniqueKey: 'defKey',
       uniqueKeyNamePath: 'dict.defKey',
       refName: 'refDicts',
-      empty: emptyDict,
+      empty: {
+        ...emptyDict,
+        id: Math.uuid(),
+      },
       dataPick: commonPick,
       component: NewDict,
       title: FormatMessage.string({id: 'menus.add.newDict'}),
@@ -200,7 +208,10 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
     viewGroups: {
       uniqueKey: 'defKey',
       uniqueKeyNamePath: 'group.defKey',
-      empty: emptyGroup,
+      empty: {
+        ...emptyGroup,
+        id: Math.uuid(),
+      },
       dataPick: commonPick.concat(['refEntities', 'refViews', 'refDiagrams', 'refDicts']),
       component: NewGroup,
       title: FormatMessage.string({id: 'menus.add.newGroup'}),
@@ -210,7 +221,10 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
     domains: {
       uniqueKey: 'defKey',
       uniqueKeyNamePath: 'domain.defKey',
-      empty: emptyDomain,
+      empty: {
+        ...emptyDomain,
+        id: Math.uuid(),
+      },
       dataPick: 'all',
       component: Domain,
       title: FormatMessage.string({id: 'menus.add.newDomain'}),
@@ -220,7 +234,10 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
     dataTypeMapping: {
       uniqueKey: 'defKey',
       uniqueKeyNamePath: 'dataType.defKey',
-      empty: emptyDataType,
+      empty: {
+        ...emptyDataType,
+        id: Math.uuid(),
+      },
       dataPick: 'all',
       component: DataType,
       title: FormatMessage.string({id: 'menus.add.newDataType'}),
@@ -228,14 +245,17 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
       require: commonRequire,
     },
     dataTypeSupports: {
-      uniqueKey: 'dataTypeSupport',
+      uniqueKey: 'defKey',
       uniqueKeyNamePath: 'database.name',
-      empty: {},
-      dataPick: [],
+      empty: {
+        defKey: '',
+        id: Math.uuid()
+      },
+      dataPick: 'all',
       component: Preview,
-      allKeys: (dataSource?.profile?.dataTypeSupports || []),
+      allKeys: (dataSource?.profile?.dataTypeSupports || []).map(d => d.defKey),
       title: FormatMessage.string({id: 'menus.add.newDataTypeSupport'}),
-      require: ['dataTypeSupport'],
+      require: commonRequire,
     },
   };
   const getRealType = () => {
@@ -289,10 +309,10 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
             tempDataSource = {
               ...tempDataSource,
               viewGroups: data.group?.length > 0 ? (dataSource?.viewGroups || []).map((v) => {
-                if (data.group.includes(v.defKey)) {
+                if (data.group.includes(v.id)) {
                   return {
                     ...v,
-                    [refName]: v?.[refName]?.concat(data[modalData.uniqueKey]),
+                    [refName]: v?.[refName]?.concat(data.id),
                   }
                 }
                 return v;
@@ -314,22 +334,24 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
               }
             };
           } else if (realType === 'dataTypeSupports') {
+            const newData = getData();
             tempDataSource = {
               ...tempDataSource,
               profile: {
                 ...(tempDataSource?.profile || {}),
-                dataTypeSupports: (tempDataSource?.profile?.dataTypeSupports || []).concat(data[modalData.uniqueKey]),
+                dataTypeSupports: (tempDataSource?.profile?.dataTypeSupports || [])
+                  .concat(_.pick(newData, ['defKey', 'id'])),
                 default: {
                   ..._.get(tempDataSource, 'profile.default', {}),
-                  db: data.defaultDb ? data[modalData.uniqueKey] :
-                    _.get(tempDataSource, 'profile.default.db', ''),
+                  db: newData.defaultDb ? newData.id :
+                    _.get(tempDataSource, 'profile.default.db', newData.id),
                 },
                 codeTemplates: _.get(tempDataSource, 'profile.codeTemplates', []).concat({
-                  applyFor: data[modalData.uniqueKey],
-                  type: data.type || 'dbDDL',
-                  ...defaultTemplate[`${data.type || 'dbDDL'}Template`].reduce((a, b) => {
+                  applyFor: newData.id,
+                  type: newData.type || 'dbDDL',
+                  ...defaultTemplate[`${newData.type || 'dbDDL'}Template`].reduce((a, b) => {
                     const temp = {...a};
-                    temp[b] = data[b] || '';
+                    temp[b] = newData[b] || '';
                     return temp;
                   }, {})
                 })
@@ -337,7 +359,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
             };
             if (_.get(tempDataSource, 'profile.default.db') !== _.get(dataSource, 'profile.default.db')){
               // 如果默认数据库发生变化
-              tempDataSource = updateAllFieldsType(tempDataSource);
+              //tempDataSource = updateAllFieldsType(tempDataSource);
             }
           } else {
             // viewGroup domains
@@ -397,34 +419,31 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
         .filter(v => v?.refDiagrams?.includes(dataKey))
         .map(v => v.defKey) || [];
       return {
-        ...(dataSource?.diagrams || []).filter(d => d.defKey === dataKey)[0] || {},
+        ...(dataSource?.diagrams || []).filter(d => d.id === dataKey)[0] || {},
         group,
       };
     } else if (dataType === 'groups') {
       name = 'viewGroups';
       title = FormatMessage.string({id: 'menus.edit.editGroup'});
-      return _.get(dataSource, name, []).filter(v => v.defKey === dataKey)[0] || {};
+      return _.get(dataSource, name, []).filter(v => v.id === dataKey)[0] || {};
     } else if (dataType === 'domain') {
       name = 'domains';
       title = FormatMessage.string({id: 'menus.edit.editDomain'});
-      return _.get(dataSource, name, []).filter(v => v.defKey === dataKey)[0] || {};
+      return _.get(dataSource, name, []).filter(v => v.id === dataKey)[0] || {};
     } else if (dataType === 'mapping') {
       name = 'dataTypeMapping.mappings';
       title = FormatMessage.string({id: 'menus.edit.editMapping'});
-      return _.get(dataSource, name, []).filter(v => v.defKey === dataKey)[0] || {};
+      return _.get(dataSource, name, []).filter(v => v.id === dataKey)[0] || {};
     } else if (dataType === 'dataType') {
-      keyName = 'dataTypeSupport';
       name = 'profile.dataTypeSupports';
       title = FormatMessage.string({id: 'menus.edit.editDataTypeSupport'});
-      const defaultDb = dataSource?.profile?.default?.db;
-      const templateData = (dataSource?.profile?.codeTemplates || [])
+      const temp = (dataSource?.profile?.codeTemplates || [])
         .filter(t => t.applyFor === dataKey)[0] || {};
       return {
-        dataTypeSupport: dataKey,
-        defaultDb,
-        templateData,
-        type: templateData.type || 'dbDDL',
-      }
+        ...temp,
+        defaultDb: dataSource?.profile?.default?.db === dataKey,
+        defKey: dataSource?.profile?.dataTypeSupports?.filter(d => d.id === temp.applyFor)[0]?.defKey
+      };
     }
     return {};
   };
@@ -439,7 +458,7 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
         updateDataSource && updateDataSource({
           ...dataSource,
           diagrams: (dataSource?.diagrams || []).map((d) => {
-            if (oldData.defKey === d.defKey) {
+            if (oldData.id === d.id) {
               return {
                 ...d,
                 defKey: data.defKey,
@@ -448,78 +467,51 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
             }
             return d;
           }),
-          viewGroups: (dataSource?.viewGroups || []).map((v) => {
-            let tempDiagramRefs = (v?.refDiagrams || []);
-            if (oldData.group.includes(v.defKey)) {
-              // 移除旧的数据
-              tempDiagramRefs = tempDiagramRefs.filter(r => r !== oldData.defKey);
-            }
-            if (data.group.includes(v.defKey)){
-              // 插入新的数据
-              tempDiagramRefs = tempDiagramRefs.concat(data.defKey);
-            }
-            return {
-              ...v,
-              refDiagrams: tempDiagramRefs,
-            };
-          }),
         });
-        const tabKey = data.defKey + separator + dataType;
-        const oldTabKey = oldData.defKey + separator + dataType;
-        replaceDataByTabId(oldTabKey, tabKey);
-        updateTabs(oldData.defKey, data.defKey, dataType);
       } else if (dataType === 'mapping') {
-        let domains = _.get(dataSource, 'domains', []);
+       // let domains = _.get(dataSource, 'domains', []);
         let tempDataSource = {
           ...dataSource,
           dataTypeMapping: {
             ...(dataSource?.dataTypeMapping || {}),
             mappings: _.get(dataSource, name, []).map((v) => {
-              if (v.defKey === oldData.defKey) {
-                if (v.defKey !== data.defKey) {
-                  // 与之相关的domains的apply需要更新
-                  domains = domains.map((d) => {
-                    if (d.applyFor === v.defKey) {
-                      return {
-                        ...d,
-                        applyFor: data.defKey,
-                      };
-                    }
-                    return d;
-                  })
-                }
+              if (v.id === oldData.id) {
                 return _.omit(data, 'group');
               }
               return v;
             })
           },
         };
-        tempDataSource.domains = domains; // 更新domains
-        tempDataSource = updateAllFieldsType(tempDataSource);
+        //tempDataSource = updateAllFieldsType(tempDataSource);
         updateDataSource && updateDataSource(tempDataSource);
       } else if (dataType === 'dataType') {
+        const dataTypeSupports = _.get(dataSource, 'profile.dataTypeSupports', []);
+        const defaultData = _.get(dataSource, 'profile.default', {});
         let tempDataSource = {
           ...dataSource,
           profile: {
             ..._.get(dataSource, 'profile', {}),
             default: {
-              ..._.get(dataSource, 'profile.default', {}),
-              db: calcDefaultDb(data, oldData),
+              ...defaultData,
+              db: calcDefaultDb(data, oldData, defaultData.db),
             },
-            dataTypeSupports: _.get(dataSource, 'profile.dataTypeSupports', []).map((d) => {
-              if (d === oldData[keyName]) {
-                return data[keyName];
+            dataTypeSupports: dataTypeSupports.map((d) => {
+              if (d.id === oldData.applyFor) {
+                return {
+                  ...d,
+                  defKey: data.defKey,
+                };
               }
               return d;
             }),
             codeTemplates: _.get(dataSource, 'profile.codeTemplates', []).map((t) => {
-              if (t.applyFor === oldData[keyName]) {
+              if (t.applyFor === oldData.applyFor) {
                 return {
+                  ..._.omit(t, defaultTemplate.appCodeTemplate.concat(defaultTemplate.dbDDLTemplate)),
                   type: data.type,
-                  applyFor: data[keyName],
                   ...defaultTemplate[`${data.type}Template`].reduce((a, b) => {
                     const temp = {...a};
-                    temp[b] = b in data ? data[b] : (oldData?.templateData[b] || '');
+                    temp[b] = b in data ? data[b] : (oldData[b] || '');
                     return temp;
                   }, {}),
                 }
@@ -530,14 +522,14 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
         };
         if (_.get(tempDataSource, 'profile.default.db') !== _.get(dataSource, 'profile.default.db')){
           // 如果默认数据库发生变化
-          tempDataSource = updateAllFieldsType(tempDataSource);
+          //tempDataSource = updateAllFieldsType(tempDataSource);
         }
         updateDataSource && updateDataSource(tempDataSource);
       } else {
         let tempDataSource = {
           ...dataSource,
           [name]: (dataSource?.[name] || []).map((v) => {
-            if (v.defKey === oldData.defKey) {
+            if (v.id === oldData.id) {
               return pickGroup ? data : _.omit(data, 'group');
             }
             return v;
@@ -562,21 +554,21 @@ const domainData = [
     type: 'domain',
     parentType: 'domains',
     name: 'domains',
-    key: 'defKey',
+    key: 'id',
     emptyData: emptyDomain,
   },
   {
     type: 'mapping',
     parentType: 'dataTypeMapping',
     name: 'dataTypeMapping.mappings',
-    key: 'defKey',
+    key: 'id',
     emptyData: emptyDataType,
   },
   {
     type: 'dataType',
     parentType: 'dataTypeSupport',
-    name: 'profile.codeTemplates',
-    key: 'applyFor',
+    name: 'profile.dataTypeSupports',
+    key: 'id',
     emptyData: emptyCodeTemplate,
   }
 ];
@@ -592,7 +584,7 @@ const copyOpt = (dataSource, menu, type = 'copy', cb) => {
   ];
   const getData = (name, data) => {
     return dataSource?.[name].filter((d) => {
-      return data.includes(d.defKey);
+      return data.includes(d.id);
     })
   };
   const getResult = (data, group) => {
@@ -624,7 +616,7 @@ const copyOpt = (dataSource, menu, type = 'copy', cb) => {
         tempTypeData = (dataSource?.viewGroups || []).reduce((a, b) => {
           return a.concat(getResult((names) => {
             return getData(names, b[`ref${names.slice(0, 1).toUpperCase() + names.slice(1)}`]);
-          }, b.defKey));
+          }, b.id));
         }, []);
       } else {
         tempTypeData = getResult(dataSource);
@@ -648,48 +640,48 @@ const getOptConfig = (dataType) => {
   const entityConfig = {
     type: ['entities', 'entity'],
     mainKey: 'entities',
-    key: 'defKey',
+    key: 'id',
     emptyData: getEmptyEntity(),
     viewRefs: 'refEntities',
   };
   const viewConfig = {
     type: ['views', 'view'],
     mainKey: 'views',
-    key: 'defKey',
+    key: 'id',
     emptyData: getEmptyView(),
     viewRefs: 'refViews',
   };
   const diagramConfig = {
     type: ['diagrams', 'diagram'],
     mainKey: 'diagrams',
-    key: 'defKey',
+    key: 'id',
     emptyData: emptyDiagram,
     viewRefs: 'refDiagrams',
   };
   const dictConfig = {
     type: ['dicts', 'dict'],
     mainKey: 'dicts',
-    key: 'defKey',
+    key: 'id',
     emptyData: emptyDict,
     viewRefs: 'refDicts',
   };
   const domianConfig = {
     type: ['domain'],
     mainKey: 'domains',
-    key: 'defKey',
+    key: 'id',
     emptyData: emptyDomain,
   };
   const mappingConfig = {
     type: ['mapping'],
     mainKey: 'dataTypeMapping.mappings',
-    key: 'defKey',
+    key: 'id',
     emptyData: emptyDataType,
   };
   const dataTypeSupportConfig = {
     type: ['dataType'],
-    mainKey: 'profile.codeTemplates',
-    key: 'applyFor',
-    emptyData: emptyCodeTemplate,
+    mainKey: 'profile.dataTypeSupports',
+    key: 'id',
+    emptyData: emptyDataTypeSupport,
   };
   const optConfigMap = {
     entityConfig,
@@ -734,14 +726,27 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
       }
       return v;
     });
-    const allKeys = oldData.map(e => e[config.key]);
+    let tempCodeTemplates = [];
+    const codeTemplates = (dataSource.profile.codeTemplates || []);
+    const allKeys = oldData.map(e => e.defKey);
     const realData = newData
         .map((e) => {
-          const key = validateKey(e[config.key], allKeys);
+          const key = validateKey(e.defKey, allKeys);
           allKeys.push(key);
+          const id = Math.uuid();
+          if (dataType === 'dataType') {
+            tempCodeTemplates = tempCodeTemplates
+              .concat(codeTemplates.filter(c => c.applyFor === e.id)).map(c => {
+                return {
+                  ...c,
+                  applyFor: id,
+                };
+              });
+          }
           return {
             ...e,
-            [config.key]: key,
+            id,
+            defKey: key,
           };
         });
     if (realData.length === 0) {
@@ -755,15 +760,14 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
         tempNewData[config.mainKey] = oldData.concat(realData);
       }
       if (dataType === 'dataType') {
-        tempNewData.profile.dataTypeSupports
-            = (tempNewData.profile.dataTypeSupports || []).concat(realData.map(d => d.applyFor));
+        tempNewData.profile.codeTemplates = codeTemplates.concat(tempCodeTemplates);
       }
       if (parentKey) {
         updateDataSource({
           ...dataSource,
           ...tempNewData,
           viewGroups: newGroupData ? newGroupData.map((v) => {
-            if (v.defKey === parentKey) {
+            if (v.id === parentKey) {
               return {
                 ...v,
                 [config.viewRefs]: (v[config.viewRefs] || []).concat(realData.map(e => e[config.key])),
@@ -794,7 +798,7 @@ const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
       if (dataType === 'groups') {
         updateDataSource && updateDataSource({
           ...dataSource,
-          viewGroups: (dataSource?.viewGroups || []).filter(v => v.defKey !== dataKey),
+          viewGroups: (dataSource?.viewGroups || []).filter(v => v.id !== dataKey),
         });
         Message.success({title: FormatMessage.string({id: 'deleteSuccess'})});
       } else if (domain && domain.type === 'mapping') {
@@ -804,14 +808,14 @@ const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
           dataTypeMapping: {
             ...dataSource.dataTypeMapping,
             mappings: (dataSource.dataTypeMapping?.mappings || [])
-                .filter(d => !deleteData.includes(d[domain.key]))
+                .filter(d => !deleteData.includes(d.id))
           }
         });
         Message.success({title: FormatMessage.string({id: 'deleteSuccess'})});
       } else if(domain && domain.type === 'dataType') {
         const deleteData = otherMenus.filter(m => m.type === dataType).map(m => m.key);
         const dataTypeSupports = (dataSource.profile?.dataTypeSupports || [])
-          .filter(d => !deleteData.includes(d));
+          .filter(d => !deleteData.includes(d.id));
         const db = _.get(dataSource, 'profile.default.db');
         updateDataSource && updateDataSource({
           ...dataSource,
@@ -819,7 +823,7 @@ const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
             ...dataSource.profile,
             default: {
               ...dataSource.profile.default,
-              db: !dataTypeSupports.includes(db) ? (dataTypeSupports[0] || '') : db,
+              db: !dataTypeSupports.map(d => d.id).includes(db) ? (dataTypeSupports[0]?.id || '') : db,
             },
             dataTypeSupports,
             codeTemplates: (dataSource.profile?.codeTemplates || [])
@@ -891,7 +895,7 @@ const clearOpt = (dataSource, menu, updateDataSource) => {
         updateDataSource && updateDataSource({
           ...dataSource,
           viewGroups: (dataSource?.viewGroups || []).map((v) => {
-            if (v.defKey === dataKey) {
+            if (v.id === dataKey) {
               return {
                 ...v,
                 refEntities:[],
@@ -921,7 +925,7 @@ const moveOpt = (dataSource, menu, updateDataSource) => {
     }
   };
   const refName = getRefName(dataType);
-  let oldData = (dataSource?.viewGroups || []).filter(v => v[refName]?.includes(dataKey)).map(v => v.defKey);
+  let oldData = (dataSource?.viewGroups || []).filter(v => v[refName]?.includes(dataKey)).map(v => v.id);
   const allGroupData = otherMenus.reduce((a, b) => {
     const tempA = {...a};
     const type = getRefName(b.type);
@@ -943,7 +947,7 @@ const moveOpt = (dataSource, menu, updateDataSource) => {
     updateDataSource && updateDataSource({
       ...dataSource,
       viewGroups: (dataSource?.viewGroups || []).map((v) => {
-        if (selectGroups.includes(v.defKey)) {
+        if (selectGroups.includes(v.id)) {
           return {
             ...v,
             ...Object.keys(allGroupData).reduce((a, b) => {
