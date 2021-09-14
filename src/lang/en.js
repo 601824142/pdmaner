@@ -55,7 +55,7 @@ export default {
     invalidProjectFile: 'Invalid project file',
     invalidProjectData: 'Invalid chnr file, please create a new project before importing!Do not modify the project suffix directly',
     invalidPdmFile: 'Invalid pdm file',
-    invalidDDLFile: 'Invalid DDL file',
+    invalidDDLFile: 'Invalid sql file',
     invalidDomainsFile: 'Invalid domains file',
     invalidConfigFile: 'Invalid config file',
     invalidPDManFile: 'Invalid PDMan file',

@@ -1,6 +1,6 @@
 {
   "name": "chiner",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "CHINER-元数建模",
   "main": "build/main.js",
   "scripts": {
