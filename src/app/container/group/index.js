@@ -14,7 +14,7 @@ export default React.memo(({prefix, dataSource, dataChange, data}) => {
       key: name,
       value: `${FormatMessage.string({id: `group.${formatMessage}`})}(${(dataSource?.[name] || []).length})`,
       children: (dataSource?.[name] || [])
-        .map(d => ({key: d.defKey, value: `${d.defKey}[${d.defName || d.defKey}]`})),
+        .map(d => ({key: d.id, value: `${d.defKey}[${d.defName || d.defKey}]`})),
     }];
   };
   const getDefaultSelect = (name) => {

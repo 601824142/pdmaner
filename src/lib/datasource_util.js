@@ -486,23 +486,24 @@ export const updateAllFieldsType = (dataSource, oldDomain, newDomain) => {
 export const importFields = (entities, fields, data, useDefaultFields, onlyEntityFields) => {
   const allFields = [...(data?.fields || [])].filter(f => !f.refEntity); // 过滤掉从实体中获取的
   if (useDefaultFields) {
-    allFields.push(...emptyProjectTemplate.profile.default.entityInitFields);
+    allFields.push(...emptyProjectTemplate.profile.default.entityInitFields
+      .map(f => ({...f, id: Math.uuid()})));
   }
   const allFieldKeys = allFields.map(f => f.defKey);
   const newFields = fields.map((v) => {
     const splitArray = v.split(separator);
     const entity = splitArray[0];
     const field = splitArray[1];
-    const tempEntity = entities?.filter(e => e.defKey === entity)[0] || {};
-    const tempField = tempEntity?.fields?.filter(f => f.defKey === field)[0] || {};
+    const tempEntity = entities?.filter(e => e.id === entity)[0] || {};
+    const tempField = tempEntity?.fields?.filter(f => f.id === field)[0] || {};
     const tempKey = validateKey(tempField.defKey, allFieldKeys);
     allFieldKeys.push({defKey: tempKey});
     return {
       ...tempField,
+      id: Math.uuid(),
       defKey: tempKey,
       refEntity: entity,
       refEntityField: field,
-      __key: Math.uuid(),
     };
   });
   return onlyEntityFields ? newFields : newFields.concat(allFields);
@@ -642,6 +643,7 @@ export const emptyDict = {
   defName: '',
   sort: '',
   intro: '',
+  id: '',
   items: [],
 };
 
@@ -889,6 +891,8 @@ export const getEmptyView = () => {
 export const emptyDiagram = {
   defKey: '',
   defName: '',
+  id: '',
+  relationType: 'field',
   canvasData: {}
 };
 

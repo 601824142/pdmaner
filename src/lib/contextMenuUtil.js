@@ -158,7 +158,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
       uniqueKey: 'defKey',
       uniqueKeyNamePath: 'tableBase.defKey',
       refName: 'refEntities',
-      empty: getEmptyEntity(_.get(dataSource, 'profile.default.entityInitFields', []),
+      empty: getEmptyEntity([],
         _.get(dataSource, 'profile.default.entityInitProperties', {})),
       dataPick: commonPick.concat('fields'),
       component: NewEntity,
@@ -312,7 +312,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
                 if (data.group.includes(v.id)) {
                   return {
                     ...v,
-                    [refName]: v?.[refName]?.concat(data.id),
+                    [refName]: v?.[refName]?.concat(modalData.empty.id),
                   }
                 }
                 return v;
@@ -417,7 +417,7 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
       title = FormatMessage.string({id: 'menus.edit.editRelation'});
       const group = (dataSource?.viewGroups || [])
         .filter(v => v?.refDiagrams?.includes(dataKey))
-        .map(v => v.defKey) || [];
+        .map(v => v.id) || [];
       return {
         ...(dataSource?.diagrams || []).filter(d => d.id === dataKey)[0] || {},
         group,
@@ -466,6 +466,16 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
               }
             }
             return d;
+          }),
+          viewGroups: (dataSource?.viewGroups || []).map((v) => {
+            let tempDiagramRefs = (v?.refDiagrams || []).filter(d => oldData.id !== d);
+            if (data.group.includes(v.id)) {
+              tempDiagramRefs.push(oldData.id);
+            }
+            return {
+              ...v,
+              refDiagrams: tempDiagramRefs,
+            };
           }),
         });
       } else if (dataType === 'mapping') {

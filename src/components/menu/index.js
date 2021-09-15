@@ -126,18 +126,18 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
   const rowOnDrop = (i, child, parentKey, menu) => {
     if ((child.type === startRef.current.type) &&
         (startRef.current.index > -1) && (startRef.current.index !== i)) {
-      const name = allType.concat({ type: 'dataType', name: 'profile.dataTypeSupports', defKey: '' }).filter(t => t.type === child.type)[0];
+      const name = allType.concat({ type: 'dataType', name: 'profile.dataTypeSupports', defKey: 'defKey' }).filter(t => t.type === child.type)[0];
       if (name) {
         if (parentKey) {
           update && update({
             ...dataSource,
             viewGroups: (dataSource.viewGroups || []).map((g) => {
-              if (g.defKey === parentKey) {
+              if (g.id === parentKey) {
                 const refName = `ref${firstUp(name.name)}`;
                 return {
                   ...g,
                   [refName]: moveArrayPosition(g[refName]
-                          .filter(c => menu.children.findIndex(m => m.defKey === c) > -1),
+                          .filter(c => menu.children.findIndex(m => m.id === c) > -1),
                       startRef.current.index, i > startRef.current.index ? i : i + 1),
                 };
               }
@@ -151,7 +151,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
                 name.name,
                 moveArrayPosition(_.get(dataSource, name.name)
                         .filter(c => menu.children
-                          .findIndex(m => m.defKey === (name.type === 'dataType' ? c : c.defKey)) > -1),
+                          .findIndex(m => m.id === c.id) > -1),
                     startRef.current.index, i > startRef.current.index ? i : i + 1),
             ),
           });

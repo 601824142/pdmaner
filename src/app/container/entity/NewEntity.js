@@ -14,7 +14,8 @@ import {getPrefix} from '../../../lib/prefixUtil';
 
 export default React.memo(({prefix, dataSource, dataChange, isNewView,
                              BaseExtraCom, disableExtend = false, data}) => {
-  const entityInitFields = _.get(dataSource, 'profile.default.entityInitFields', []);
+  const entityInitFields = _.get(dataSource, 'profile.default.entityInitFields', [])
+    .map(f => ({...f, id: Math.uuid()}));
   const Option = MultipleSelect.Option;
   const currentPrefix = getPrefix(prefix);
   const [type, setType] = useState('1');
@@ -23,7 +24,7 @@ export default React.memo(({prefix, dataSource, dataChange, isNewView,
   const onParentEntityChange = (e) => {
     currentParent.current = e.target.value;
     const entityData = (dataSource?.entities || [])
-        .filter(entity => entity.defKey === e.target.value)[0];
+        .filter(entity => entity.id === e.target.value)[0];
     const defaultFields = (entityData?.fields || []).filter(f => f.primaryKey);
     setExtendFields(defaultFields);
   };
@@ -35,20 +36,20 @@ export default React.memo(({prefix, dataSource, dataChange, isNewView,
     if (type === '1') {
       dataChange(entityInitFields, 'fields', '');
     } else {
-      dataChange(extendFields, 'fields', currentParent.current);
+      dataChange(extendFields.map(f => ({...f, id: Math.uuid()})), 'fields', currentParent.current);
     }
   }, [type, extendFields]);
   const pickerFields = () => {
-    const entity = (dataSource?.entities || []).filter(e => e.defKey === currentParent.current)[0];
+    const entity = (dataSource?.entities || []).filter(e => e.id === currentParent.current)[0];
     let modal = null;
     let checkedFields = [...extendFields];
     const checkChange = (e, f) => {
       if (e.target.checked &&
-          !checkedFields.findIndex(field => f.defKey === field.defKey) >= 0) {
+          !checkedFields.findIndex(field => f.id === field.id) >= 0) {
         checkedFields.push(f);
       } else if (!e.target.checked &&
-          checkedFields.findIndex(field => f.defKey === field.defKey) >= 0) {
-        checkedFields = checkedFields.filter(field => field.defKey !== f.defKey);
+          checkedFields.findIndex(field => f.id === field.id) >= 0) {
+        checkedFields = checkedFields.filter(field => field.id !== f.id);
       }
     };
     const onOK = () => {
@@ -62,10 +63,10 @@ export default React.memo(({prefix, dataSource, dataChange, isNewView,
     modal = openModal(<div className={`${currentPrefix}-entity-fields-right-import`}>{
       entity?.fields?.map(f => (
         <div
-          key={f.defKey}
+          key={f.id}
               >
           <Checkbox
-            defaultChecked={extendFields.findIndex(field => f.defKey === field.defKey) >= 0}
+            defaultChecked={extendFields.findIndex(field => f.id === field.id) >= 0}
             onChange={e => checkChange(e, f)}
           />
           {`${f.defKey}[${f.defName}]`}
@@ -147,8 +148,8 @@ export default React.memo(({prefix, dataSource, dataChange, isNewView,
                 {
               (dataSource?.entities || []).map((e) => {
                 return <Select.Option
-                  value={e.defKey}
-                  key={e.defKey}>
+                  value={e.id}
+                  key={e.id}>
                   {`${e.defKey}(${e.defName})`}
                 </Select.Option>;
               })
@@ -185,7 +186,7 @@ export default React.memo(({prefix, dataSource, dataChange, isNewView,
           >
             {
               dataSource?.viewGroups?.map(v => (
-                <Option key={v.defKey} value={v.defKey}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
+                <Option key={v.id} value={v.id}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
             }
           </MultipleSelect>
         </span>

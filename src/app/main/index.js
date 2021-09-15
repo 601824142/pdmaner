@@ -833,11 +833,12 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     icon: 'fa-th-large',
     children: simpleMenu.map(c => ({
       ...c,
+      id: `${v.defKey}${separator}${c.defKey}`,
       defKey: `${v.defKey}${separator}${c.defKey}`,
       type: c.defKey,
       children: (v[`ref${c.defKey.slice(0, 1).toUpperCase() + c.defKey.slice(1)}`] || [])
           .map((key) => {
-            return c.children.filter(e => e.defKey === key)[0];
+            return c.children.filter(e => e.id === key)[0];
           }).filter(e => !!e),
     })),
   })), [restProps.dataSource, config]);

@@ -17,9 +17,9 @@ const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
   const parentKeys = useMemo(() => arrayData.filter(d => !!d.children).map(d => d.key),
       [arrayData]);
   const [searchValue, updateSearchValue] = useState('');
+  const checkedData = [...(defaultCheckeds || [])];
+  const checkData = useMemo(() => arrayData.filter(d => checkedData.includes(d.key)), []);
   const [checkeds, updateCheckeds] = useState(() => {
-    const checkedData = (defaultCheckeds || []);
-    const checkData = arrayData.filter(d => checkedData.includes(d.key));
     checkData.filter(d => !!d.children).forEach((d) => {
       // 先处理所有父节点 把父节点下的所有子节点选中
       checkedData.push(...calcKey(d.children));
@@ -37,7 +37,7 @@ const Tree = React.memo(({prefix, dataSource, labelRender, defaultCheckeds,
     return [...new Set(checkedData)];
   });
   const [expands, updateExpands] = useState(() => {
-    return parentKeys.filter(k => checkeds.includes(k));
+    return checkData.reduce((a, b) => a.concat(b.parents),[]).map(d => d.key);
   });
   const _iconClick = (key) => {
     let tempExpands = [...expands];
