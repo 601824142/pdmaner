@@ -8,7 +8,7 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 
 const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear = true,
-                                     defaultCheckValues, onChange, simple = false,
+                                     defaultCheckValues, onChange, simple = false, disable,
                                      ...restProps}) => {
   const inputRef = useRef(null);
   const optionsRef = useRef(null);
@@ -132,24 +132,24 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
     }
   };
   useEffect(() => {
-    if (visible) {
+    if (visible && !disable) {
       calcPosition(optionsRef.current);
     }
-  }, [visible, selected, checkValues]);
+  }, [visible, selected, checkValues, disable]);
   const onClear = (e) => {
     e.stopPropagation();
     updateCheckValues([]);
     onChange && onChange([]);
   };
   return <div className={`${currentPrefix}-multiple-select`} onClick={selectClick} ref={selectRef}>
-    <div className={`${currentPrefix}-multiple-select-data ${currentPrefix}-multiple-select-data-${visible ? 'focus' : 'normal'}`}>
+    <div className={`${currentPrefix}-multiple-select-data ${currentPrefix}-multiple-select-data-${disable ? 'disable' : 'default'} ${currentPrefix}-multiple-select-data-${visible ? 'focus' : 'normal'}`}>
       {simple ? <span
         title={selected[0]?.props?.children || ''}
         className={`${currentPrefix}-multiple-select-data-item-simple`}
           >{
             searchValue ? '' : (selected[0]?.props?.children || finalCheckValues[0])
           }{allowClear && selected[0]
-          && <span
+          && !disable && <span
             onClick={onClear}
             className={`${currentPrefix}-multiple-select-data-item-simple-clear`}
           >
@@ -159,7 +159,7 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
           selected.map((c) => {
             return <span key={c.key || c.props.value} className={`${currentPrefix}-multiple-select-data-item`}>
               <span>{c?.props?.children}</span>
-              <Icon type='fa-close' onClick={() => closeClick(c.props.value)}/>
+              {!disable && <Icon type='fa-close' onClick={() => closeClick(c.props.value)}/>}
             </span>;
           })}
       <span
@@ -168,10 +168,13 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
       >
         {restProps.placeholder || ''}
       </span>
-      <span className={`${currentPrefix}-multiple-select-data-input-icon`}>
-        <Icon type='fa-angle-down'/>
-      </span>
+      {
+        !disable && <span className={`${currentPrefix}-multiple-select-data-input-icon`}>
+          <Icon type='fa-angle-down'/>
+        </span>
+      }
       <input
+        disabled={disable}
         onKeyDown={onKeyDown}
         ref={inputRef}
         onFocus={onFocus}
@@ -184,7 +187,7 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
         className={`${currentPrefix}-multiple-select-data-hidden-input`}
       />
       {
-        visible ? ReactDOM.createPortal(getChildren(), document.body) : null
+        !disable && visible ? ReactDOM.createPortal(getChildren(), document.body) : null
       }
     </div>
   </div>;
