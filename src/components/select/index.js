@@ -5,7 +5,7 @@ import FormatMessage from '../formatmessage';
 import './style/index.less';
 
 
-const Select = React.memo(({prefix, children = [], style,
+const Select = React.memo(({prefix, children = [], style, disable,
                              defaultValue, onChange, notAllowEmpty, ...restProps}) => {
   const [state, updateState] = useState([defaultValue]);
   const emptyChild = notAllowEmpty ? '' :
@@ -33,6 +33,7 @@ const Select = React.memo(({prefix, children = [], style,
     onChange={values => _onChange(values)}
     checkValue={tempValue}
     simple
+    disable={disable}
   >
     {
       emptyChild ? [emptyChild].concat(children) : children

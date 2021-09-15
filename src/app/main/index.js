@@ -1104,10 +1104,13 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       if (m.type === 'groups'){
         return `${m.defKey}-${m.defName || m.defKey}`;
       } else if (m.type === 'entity' || m.type === 'view' || m.type === 'diagram' || m.type === 'dict'){
-        const tempDisplayMode = m.nameTemplate || '{defKey}[{defName}]';
-        return tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
-          return m[word] || m.defKey || '';
-        });
+        if (m.defName) {
+          const tempDisplayMode = m.nameTemplate || '{defKey}[{defName}]';
+          return tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
+            return m[word] || m.defKey || '';
+          });
+        }
+        return m.defKey;
       }
       return m.defName;
     }
