@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, useMemo, forwardRef, useImperativeHandle} from 'react';
+import React, {useState, useRef, useEffect, useMemo, forwardRef, useImperativeHandle, useCallback} from 'react';
 import * as _ from 'lodash/object';
 import * as Component from 'components';
 
@@ -20,7 +20,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                                className, expand, otherOpt = true, disableHeaderReset,
                                updateDataSource, disableAddStandard, ready, twinkle, getDataSource,
                                disableDragRow = true, freeze = false, reading = false,
-                               fixHeader = true, openDict, defaultGroups, forceUpdate = false},
+                               fixHeader = true, openDict, defaultGroups},
                                      refInstance) => {
   const inputRef = useRef({});
   const currentPrefix = getPrefix(prefix);
@@ -29,7 +29,8 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   const checkboxComponents = ['primaryKey', 'notNull', 'autoIncrement', 'unique', 'enabled', 'defaultDb'];
   const domains = _.get(dataSource, 'domains', []);
   const mapping = _.get(dataSource, 'dataTypeMapping.mappings', []);
-  const db = _.get(dataSource, 'profile.default.db', '');
+  const uiHint =  _.get(dataSource, 'profile.uiHint', []);
+  const db = _.get(dataSource, 'profile.default.db', _.get(dataSource, 'profile.dataTypeSupports[0].id'));
   const tableRef = useRef(null);
   const dragRef = useRef(null);
   const optRef = useRef(null);
@@ -43,10 +44,10 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     }
     return getFullColumns();
   }, []);
-  const getFieldProps = (prop) => {
+  const getFieldProps = useCallback((prop) => {
     if (prop){
-      const domain = domains.filter(d => d.defKey === prop)[0] || { len: '', scale: '' };
-      const dataType = mapping.filter(m => m.defKey === domain.applyFor)[0]?.[db] || '';
+      const domain = domains.filter(d => d.id === prop)[0] || { len: '', scale: '' };
+      const dataType = mapping.filter(m => m.id === domain.applyFor)[0]?.[db] || '';
       return {
         len: domain.len === undefined ? '' : domain.len,
         scale: domain.scale === undefined ? '' : domain.scale,
@@ -54,35 +55,16 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       };
     }
     return {};
-  };
-  const getInitState = (preData = []) => {
-    return {
-      ...data,
-      fields: _.get(data, 'fields', []).map((f) => {
-        const oldField = preData.filter(preF => preF.defKey === f.defKey);
-        return {
-          ...f,
-          ...getFieldProps(f.domain),
-          __key: f.__key || oldField.__key || Math.uuid(), // 复用key 减少无意义渲染
-        };
-      }),
-      headers: data.headers || allColumns,
-    };
-  };
-  const [{ headers = [], fields = [], ...restData }, updateTableData] = useState(getInitState);
-  const [preData, updatePreData] = useState(data);
+  }, [domains, mapping, db]);
+  const [{ headers = [], fields = [], ...restData }, updateTableData] = useState({
+    ...data,
+    headers: data.headers || allColumns,
+  });
   const fieldsRef = useRef([]);
   useEffect(() => {
     setDict(dataSource?.dicts);
   }, [dataSource?.dicts]);
   fieldsRef.current = fields;
-  if (preData !== data) {
-    // 如果上一次的数据源和当前的数据源不相同 则需要更新
-    updatePreData(data);
-    const initState = getInitState(fields);
-    updateTableData(initState);
-    forceUpdate && tableDataChange && tableDataChange(initState.fields, 'fields');
-  }
   const [selectedFields, updateSelectedFields] = useState([]);
   const [selectedColumns, updateSelectedColumns] = useState([]);
   const [insertField, setInsertField] = useState('');
@@ -102,21 +84,11 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       };
     });
   }, [headers, allColumns]);
-  const comBlur = () => {
-    // const value = e.target.value;
-    // if (value && (name === uniqueKey) &&
-    //     (fieldsRef.current.filter(d => d[name] === value).length > 1)) {
-    //   Component.Modal.error({
-    //     title: Component.FormatMessage.string({id: 'optFail'}),
-    //     message: Component.FormatMessage.string({id: 'uniqueKeyError'}),
-    //   });
-    // }
-  };
   const cellClick = (h, f) => {
-    if (h !== 'domain' || (h === 'domain' && !selectedFieldsRef.current.includes(f.__key))) {
+    if (h !== 'domain' || (h === 'domain' && !selectedFieldsRef.current.includes(f.id))) {
       updateSelectedFields((pre) => {
-        if (pre.includes(f.__key)) {
-          return [f.__key];
+        if (pre.includes(f.id)) {
+          return [f.id];
         }
         return [];
       });
@@ -134,28 +106,31 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       const newData = {
         ...pre,
         fields: pre.fields.map((field) => {
-          if (name === 'domain') {
-            if (selectedFieldsRef.current.includes(field.__key) || f.__key === field.__key) {
-              // 需要联动修改 字段长度和小数位数
-              return {
-                ...field,
-                [name]: value,
-                ...getFieldProps(value),
+         if (f.id === field.id) {
+            let others = {};
+            if (name === 'domain') {
+              // 选择数据域 重置手动设置的数据
+              others = {
+                type: value ? '' : f.type,
+                len: value ? '' : f.len,
+                scale: value ? '' : f.scale,
               };
-            }
-            return field;
-          } else if (f.__key === field.__key) {
-            const others = {};
-            if (name === 'primaryKey' && value) {
-              others.notNull = true;
+            } else if (name === 'primaryKey' && value) {
+              others = {
+                notNull: true,
+              };
             } else if((name === 'type' || name === 'len' || name === 'scale')
               && !!field.domain && (f[name] !== value)){
-              others.domain = '';
+              // 将当前domain的对应的数据落地
+              others = {
+                ...getFieldProps(field.domain),
+                domain: '',
+              };
             }
             return {
               ...field,
-              [name]: value,
               ...others,
+              [name]: value,
             };
           }
           return field;
@@ -219,15 +194,15 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       return [fieldKey];
     }
     const minIndex = Math.min(...selected.map(key => fields.findIndex((c) => {
-      return c.__key === key;
+      return c.id === key;
     })));
     const currentIndex = fields.findIndex((c) => {
-      return fieldKey === c.__key;
+      return fieldKey === c.id;
     });
     if (minIndex >= 0) {
       selected = fields.map((m, i) => {
         if ((i >= currentIndex && i <= minIndex) || (i >= minIndex && i <= currentIndex)) {
-          return m.__key;
+          return m.id;
         }
         return null;
       }).filter(m => !!m);
@@ -259,9 +234,9 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
               .map((t) => {
                 return t.getAttribute('data-key');
               });
-          const toIndex = fieldsRef.current.findIndex(f => f.__key === insertFieldRef.current);
+          const toIndex = fieldsRef.current.findIndex(f => f.id === insertFieldRef.current);
           let tempFields = fieldsRef.current.map((f) => {
-            if (dragKeys.includes(f.__key)) {
+            if (dragKeys.includes(f.id)) {
               return {
                 ...f,
                 needRemove: true,
@@ -269,7 +244,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
             }
             return f;
           });
-          const dragFields = fieldsRef.current.filter(f => dragKeys.includes(f.__key));
+          const dragFields = fieldsRef.current.filter(f => dragKeys.includes(f.id));
           tempFields.splice(toIndex + 1, 0, ...dragFields);
           tempFields = tempFields.filter(f => !f.needRemove);
           updateTableData(preD => ({
@@ -363,7 +338,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   const getSelectedFieldsIndex = () => {
     let tempFields = [...(fieldsRef.current || [])];
     return tempFields.map((field, index) => {
-      if (selectedFieldsRef.current.includes(field.__key)) {
+      if (selectedFieldsRef.current.includes(field.id)) {
         return index;
       }
       return null;
@@ -373,7 +348,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     // 将所有选中的属性进行移动
     const tempFields = moveArrayPositionByArray(fieldsRef.current,
         selectedFieldsRef.current,
-        type === 'up' ? -1 : 1, '__key', status);
+        type === 'up' ? -1 : 1, 'id', status);
     updateTableData((pre) => {
       return {
         ...pre,
@@ -385,7 +360,6 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   const createEmptyField = (count) => {
     const emptyFields = [];
     const domain = domains[0] || {};
-    const type = mapping.filter(m => m.defKey === domain.applyFor)[0]?.[db] || '';
     for (let i = 0; i < count; i += 1){
       let newField = {};
       if (defaultEmptyField) {
@@ -393,15 +367,12 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       } else {
         newField = {
           ...emptyField,
-          type,
-          domain: domain.defKey,
-          len: domain.len === undefined ? '' : domain.len,
-          scale: domain.scale === undefined ? '' : domain.scale,
+          domain: domain.id,
         };
       }
       emptyFields.push({
         ...newField,
-        __key: Math.uuid(), // 创建唯一ID
+        id: Math.uuid(), // 创建唯一ID
       });
     }
     return emptyFields;
@@ -420,7 +391,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     }
     if (expand) {
       setExpands((pre) => {
-        return pre.concat(newFields.map(f => f.__key));
+        return pre.concat(newFields.map(f => f.id));
       });
     }
     updateTableData((pre) => {
@@ -443,7 +414,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   const deleteField = () => {
     const allIndex = getSelectedFieldsIndex();
     const minIndex = Math.min(...allIndex);
-    const newFields = (fields || []).filter(f => !selectedFields.includes(f.__key));
+    const newFields = (fields || []).filter(f => !selectedFields.includes(f.id));
     updateTableData((pre) => {
       return {
         ...pre,
@@ -452,7 +423,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     });
     tableDataChange && tableDataChange(newFields, 'fields');
     const selectField = newFields[(minIndex - 1) < 0 ? 0 : minIndex - 1];
-    updateSelectedFields((selectField && [selectField.__key]) || []);
+    updateSelectedFields((selectField && [selectField.id]) || []);
   };
   const tableKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey) {
@@ -460,7 +431,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
         const { current } = tableRef;
         // 如果选中的是表格
         if (e.keyCode === 67 && selectedFields.length > 0) {
-          Copy(fields.filter(f => selectedFields.includes(f.__key)).map(f => _.omit(f, '__key', 'children')),
+          Copy(fields.filter(f => selectedFields.includes(f.id)).map(f => _.omit(f, 'children')),
               Component.FormatMessage.string({id: 'copySuccess'}));
           current && current.focus({
             preventScroll: true,
@@ -477,14 +448,14 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                 pasteFields = validateFields(pasteFields);
               }
               // 过滤重复字段
-              const fieldKeys = fields.map(f => f.defKey);
-              const pasteFieldKeys = pasteFields.map(f => f.defKey);
+              const fieldKeys = fields.map(f => f.id);
+              const pasteFieldKeys = pasteFields.map(f => f.id);
               const realFieldKeys = [...new Set(pasteFieldKeys
                   .filter(key => !fieldKeys.includes(key)))];
               const finalFields = realFieldKeys.map((k) => {
                 return {
-                  ...pasteFields.filter(f => f.defKey === k)[0],
-                  __key: Math.uuid(),
+                  ...pasteFields.filter(f => f.id === k)[0],
+                  id: Math.uuid(),
                 };
               });
               if (finalFields.length !== pasteFields.length) {
@@ -525,7 +496,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   };
   const updateFieldsHideInGraph = (type) => {
     const newFields = fields.map((f) => {
-      if (selectedFields.includes(f.__key)) {
+      if (selectedFields.includes(f.id)) {
         return {
           ...f,
           hideInGraph: type,
@@ -550,12 +521,12 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       const current = dataSource.standardFields || [];
       const onOk = () => {
         const group = standardGroupRef.current.getGroup() || {};
-        if (group.defKey) {
+        if (group.id) {
           const newFields = fieldsRef.current
-              .filter(f => selectedFieldsRef.current.includes(f.__key))
+              .filter(f => selectedFieldsRef.current.includes(f.id))
               .filter(f => current
                   .reduce((a, b) => a.concat(b.fields || []), [])
-                  .findIndex(c => c.defKey === f.defKey) < 0)
+                  .findIndex(c => c.id === f.id) < 0)
               .map(f => ({
                 ...f,
                 primaryKey: false,
@@ -566,7 +537,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
           let result = false;
           if (group.group) {
             newCurrent = newCurrent.map((c) => {
-              if (c.defKey === group.group) {
+              if (c.id === group.group) {
                 return {
                   ...c,
                   defKey: group.defKey,
@@ -577,8 +548,9 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
               return c;
             });
             result = true;
-          } else if (current.findIndex(c => c.defKey === group.defKey) < 0) {
+          } else if (current.findIndex(c => c.id === group.id) < 0) {
             newCurrent = newCurrent.concat({
+              id: Math.uuid(),
               defKey: group.defKey,
               defName: group.defName,
               fields: [...newFields],
@@ -638,12 +610,12 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   const getClass = (f) => {
     let classData = '';
     const base = `${currentPrefix}-table-`;
-    if (selectedFields.includes(f.__key)) {
+    if (selectedFields.includes(f.id)) {
       classData += `${base}selected`;
     } else {
       classData += `${base}default`;
     }
-    if (f.__key === insertField) {
+    if (f.id === insertField) {
       classData += ` ${base}insert`;
     }
     return classData;
@@ -663,15 +635,15 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
   const getRowAndCellIndex = (row, cell, type) => {
     let currentRowIndex, currentCellIndex;
     if (type === 'up') {
-      currentRowIndex = fieldsRef.current.findIndex(f => f.__key === row);
+      currentRowIndex = fieldsRef.current.findIndex(f => f.id === row);
       return {
-        rowKey: fieldsRef.current[currentRowIndex - 1]?.__key,
+        rowKey: fieldsRef.current[currentRowIndex - 1]?.id,
         cellKey: cell,
       };
     } else if (type === 'down') {
-      currentRowIndex = fieldsRef.current.findIndex(f => f.__key === row);
+      currentRowIndex = fieldsRef.current.findIndex(f => f.id === row);
       return {
-        rowKey: fieldsRef.current[currentRowIndex + 1]?.__key,
+        rowKey: fieldsRef.current[currentRowIndex + 1]?.id,
         cellKey: cell,
       };
     } else if (type === 'left') {
@@ -757,18 +729,18 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     };
   };
   const otherStyle = freeze ? { position: 'sticky', left: 0, zIndex: 100, top: fixHeader ? 0 : 'unset' } : {};
-  const twinkleTr = (defKey) => {
-    const keyArray = defKey.split(separator);
+  const twinkleTr = (id) => {
+    const keyArray = id.split(separator);
     const key = keyArray[0];
-    let current = fieldsRef.current.filter(f => f.defKey === key)[0];
+    let current = fieldsRef.current.filter(f => f.id === key)[0];
     if (current) {
       if (keyArray.length > 1) {
-        setExpands([current.__key]);
-        current = (current.fields || []).filter(f => f.defKey === keyArray[1])[0];
+        setExpands([current.id]);
+        current = (current.fields || []).filter(f => f.id === keyArray[1])[0];
       }
       const container = tableRef.current.parentElement;
       const currentTr = Array.from(container.querySelectorAll('tr'))
-          .filter(t => t.getAttribute('data-key') === current?.__key)[0];
+          .filter(t => t.getAttribute('data-key') === current?.id)[0];
       if (currentTr) {
         setTimeout(() => {
           const trRect = currentTr.getBoundingClientRect();
@@ -989,7 +961,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                   reading={reading}
                   onKeyDown={onKeyDown}
                   cellRef={cellRef}
-                  key={f.__key}
+                  key={f.id}
                   f={f}
                   i={i}
                   expand={expand}
@@ -1005,14 +977,16 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                   onExpand={onExpand}
                   selectedFields={selectedFields}
                   expands={expands}
-                  dataSource={dataSource}
                   dicts={dicts}
                   setDict={setDict}
                   updateTableDataByName={updateTableDataByName}
-                  comBlur={comBlur}
                   freeze={freeze}
                   cellClick={cellClick}
                   defaultGroups={defaultGroups}
+                  getFieldProps={getFieldProps}
+                  domains={domains}
+                  mapping={mapping}
+                  uiHint={uiHint}
                   />
               ))
             }

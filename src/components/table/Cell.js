@@ -5,18 +5,16 @@ import {emptyDict, getColumnWidth, validateDictBase} from '../../lib/datasource_
 import DictBase from '../../app/container/dict/DictBase';
 
 
-export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, currentPrefix,
+export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
                              onChange, onBlur, checkboxComponents, reading, cellRef, dicts,
                              setDict, getDataSource, updateDataSource,
-                             openDict, defaultGroups}) => {
+                             openDict, defaultGroups, domains, uiHint}) => {
   const tooltipRef = useRef(null);
   const columnWidth = getColumnWidth();
   const cell = useRef(null);
   useEffect(() => {
     cellRef && cellRef(cell);
   }, []);
-  const domains = _.get(dataSource, 'domains', []);
-  const uiHint = _.get(dataSource, 'profile.uiHint', []);
   const numberComponents = ['len', 'scale'];
   const openRemark = () => {
     const { Button, openModal } = Component;
@@ -45,7 +43,7 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
     const { Button, openModal, Modal, FormatMessage } = Component;
     const currentDataSource = getDataSource();
     let dictModal;
-    let newDict = {...emptyDict, group: defaultGroups};
+    let newDict = {...emptyDict, group: defaultGroups, id: Math.uuid()};
     const dictChange = (dictData, dictName) => {
       if (dictName === 'fields') {
         newDict.items = dictData;
@@ -58,7 +56,7 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
           && !(currentDataSource.dicts || []).map(d => d.defKey).includes(newDict.defKey)) {
         onChange && onChange({
           target: {
-            value: newDict.defKey,
+            value: newDict.id,
           },
         });
         dictModal && dictModal.close();
@@ -67,10 +65,10 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
           ...currentDataSource,
           dicts: newDicts,
           viewGroups: (currentDataSource?.viewGroups || []).map((g) => {
-            if (newDict.group.includes(g.defKey)) {
+            if (newDict.group.includes(g.id)) {
               return {
                 ...g,
-                refDicts: [...new Set((g.refDicts || []).concat(newDict.defKey))],
+                refDicts: [...new Set((g.refDicts || []).concat(newDict.id))],
               };
             }
             return g;
@@ -105,11 +103,11 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
   };
   const viewDict = () => {
     const { Table, Button } = Component;
-    const data = (dicts || [])?.filter(d => d.defKey === f[name])[0];
+    const data = (dicts || [])?.filter(d => d.id === f[name])[0];
     if (data) {
       const onOk = () => {
         tooltipRef.current.setTooltipVisible(false);
-        openDict(data.defKey, 'dict', null, 'dict.svg');
+        openDict(data.id, 'dict', null, 'dict.svg');
       };
       return <div className={`${currentPrefix}-table-dict-items`}>
         <div style={{width: '100%', height: '100%', overflow: 'auto'}}>
@@ -150,8 +148,8 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
     return <Component.Select value={f[name]} onChange={onChange}>
       {domains.map(d =>
         (<Component.Select.Option
-          key={d.defKey}
-          value={d.defKey}
+          key={d.id}
+          value={d.id}
         >
           {d.defName || d.defKey}
         </Component.Select.Option>))}
@@ -160,8 +158,8 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
     return <Component.Select value={f[name]} onChange={onChange}>
       {uiHint.map(d =>
         (<Component.Select.Option
-          key={d.defKey}
-          value={d.defKey}
+          key={d.id}
+          value={d.id}
         >
           {d.defName || d.defKey}
         </Component.Select.Option>))}
@@ -226,8 +224,8 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
         {
           dicts.map(v => (
             <Component.MultipleSelect.Option
-              key={v.defKey}
-              value={v.defKey}>{`${v.defKey}(${v.defName || v.defKey})`}
+              key={v.id}
+              value={v.id}>{`${v.defKey}(${v.defName || v.defKey})`}
             </Component.MultipleSelect.Option>))
         }
       </Component.MultipleSelect>
@@ -259,13 +257,13 @@ export default React.memo(({f, name, dataSource, remarkChange, onKeyDown, curren
   />;
 }, (pre, next) => {
   if (pre.name === 'domain') {
-    return !((pre?.dataSource?.domains !== next?.dataSource?.domains)
+    return !((pre?.domains !== next?.domains)
       || (pre.f[pre.name] !== next.f[next.name]));
   } else if (pre.name === 'refDict') {
     return !((pre?.dicts !== next?.dicts)
         || (pre.f[pre.name] !== next.f[next.name]));
   } else if (pre.name === 'uiHint') {
-    return !((pre?.dataSource?.uiHint !== next?.dataSource?.uiHint)
+    return !((pre?.uiHint !== next?.uiHint)
       || (pre.f[pre.name] !== next.f[next.name]));
   }
   return pre.f[pre.name] === next.f[next.name];

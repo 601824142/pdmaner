@@ -18,7 +18,6 @@ export default React.memo(({data, dataSource, update, FieldsExtraOpt,customerHea
   }, []);
   return <Table
     ref={tableRef}
-    forceUpdate
     twinkle={param?.defKey}
     customerHeaders={customerHeaders}
     freeze={freeze}

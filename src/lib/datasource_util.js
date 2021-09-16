@@ -7,20 +7,6 @@ import { separator } from '../../profile';
 import {firstUp} from './string';
 import {compareVersion} from './update';
 
-export const removeUnlessFields = (data, fields = []) => {
-  if (Array.isArray(data)) {
-    return data.map(d => removeUnlessFields(d, fields));
-  } else if (data && typeof data === 'object') {
-    const tempData = _.omit(data, fields);
-    return Object.keys(tempData).reduce((a, b) => {
-      const tempA = {...a};
-      tempA[b] = removeUnlessFields(tempData[b], fields);
-      return tempA;
-    }, {});
-  }
-  return data;
-};
-
 export const allType = [
   { type: 'entity', name: 'entities', defKey: 'defKey' },
   { type: 'view', name: 'views', defKey: 'defKey' },
@@ -42,8 +28,7 @@ export const filterEdge = (allNodes, c) => {
 };
 
 export const updateAllData = (dataSource, tabs) => {
-  // 整理项目中所有的关系图数据 去除无效的关系图数据 更新所有的tab数据
-  const needReplace = [];
+  // 整理项目中所有的关系图数据 去除无效的关系图数据
   let tempData = {...dataSource};
   const allTabData = getAllTabData();
   let message = '';
@@ -60,12 +45,12 @@ export const updateAllData = (dataSource, tabs) => {
   const size = _.get(dataSource, 'profile.relationFieldSize', 15);
   tabs.map(t => {
     const typeName = t.type === 'entity' ? 'entities' : 'views';
+    const oldData = tempData[typeName].filter(e => e.id === t.tabKey.split(separator)[0])[0];
     return {
       type: t.type,
       key: t.tabKey,
-      data: getDataByTabId(t.tabKey)?.data
-          || tempData[typeName].filter(e => e.defKey === t.tabKey.split(separator)[0])[0]
-          || []
+      oldData,
+      data: getDataByTabId(t.tabKey)?.data || oldData || {}
     }
   }).forEach(t => {
     if (t.type === 'entity' || t.type === 'view') {
@@ -85,7 +70,7 @@ export const updateAllData = (dataSource, tabs) => {
       }
       // 判断数据表或者视图重复
       const newDefKey = t.data?.defKey;
-      if (newDefKey !== t.key.split(separator)[0]) {
+      if (newDefKey !== t.oldData?.defKey) {
         // 不能跟当前打开的TAB的key重复
         // 不能跟已经存在的key重复
         if (!currentDefKey[t.type].includes(newDefKey)) {
@@ -134,7 +119,7 @@ export const updateAllData = (dataSource, tabs) => {
           if (!tempPre[type]) {
             tempPre[type] = [];
           }
-          tempPre[type].push({...allTabData[next].data, __key: allTabData[next].key});
+          tempPre[type].push({...allTabData[next].data});
         }
         return tempPre;
       }, {});
@@ -147,11 +132,11 @@ export const updateAllData = (dataSource, tabs) => {
         tempData = {
           ...tempData,
           [type.name]: _.get(tempData, type.name, []).map((d) => {
-            const currentData = tabsAllData[type.type].filter(t => t.__key === d[type.defKey])[0];
+            const currentData = tabsAllData[type.type].filter(t => t.id === d.id)[0];
             if (currentData) {
               if (type.type === 'diagram') {
                 const allNodes = currentData?.cells || [];
-                return _.omit({
+                return {
                   ...d,
                   canvasData: {
                     cells: allNodes.map(c => {
@@ -202,22 +187,15 @@ export const updateAllData = (dataSource, tabs) => {
                       };
                     }),
                   },
-                }, ['__key']);
-              } else if (currentData[type.defKey] !== d[type.defKey]){
-                needReplace.push({
-                  old: d[type.defKey],
-                  oldData: d,
-                  newData: currentData,
-                  new: currentData[type.defKey],
-                  type: type.type
-                });
+                };
               }
               if (currentData.group) {
+                // 如果包含分组的修改
                 viewGroups = viewGroups.map((g) => {
                   const tempRefs = (g?.[`ref${firstUp(type.name)}`] || [])
-                      .filter((key) => key !== currentData.defKey);
-                  if (currentData.group.includes(g.defKey)) {
-                    tempRefs.push(d[type.defKey]);
+                      .filter((key) => key !== currentData.id);
+                  if (currentData.group.includes(g.id)) {
+                    tempRefs.push(d.id);
                   }
                   return {
                     ...g,
@@ -225,7 +203,7 @@ export const updateAllData = (dataSource, tabs) => {
                   };
                 });
               }
-              return removeUnlessFields(_.omit(currentData, 'group'), ['__key'])
+              return currentData;
             }
             return d;
           }),
@@ -235,10 +213,9 @@ export const updateAllData = (dataSource, tabs) => {
     if (flag) {
       return {
         dataSource: {
-          ...updateAllEntity(updateAllViewFiledRefEntity(updateAllDiagrams(tempData, needReplace), needReplace), needReplace),
-          viewGroups: updateAllGroups(viewGroups, needReplace),
+          ...tempData,
+          viewGroups,
         },
-        replace: needReplace,
         result: {
           status: true,
         },
@@ -246,175 +223,12 @@ export const updateAllData = (dataSource, tabs) => {
     }
     return {
       dataSource,
-      replace: [],
       result: {
         status: true,
       },
     };
   }
   return { result: { status: false, message } };
-};
-
-const updateAllEntity = (dataSource, needReplace) => {
-  const calcCorrelations = () => {
-    return (dataSource.diagrams || []).reduce((a, b) => {
-      const cells = b.canvasData?.cells || [];
-      const allTable = cells.filter(c => c.shape === 'table');
-      return a.concat(cells.filter(c => c.shape === 'erdRelation').map(cell => {
-        const sourceId = _.get(cell, 'source.cell', '');
-        const targetId = _.get(cell, 'target.cell', '');
-        const relation = (cell.relation || '').split(':');
-        const status = relation[0]?.includes('n');
-        const myEntity = allTable
-            .filter(t => t.id === (status ? sourceId : targetId))[0]?.originKey;
-        const refEntity = allTable
-            .filter(t => t.id === (status ? targetId : sourceId))[0]?.originKey;
-        if (myEntity && refEntity) {
-          return {
-            myEntity,
-            myField: _.get(cell, status ? 'source.port' : 'target.port', '')
-                .split(separator)[0],
-            refEntity,
-            refField: _.get(cell, status ? 'target.port' : 'source.port', '')
-                .split(separator)[0],
-            myRows: (status ? relation[0] : relation[1]) || '',
-            refRows: (status ? relation[1] : relation[0]) || '',
-            innerType: '',
-          }
-        }
-        return null;
-      }).filter(c => !!c));
-    }, []);
-  };
-  const correlations = calcCorrelations();
-  const dictChange = needReplace.filter(n => n.type === 'dict');
-  return {
-    ...dataSource,
-    entities: (dataSource.entities || []).map(e => {
-      const current = correlations
-          .filter(c => c.myEntity === e.defKey)
-          .map(c => _.omit(c, 'myEntity'));
-      return {
-        ...e,
-        fields: (e.fields || []).map(f => {
-          if (f.refDict) {
-            const newDict = dictChange.filter(d => d.old === f.refDict)[0];
-            if (newDict) {
-              return {
-                ...f,
-                refDict: newDict.new,
-              };
-            }
-            return f;
-          }
-          return f;
-        }),
-        correlations: current,
-      }
-    })
-  };
-};
-
-const updateAllGroups = (viewGroups, replace) => {
-  if (replace.length === 0){
-    return viewGroups;
-  }
-  const data = {
-    refEntities : replace.filter(r => r.type === 'entity'),
-    refDicts : replace.filter(r => r.type === 'dict'),
-    refViews : replace.filter(r => r.type === 'view'),
-  }
-  return (viewGroups || []).map(g => {
-    return {
-      ...g,
-      ...['refEntities', 'refDicts', 'refViews'].reduce((a, b) => {
-        return {
-          ...a,
-          [b]: (g[b] || []).map(r => {
-            const oldIndex = data[b].findIndex(e => e.old === r);
-            if (oldIndex > -1) {
-              return data[b][oldIndex].new;
-            }
-            return r;
-          })
-        }
-      }, {}),
-    }
-  });
-};
-
-export const updateAllDiagrams = (dataSource, replace) => {
-  return {
-    ...dataSource,
-    diagrams: (dataSource.diagrams || []).map(d => {
-      return {
-        ...d,
-        canvasData: {
-          ...d?.canvasData,
-          cells: (d?.canvasData?.cells || []).map(c => {
-            if (c.originKey) {
-              const updateEntity = replace.filter(n => n.type === 'entity' && n.old === c.originKey)[0];
-              if (updateEntity) {
-                return {
-                  ...c,
-                  originKey: updateEntity.new,
-                };
-              }
-              return c;
-            }
-            return c;
-          }),
-        }
-      }
-    })
-  };
-}
-
-export const updateAllViewFiledRefEntity = (dataSource, replace) => {
-  const entityChange = replace.filter(r => r.type === 'entity')
-      .reduce((a, b) => {
-        const tempA = {...a};
-        tempA[b.old] = b;
-        return tempA;
-      }, {});
-  const changeKeys = Object.keys(entityChange);
-  if (changeKeys.length === 0) {
-    return dataSource;
-  }
-  return {
-    ...dataSource,
-    views: (dataSource.views || []).map(v => {
-      if ((v.refEntities || []).some(e => changeKeys.includes(e))){
-        return {
-          ...v,
-          refEntities: (v.refEntities || []).map(e => {
-            return entityChange[e]?.new || e;
-          }),
-          fields: (v.fields || []).map(f => {
-            if (entityChange[f.refEntity]) {
-              const index = entityChange[f.refEntity]
-                  ?.newData
-                  ?.fields
-                  ?.findIndex(nF => nF.defKey === f.refEntityField)
-              if (index > -1) {
-                return {
-                  ...f,
-                  refEntity: entityChange[f.refEntity].new,
-                };
-              }
-              return {
-                ...f,
-                refEntity: '',
-                refEntityField: ''
-              };
-            }
-            return f;
-          }),
-        };
-      }
-      return v;
-    }),
-  }
 };
 
 const refactorAllFields = (dataSource, fuc) => {
@@ -461,27 +275,6 @@ const refactorAllFields = (dataSource, fuc) => {
   });
   return tempDataSource;
 }
-
-export const updateAllFieldsUiHint = (dataSource, changes) => {
-  return refactorAllFields(dataSource, (f) => {
-    const change = changes.filter(c => c.old === f.uiHint)[0];
-    return {
-      ...f,
-      uiHint: change ? change.new : (typeof f.uiHint === 'object' ? '' : f.uiHint),
-    };
-  });
-};
-
-export const updateAllFieldsType = (dataSource, oldDomain, newDomain) => {
-  // 默认数据库发生变化时 所有的数据类型全部更换 需要从缓存读取数据进行替换
-  const mapFields = (f) => {
-    return {
-      ...f,
-      domain: f.domain === oldDomain ? newDomain : (f.domain || ''),
-    };
-  };
-  return refactorAllFields(dataSource, mapFields);
-};
 
 export const importFields = (entities, fields, data, useDefaultFields, onlyEntityFields) => {
   const allFields = [...(data?.fields || [])].filter(f => !f.refEntity); // 过滤掉从实体中获取的

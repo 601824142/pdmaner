@@ -35,7 +35,7 @@ import { getMenu, getMenus, dealMenuClick } from '../../lib/contextMenuUtil';
 import {
   validateKey,
   updateAllData,
-  allType, pdman2sino, getFullColumns, updateAllFieldsUiHint, emptyDictSQLTemplate,
+  allType, pdman2sino, getFullColumns, emptyDictSQLTemplate,
 } from '../../lib/datasource_util';
 import {clearAllTabData, setDataByTabId} from '../../lib/cache';
 import { Save } from '../../lib/event_tool';
@@ -85,7 +85,6 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const [draggable, setDraggable] = useState(false);
   const { lang } = config;
   const cavRefArray = useRef([]);
-  const replace = useMemo(() => [], []);
   const headerToolRef = useRef(null);
   const [menuType, setMenuType] = useState('1');
   const projectInfoRef = useRef(projectInfo);
@@ -95,7 +94,6 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     const newData = updateAllData(dataSourceRef.current,
         injectTempTabs.current.concat(tabsRef.current));
     if (newData.result.status) {
-      replace.splice(0, replace.length - 1, ...newData.replace); // 重置数组
       restProps.save(newData.dataSource, FormatMessage.string({id: 'saveProject'}), isSaveAs, (err) => {
         if (!err) {
           if (!isSaveAs) {
@@ -126,39 +124,6 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       saveProject();
     });
   }, [restProps.dataSource, tabs]);
-  const replaceAllTab = (replaceTabs) => {
-    const index = replaceTabs.findIndex(r => (r.old + separator + r.type) === activeKey);
-    updateTabs(tabs.map((t) => {
-      const replaceTab = replaceTabs.filter(r => (r.old + separator + r.type) === t.tabKey)[0];
-      if (replaceTab) {
-        return {
-          ...t,
-          tabKey: replaceTab.new + separator + replaceTab.type,
-          menuKey: replaceTab.new,
-          type: replaceTab.type,
-        };
-      }
-      return t;
-    }));
-    activeTabStack.current = activeTabStack.current.map((s) => {
-      const i = replaceTabs.findIndex(r => (r.old + separator + r.type) === s);
-      const replaceTab = replaceTabs[i];
-      if (i > -1) {
-        return replaceTab.new + separator + replaceTab.type;
-      }
-      return s;
-    });
-    if (index > -1) {
-      const newActiveTab = replaceTabs[index];
-      updateActiveKey(newActiveTab.new + separator + newActiveTab.type);
-    }
-  };
-  useEffect(() => {
-    if (replace.length !== 0) {
-      replaceAllTab(replace);
-    }
-    replace.splice(0, replace.length);
-  }, [restProps.dataSource]);
   const validateTableStatus = (key) => {
     return tabsRef.current.findIndex(t => t.tabKey === key) >= 0;
   };
@@ -249,32 +214,11 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     updateTabs(tempTabs);
     updateActiveKey(tabKey);
   };
-  const _replaceTab = (oldMenuKey, menuKey, type) => {
-    const tempTabs = [...tabsRef.current];
-    const tabKey = menuKey + separator + type;
-    const oldTabKey = oldMenuKey + separator + type;
-    if (tempTabs.findIndex(t => t.tabKey === oldTabKey) > -1) {
-      updateTabs(tempTabs.map((t) => {
-        if (t.tabKey === oldTabKey) {
-          return {
-            ...t,
-            tabKey,
-            menuKey,
-            type,
-          };
-        }
-        return t;
-      }));
-      if (activeKeyRef.current === oldTabKey) {
-        updateActiveKey(tabKey);
-      }
-    }
-  };
   const _onContextMenu = (key, type, selectedMenu, parentKey) => {
     updateContextMenus(getMenus(key, type, selectedMenu, parentKey, groupType));
   };
   const _contextMenuClick = (e, m, callback) => {
-    dealMenuClick(restProps?.dataSource, m, restProps?.update, _replaceTab, _tabClose, callback);
+    dealMenuClick(restProps?.dataSource, m, restProps?.update, _tabClose, callback);
   };
   const sliderChange = (percent) => {
     const cavRef = cavRefArray.current.filter(cav => activeKeyRef.current === cav.key)[0]?.cav;
@@ -1027,19 +971,6 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           if (Object.keys(userData).length > 0) {
             restProps?.saveUserData(userData);
           }
-          if ('profile.uiHint' in tempData) {
-            const dataKeys = _.get(tempData, 'profile.uiHint', []).map(d => d.__key);
-            const changes = Object.keys(tempData.uiHintChanges || {})
-              .filter(k => dataKeys.includes(k))
-              .reduce((a, b) => {
-              const d = tempData.uiHintChanges[b] || {};
-              if (d.newData) {
-                return a.concat({old: d.oldData, new: d.newData});
-              }
-              return a;
-            }, []);
-            tempDataSource = updateAllFieldsUiHint(tempDataSource, changes);
-          }
         }
         if ('dictSQLTemplate' in tempData) {
           const path = 'profile.codeTemplates';
@@ -1058,10 +989,9 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
               return c;
             }));
         }
-        filterData.splice(0, 0, 'uiHintChanges', 'dictSQLTemplate');
+        filterData.splice(0, 0, 'dictSQLTemplate');
         Object.keys(tempData).filter(f => !filterData.includes(f)).forEach((f) => {
-          tempDataSource = _.set(tempDataSource, f,
-            Array.isArray(tempData[f]) ? tempData[f].map(d => _.omit(d, '__key')) : tempData[f]);
+          tempDataSource = _.set(tempDataSource, f, tempData[f]);
         });
         restProps?.save(tempDataSource, FormatMessage.string({id: 'saveProject'}), !projectInfoRef.current); // 配置项内容在关闭弹窗后自动保存
       }

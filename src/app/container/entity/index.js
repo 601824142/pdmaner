@@ -25,6 +25,7 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
       [name]: value,
     };
     updateData(tempData);
+    console.log(tempData);
     tabDataChange && tabDataChange({
       type: 'entity',
       key: entity,

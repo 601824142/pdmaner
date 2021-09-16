@@ -4,7 +4,6 @@ import _ from 'lodash/object';
 import { Button, openModal, Modal, Message, FormatMessage } from 'components';
 
 import { Copy, Paste } from './event_tool';
-import { replaceDataByTabId } from './cache';
 import NewEntity from '../app/container/entity/NewEntity';
 import NewView from '../app/container/view/NewViewStep';
 import NewRelation from '../app/container/relation/NewRelation';
@@ -16,7 +15,7 @@ import Domain from '../app/container/domain';
 import Preview from '../app/container/database';
 import { getEmptyEntity, getEmptyView, emptyRelation, emptyGroup, emptyDomain, emptyDataType, emptyCodeTemplate,
   emptyDict, validateItem, validateKey, emptyDiagram, defaultTemplate, validateItemInclude, emptyDataTypeSupport,
-updateAllFieldsType } from './datasource_util';
+ } from './datasource_util';
 // 专门处理左侧菜单 右键菜单数据
 import { separator } from '../../profile';
 
@@ -108,11 +107,11 @@ export const getMenus = (key, type, selectedMenu, parentKey, groupType) => {
   });
 };
 
-export const dealMenuClick = (dataSource, menu, updateDataSource, tabOpt, tabClose, callback) => {
+export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, callback) => {
   const { key } = menu;
   switch (key) {
     case 'add': addOpt(dataSource, menu, updateDataSource, {}, null, null, callback); break;
-    case 'edit': editOpt(dataSource, menu, updateDataSource, tabOpt); break;
+    case 'edit': editOpt(dataSource, menu, updateDataSource); break;
     case 'copy': copyOpt(dataSource, menu); break;
     case 'cut': cutOpt(dataSource, menu); break;
     case 'paste': pasteOpt(dataSource, menu, updateDataSource); break;
@@ -357,10 +356,6 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
                 })
               },
             };
-            if (_.get(tempDataSource, 'profile.default.db') !== _.get(dataSource, 'profile.default.db')){
-              // 如果默认数据库发生变化
-              //tempDataSource = updateAllFieldsType(tempDataSource);
-            }
           } else {
             // viewGroup domains
             tempDataSource = {
@@ -402,7 +397,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
   )
 };
 
-const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
+const editOpt = (dataSource, menu, updateDataSource) => {
   // 暂时只有关系图和分组可以进行右键编辑 后续可以基于此进行拓展
   // 数据域 双击将触发此处的编辑方法
   const { dataType, dataKey } = menu;
@@ -492,7 +487,6 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
             })
           },
         };
-        //tempDataSource = updateAllFieldsType(tempDataSource);
         updateDataSource && updateDataSource(tempDataSource);
       } else if (dataType === 'dataType') {
         const dataTypeSupports = _.get(dataSource, 'profile.dataTypeSupports', []);
@@ -530,10 +524,6 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
             }),
           }
         };
-        if (_.get(tempDataSource, 'profile.default.db') !== _.get(dataSource, 'profile.default.db')){
-          // 如果默认数据库发生变化
-          //tempDataSource = updateAllFieldsType(tempDataSource);
-        }
         updateDataSource && updateDataSource(tempDataSource);
       } else {
         let tempDataSource = {
@@ -545,12 +535,6 @@ const editOpt = (dataSource, menu, updateDataSource, updateTabs) => {
             return v;
           }),
         };
-        if ((dataType === 'domain')) {
-          const domainCompare = ['defKey', 'applyFor', 'len', 'scale'];
-          if (domainCompare.some(d => oldData[d] !== data[d])) {
-            tempDataSource = updateAllFieldsType(tempDataSource, oldData.defKey, data.defKey);
-          }
-        }
         updateDataSource && updateDataSource(tempDataSource);
       }
       modal && modal.close();

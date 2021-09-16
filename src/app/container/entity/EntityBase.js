@@ -37,8 +37,8 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
   };
   const getGroups = () => {
     return (dataSource?.viewGroups || [])
-        .filter(g => (g?.refEntities || []).includes(data.defKey))
-        .map(g => g.defKey);
+        .filter(g => (g?.refEntities || []).includes(data.id))
+        .map(g => g.id);
   };
   const [checkValues, setCheckValues] = useState(() => {
     return getGroups();
@@ -57,7 +57,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
       const result = {};
       tableRef.current.updateTableData((pre) => {
         const success = newFields
-            .filter(f => (pre.fields || []).findIndex(eFiled => eFiled.defKey === f.defKey) < 0);
+            .filter(f => (pre.fields || []).findIndex(eFiled => eFiled.id === f.id) < 0);
         result.success = success.length;
         result.hidden = 0;
         const finalFields = (pre.fields || [])
@@ -175,7 +175,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
                 >
                     {
                     dataSource?.viewGroups?.map(v => (
-                      <Option key={v.defKey} value={v.defKey}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
+                      <Option key={v.id} value={v.id}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
                   }
                   </MultipleSelect>
                 </span>

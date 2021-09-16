@@ -11,8 +11,8 @@ export default React.memo(({prefix, dictData, dictChange, dataSource,
   const tableRef = useRef(null);
   useEffect(() => {
     hasRender && hasRender({
-      twinkle: (key) => {
-        tableRef.current?.twinkleTr(key);
+      twinkle: (id) => {
+        tableRef.current?.twinkleTr(id);
       },
     });
     return () => {
@@ -21,8 +21,8 @@ export default React.memo(({prefix, dictData, dictChange, dataSource,
   }, []);
   const getGroups = () => {
     return (dataSource?.viewGroups || [])
-        .filter(g => (g?.refDicts || []).includes(dictData.defKey))
-        .map(g => g.defKey);
+        .filter(g => (g?.refDicts || []).includes(dictData.id))
+        .map(g => g.id);
   };
   const [checkValues, setCheckValues] = useState(() => {
     return defaultGroups || getGroups();
@@ -124,7 +124,7 @@ export default React.memo(({prefix, dictData, dictChange, dataSource,
           >
               {
               dataSource?.viewGroups?.map(v => (
-                <Option key={v.defKey} value={v.defKey}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
+                <Option key={v.id} value={v.id}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
             }
             </MultipleSelect>
           </span>
@@ -150,7 +150,7 @@ export default React.memo(({prefix, dictData, dictChange, dataSource,
       <div style={{width: size.width, height: '100%'}}>
         <Table
           {...commonProps}
-          twinkle={param?.defKey}
+          twinkle={param?.id}
           ref={tableRef}
           otherOpt={false}
           tableDataChange={onChange}

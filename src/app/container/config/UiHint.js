@@ -4,18 +4,7 @@ import {getPrefix} from '../../../lib/prefixUtil';
 import {moveArrayPositionByArray} from '../../../lib/array_util';
 
 export default React.memo(({ prefix, dataSource, dataChange }) => {
-  const changes = useRef({});
-  const initData = useMemo(() => (dataSource?.profile?.uiHint || []).map(d => {
-    const __key = Math.uuid();
-    changes.current[__key] = {
-      oldData: d.defKey,
-    };
-    return {
-      ...d,
-      __key,
-    };
-  }), []);
-  const [data, setData] = useState(initData);
+  const [data, setData] = useState(dataSource?.profile?.uiHint || []);
   const dataRef = useRef(data);
   dataRef.current = data;
   const [selected, setSelected] = useState([]);
@@ -30,7 +19,7 @@ export default React.memo(({ prefix, dataSource, dataChange }) => {
   const getSelectedFieldsIndex = () => {
     let tempData = [...(dataRef.current || [])];
     return tempData.map((d, index) => {
-      if (selectedRef.current.includes(d.__key)) {
+      if (selectedRef.current.includes(d.id)) {
         return index;
       }
       return null;
@@ -50,7 +39,7 @@ export default React.memo(({ prefix, dataSource, dataChange }) => {
     const count = m.key;
     const newData = [];
     for (let i = 0; i < count; i += 1) {
-      newData.push({data: ['' , ''], __key: Math.uuid()});
+      newData.push({data: ['' , ''], id: Math.uuid()});
     }
     const tempData = addData(newData);
     setData(tempData);
@@ -60,15 +49,15 @@ export default React.memo(({ prefix, dataSource, dataChange }) => {
     let newData = [...data];
     switch (type) {
       case 'add':
-        newData = addData([{defKey: '', defName: '', __key: Math.uuid()}]);
+        newData = addData([{defKey: '', defName: '', id: Math.uuid()}]);
         break;
       case 'delete':
-        newData = newData.filter(p => !selected.includes(p.__key));
+        newData = newData.filter(p => !selected.includes(p.id));
       break;
       case 'up':
       case 'down':
         newData = moveArrayPositionByArray(newData, selected,
-          type === 'up' ? -1 : 1, '__key')
+          type === 'up' ? -1 : 1, 'id')
         break;
     }
     setData(newData);
@@ -84,10 +73,7 @@ export default React.memo(({ prefix, dataSource, dataChange }) => {
   };
   const onChange = (key, name, e) => {
     const newData = data.map(d => {
-      if (d.__key === key) {
-        if (name === 'defKey' && changes.current[key]) {
-          changes.current[key].newData = e.target.value;
-        }
+      if (d.id === key) {
         return {
           ...d,
           [name]: e.target.value,
@@ -97,7 +83,6 @@ export default React.memo(({ prefix, dataSource, dataChange }) => {
     });
     setData(newData);
     dataChange(newData.filter(d => !!d.defKey), 'profile.uiHint');
-    dataChange(changes.current, 'uiHintChanges');
   }
   return <div className={`${currentPrefix}-setting-uiHint`}>
     <div>
@@ -114,11 +99,11 @@ export default React.memo(({ prefix, dataSource, dataChange }) => {
           <tbody>
             {
               data.map((d, i) => {
-                return <tr key={d.__key}>
+                return <tr key={d.id}>
                   <td>{i+1}</td>
-                  <td><Checkbox onChange={e => onSelect(d.__key, e)}/></td>
-                  <td><Input placeholder={FormatMessage.string({id: 'config.uiHint.defKey'})} onChange={e => onChange(d.__key, 'defKey', e)} defaultValue={d.defKey}/></td>
-                  <td><Input placeholder={FormatMessage.string({id: 'config.uiHint.defName'})} onChange={e => onChange(d.__key, 'defName', e)} defaultValue={d.defName}/></td>
+                  <td><Checkbox onChange={e => onSelect(d.id, e)}/></td>
+                  <td><Input placeholder={FormatMessage.string({id: 'config.uiHint.defKey'})} onChange={e => onChange(d.id, 'defKey', e)} defaultValue={d.defKey}/></td>
+                  <td><Input placeholder={FormatMessage.string({id: 'config.uiHint.defName'})} onChange={e => onChange(d.id, 'defName', e)} defaultValue={d.defName}/></td>
                 </tr>
               })
             }
