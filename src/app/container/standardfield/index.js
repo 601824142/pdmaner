@@ -78,12 +78,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
         if (validateStandardFields(tempData)) {
           tempData && updateDataSource({
             ...dataSourceRef.current,
-            standardFields: tempData.map((group) => {
-              return {
-                ..._.omit(group, ['__key']),
-                fields: (group.fields || []).map(f => _.omit(f, ['__key'])),
-              };
-            }),
+            standardFields: tempData,
           });
           modal.close();
         } else {
@@ -103,13 +98,13 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       tempData = data;
     };
     let twinkle;
-    if (d?.defKey) {
-      const defKey = d?.defKey;
+    if (d?.id) {
+      const id = d?.id;
       const group = d?.groups?.[0];
       if (group) {
-        twinkle = group + separator + defKey;
+        twinkle = group + separator + id;
       } else {
-        twinkle = defKey;
+        twinkle = id;
       }
     }
     modal = openModal(<StandardFieldsEdit
@@ -231,7 +226,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
             <FormatMessage id='standardFields.standardFieldsLibEmpty'/>
           </div>
             : finalData.map((g) => {
-              return <div key={g.defKey}>
+              return <div key={g.id}>
                 <span className={`${currentPrefix}-standard-fields-list-group`}>
                   <Icon type='icon-shuju2'/>
                   <span>{g.defName}({g.defKey})</span>
@@ -239,13 +234,13 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
                 {
                   (g.fields || []).map((f) => {
                     const key = getKey(f);
-                    const selected = selectFields.findIndex(s => getKey(s) === key) >= 0;
+                    const selected = selectFields.findIndex(s => s.id === f.id) >= 0;
                     return <div
                       onDragStart={onDragStart}
                       draggable={selected}
                       className={`${currentPrefix}-standard-fields-list-content-${selected ? 'selected' : 'unselected'}`}
                       onClick={e => onItemClick(e, f)}
-                      key={key}
+                      key={f.id}
                     >
                       {key}
                     </div>;

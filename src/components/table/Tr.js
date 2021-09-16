@@ -100,7 +100,7 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
   </tr>,
   expand && f.children && <tr
     style={{display: expands.includes(f.id) ? '' : 'none'}}
-    key={f.id}
+    key={`${f.id}_1`}
   >
     <td style={{cursor: 'auto'}} colSpan={tempHeaders.length + 2}>
       {f.children}

@@ -65,7 +65,7 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
           ...currentDataSource,
           dicts: newDicts,
           viewGroups: (currentDataSource?.viewGroups || []).map((g) => {
-            if (newDict.group.includes(g.id)) {
+            if (newDict.group?.includes(g.id)) {
               return {
                 ...g,
                 refDicts: [...new Set((g.refDicts || []).concat(newDict.id))],

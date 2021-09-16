@@ -521,14 +521,15 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       const current = dataSource.standardFields || [];
       const onOk = () => {
         const group = standardGroupRef.current.getGroup() || {};
-        if (group.id) {
+        if (group.defKey) {
           const newFields = fieldsRef.current
               .filter(f => selectedFieldsRef.current.includes(f.id))
               .filter(f => current
                   .reduce((a, b) => a.concat(b.fields || []), [])
-                  .findIndex(c => c.id === f.id) < 0)
+                  .findIndex(c => c.defKey === f.defKey) < 0)
               .map(f => ({
                 ...f,
+                id: Math.uuid(),
                 primaryKey: false,
                 notNull: false,
                 autoIncrement: false,

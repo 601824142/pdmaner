@@ -465,9 +465,9 @@ export const validateStandardFields = (data) => {
   const fields = data.reduce((a, b) => a.concat(b.fields), []);
   const fieldKeys = fields.map(d => d.defKey);
   return (groupKeys.length === new Set(groupKeys).size)
-      && (groupKeys.length === groupKeys.map(g => !!g).length)
+      && (groupKeys.length === groupKeys.filter(g => !!g).length)
       && (fieldKeys.length === new Set(fieldKeys).size)
-      && (fieldKeys.length === fieldKeys.map(g => !!g).length);
+      && (fieldKeys.length === fieldKeys.filter(g => !!g).length);
 }
 
 export const validateDictBase = (dict) => {

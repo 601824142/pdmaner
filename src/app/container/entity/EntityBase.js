@@ -54,23 +54,26 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
     const dragData = e.dataTransfer.getData('fields');
     if (dragData) {
       const newFields = JSON.parse(dragData);
-      const result = {};
+      const result = {success: 0};
       tableRef.current.updateTableData((pre) => {
         const success = newFields
-            .filter(f => (pre.fields || []).findIndex(eFiled => eFiled.id === f.id) < 0);
+            .filter(f => (pre.fields || []).findIndex(eFiled => eFiled.defKey === f.defKey) < 0);
         result.success = success.length;
         result.hidden = 0;
-        const finalFields = (pre.fields || [])
+        if (success.length > 0) {
+          const finalFields = (pre.fields || [])
             .concat(success.map(s => ({
               ...s,
               isStandard: true,
-              __key: Math.uuid(),
+              id: Math.uuid(),
             })));
-        dataChange && dataChange(finalFields, 'fields');
-        return {
-          ...pre,
-          fields: finalFields,
-        };
+          dataChange && dataChange(finalFields, 'fields');
+          return {
+            ...pre,
+            fields: finalFields,
+          };
+        }
+        return pre;
       });
       if (result.success === newFields.length) {
         Message.success({title: FormatMessage.string({id: 'optSuccess'})});
