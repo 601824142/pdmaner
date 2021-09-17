@@ -6,12 +6,6 @@ import doT from 'dot';
 
 import { separator, msgSeparator } from '../../profile';
 import {firstUp} from './string';
-export const packageDataSource = (dataSource) => {
-  return {
-    ...dataSource,
-    entities: (dataSource?.entities || [])
-  }
-};
 // 获取所有的数据表信息（包含真实的type）
 const mapDataSourceEntities = (dataSource, datatype, domains, code, currentCode, path = 'entities') => {
   return _.get(dataSource, path, []).map((entity) => {
@@ -28,9 +22,9 @@ const mapDataSourceEntities = (dataSource, datatype, domains, code, currentCode,
 };
 // 根据数据库类型 返回真实的数据类型
 export const getFieldData = (datatype, domains, field, code) => {
-  const domain = domains.filter(d => d.defKey === field.domain)[0];
+  const domain = domains.filter(d => d.id === field.domain)[0];
   if (domain) {
-    const type = datatype.filter(d => d.defKey === domain.applyFor)[0];
+    const type = datatype.filter(d => d.id === domain.applyFor)[0];
     return {
       type: type?.[code] || field.type,
       len: domain.len,
@@ -193,14 +187,27 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
   const template = allTemplate.filter(t => t.applyFor === code)[0]?.[templateShow] || '';
   const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
   // 构造新的数据表传递给模板
+  const fields = (dataTable.fields || []);
+  const indexes = (dataTable.indexes || []);
   const tempDataTable = {
     ...dataTable,
-    fields: (dataTable.fields || []).map(field => {
+    fields: templateShow === 'createIndex' ? fields : fields.map(field => {
       return {
         ...field,
         ...getFieldData(datatype, domains, field, code),
       }
-    })
+    }),
+    indexes: templateShow === 'createIndex' ? indexes.map(i => {
+      return {
+        ...i,
+        fields: (i.fields || []).map(f => {
+          return {
+            ...f,
+            fieldDefKey: fields.filter(field => field.id === f.fieldDefKey)[0]?.defKey,
+          };
+        }),
+      }
+    }) : indexes,
   };
   const name = templateShow === 'createView' ? 'view' : 'entity';
   const templateData = {
@@ -1389,7 +1396,7 @@ export const getDataByTemplate = (data, template) => {
 };
 // 获取项目的一些配置信息
 const getDataSourceProfile = (data) => {
-  const dataSource = packageDataSource(data);
+  const dataSource = {...data};
   const datatype = _.get(dataSource, 'dataTypeMapping.mappings', []);
   const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
   const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';') || ';';

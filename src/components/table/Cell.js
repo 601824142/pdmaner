@@ -7,7 +7,7 @@ import DictBase from '../../app/container/dict/DictBase';
 
 export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
                              onChange, onBlur, checkboxComponents, reading, cellRef, dicts,
-                             setDict, getDataSource, updateDataSource,
+                             setDict, getDataSource, updateDataSource, entities,
                              openDict, defaultGroups, domains, uiHint}) => {
   const tooltipRef = useRef(null);
   const columnWidth = getColumnWidth();
@@ -137,6 +137,8 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
     if (name === 'enabled' || name === 'isStandard') {
       label = label ? Component.FormatMessage.string({id: 'dict.enabled'})
           : Component.FormatMessage.string({id: 'dict.disabled'});
+    } else if (name === 'refEntity') {
+      label = entities.filter(e => e.id === f[name])[0]?.defKey || '';
     }
     return <Component.Tooltip title={label}>
       <span
@@ -265,6 +267,8 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
   } else if (pre.name === 'uiHint') {
     return !((pre?.uiHint !== next?.uiHint)
       || (pre.f[pre.name] !== next.f[next.name]));
+  } else if (pre.name === 'refEntity') {
+    return pre?.entities === next?.entities;
   }
   return pre.f[pre.name] === next.f[next.name];
 });

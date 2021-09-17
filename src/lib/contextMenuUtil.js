@@ -837,10 +837,29 @@ const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
               ...v,
               [optConfig.viewRefs]: (v[optConfig.viewRefs] || []).filter(k => !deleteDataKeys.includes(k)),
             }));
-            updateDataSource && updateDataSource({
+            const tempDataSource = {
               ...dataSource,
-              [optConfig.mainKey]: newData,
               viewGroups: newGroupData,
+              [optConfig.mainKey]: newData,
+            };
+            updateDataSource && updateDataSource({
+              ...tempDataSource,
+              views: optConfig.mainKey === 'entities' ? (tempDataSource.views || []).map(v => {
+                // 需要移除视图内与该数据表有关的内容
+                if (v.refEntities?.some(ref => deleteDataKeys.includes(ref))) {
+                  return {
+                    ...v,
+                    refEntities: v.refEntities?.filter(ref => !deleteDataKeys.includes(ref)),
+                    fields: v.fields?.map(f => {
+                      if (deleteDataKeys.includes(f.refEntity)) {
+                        return _.omit(f, ['refEntity', 'refEntityField']);
+                      }
+                      return f;
+                    })
+                  };
+                }
+                return v;
+              }) : tempDataSource.views,
             });
             tabClose && tabClose(dataKey + separator + dataType);
             Message.success({title: FormatMessage.string({id: 'deleteSuccess'})});

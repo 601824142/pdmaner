@@ -1,24 +1,22 @@
-import React, { useMemo, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Button, Icon, openModal, Tree, FormatMessage } from 'components';
 import {getPrefix} from '../../../lib/prefixUtil';
 
 export default React.memo(({prefix, dataSource, data, onChange}) => {
   const [entityRefs, updateEntityRefs] = useState(data?.refEntities || []);
-  const message = FormatMessage.string({id: 'view.selectEntityMessage', data: { count: entityRefs.length}});
+  useEffect(() => {
+    const entities = dataSource?.entities || [];
+    const tempRefEntities =
+      data?.refEntities?.filter(ref => entities.findIndex(e => e.id === ref) > -1);
+    updateEntityRefs(tempRefEntities);
+    onChange && onChange(tempRefEntities);
+  }, [dataSource?.entities?.length]);
+  const message = FormatMessage.string({
+    id: 'view.selectEntityMessage',
+    data: {
+      count: entityRefs.length,
+    }});
   const currentPrefix = getPrefix(prefix);
-  const treeData = useMemo(() => {
-    return [
-      {
-        key: 'entityList',
-        value: FormatMessage.string({id: 'view.entityList'}),
-        children: (dataSource?.entities || [])
-            .map(e => ({
-              key: e.defKey,
-              value: `${e.defKey}-${e.defName}`,
-            })),
-      },
-    ];
-  }, dataSource);
   const click = () => {
     let modal = null;
     let tempValue = [...entityRefs];
@@ -33,6 +31,17 @@ export default React.memo(({prefix, dataSource, data, onChange}) => {
     const onCancel = () => {
       modal && modal.close();
     };
+    const treeData = [
+      {
+        key: 'entityList',
+        value: FormatMessage.string({id: 'view.entityList'}),
+        children: (dataSource?.entities || [])
+          .map(e => ({
+            key: e.id,
+            value: `${e.defKey}-${e.defName}`,
+          })),
+      },
+    ];
     modal = openModal(<div className={`${currentPrefix}-view-entity-select`}>
       <Tree dataSource={treeData} onChange={_onChange} defaultCheckeds={entityRefs}/>
     </div>, {
@@ -56,13 +65,15 @@ export default React.memo(({prefix, dataSource, data, onChange}) => {
         <FormatMessage id='view.selectEntity'/>
       </span>
       <span className={`${currentPrefix}-form-item-component`}>
-        <span>{message}</span>
-        <Icon
-          title={FormatMessage.string({id: 'view.selectEntityIcon'})}
-          onClick={click}
-          type='fa-pencil-square-o'
-          className={`${currentPrefix}-entity-base-properties-edit`}
+        <div>
+          <span>{message}</span>
+          <Icon
+            title={FormatMessage.string({id: 'view.selectEntityIcon'})}
+            onClick={click}
+            type='fa-pencil-square-o'
+            className={`${currentPrefix}-entity-base-properties-edit`}
         />
+        </div>
       </span>
     </div>
   );

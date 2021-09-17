@@ -111,7 +111,6 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
       tableDataChange={tableDataGroupChange}
       expand
       ready={ready}
-      ref={tableRef}
     />
   </div>;
 });

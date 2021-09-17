@@ -6,6 +6,7 @@ import {
   MultipleSelect,
   Text, Message, Modal,Icon,
 } from 'components';
+import _ from 'lodash/object';
 
 import { addDomResize, removeDomResize } from '../../../lib/listener';
 
@@ -15,8 +16,8 @@ import {getPrefix} from '../../../lib/prefixUtil';
 
 
 export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHeaders,
-                             dataChange, FieldsExtraOpt, updateDataSource, param,
-                             hasRender, hasDestory, getDataSource, openDict}) => {
+                             dataChange, FieldsExtraOpt, updateDataSource, param, getRestData,
+                             hasRender, hasDestory, getDataSource, openDict, type}) => {
   const Option = MultipleSelect.Option;
   const id = useMemo(() => Math.uuid(), []);
   const [size, setSize] = useState({width: 0});
@@ -37,7 +38,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
   };
   const getGroups = () => {
     return (dataSource?.viewGroups || [])
-        .filter(g => (g?.refEntities || []).includes(data.id))
+        .filter(g => (g?.[type === 'entity' ? 'refEntities' : 'refViews'] || []).includes(data.id))
         .map(g => g.id);
   };
   const [checkValues, setCheckValues] = useState(() => {
@@ -45,7 +46,26 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
   });
   useEffect(() => {
     setCheckValues(getGroups());
-  }, [dataSource?.viewGroups, data]);
+  }, [dataSource?.viewGroups]);
+  useEffect(() => {
+    if (type === 'view') {
+      // 删除数据表
+      const allEntities = dataSource?.entities?.map(e => e.id);
+      tableRef.current.updateTableData((pre) => {
+        const tempFields = pre?.fields?.map((f) => {
+          if (!allEntities.includes(f.refEntity)) {
+            return _.omit(f, ['refEntity', 'refEntityField']);
+          }
+          return f;
+        });
+        dataChange && dataChange(tempFields, 'fields');
+        return {
+          ...pre,
+          fields: tempFields,
+        };
+      });
+    }
+  }, [dataSource?.entities?.length]);
   const currentPrefix = getPrefix(prefix);
   const onDragOver = (e) => {
     e.preventDefault();
@@ -232,6 +252,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
           style={{width: size.width, height: '100%'}}
         >
           <EntityFields
+            getRestData={getRestData}
             openDict={openDict}
             hasRender={hasRender}
             hasDestory={hasDestory}

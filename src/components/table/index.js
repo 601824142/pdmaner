@@ -16,7 +16,7 @@ import StandardGroupSelect from '../../app/container/standardfield/StandardGroup
 const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                                dataSource, customerHeaders, disableHeaderIcon, tableDataChange,
                                defaultEmptyField, validate, disableCopyAndCut, onTableRowClick,
-                               onAdd, ExtraOpt, style, hiddenHeader,
+                               onAdd, ExtraOpt, style, hiddenHeader, getRestData,
                                className, expand, otherOpt = true, disableHeaderReset,
                                updateDataSource, disableAddStandard, ready, twinkle, getDataSource,
                                disableDragRow = true, freeze = false, reading = false,
@@ -421,7 +421,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
         fields: newFields,
       };
     });
-    tableDataChange && tableDataChange(newFields, 'fields');
+    tableDataChange && tableDataChange(newFields, 'fields', 'delete');
     const selectField = newFields[(minIndex - 1) < 0 ? 0 : minIndex - 1];
     updateSelectedFields((selectField && [selectField.id]) || []);
   };
@@ -886,7 +886,8 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
             {ExtraOpt && <span className={`${currentPrefix}-table-opt-extra`}><ExtraOpt
               prefix={currentPrefix}
               dataSource={dataSource}
-              data={{fields, headers, ...restData}}
+              getRestData={getRestData}
+              data={{fields, headers}}
               onChange={importFields}
             />
             </span>}
@@ -954,6 +955,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
             {
               fields.map((f, i) => (
                 <Tr
+                  entities={dataSource.entities}
                   openDict={openDict}
                   selectedColumns={selectedColumns}
                   hiddenFields={hiddenFields}

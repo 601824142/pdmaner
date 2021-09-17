@@ -4,7 +4,7 @@ import Cell from 'components/table/Cell';
 
 export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition,
                              getClass, tableRowClick, disableDragRow, checkboxComponents,
-                             onMouseDown, currentPrefix, onExpand, expands,
+                             onMouseDown, currentPrefix, onExpand, expands, entities,
                              updateTableDataByName, comBlur, cellRef, onKeyDown, freeze,
                              reading, getDataSource, updateDataSource, cellClick, setDict,
                              hiddenFields, selectedColumns, openDict, defaultGroups, dicts,
@@ -93,6 +93,7 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
                 dicts={dicts}
                 uiHint={uiHint}
                 setDict={setDict}
+                entities={entities}
               />
             </td>;
           })
@@ -108,7 +109,7 @@ export default React.memo(({f, i, expand, onMouseOver, tempHeaders, calcPosition
   </tr>,
 ];
 }, (pre, next) => {
-  const simpleProps = ['f', 'i', 'expand', 'tempHeaders', 'getClass',
+  const simpleProps = ['f', 'i', 'expand', 'tempHeaders', 'getClass', 'entities',
     'selectedColumns', 'defaultGroups', 'getFieldProps', 'domains', 'mapping', 'dicts', 'uiHint'];
   const calcArray = (oldData, newData) => {
     return (oldData === newData)
