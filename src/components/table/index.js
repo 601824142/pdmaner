@@ -955,7 +955,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
             {
               fields.map((f, i) => (
                 <Tr
-                  entities={dataSource.entities}
+                  entities={dataSource?.entities}
                   openDict={openDict}
                   selectedColumns={selectedColumns}
                   hiddenFields={hiddenFields}

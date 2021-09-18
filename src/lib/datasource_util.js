@@ -958,40 +958,50 @@ export  const getTextWidth = (text, font, weight = 'normal') => {
   return Math.ceil(width);
 };
 
-export  const calcNodeData = (nodeData, dataSource, groups) => {
-  // 节点源数据
+export const transform = (f, dataSource, code) => {
   // 获取该数据表需要显示的字段
   const domains = dataSource?.domains || [];
+  const entities = dataSource?.entities || [];
   const mappings = dataSource?.dataTypeMapping?.mappings || [];
   const db = _.get(dataSource, 'profile.default.db', _.get(dataSource, 'profile.dataTypeSupports[0].id'));
   const dicts = dataSource?.dicts || [];
   const uiHints = _.get(dataSource, 'profile.uiHint', []);
-  const transform = (f) => {
-    const temp = {};
-    if (f.domain){
-      // 转换数据域
-      const domain = domains.filter(dom => dom.id === f.domain)[0] || { len: '', scale: '' };
-      const dataType = mappings.filter(m => m.id === domain.applyFor)[0]?.[db] || '';
-      temp.len = domain.len === undefined ? '' : domain.len;
-      temp.scale = domain.scale === undefined ? '' : domain.scale;
-      temp.type = dataType;
-      temp.domain = domain.defName || domain.defKey;
+  const temp = {};
+  if (f.domain){
+    // 转换数据域
+    const domain = domains.filter(dom => dom.id === f.domain)[0] || { len: '', scale: '' };
+    const dataType = mappings.filter(m => m.id === domain.applyFor)[0]?.[code || db] || '';
+    temp.len = domain.len === undefined ? '' : domain.len;
+    temp.scale = domain.scale === undefined ? '' : domain.scale;
+    temp.type = dataType;
+    temp.domain = domain.defName || domain.defKey;
+  }
+  // 转换数据字典
+  if (f.refDict) {
+    const dict = dicts.filter(d => d.id === f.refDict)[0];
+    temp.refDict = dict?.defName || dict?.defKey;
+  }
+  // 转换UI建议
+  if (f.uiHint) {
+    const uiHint = uiHints.filter(u => u.id === f.uiHint)[0];
+    temp.uiHint = uiHint?.defName || uiHint?.defKey;
+  }
+  // 转换引用数据表  如果是视图
+  if (entities && f.refEntity) {
+    const entity = entities.filter(e => e.id === f.refEntity)[0];
+    if (entity) {
+      temp.refEntity = entity.defName || entity.defKey;
+      temp.refEntityField = (entity.fields || []).filter(field => f.refEntityField === field.id)[0]?.defKey || '';
     }
-    // 转换数据字典
-    if (f.refDict) {
-      const dict = dicts.filter(d => d.id === f.refDict)[0];
-      temp.refDict = dict?.defName || dict?.defKey;
-    }
-    // 转换UI建议
-    if (f.uiHint) {
-      const uiHint = uiHints.filter(u => u.id === f.uiHint)[0];
-      temp.uiHint = uiHint?.defName || uiHint?.defKey;
-    }
-    return temp;
-  };
+  }
+  return temp;
+};
+
+export  const calcNodeData = (nodeData, dataSource, groups) => {
+  // 节点源数据
   const headers = nodeData?.headers.filter(h => !h.hideInGraph);
   const fields = (nodeData?.fields || []).filter(f => !f.hideInGraph)
-      .map(f => ({...f, ...transform(f)}));
+      .map(f => ({...f, ...transform(f, dataSource)}));
   // 计算表头的宽度
   const headerWidth = getTextWidth(
       `${nodeData.defKey}${nodeData.count > 0 ? `:${nodeData.count}` : ''}(${nodeData.defName})`,

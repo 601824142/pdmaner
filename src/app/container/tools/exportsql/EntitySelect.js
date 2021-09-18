@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, {forwardRef, useImperativeHandle, useMemo, useRef} from 'react';
 
 import {FormatMessage, Tree} from 'components';
 
@@ -18,8 +18,8 @@ export default React.memo(forwardRef(({dataSource, defaultCheckeds, prefix, temp
     const allGroupKeys = (dataSource.viewGroups || [])
         .reduce((a, b) => a.concat(b[`ref${firstUp(name)}`]), []);
     return (dataSource[name] || [])
-        .filter(e => !(allGroupKeys.includes(e.defKey)))
-        .map(e => e.defKey);
+        .filter(e => !(allGroupKeys.includes(e.id)))
+        .map(e => e.id);
   };
   const getTreeData = () => {
     const refData = {};
@@ -31,6 +31,7 @@ export default React.memo(forwardRef(({dataSource, defaultCheckeds, prefix, temp
     }
     return (dataSource.viewGroups || [])
         .concat({
+          id: '__ungroup',
           defKey: '__ungroup',
           defName: FormatMessage.string({id: 'exportSql.defaultGroup'}),
           ...refData,
@@ -43,27 +44,27 @@ export default React.memo(forwardRef(({dataSource, defaultCheckeds, prefix, temp
         })
         .map((g) => {
       const getData = dataName => (dataSource[dataName] || [])
-          .filter(e => (g[`ref${firstUp(dataName)}`] || []).includes(e.defKey));
+          .filter(e => (g[`ref${firstUp(dataName)}`] || []).includes(e.id));
       const children = templateType === 'dict' ? getData('dicts').map(d => ({
-        key: `${g.defKey}${separator}dicts${separator}${d.defKey}`,
+        key: `${g.id}${separator}dicts${separator}${d.id}`,
         value: `${d.defName}(${d.defKey})`,
       })) : [{
-        key: `${g.defKey}${separator}entities`,
+        key: `${g.id}${separator}entities`,
         value: FormatMessage.string({id: 'exportSql.entityList'}),
         children: getData('entities').map(d => ({
-          key: `${g.defKey}${separator}entities${separator}${d.defKey}`,
+          key: `${g.id}${separator}entities${separator}${d.id}`,
           value: `${d.defName}(${d.defKey})`,
         })),
       }, {
-        key: `${g.defKey}${separator}views`,
+        key: `${g.id}${separator}views`,
         value: FormatMessage.string({id: 'exportSql.viewList'}),
         children: getData('views').map(d => ({
-          key: `${g.defKey}${separator}views${separator}${d.defKey}`,
+          key: `${g.id}${separator}views${separator}${d.id}`,
           value: `${d.defName}(${d.defKey})`,
         })),
       }].filter(c => c.children.length > 0);
       return {
-        key: g.defKey,
+        key: g.id,
         value: g.defName || g.defKey,
         children,
       };
@@ -72,6 +73,7 @@ export default React.memo(forwardRef(({dataSource, defaultCheckeds, prefix, temp
   const onChange = (keys) => {
     checkedsRef.current = keys;
   };
+  console.log(defaultCheckeds, getTreeData());
   return <div className={`${prefix}-export-sql-entity-select`}>
     <Tree
       dataSource={getTreeData()}
