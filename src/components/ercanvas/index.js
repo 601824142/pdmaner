@@ -183,7 +183,7 @@ import {
   getEmptyEntity,
   generatorTableKey,
   getFullColumns,
-  calcCellData, calcNodeData,
+  calcCellData, calcNodeData, mapData2Table,
 } from '../../lib/datasource_util';
 import { separator } from '../../../profile';
 import Entity from '../../app/container/entity';
@@ -199,6 +199,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                   changes, versionsData, save, getDataSource, openDict, selectionChanged,
                   jumpEntity, diagramKey, relationType, ...restProps}) => {
   const currentPrefix = getPrefix(prefix);
+  const isInit = useRef(false);
   const findRef = useRef(null);
   const needRender = useRef(false);
   const graphRef = useRef(null);
@@ -206,8 +207,6 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
   const interactingRef = useRef(true);
   const dataSourceRef = useRef(dataSource);
   dataSourceRef.current = dataSource;
-  const dataRef = useRef(data);
-  dataRef.current = data;
   const currentColor = useRef({
     selected: '#1890FF', // 选中色
     border: '#DFE3EB', // 边框色
@@ -443,7 +442,13 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     };
   };
   const getEntityInitFields = () => {
-    return _.get(dataSourceRef.current, 'profile.default.entityInitFields', []);
+    return _.get(dataSourceRef.current, 'profile.default.entityInitFields', [])
+      .map((f) => {
+      return {
+        ...f,
+        id: Math.uuid(),
+      };
+    });
   };
   const getEntityInitProperties = () => {
     return _.get(dataSourceRef.current, 'profile.default.entityInitProperties', {});
@@ -457,7 +462,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       const newDataSource = {
         ...dataSourceRef.current,
         entities: dataSourceRef.current.entities.map((e) => {
-          if (e.defKey === originKey) {
+          if (e.id === originKey) {
             const success = fields
                 .filter(f => (e.fields || [])
                     .findIndex(eFiled => getKey(eFiled) === getKey(f)) < 0);
@@ -561,11 +566,35 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graphRef.current.zoom(factor);
   };
   const render = () => {
-    graphRef.current.resetSelection();
-    graphRef.current.fromJSON({
-      cells: calcCellData(dataRef.current.cells, dataSourceRef.current, updateFields,
+    if (!isInit.current) {
+      graphRef.current.fromJSON({
+        cells: calcCellData(data?.canvasData?.cells || [], dataSourceRef.current, updateFields,
           getTableGroup(), commonPorts, relationType, commonEntityPorts),
-    });
+      });
+      graphRef.current.centerContent();
+      isInit.current = true;
+    } else {
+      // 需要更新数据表相关的节点
+      const cells = graphRef.current.getCells();
+      graphRef.current.batchUpdate('update', () => {
+        cells.filter(c => c.shape === 'table').forEach((c) => {
+          const { size, ports, ...rest } = mapData2Table({
+              originKey: c.data.id,
+              ports: c.ports,
+            },
+            dataSource, updateFields, getTableGroup(),
+            commonPorts, relationType, commonEntityPorts) || {};
+          if (size) {
+            // 需要取消撤销重做的记录
+            c.setProp('data', rest.data, { ignoreHistory : true});
+            c.setProp('size', size, { ignoreHistory : true});
+            c.setProp('ports', ports, { ignoreHistory : true});
+          } else {
+            graphRef.current.removeCell(c, { ignoreHistory : true});
+          }
+        });
+      });
+    }
   };
   useEffect(() => {
     const container = document.getElementById(id);
@@ -768,7 +797,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           if ((g.refDiagrams || []).includes(tabKey.split(separator)[0])) {
             return {
               ...g,
-              refEntities: (g.refEntities || []).concat(cells.map(c => c.data.defKey)),
+              refEntities: (g.refEntities || []).concat(cells.map(c => c.data.id)),
             };
           }
           return g;
@@ -819,7 +848,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
               entities: (dataSourceRef.current.entities || []).concat(keys),
             });
             keys.push({defKey: newKey});
-            c.setProp('originKey', newKey, {ignoreHistory : true});
+            c.setProp('originKey', Math.uuid(), {ignoreHistory : true});
             c.setData({defKey: newKey}, {ignoreHistory : true, relation: true});
             return {
               data: c.data,
@@ -964,11 +993,11 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
               relation: '1:n',
               source: {
                 cell: edge.target.cell,
-                port: `${p.defKey}${separator}out`,
+                port: `${p.id}${separator}out`,
               },
               target: {
                 cell: edge.source.cell,
-                port: `${p.defKey}${separator}in`,
+                port: `${p.id}${separator}in`,
               },
             };
           }).filter((e) => {
@@ -991,11 +1020,11 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           const newDataSource = {
             ...dataSourceRef.current,
             entities: (dataSourceRef.current.entities || []).map(((entity) => {
-              if (entity.defKey === sourceKey) {
+              if (entity.id === sourceKey) {
                 const tempFields = entity.fields || [];
                 const tempPrimaryKeys = primaryKeys
                     .filter(p => tempFields
-                        .findIndex(f => f.defKey === p.defKey) < 0);
+                        .findIndex(f => f.id === p.id) < 0);
                 return {
                   ...entity,
                   fields: tempPrimaryKeys.concat(tempFields),
@@ -1263,7 +1292,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         const cellData = cell.getData();
         const key = cell.getProp('originKey');
         const group = dataSourceRef.current?.viewGroups?.
-        filter(v => v.refEntities?.some(r => r === key))[0]?.defKey || '';
+        filter(v => v.refEntities?.some(r => r === key))[0]?.id || '';
         const entityTabKey = `${key + separator}entity`;
         if (!validateTableStatus(entityTabKey)) {
           let drawer;
@@ -1271,7 +1300,6 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             type: 'entity',
             tabKey: entityTabKey,
           };
-          tabDataChange && tabDataChange(null, tab);
           const onOK = () => {
             save((fail) => {
               if (!fail) {
@@ -1364,7 +1392,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graph.on('node:added', ({cell, options}) => {
       if (cell.shape === 'table') {
         if ((dataSourceRef.current.entities || [])
-            .findIndex(e => cell.data.defKey === e.defKey) < 0){
+            .findIndex(e => cell.data.id === e.id) < 0){
           updateDataSource && updateDataSource(addEntityData(cell, 'create'));
         }
       }
@@ -1412,8 +1440,8 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           properties: getEntityInitProperties(),
         };
       } else {
-        empty = dataSourceRef.current?.entities?.filter(entity => entity.defKey === key)[0];
-        count = graph.getNodes().filter(n => n.data?.defKey === key).length;
+        empty = dataSourceRef.current?.entities?.filter(entity => entity.id === key)[0];
+        count = graph.getNodes().filter(n => n.data?.id === key).length;
       }
       if (!empty) {
         return;
@@ -1427,7 +1455,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         },
         shape: 'table',
         ports: relationType === 'entity' ? commonEntityPorts : ports,
-        originKey: empty.defKey,
+        originKey: empty.id,
         count,
         updateFields,
         data: {
@@ -1506,7 +1534,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           html2canvas(dom).then((canvas) => {
             document.body.removeChild(dom.parentElement.parentElement);
             const diagram = (dataSourceRef.current?.diagrams || [])
-                .filter(d => d.defKey === diagramKey)[0] || {};
+                .filter(d => d.id === diagramKey)[0] || {};
             DataUri.downloadDataUri(canvas.toDataURL('image/png'),
                 `${dataSourceRef.current.name}-${diagram.defKey}[${diagram.defName || diagram.defKey}]-${moment().format('YYYYMDHHmmss')}.png`);
           });
@@ -1520,7 +1548,12 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     } else {
       needRender.current = true;
     }
-  }, [data, dataSource]);
+  }, [
+    dataSource.domains,
+    dataSource.dicts,
+    dataSource.uiHint,
+    dataSource.entities,
+  ]);
   useEffect(() => {
     const dom = document.getElementById(id);
     if (dom?.clientWidth > 0) {

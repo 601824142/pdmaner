@@ -58,7 +58,7 @@ export const updateAllData = (dataSource, tabs) => {
       if(!(t.data.fields.filter(f => !f.hideInGraph).length <= size)) {
         sizeError.push(t.data.defKey);
       }
-      if (keys.length !== new Set(keys).size) {
+      if (keys.filter(k => !!k).length !== new Set(keys).size) {
         const fields = t.data?.fields || [];
         const repeat = fields.reduce((a, b) => {
           if (fields.filter(f => f.defKey === b.defKey).length > 1 && !a.includes(b.defKey)) {
@@ -962,12 +962,36 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
   // 节点源数据
   // 获取该数据表需要显示的字段
   const domains = dataSource?.domains || [];
-  const getDomain = (domain) => {
-    return domains.filter(d => d.defKey === domain)[0]?.defName || domain;
+  const mappings = dataSource?.dataTypeMapping?.mappings || [];
+  const db = _.get(dataSource, 'profile.default.db', _.get(dataSource, 'profile.dataTypeSupports[0].id'));
+  const dicts = dataSource?.dicts || [];
+  const uiHints = _.get(dataSource, 'profile.uiHint', []);
+  const transform = (f) => {
+    const temp = {};
+    if (f.domain){
+      // 转换数据域
+      const domain = domains.filter(dom => dom.id === f.domain)[0] || { len: '', scale: '' };
+      const dataType = mappings.filter(m => m.id === domain.applyFor)[0]?.[db] || '';
+      temp.len = domain.len === undefined ? '' : domain.len;
+      temp.scale = domain.scale === undefined ? '' : domain.scale;
+      temp.type = dataType;
+      temp.domain = domain.defName || domain.defKey;
+    }
+    // 转换数据字典
+    if (f.refDict) {
+      const dict = dicts.filter(d => d.id === f.refDict)[0];
+      temp.refDict = dict?.defName || dict?.defKey;
+    }
+    // 转换UI建议
+    if (f.uiHint) {
+      const uiHint = uiHints.filter(u => u.id === f.uiHint)[0];
+      temp.uiHint = uiHint?.defName || uiHint?.defKey;
+    }
+    return temp;
   };
   const headers = nodeData?.headers.filter(h => !h.hideInGraph);
   const fields = (nodeData?.fields || []).filter(f => !f.hideInGraph)
-      .map(f => ({...f, domain: getDomain(f.domain)}));
+      .map(f => ({...f, ...transform(f)}));
   // 计算表头的宽度
   const headerWidth = getTextWidth(
       `${nodeData.defKey}${nodeData.count > 0 ? `:${nodeData.count}` : ''}(${nodeData.defName})`,
@@ -1012,11 +1036,11 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
       return a.concat([{
         group: 'in',
         args: { x: 0, y: 40 + i * 23 },
-        id: `${b.defKey}${separator}in`,
+        id: `${b.id}${separator}in`,
       }, {
         group: 'out',
         args: { x: 0 + width, y: 40 + i * 23 },
-        id: `${b.defKey}${separator}out`,
+        id: `${b.id}${separator}out`,
       }]);
     }, [])
         .concat([
@@ -1053,6 +1077,30 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
     headers,
     ports,
   };
+};
+
+export const mapData2Table = (n, dataSource, updateFields, groups, commonPorts,
+                              relationType, commonEntityPorts) => {
+  const nodeData = dataSource?.entities?.filter(e => e.id === n.originKey)[0];
+  if (nodeData) {
+    const { width, height, fields, headers, maxWidth, ports } = calcNodeData(nodeData, dataSource, groups);
+    return {
+      ...n,
+      size: {
+        width,
+        height,
+      },
+      ports: relationType === 'entity' ? (n.ports || commonEntityPorts) : ports,
+      updateFields,
+      data: {
+        ...nodeData,
+        fields,
+        headers,
+        maxWidth,
+      },
+    };
+  }
+  return nodeData;
 };
 
 export const calcCellData = (cells = [], dataSource, updateFields, groups, commonPorts,
@@ -1094,26 +1142,8 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
     }
   });
   const nodes = cells.filter(c => c.shape === 'table').map((n) => {
-    const nodeData = dataSource?.entities?.filter(e => e.defKey === n.originKey)[0];
-    if (nodeData) {
-      const { width, height, fields, headers, maxWidth, ports } = calcNodeData(nodeData, dataSource, groups);
-      return {
-        ...n,
-        size: {
-          width,
-          height,
-        },
-        ports: relationType === 'entity' ? (n.ports || commonEntityPorts) : ports,
-        updateFields,
-        data: {
-          ...nodeData,
-          fields,
-          headers,
-          maxWidth,
-        },
-      };
-    }
-    return nodeData;
+    return mapData2Table(n, dataSource, updateFields, groups, commonPorts,
+      relationType, commonEntityPorts);
   }).filter(n => !!n);
   const allNodes = (nodes || []).concat(remarks || []).concat(polygon || []);
   const edges = cells.filter(c => c.shape === 'erdRelation')
