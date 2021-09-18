@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useMemo, useRef} from 'react';
+import React, {forwardRef, useImperativeHandle, useRef} from 'react';
 
 import {FormatMessage, Tree} from 'components';
 
@@ -73,7 +73,6 @@ export default React.memo(forwardRef(({dataSource, defaultCheckeds, prefix, temp
   const onChange = (keys) => {
     checkedsRef.current = keys;
   };
-  console.log(defaultCheckeds, getTreeData());
   return <div className={`${prefix}-export-sql-entity-select`}>
     <Tree
       dataSource={getTreeData()}
