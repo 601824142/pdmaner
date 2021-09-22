@@ -1257,3 +1257,64 @@ export const emptyDictSQLTemplate =  {
   content: ''
 };
 
+export const reduceProject = (emptyProject) => {
+  const dataTypeSupports = emptyProject?.profile?.dataTypeSupports?.map(d => {
+      return {
+        defKey: d,
+        id: Math.uuid(),
+      };
+    });
+  const codeTemplates = emptyProject.profile?.codeTemplates
+    .map(c => {
+    return {
+      ...c,
+      applyFor: c.applyFor !== 'dictSQLTemplate' ? dataTypeSupports
+        .filter(d => d.defKey === c.applyFor)[0]?.id : 'dictSQLTemplate',
+    };
+  })
+  const uiHint = emptyProject.profile?.uiHint?.map(u => {
+    return {
+      ...u,
+      id: Math.uuid(),
+    };
+  })
+  const mappings = emptyProject?.dataTypeMapping?.mappings?.map(m => {
+    return {
+      ...m,
+      id: Math.uuid(),
+    };
+  });
+  const domains = emptyProject?.domains?.map(d => {
+    return {
+      ...d,
+      id: Math.uuid(),
+    };
+  });
+  return {
+    ...emptyProject,
+    profile: {
+      ...emptyProject.profile,
+      default: {
+        ...emptyProject.profile?.default,
+        entityInitFields: emptyProject.profile
+          ?.default?.entityInitFields?.map(f => {
+            return {
+              ...f,
+              domain: f.domain ? domains.filter(d => d.defKey === f.domain)[0]?.id : '',
+              uiHint: f.uiHint ? uiHint.filter(u => u.defKey === f.uiHint)[0]?.id : '',
+              id: Math.uuid(),
+            };
+          })
+      },
+      dataTypeSupports,
+      codeTemplates,
+      uiHint
+    },
+    dataTypeMapping: {
+      ...emptyProject?.dataTypeMapping,
+      mappings,
+    },
+    domains,
+  }
+};
+

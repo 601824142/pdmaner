@@ -15,7 +15,7 @@ import allLangData from '../../lang';
 import { projectSuffix } from '../../../profile';
 import emptyProject from '../../lib/emptyProjectTemplate';
 import { version } from '../../../package';
-import {transformationData} from '../../lib/datasource_util';
+import {reduceProject, transformationData} from '../../lib/datasource_util';
 import {setMemoryCache} from '../../lib/cache';
 
 /*
@@ -321,7 +321,7 @@ export const createProject = (data, path, title, type) => {
       } else {
         const time = moment().format('YYYY-M-D HH:mm:ss');
         const newData = {
-          ...emptyProject,
+          ...reduceProject(emptyProject),
           ...data,
           version,
           createdTime: time,
