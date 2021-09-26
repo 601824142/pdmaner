@@ -270,7 +270,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         parent = d.type === 'refViews' ? 'views' : 'entities';
         parents = group ? [group, `${group}${separator}${parent}`] : [parent];
         updateSelectedMenu([{
-          key: d.defKey,
+          key: d.id,
           parentKey: group,
           type: d.type === 'refViews' ? 'view' : 'entity',
         }]);
@@ -279,7 +279,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         parent = 'dicts';
         parents = group ? [group, `${group}${separator}${parent}`] : [parent];
         updateSelectedMenu([{
-          key: d.defKey,
+          key: d.id,
           parentKey: group,
           type: 'dict',
         }]);
@@ -294,16 +294,16 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     };
     switch (key){
       case 'entities':
-        positionData.defKey = d.defKey;
+        positionData.id = d.id;
         jumpPosition(positionData, key);break;
       case 'dicts':
-        positionData.defKey = d.defKey;
+        positionData.id = d.id;
         jumpPosition(positionData, key);break;
       case 'fields':
-        positionData.defKey = d.entity;
+        positionData.id = d.entity;
         jumpPosition(positionData, 'entities');break;
       case 'dictItems':
-        positionData.defKey = d.dict;
+        positionData.id = d.dict;
         jumpPosition(positionData, 'dicts');break;
       default: break;
     }
@@ -321,8 +321,8 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         icon: 'dict.svg',
       },
     };
-    const param = (key === 'fields' || key === 'dictItems') ? {defKey: d.defKey} : null;
-    doubleMenuClick && doubleMenuClick(positionData.defKey,
+    const param = (key === 'fields' || key === 'dictItems') ? {defKey: d.id} : null;
+    doubleMenuClick && doubleMenuClick(positionData.id,
         typeMap[d.type].type, d.groups[0], typeMap[d.type].icon, param);
   };
   useImperativeHandle(ref, () => {

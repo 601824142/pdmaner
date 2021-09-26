@@ -12,7 +12,7 @@ const Option = Select.Option;
 export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
   const url = getDemoDbConnect();
   const dataTypeSupports = _.get(dataSource, 'profile.dataTypeSupports', []);
-  const defaultDb = _.get(dataSource, 'profile.default.db', dataTypeSupports[0]);
+  const defaultDb = _.get(dataSource, 'profile.default.db', dataTypeSupports[0]?.id);
   const [dbConn, updateDbConn] = useState(dataSource?.dbConn || []);
   const [defaultConn, updateDefaultConn] = useState(() => {
     return dbConn.filter(d => d.defKey === dataSource?.profile?.default?.dbConn)[0]?.defKey || '';
@@ -207,10 +207,10 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
                   >
                     {dataTypeSupports
                       .map(type => (<Option
-                        key={type}
-                        value={type}
+                        key={type.id}
+                        value={type.id}
                       >
-                        {type}
+                        {type.defKey}
                       </Option>))}
                   </Select>
                 </span>

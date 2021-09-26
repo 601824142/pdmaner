@@ -38,9 +38,11 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
     updateCurrentKey(1);
   };
   const parseFinish = (data) => {
-    parseData.data = data;
-    updateCurrentKey(3);
-    dealDataRef.current.refresh();
+    if (dealDataRef.current) {
+      parseData.data = data;
+      updateCurrentKey(3);
+      dealDataRef.current?.refresh();
+    }
   };
   const pre = () => {
     updateCurrentKey(1);
@@ -48,7 +50,7 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
   const onOK = (e, {updateStatus}) => {
     updateStatus('loading');
     const selectedTable = dealDataRef.current.getData()
-        .reduce((a, b) => a.concat(b.fields.map(f => ({...f, group: b.defKey}))), []);
+        .reduce((a, b) => a.concat(b.fields.map(f => ({...f, group: b.id}))), []);
     if (selectedTable.length > 0) {
       const properties = (dbConn.filter(d => d.defKey === dbData.defKey)[0] || {})?.properties
         || {};
@@ -77,12 +79,14 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
               return {
                 ...d,
                 group,
+                fields: (d.fields || []).map(f => ({...f, defKey: f.defKey?.toLocaleLowerCase()})),
                 defKey: d.defKey.toLocaleLowerCase(),
               };
             } else if (dbData.flag === 'UPPERCASE') {
               return {
                 ...d,
                 group,
+                fields: (d.fields || []).map(f => ({...f, defKey: f.defKey?.toLocaleUpperCase()})),
                 defKey: d.defKey.toLocaleUpperCase(),
               };
             }
@@ -91,7 +95,11 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
               group,
             };
           });
-          onOk(tempData, dbData.defKey);
+          onOk(tempData.map(t => ({
+            ...t,
+            id: Math.uuid(),
+            fields: (t.fields || []).map(f => ({...f, id: Math.uuid()})),
+          })), dbData.defKey);
         }
       });
     } else {

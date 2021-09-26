@@ -21,7 +21,9 @@ export const AutoCompose = (Com) => {
       let offset = 0;
       if (domRef.current) {
         const headerDom = domRef.current.querySelector(`.${currentPrefix}-tab-header`);
-        offset = headerDom.offsetWidth - headerDom.scrollWidth;
+        if (headerDom) {
+          offset = headerDom.offsetWidth - headerDom.scrollWidth;
+        }
       }
       return offset;
     };

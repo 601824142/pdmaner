@@ -16,7 +16,7 @@ import StandardFieldsEdit from './StandardFieldsEdit';
 import StandardFieldsListSelect from './StandardFieldsListSelect';
 import {getPrefix} from '../../../lib/prefixUtil';
 import { separator } from '../../../../profile';
-import { validateStandardFields } from '../../../lib/datasource_util';
+import {validateStandardFields, reset} from '../../../lib/datasource_util';
 import './style/index.less';
 
 const OptHelp = ({currentPrefix}) => {
@@ -129,7 +129,10 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
   const exportStandardFields = () => {
     const standardFields = _.get(dataSource, 'standardFields', []);
     Download(
-        [JSON.stringify(standardFields, null, 2)],
+        [JSON.stringify(standardFields.map(s => ({
+          ...s,
+          fields: s.fields?.map(f => reset(f, dataSource,['id', 'defKey'])),
+        })), null, 2)],
         'application/json',
       `${dataSource.name}-${FormatMessage.string({id: 'standardFields.standardFieldsLib'})}-${moment().format('YYYYMDHHmmss')}.json`,
      );
@@ -137,7 +140,11 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
   const importStandardFields = () => {
     Upload('application/json', (data) => {
       try {
-        const dataObj = JSON.parse(data);
+        const dataObj = JSON.parse(data).map(d => ({
+          ...d,
+          id: Math.uuid(),
+          fields: (d.fields || []).map(f => reset({...f, id: Math.uuid()}, dataSource, ['defKey', 'id'])),
+        }));
         let modal;
         const onOk = () => {
           updateDataSource({

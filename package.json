@@ -1,6 +1,6 @@
 {
   "name": "chiner",
-  "version": "3.3.0",
+  "version": "3.5.0",
   "description": "CHINER-元数建模",
   "main": "build/main.js",
   "scripts": {
@@ -43,6 +43,7 @@
     "react-dom": "16.8.6",
     "react-redux": "7.1.0",
     "react-router-dom": "5.0.1",
+    "react-window": "^1.8.6",
     "redux": "4.0.4",
     "redux-logger": "3.0.6",
     "redux-thunk": "2.3.0",

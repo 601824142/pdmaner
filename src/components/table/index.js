@@ -729,7 +729,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       left: calcLeft(h),
     };
   };
-  const otherStyle = freeze ? { position: 'sticky', left: 0, zIndex: 100, top: fixHeader ? 0 : 'unset' } : {};
+  const otherStyle = { position: 'sticky', left: 0, zIndex: 100, top: fixHeader ? 0 : 'unset' };
   const twinkleTr = (id) => {
     const keyArray = id.split(separator);
     const key = keyArray[0];
@@ -761,7 +761,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     if (twinkle) {
       twinkleTr(twinkle);
     }
-  }, [twinkle]);
+  }, [twinkle, fields]);
   useImperativeHandle(refInstance, () => {
     return {
       twinkleTr: (key) => {

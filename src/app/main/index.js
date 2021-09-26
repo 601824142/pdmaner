@@ -35,7 +35,14 @@ import { getMenu, getMenus, dealMenuClick } from '../../lib/contextMenuUtil';
 import {
   validateKey,
   updateAllData,
-  allType, pdman2sino, getFullColumns, emptyDictSQLTemplate,
+  allType,
+  pdman2sino,
+  getFullColumns,
+  emptyDictSQLTemplate,
+  reduceProject,
+  findExits,
+  replaceDiagrams,
+  replaceEntitiesOrViews, replaceDomainsApplyFor, calcDomains, reset,
 } from '../../lib/datasource_util';
 import {clearAllTabData, setDataByTabId} from '../../lib/cache';
 import { Save } from '../../lib/event_tool';
@@ -46,6 +53,7 @@ import {addBodyEvent, removeBodyEvent} from '../../lib/listener';
 import {firstUp} from '../../lib/string';
 import {connectDB, getLogPath, selectWordFile, showItemInFolder} from '../../lib/middle';
 import { imgAll } from '../../lib/generatefile/img';
+import {compareVersion} from '../../lib/update';
 
 const TabItem = Tab.TabItem;
 
@@ -155,29 +163,24 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     } else {
       setDraggable(false);
     }
-    const activeIndex = activeTabStack.current.findIndex(a => a === activeKey);
-    if (activeIndex > -1) {
-      activeTabStack.current.splice(activeIndex, 1);
-    }
-    if (activeKey) {
-      activeTabStack.current.push(activeKey);
-    }
   }, [activeKey]);
   const _tabChange = (menuKey) => {
     updateActiveKey(menuKey);
+    activeTabStack.current = activeTabStack.current.filter(k => k !== menuKey);
+    activeTabStack.current.push(menuKey);
   };
   const _tabClose = (tabKey) => {
+    const tabKeys = [].concat(tabKey);
     // 重新设置激活的tab页
     let newActiveKey = null;
-    if (activeKey === tabKey) {
-      const length = activeTabStack.current.length;
-      newActiveKey = activeTabStack.current[length - 2];
+    activeTabStack.current = activeTabStack.current.filter(k => !tabKeys.includes(k));
+    if (tabKeys.includes(activeKey)) {
+      newActiveKey = activeTabStack.current[activeTabStack.current.length - 1];
     }
-    activeTabStack.current = activeTabStack.current.filter(a => a !== tabKey);
     updateTabs((pre) => {
-      return pre.filter(t => t.tabKey !== tabKey);
+      return pre.filter(t => !tabKeys.includes(t.tabKey));
     });
-    cavRefArray.current = cavRefArray.current.filter(c => c.key !== tabKey);
+    cavRefArray.current = cavRefArray.current.filter(c => !tabKeys.includes(c.tabKey));
     updateActiveKey((pre) => {
       return newActiveKey || pre;
     });
@@ -213,6 +216,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     }
     updateTabs(tempTabs);
     updateActiveKey(tabKey);
+    activeTabStack.current = activeTabStack.current.filter(k => k !== tabKey);
+    activeTabStack.current.push(tabKey);
   };
   const _onContextMenu = (key, type, selectedMenu, parentKey) => {
     updateContextMenus(getMenus(key, type, selectedMenu, parentKey, groupType));
@@ -296,81 +301,116 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     const cavRef = getCurrentCav();
     cavRef.exportImg();
   };
-  const calcDomain = (data = [], dbKey = '') => {
+  const calcDomain = (data = [], dbKey = null, finalDomains) => {
     const dataTypeSupports = _.get(dataSourceRef.current, 'profile.dataTypeSupports', []);
     const defaultDb = _.get(dataSourceRef.current, 'profile.default.db', dataTypeSupports[0]);
     const mappings = _.get(dataSourceRef.current, 'dataTypeMapping.mappings', []);
-    const domains = _.get(dataSourceRef.current, 'domains', []);
+    const domains = finalDomains || _.get(dataSourceRef.current, 'domains', []);
     const dbConn = dataSourceRef.current?.dbConn || [];
-    const currentDb = dbConn.filter(d => d.defKey === dbKey)[0]?.type || defaultDb;
+    const currentDb = dbConn.filter(d => d.id === dbKey)[0]?.type || defaultDb;
     return data.map((d) => {
       return {
         ...d,
         fields: (d.fields || []).map((f) => {
           const domainData = domains.map((domain) => {
-            const mapping = mappings.filter(m => m.defKey === domain.applyFor)[0];
+            const mapping = mappings.filter(m => m.id === domain.applyFor)[0];
             return {
-              defKey: domain.defKey,
-              type: `${mapping[currentDb]}${domain.len}${domain.scale}`,
+              id: domain.id,
+              type: `${mapping?.[currentDb]?.toLocaleLowerCase()}${domain.len || ''}${domain.scale || ''}`,
             };
-          }).filter(domain => domain.type === `${f.type}${f.len}${f.scale}`)[0];
-          const domain = domainData?.defKey || '';
+          }).filter(domain => domain.type === `${f.type?.toLocaleLowerCase()}${f.len || ''}${f.scale || ''}`)[0];
+          const domain = domainData?.id || '';
+          if (domain) {
+            return {
+              ...f,
+              domain,
+              len: '',
+              scale: '',
+            };
+          }
           return {
             ...f,
-            domain,
-            type: domain ? '' : f.type,
+            domain: '',
           };
         }),
       };
     });
   };
-  const injectDataSource = (dataSource, selectData, domains, modal) => {
-    const allEntityKey = selectData.map(d => d.defKey);
-    const currentDomains = dataSource.domains || [];
-    const headers = getFullColumns()
+  const getHeaders = () => {
+    return getFullColumns()
       .map(h => ({
         refKey: h.newCode,
         hideInGraph: h.relationNoShow,
       }));
-    restProps?.update({
-      ...dataSource,
-      domains: currentDomains.concat(domains.filter(((d) => {
-        return currentDomains.findIndex(cd => cd.defKey === d.defKey) < 0;
-      }))),
-      entities: (dataSource.entities || [])
-          .filter(e => !allEntityKey.includes(e.defKey))
-          .concat(selectData.map(d => ({
-            ..._.omit(d, ['group']),
-            headers: d.headers || headers,
-          }))),
-      viewGroups: (dataSource.viewGroups || []).map((g) => {
-        const currentGroupData = selectData.filter(d => d.group === g.defKey)
-            .map(d => d.defKey);
-        return {
-          ...g,
-          refEntities: [...new Set((g.refEntities || []).concat(currentGroupData))],
-        };
-      }),
-    });
+  };
+  const calcRepeat = (pre, next, type, needOrigin) => {
+    const origin =  type === 'entity' ? pre
+      .filter(p => next.findIndex(n => n.defKey === p.defKey) < 0) : pre;
+    const add = type === 'entity' ? next : next.filter(((d) => {
+      return pre.findIndex(cd => cd.defKey === d.defKey) < 0;
+    }));
+    if (needOrigin) {
+      return [origin, add, findExits(pre, next)];
+    }
+    return [origin.concat(add), findExits(pre, next)];
+  };
+  const injectDataSource = (dataSource, modal) => {
+    restProps?.update({...dataSource});
     Message.success({title: FormatMessage.string({id: 'optSuccess'})});
     modal && modal.close();
+  };
+  const updateEntities = (data, domains, dbKey, modal) => {
+    const [originEntities, addEntities] = calcRepeat(dataSourceRef.current.entities, data, 'entity', true);
+    const finalDomains = domains.map(d => ({...d, id: d.id || Math.uuid()}));
+    const addEntityKeys = addEntities.map(e => e.id);
+    injectDataSource({
+      ...dataSourceRef.current,
+      domains: finalDomains,
+      entities: originEntities.concat(calcDomain(addEntities, dbKey, finalDomains)),
+      viewGroups: (dataSourceRef.current.viewGroups || []).map((g) => {
+        const currentGroupData = addEntities.filter(d => d.group === g.id).map(d => d.id);
+        return {
+          ...g,
+          refEntities: [...new Set((g.refEntities || [])
+            .filter(e => !addEntityKeys.includes(e))
+            .concat(currentGroupData))],
+        };
+      }),
+    }, modal);
   };
   const importFromPDMan = (type) => {
     Upload('application/json', (data, file) => {
       try {
-        const newData = type === 'chiner' ? JSON.parse(data) : pdman2sino(JSON.parse(data), file.name);
+        let newData = type === 'chiner' ? JSON.parse(data) : pdman2sino(JSON.parse(data), file.name);
         let modal;
         const onCancel = () => {
           modal.close();
         };
+        const compareType = compareVersion('3.5.0', newData.version.split('.')) ? 'defKey' : 'old';
+        newData = reduceProject(newData, compareType);
         const onOk = () => {
-          const allEntities = importPdRef.current.getData()
-              .reduce((a, b) => a.concat((b.fields || [])
-                  .map(f => ({...f, group: b.defKey}))), []);
-          //console.log(allEntities);
           // 合并分组 关系图 数据域
-          // 1.判断关系图是否有重复
-          let tempNewData = {...newData};
+          // 1.合并重复的数据域相关
+          const currentMappings = (dataSourceRef.current?.dataTypeMapping?.mappings || []);
+          const [dicts, replaceDicts] = calcRepeat(dataSourceRef.current.dicts,
+            newData.dicts || []);
+          const [uiHint, replaceUiHint] = calcRepeat(dataSourceRef.current?.profile?.uiHint,
+            newData?.profile?.uiHint || []);
+          const [mappings, replaceMappings] = calcRepeat(currentMappings,
+            newData?.dataTypeMapping?.mappings || []);
+          const [originViews, addViews, replaceViews] = calcRepeat(dataSourceRef.current.views,
+            newData.views, null, true);
+          const [domains, replaceDomains] = calcRepeat(dataSourceRef.current.domains,
+            newData.domains);
+          const [originEntities, addEntities, replaceEntities] =
+            calcRepeat(dataSourceRef.current.entities,
+            (importPdRef.current.getData()
+            .reduce((a, b) => a.concat((b.fields || [])
+              .map(f => ({
+                ...f,
+                headers: f.headers || getHeaders(),
+                group: b.id,
+              }))), [])), 'entity', true);
           const tempDiagrams = (dataSourceRef.current?.diagrams || []);
           const tempDiagramKeys = tempDiagrams.map(d => d.defKey);
           const calcDefKey = (defKey) => {
@@ -379,31 +419,16 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             }
             return defKey;
           };
-          const needReplace = [];
-          const newViewDiagrams = (tempNewData.diagrams || []).map((d) => {
+          // 需要去除id一致的关系图
+          const newViewDiagrams = (newData.diagrams || []).map((d) => {
             const newKey = calcDefKey(d.defKey);
             tempDiagramKeys.push(newKey);
-            if (newKey !== d.defKey) {
-              needReplace.push({old: d.defKey, new: newKey});
-            }
             return {
               ...d,
               defKey: calcDefKey(d.defKey),
             };
           });
-          const newViewGroups = (tempNewData.viewGroups || []).map((g) => {
-            return {
-              ...g,
-              refEntities: [],
-              refDiagrams: (g.refDiagrams || []).map((d) => {
-                const r = needReplace.filter(n => n.old === d)[0];
-                if (r) {
-                  return r.new;
-                }
-                return d;
-              }),
-            };
-          });
+          const newViewGroups = (newData.viewGroups || []);
           // 2.复制或增量更新分组（包含关系图）
           const injectViewsGroups = [];
           const preViewGroups = (dataSourceRef.current.viewGroups || []).map((g) => {
@@ -418,22 +443,62 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             return g;
           });
           const finalViewGroups = preViewGroups.concat(newViewGroups
-              .filter(g => !injectViewsGroups.includes(g.defKey)));
-          const finalDiagrams = tempDiagrams.concat(newViewDiagrams);
-          const currentMappings = (dataSourceRef.current?.dataTypeMapping?.mappings || []);
+              .filter(g => !injectViewsGroups.includes(g.defKey))
+            .map(g => ({...g, refEntities: []})));
+          const finalDiagrams = tempDiagrams.concat(
+            replaceDiagrams(newViewDiagrams, replaceEntities));
+          const tempAddEntities = addEntities.map((e) => {
+            return {
+              ...e,
+              id: replaceEntities.filter(r => r.old === e.id)[0]?.new || e.id,
+            };
+          });
+          const commonReplace = {
+            entities: replaceEntities,
+            dicts: replaceDicts,
+            domains: replaceDomains,
+            uiHint: replaceUiHint,
+          };
+          const finalEntities = originEntities.concat(
+            replaceEntitiesOrViews(addEntities, commonReplace)
+            .map((e) => {
+              return _.omit(e, ['group']);
+            }));
+          const addEntityKeys = tempAddEntities.map(e => e.id);
           const newDataSource = {
             ...dataSourceRef.current,
-            viewGroups: finalViewGroups,
+            profile: {
+              ...dataSourceRef.current.profile,
+              uiHint,
+            },
+            entities: finalEntities,
+            views: originViews
+              .concat(replaceEntitiesOrViews(addViews, commonReplace, finalEntities)),
+            dicts,
+            domains: replaceDomainsApplyFor(domains, replaceMappings),
+            viewGroups: finalViewGroups.map((g) => {
+              const currentGroupData = tempAddEntities.filter(d => d.group === g.id).map(d => d.id);
+              return {
+                ...g,
+                refEntities: [...new Set((g.refEntities || [])
+                  .filter(e => !addEntityKeys.includes(e))
+                  .concat(currentGroupData))],
+                refDicts: [...new Set((g.refDicts || []).map((dict) => {
+                  return replaceDicts.filter(r => r.old === dict)[0]?.new || dict;
+                }))],
+                refViews: [...new Set((g.refViews || []).map((view) => {
+                  return replaceViews.filter(r => r.old === view)[0]?.new || view;
+                }))],
+              };
+            }),
             diagrams: finalDiagrams,
             dataTypeMapping: {
               ...dataSourceRef.current.dataTypeMapping,
-              mappings: currentMappings
-                .concat(_.get(newData, 'dataTypeMapping.mappings', [])
-                  .filter(m => currentMappings.findIndex(c => c.defKey === m.defKey) < 0)),
+              mappings,
             },
           };
           updateGroupType('modalGroup');
-          injectDataSource(newDataSource, allEntities, newData.domains || [], modal);
+          injectDataSource(newDataSource, modal);
         };
         const allRefEntities = newData.viewGroups.reduce((a, b) => a.concat(b.refEntities), []);
         modal = openModal(<ImportPd
@@ -443,14 +508,17 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           customerData={newData.viewGroups.map((g) => {
             return {
               ...g,
+              id: dataSourceRef.current.viewGroups
+                  ?.filter(group => group.defKey === g.defKey)[0]?.id || g.id,
               fields: (newData.entities || [])
                   .filter(e => (g.refEntities || [])
-                      .includes(e.defKey)),
+                      .includes(e.id)),
             };
           }).concat({
+            id: '',
             defKey: '',
             defName: FormatMessage.string({id: 'components.select.empty'}),
-            fields: newData.entities.filter(e => !allRefEntities.includes(e.defKey)),
+            fields: newData.entities.filter(e => !allRefEntities.includes(e.id)),
           })}
           ref={importPdRef}
           dataSource={dataSourceRef.current}
@@ -501,19 +569,30 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           restProps.closeLoading();
         } else {
           restProps.closeLoading();
+          const [domains] = calcRepeat(dataSourceRef.current.domains,
+            calcDomains(result.body?.domains || [], dataSourceRef.current.dataTypeMapping?.mappings, 'defKey'));
+          const entities = ((type === 'PD' ? result.body?.tables : result.body) || []).map((t) => {
+            return {
+              ...t,
+              id: Math.uuid(),
+              fields: (t.fields || []).map(f => ({...f, id: Math.uuid()})),
+            };
+          });
           let modal;
           const onCancel = () => {
             modal.close();
           };
           const onOk = () => {
-            const allEntities = importPdRef.current.getData()
-                .reduce((a, b) => a.concat((b.fields || [])
-                    .map(f => ({...f, group: b.defKey}))), []);
-            injectDataSource(dataSourceRef.current,
-              calcDomain(allEntities), result.body?.domains || [], modal);
+            updateEntities((importPdRef.current.getData()
+              .reduce((a, b) => a.concat((b.fields || [])
+                .map(f => ({
+                  ...f,
+                  headers: f.headers || getHeaders(),
+                  group: b.id,
+                }))), [])), domains, null, modal);
           };
           modal = openModal(<ImportPd
-            data={(type === 'PD' ? result.body?.tables : result.body) || []}
+            data={entities}
             ref={importPdRef}
             dataSource={dataSourceRef.current}
           />, {
@@ -537,6 +616,21 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       return result;
     }, false);
   };
+  const calcData = (oldData, newData, keyName = 'id') => {
+    return newData.map((d) => {
+      const index = oldData.findIndex(o => o.defKey === d.defKey);
+      if (index > -1) {
+        return {
+          ...d,
+          [keyName]: oldData[index][keyName],
+        };
+      }
+      return d;
+    }).concat(oldData
+      .filter(o => newData.findIndex((n) => {
+        return n.defKey === o.defKey;
+      }) < 0));
+  };
   const configFields = ['profile.default.entityInitFields',
     'profile.default.entityInitProperties', 'profile.sql.delimiter', 'profile.generatorDoc.docTemplate',
   'profile.relationFieldSize', 'profile.uiHint', 'profile.modelType', 'profile.relationType'];
@@ -546,7 +640,16 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       const codeTemplates = _.get(dataSourceRef.current, 'profile.codeTemplates', []);
       let tempData = dataSourceRef.current;
       configFields.forEach((f) => {
-        tempData = _.set(tempData, f, _.get(data, f, _.get(tempData, f)));
+        const oldData = _.get(tempData, f);
+        let newData = _.get(data, f, _.get(tempData, f));
+        if (f === configFields[5] || f === configFields[0]) {
+          newData = newData.map(o => ({...o, id: Math.uuid()}));
+          if (f === configFields[0]) {
+            newData = newData.map(n => reset(n, dataSourceRef.current, ['defKey', 'id']));
+          }
+          newData = calcData(oldData, newData);
+        }
+        tempData = _.set(tempData, f, newData);
       });
       restProps?.update({
         ...tempData,
@@ -573,12 +676,15 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     });
   };
   const exportConfig = () => {
+    let data = {
+      ..._.pick(dataSourceRef.current, configFields),
+      dictSQLTemplate: _.get(dataSourceRef.current, 'profile.codeTemplates', [])
+        .filter(t => t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')[0],
+    };
+    data = _.set(data, configFields[0], _.get(data, configFields[0], [])
+      .map(d => reset(d, dataSourceRef.current, ['id', 'defKey'])));
     Download(
-      [JSON.stringify({
-        ..._.pick(dataSourceRef.current, configFields),
-        dictSQLTemplate: _.get(dataSourceRef.current, 'profile.codeTemplates', [])
-          .filter(t => t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')[0],
-      }, null, 2)],
+      [JSON.stringify(data, null, 2)],
       'application/json',
       `${dataSourceRef.current.name}-${FormatMessage.string({id: 'toolbar.setting'})}-${moment().format('YYYYMDHHmmss')}.json`);
 
@@ -596,15 +702,6 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       `${dataSourceRef.current.name}-${FormatMessage.string({id: 'project.domains'})}-${moment().format('YYYYMDHHmmss')}.json`);
   };
   const importDomains = () => {
-    const calcData = (oldData, newData, key) => {
-      return newData.concat(oldData
-        .filter(o => newData.findIndex((n) => {
-          if (key) {
-            return n[key] === o[key];
-          }
-          return n === o;
-        }) < 0));
-    };
     Upload('application/json', (d) => {
       const data = JSON.parse(d);
       if (!data.domains) {
@@ -613,27 +710,71 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           message: FormatMessage.string({id: 'invalidDomainsFile'}),
         });
       } else {
+        const dataTypeSupports = calcData(
+          _.get(dataSourceRef.current, 'profile.dataTypeSupports', []),
+          _.get(data, 'dataTypeSupports', []).map((t) => {
+            if (typeof t === 'string') {
+              return {
+                defKey: t,
+                old: t,
+                id: Math.uuid(),
+              };
+            }
+            return {
+              ...t,
+              old: t.id,
+              id: Math.uuid(),
+            };
+          }));
+        const mappings = calcData(
+          _.get(dataSourceRef.current, 'dataTypeMapping.mappings', []),
+          _.get(data, 'dataTypeMapping.mappings', []).map((m) => {
+            return {
+              defKey: m.defKey,
+              defName: m.defName,
+              id: Math.uuid(),
+              old: m.id || m.defKey,
+              ...dataTypeSupports.reduce((a, b) => {
+                return {
+                  ...a,
+                  [b.id]: m[b.old],
+                };
+              }, {}),
+            };
+          }));
         restProps?.update({
           ...dataSourceRef.current,
           profile: {
             ...dataSourceRef.current?.profile,
-            dataTypeSupports: calcData(
-              _.get(dataSourceRef.current, 'profile.dataTypeSupports', []),
-              _.get(data, 'dataTypeSupports', [])),
+            dataTypeSupports: dataTypeSupports.map(t => _.omit(t, 'old')),
             codeTemplates: calcData(
-              _.get(dataSourceRef.current, 'profile.codeTemplates', []),
+              _.get(dataSourceRef.current, 'profile.codeTemplates', []).map(c => ({
+                ...c,
+                defKey: dataTypeSupports.filter(t => t.old === c.applyFor)[0]?.defKey,
+              })),
               _.get(data, 'codeTemplates', [])
-                .filter(t => !(t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')), 'applyFor'),
+                .filter(t => !(t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')).map((c) => {
+                  const apply = dataTypeSupports.filter(t => t.old === c.applyFor)[0];
+                  return {
+                    ...c,
+                    applyFor: apply?.id,
+                    defKey: apply?.defKey,
+                  };
+              }), 'applyFor').map(c => _.omit(c, 'defKey')),
           },
           dataTypeMapping: {
             ...dataSourceRef.current?.dataTypeMapping,
-            mappings: calcData(
-              _.get(dataSourceRef.current, 'dataTypeMapping.mappings', []),
-              _.get(data, 'dataTypeMapping.mappings', []), 'defKey'),
+            mappings: mappings.map(m => _.omit(m, 'old')),
           },
           domains: calcData(
             _.get(dataSourceRef.current, 'domains', []),
-            _.get(data, 'domains', []), 'defKey'),
+            _.get(data, 'domains', []).map((domain) => {
+              return {
+                ...domain,
+                applyFor: mappings.filter(m => m.old === domain.applyFor)[0]?.id,
+                id: Math.uuid(),
+              };
+            }), 'id'),
         });
         Message.success({title: FormatMessage.string({id: 'optSuccess'})});
       }
@@ -662,7 +803,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         modal && modal.close();
       };
       const onOk = (data, dbKey) => {
-        injectDataSource(dataSourceRef.current, calcDomain(data, dbKey), [], modal);
+        updateEntities(data, dataSourceRef.current.domains, dbKey, modal);
       };
       modal = openModal(<DbReverseParse
         config={configRef.current}
@@ -814,6 +955,8 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   };
   const jumpEntity = (tabKey) => {
     updateActiveKey(tabKey);
+    activeTabStack.current = activeTabStack.current.filter(k => k !== tabKey);
+    activeTabStack.current.push(tabKey);
   };
   const getTabComponent = (t) => {
     const type = t.type;
@@ -1097,7 +1240,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     filter(d => d.id === t.menuKey)[0];
     const tempDisplayMode = currentData?.nameTemplate || '{defKey}[{defName}]';
     return {
-      title: currentData?.defName || currentData.defKey,
+      title: currentData?.defName || currentData?.defKey,
       tooltip: tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
         return currentData?.[word] || currentData?.defKey || '';
       }),
@@ -1147,7 +1290,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     } else {
       updateGroupType('modalAll');
     }
-    (currentMenu.current || menuModelRef.current)?.jumpPosition(d, key);
+    menuModelRef.current?.jumpPosition(d, key);
   };
   const _jumpDetail = (d, key) => {
     if (key === 'standardFields') {
@@ -1159,7 +1302,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       } else {
         updateGroupType('modalAll');
       }
-      (currentMenu.current || menuModelRef.current)?.jumpDetail(d, key);
+      menuModelRef.current?.jumpDetail(d, key);
     }
   };
   const onMouseDown = (e) => {
@@ -1368,7 +1511,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
         style={{width: `calc(100% - ${menuNorWidth + menuMinWidth}px)`}}
       >
         {
-          tabs.length > 0 ?  <Tab
+          <Tab
             menuClick={dropDownMenuClick}
             dropDownMenus={dropDownMenus}
             position='top'
@@ -1376,6 +1519,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
             closeTab={_tabClose}
             onChange={_tabChange}
             excess={standardFieldMemo}
+            empty={<MessageHelp prefix={currentPrefix}/>}
           >
             {tabs.map((t) => {
               const title = getTabTitle(t);
@@ -1391,7 +1535,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
                 </TabItem>
               );
             })}
-          </Tab> : <MessageHelp prefix={currentPrefix}/>
+          </Tab>
         }
       </div>
     </div>

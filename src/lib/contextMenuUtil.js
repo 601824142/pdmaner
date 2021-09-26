@@ -861,7 +861,7 @@ const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
                 return v;
               }) : tempDataSource.views,
             });
-            tabClose && tabClose(dataKey + separator + dataType);
+            tabClose && tabClose(deleteDataKeys.map(d => d + separator + optConfig.type[1]));
             Message.success({title: FormatMessage.string({id: 'deleteSuccess'})});
           });
         }

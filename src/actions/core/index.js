@@ -276,8 +276,9 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
 export const openDemoProject = (h, title, type) => {
   return (dispatch) => {
     dispatch(openLoading(title));
-    setMemoryCache('data', h);
-    dispatch(readProjectSuccess(h, [], '', true));
+    const data = reduceProject(h, 'defKey');
+    setMemoryCache('data', data);
+    dispatch(readProjectSuccess(data, [], '', true));
     dispatch(closeLoading(STATUS[1], null, '', type));
   };
 };
@@ -321,7 +322,7 @@ export const createProject = (data, path, title, type) => {
       } else {
         const time = moment().format('YYYY-M-D HH:mm:ss');
         const newData = {
-          ...reduceProject(emptyProject),
+          ...reduceProject(emptyProject, 'defKey'),
           ...data,
           version,
           createdTime: time,

@@ -8,7 +8,7 @@ export default React.memo(forwardRef(({getData, dataSource, prefix}, ref) => {
   const listGroupSelectRef = useRef(null);
   const currentPrefix = getPrefix(prefix);
   const entities = dataSource.entities || [];
-  const pickName = ['defKey', 'defName'];
+  const pickName = ['defKey', 'defName', 'id'];
   const viewGroups = (dataSource.viewGroups || []).map((g) => {
     return {
       ..._.pick(g, pickName),
@@ -25,9 +25,13 @@ export default React.memo(forwardRef(({getData, dataSource, prefix}, ref) => {
   };
   const calcData = () => {
     return [{
+      id: '',
       defKey: '',
       defName: FormatMessage.string({id: 'components.select.empty'}),
-      fields: getData().data || [],
+      fields: (getData().data || []).map(e => ({
+        ...e,
+        id: Math.uuid(),
+      })),
     }];
   };
   const [data, setData] = useState(calcData);

@@ -409,6 +409,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           const { size, ports, ...rest } = mapData2Table({
               originKey: c.data.id,
               ports: c.ports,
+              data: c.getProp('data'),
             },
             dataSource, updateFields, getTableGroup(),
             commonPorts, relationType, commonEntityPorts) || {};
