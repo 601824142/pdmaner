@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, {useState, useRef, useImperativeHandle, forwardRef, useMemo, useEffect} from 'react';
 import moment from 'moment';
 
 import {
@@ -28,6 +28,7 @@ const OptHelp = ({currentPrefix}) => {
 export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, ref) => {
   const currentPrefix = getPrefix(prefix);
   const [fold, setFold] = useState(true);
+  const [expandMenu, setExpandMenu] = useState([]);
   const [filterValue, setFilterValue] = useState('');
   const [selectFields, setSelectFields] = useState([]);
   const listSelectRef = useRef([]);
@@ -62,14 +63,17 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
   const onChange = (e) => {
     setFilterValue(e.target.value);
   };
-  const finalData = (dataSource.standardFields || []).map((g) => {
+  const finalData = useMemo(() => (dataSource.standardFields || []).map((g) => {
     const reg = new RegExp((filterValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
     return {
       ...g,
       fields: (g.fields || [])
           .filter(f => reg.test(getKey(f))),
     };
-  });
+  }), [dataSource.standardFields, filterValue]);
+  useEffect(() => {
+    setExpandMenu(finalData.map(d => d.id));
+  }, [filterValue]);
   const onClick = (d) => {
     let tempData;
     let modal;
@@ -189,6 +193,14 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
     };
   }, [dataSource]);
   const type = activeKey.split(separator)[1];
+  const onGroupClick = (id) => {
+    setExpandMenu((pre) => {
+      if (pre.includes(id)) {
+        return pre.filter(p => p !== id);
+      }
+      return pre.concat(id);
+    });
+  };
   return <div
     style={{display: (type === 'entity' || type === 'diagram') ? 'block' : 'none'}}
     className={`${currentPrefix}-standard-fields-list-${fold ? 'fold' : 'unfold'}`}
@@ -217,9 +229,9 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
           <Tooltip title={<OptHelp currentPrefix={currentPrefix}/>} force placement='topLeft'>
             <IconTitle type='icon-xinxi'/>
           </Tooltip>
-          <IconTitle title={FormatMessage.string({id: 'standardFields.importStandardFieldsLib'})} type='icon-daoru' onClick={importStandardFields}/>
-          <IconTitle title={FormatMessage.string({id: 'standardFields.exportStandardFieldsLib'})} type='icon-daochu' onClick={exportStandardFields}/>
-          <IconTitle title={FormatMessage.string({id: 'standardFields.setting'})} type='icon-weihu' onClick={onClick}/>
+          <IconTitle title={<FormatMessage id='standardFields.importStandardFieldsLib'/>} type='icon-daoru' onClick={importStandardFields}/>
+          <IconTitle title={<FormatMessage id='standardFields.exportStandardFieldsLib'/>} type='icon-daochu' onClick={exportStandardFields}/>
+          <IconTitle title={<FormatMessage id='standardFields.setting'/>} type='icon-weihu' onClick={onClick}/>
         </span>
       </div>
     }
@@ -234,15 +246,26 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
           </div>
             : finalData.map((g) => {
               return <div key={g.id}>
-                <span className={`${currentPrefix}-standard-fields-list-group`}>
+                <span
+                  onClick={() => onGroupClick(g.id)}
+                  className={`${currentPrefix}-standard-fields-list-group`}
+                >
                   <Icon type='icon-shuju2'/>
                   <span>{g.defName}({g.defKey})</span>
+                  <Icon
+                    style={{
+                     transform: `${expandMenu.includes(g.id) ? 'rotate(0deg)' : 'rotate(90deg)'}`,
+                   }}
+                    type='fa-angle-down'
+                    className={`${currentPrefix}-standard-fields-list-group-icon`}
+                 />
                 </span>
                 {
                   (g.fields || []).map((f) => {
                     const key = getKey(f);
                     const selected = selectFields.findIndex(s => s.id === f.id) >= 0;
                     return <div
+                      style={{display: expandMenu.includes(g.id) ? 'block' : 'none'}}
                       onDragStart={onDragStart}
                       draggable={selected}
                       className={`${currentPrefix}-standard-fields-list-content-${selected ? 'selected' : 'unselected'}`}

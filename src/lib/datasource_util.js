@@ -1038,7 +1038,7 @@ export  const calcNodeData = (preData, nodeData, dataSource, groups) => {
         const fieldValue = (f[fName] || '').toString();
         if (preF) {
           const preFieldValue = (preF[fName] || '').toString();
-          if (preFieldValue === fieldValue) {
+          if (preFieldValue === fieldValue && preData.maxWidth) {
             return preData.maxWidth[fName] || 0;
           }
           return getTextWidth(fieldValue, 12);

@@ -181,7 +181,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
                   <FormatMessage id='tableBase.nameTemplate'/>
                 </span>
                 <span className={`${currentPrefix}-form-item-component`}>
-                  <Input defaultValue={data.nameTemplate || '{code}[{name}]'} onChange={e => onChange(e, 'nameTemplate')}/>
+                  <Input defaultValue={data.nameTemplate || '{defKey}[{defName}]'} onChange={e => onChange(e, 'nameTemplate')}/>
                 </span>
               </div>
               <div className={`${currentPrefix}-form-item`}>

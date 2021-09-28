@@ -1,4 +1,13 @@
-import React, {useState, useRef, useEffect, useMemo, forwardRef, useImperativeHandle, useCallback} from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+  useContext,
+} from 'react';
 import * as _ from 'lodash/object';
 import * as Component from 'components';
 
@@ -11,7 +20,10 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 import {separator} from '../../../profile';
 import FormatMessage from '../formatmessage';
+import { ConfigContent } from '../../lib/context';
 import StandardGroupSelect from '../../app/container/standardfield/StandardGroupSelect';
+
+const empty = [];
 
 const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                                dataSource, customerHeaders, disableHeaderIcon, tableDataChange,
@@ -22,7 +34,9 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                                disableDragRow = true, freeze = false, reading = false,
                                fixHeader = true, openDict, defaultGroups},
                                      refInstance) => {
+  const { lang } = useContext(ConfigContent);
   const inputRef = useRef({});
+  const ioRef = useRef(null);
   const currentPrefix = getPrefix(prefix);
   const [expands, setExpands] = useState([]);
   const [dicts, setDict] = useState(dataSource?.dicts || []);
@@ -43,7 +57,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       return [];
     }
     return getFullColumns();
-  }, []);
+  }, [lang]);
   const getFieldProps = useCallback((prop) => {
     if (prop){
       const domain = domains.filter(d => d.id === prop)[0] || { len: '', scale: '' };
@@ -90,12 +104,12 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
         if (pre.includes(f.id)) {
           return [f.id];
         }
-        return [];
+        return empty;
       });
     }
   };
   const onBodyClick = () => {
-    updateSelectedColumns([]);
+    updateSelectedColumns(empty);
   };
   const updateTableDataByName = (f, name, e) => {
     let value = e.target.value;
@@ -221,7 +235,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     } else if (e.shiftKey) {
       tempKeys = calcShiftSelected(key);
     } else {
-      tempKeys = tempKeys.includes(key) ? [] : [key];
+      tempKeys = tempKeys.includes(key) ? empty : [key];
     }
     onTableRowClick && onTableRowClick(tempKeys, fields);
     updateSelectedFields(tempKeys);
@@ -423,7 +437,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
     });
     tableDataChange && tableDataChange(newFields, 'fields', 'delete');
     const selectField = newFields[(minIndex - 1) < 0 ? 0 : minIndex - 1];
-    updateSelectedFields((selectField && [selectField.id]) || []);
+    updateSelectedFields((selectField && [selectField.id]) || empty);
   };
   const tableKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey) {
@@ -854,6 +868,27 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       <span>{Component.FormatMessage.string({id: 'tableEdit.opt[6]'})}</span>
     </div>;
   };
+  useEffect(() => {
+    ioRef.current = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.intersectionRatio > 0) {
+          e.target.style.visibility = 'visible';
+        } else {
+          e.target.style.visibility = 'hidden';
+        }
+      });
+    }, {
+      threshold: [0, 0.25, 0.5, 0.75, 1],
+    });
+    return () => {
+      ioRef.current.disconnect();
+    };
+  }, []);
+  useEffect(() => {
+    Array.from(tableRef.current.querySelectorAll('tbody > tr')).forEach((r) => {
+      ioRef.current.observe(r);
+    });
+  }, [fields]);
   return (
     <div className={`${currentPrefix}-table-container ${className || ''}`}>
       {

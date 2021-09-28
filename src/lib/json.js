@@ -6,6 +6,7 @@ import moment from 'moment';
 import * as _ from 'lodash/object';
 import { projectSuffix } from '../../profile';
 import { defaultJVM } from './datasource_util';
+import { FormatMessage } from 'components';
 const { execFile } = require('child_process');
 
 const { ipcRenderer, shell } = require('electron');
@@ -385,15 +386,19 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
   if (customerDriver) {
     commend.unshift(`-Xbootclasspath/a:${customerDriver}`);
   }
-  execFile(tempValue, commend,
+  return execFile(tempValue, commend,
     {
       maxBuffer: 100 * 1024 * 1024, // 100M
     },
     (error, stdout, stderr) => {
       if (error) {
+        let tempError = (stdout || stderr || error.message);
+        if (/spawn .* ENOENT/.test(tempError)) {
+          tempError = FormatMessage.string({id: 'config.JavaHomeConfigResult.notFoundJDK'});
+        }
         cb && cb({
           status : "FAILED",
-          body : (stdout || stderr || error.message),
+          body: tempError,
         });
       } else {
         readJsonPromise(outFile).then((d) => {
@@ -507,7 +512,7 @@ export const getBackupAllFile = ({core, config}, callback) => {
         const allFiles = files.filter(f => reg.test(f)).sort((a, b) => {
           return moment(a.match(/(\d)+/)[0]).isAfter(b.match(/(\d)+/)[0]);
         });
-        if (allFiles.length === config.autoBackup) {
+        if (allFiles.length >= config.autoBackup) {
           // 删除最旧的
           fs.unlinkSync(path.join(dir, allFiles[0]));
         }

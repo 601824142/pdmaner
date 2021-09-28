@@ -1276,7 +1276,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         return;
       }
       const { width, height, fields, headers, maxWidth, ports } =
-          calcNodeData(empty, dataSourceRef.current, getTableGroup());
+          calcNodeData(empty, empty, dataSourceRef.current, getTableGroup());
       const node =  graphRef.current.createNode({
         size: {
           width,

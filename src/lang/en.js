@@ -547,6 +547,7 @@ export default {
             success: 'config success',
             error: 'config error',
             placeholder: 'If it is not filled in, it will be automatically read from the environment variable of the system',
+            notFoundJDK: 'no JDK is detected, please install the JDK first (if it has been installed, please check whether the environment variables are configured correctly, or go to system [setting] -> [SystemParameter] -> [JAVA_HOME] to specify the JDK path)',
         },
         DictSQLTemplate: 'dict SQL template',
         JVMLabel: 'JVM Parameters',

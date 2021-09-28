@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, {useState, useMemo, useRef, useEffect} from 'react';
 import {Step, Button, FormatMessage, Modal, Terminal} from 'components';
 
 import DbSelect from './DbSelect';
@@ -10,6 +10,7 @@ import {connectDB, getLogPath, showItemInFolder} from '../../../../lib/middle';
 
 export default React.memo(({prefix, dataSource, dataChange, config, onClose, onOk}) => {
   const dealDataRef = useRef(null);
+  const parserRef = useRef(null);
   const [currentKey, updateCurrentKey] = useState(1);
   const parseDbRef = useRef(null);
   const dbConn = dataSource?.dbConn || [];
@@ -38,11 +39,9 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
     updateCurrentKey(1);
   };
   const parseFinish = (data) => {
-    if (dealDataRef.current) {
-      parseData.data = data;
-      updateCurrentKey(3);
-      dealDataRef.current?.refresh();
-    }
+    parseData.data = data;
+    updateCurrentKey(3);
+    dealDataRef.current?.refresh();
   };
   const pre = () => {
     updateCurrentKey(1);
@@ -54,7 +53,7 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
     if (selectedTable.length > 0) {
       const properties = (dbConn.filter(d => d.defKey === dbData.defKey)[0] || {})?.properties
         || {};
-      connectDB(dataSource, config, {
+      parserRef.current = connectDB(dataSource, config, {
         ...properties,
         tables: selectedTable.map(t => t.originDefKey).join(','),
       }, 'DBReverseGetTableDDL', (data) => {
@@ -106,7 +105,11 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
       onOk([], dbData.defKey);
     }
   };
-
+  useEffect(() => {
+    return () => {
+      parserRef.current?.kill(0);
+    };
+  }, []);
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-dbreverseparse-db`}>
     <Step

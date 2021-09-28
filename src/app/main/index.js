@@ -527,7 +527,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
           buttons: [
             <Button type='primary' key='ok' onClick={onOk}><FormatMessage id='button.ok'/></Button>,
             <Button key='cancel' onClick={onCancel}><FormatMessage id='button.cancel'/></Button>],
-          title: FormatMessage.string({id: 'toolbar.importPDMan'}),
+          title: FormatMessage.string({id: `toolbar.${type === 'chiner' ? 'importCHNR' : 'importPDMan'}`}),
         });
       } catch (err) {
         Modal.error({

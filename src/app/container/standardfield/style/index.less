@@ -16,11 +16,18 @@
       width: 100%;
     }
     &-group {
+      position: relative;
       display: inline-block;
       width: 100%;
       color: @primary-color;
       & > span {
         margin-left: 5px;
+      }
+      &-icon {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        transition: transform 0.3s;
       }
     }
     &-title {
