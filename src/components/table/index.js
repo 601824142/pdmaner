@@ -20,12 +20,12 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 import {separator} from '../../../profile';
 import FormatMessage from '../formatmessage';
-import { ConfigContent } from '../../lib/context';
+import { ConfigContent, TableContent } from '../../lib/context';
 import StandardGroupSelect from '../../app/container/standardfield/StandardGroupSelect';
 
 const empty = [];
 
-const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
+const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, search,
                                dataSource, customerHeaders, disableHeaderIcon, tableDataChange,
                                defaultEmptyField, validate, disableCopyAndCut, onTableRowClick,
                                onAdd, ExtraOpt, style, hiddenHeader, getRestData,
@@ -35,10 +35,12 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                                fixHeader = true, openDict, defaultGroups},
                                      refInstance) => {
   const { lang } = useContext(ConfigContent);
+  const { valueContext, valueSearch } = useContext(TableContent);
   const inputRef = useRef({});
   const ioRef = useRef(null);
   const currentPrefix = getPrefix(prefix);
   const [expands, setExpands] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
   const [dicts, setDict] = useState(dataSource?.dicts || []);
   const checkboxComponents = ['primaryKey', 'notNull', 'autoIncrement', 'unique', 'enabled', 'defaultDb'];
   const domains = _.get(dataSource, 'domains', []);
@@ -889,6 +891,16 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
       ioRef.current.observe(r);
     });
   }, [fields]);
+  const onFilterChange = (e) => {
+    setSearchValue(e.target.value);
+    expand && setExpands(fieldsRef.current.map(f => f.id));
+  };
+  const tableContextMemo = useMemo(() => {
+    return {
+      valueContext: searchValue,
+      valueSearch: search,
+    };
+  }, [searchValue]);
   return (
     <div className={`${currentPrefix}-table-container ${className || ''}`}>
       {
@@ -931,6 +943,11 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                 <Component.Icon type='icon-xinxi'/>
               </Component.Tooltip>
             </span>
+            {
+              search && <div className={`${currentPrefix}-table-opt-search`}>
+                <Component.SearchInput onChange={onFilterChange}/>
+              </div>
+            }
           </span>
         }
       <div className={`${currentPrefix}-table-content`}>
@@ -986,9 +1003,15 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
               })}
             </tr>
             </thead>}
-          <tbody onClick={onBodyClick}>
-            {
-              fields.map((f, i) => (
+          <TableContent.Provider value={tableContextMemo}>
+            <tbody onClick={onBodyClick}>
+              {
+              fields.filter((f) => {
+                if (valueSearch || search) {
+                  return (valueSearch || search)(f, valueContext || searchValue);
+                }
+                return true;
+              }).map((f, i) => (
                 <Tr
                   entities={dataSource?.entities}
                   openDict={openDict}
@@ -1002,6 +1025,8 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                   key={f.id}
                   f={f}
                   i={i}
+                  searchValue={searchValue}
+                  search={search}
                   expand={expand}
                   onMouseOver={onMouseOver}
                   tempHeaders={tempHeaders}
@@ -1025,10 +1050,11 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort,
                   domains={domains}
                   mapping={mapping}
                   uiHint={uiHint}
-                  />
+                />
               ))
             }
-          </tbody>
+            </tbody>
+          </TableContent.Provider>
         </table>
       </div>
     </div>

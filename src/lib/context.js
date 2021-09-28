@@ -6,3 +6,5 @@ const defaultConfig = {
 };
 
 export const ConfigContent = React.createContext(defaultConfig);
+
+export const TableContent = React.createContext({});

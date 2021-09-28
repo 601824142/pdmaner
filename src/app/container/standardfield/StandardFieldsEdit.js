@@ -1,4 +1,4 @@
-import React, {useMemo, useEffect, useRef, useState} from 'react';
+import React, {useMemo, useEffect, useRef, useState, useCallback} from 'react';
 import {
   Table,
 } from 'components';
@@ -99,6 +99,13 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
   const ready = (table) => {
     tableRef.current = table;
   };
+  const search = useCallback((f, value) => {
+    const reg = new RegExp((value || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
+    if (f.fields && f.fields.some(field => reg.test(field.defName) || reg.test(field.defKey))) {
+      return true;
+    }
+    return reg.test(f.defName) || reg.test(f.defKey);
+  }, []);
   return <div className={`${currentPrefix}-standard-fields`} ref={resizeDomRef}>
     <Table
       {...commonProps}
@@ -111,6 +118,7 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
       tableDataChange={tableDataGroupChange}
       expand
       ready={ready}
+      search={search}
     />
   </div>;
 });
