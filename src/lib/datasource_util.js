@@ -53,6 +53,9 @@ export const updateAllData = (dataSource, tabs) => {
       data: getDataByTabId(t.tabKey)?.data || oldData || {}
     }
   }).forEach(t => {
+    if (!t.data.defKey) {
+      message = FormatMessage.string({id: 'defKeyValidateMessage'});
+    }
     if (t.type === 'entity' || t.type === 'view') {
       const keys = (t.data?.fields || []).map(f => f.defKey);
       if(!(t.data.fields.filter(f => !f.hideInGraph).length <= size)) {

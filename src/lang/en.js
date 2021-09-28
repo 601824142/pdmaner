@@ -141,6 +141,7 @@ export default {
     entityUniqueDefKeyError: 'The data table/view already exists, please modify it. The duplicate data table/view has [{entities}]',
     entityHideInGraphSizeError: 'Please select the typical attribute fields that can represent the business meaning of this table, and limit them to [{size}], The overrun data entity has[{entities}],If you need to modify it, please modify it through "Settings > SystemParameter > relation show field size"',
     formValidateMessage: 'Asterisk is required, cannot be empty!',
+    defKeyValidateMessage: 'entity/view/dict cannot be empty',
     entityAndViewUniquenessCheck: 'required cannot be duplicate!',
     showGroup: 'GROUP',
     emptyGroup: 'There is no grouping data for now. Click to create a new grouping',
