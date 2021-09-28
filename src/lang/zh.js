@@ -606,6 +606,7 @@ export default {
         test: '测试',
         add: '新增',
         delete: '删除',
+        copy: '复制',
         demoDbConnect: {
             mysql: 'jdbc:mysql://IP地址:端口号/数据库名?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC',
             oracle: 'jdbc:oracle:thin:@IP地址:端口号/数据库名',

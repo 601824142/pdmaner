@@ -597,6 +597,7 @@ export default {
         test: 'test',
         add: 'add',
         delete: 'delete',
+        copy: 'copy',
         demoDbConnect: {
             mysql: 'jdbc:mysql://ip:port/name?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC',
             oracle: 'jdbc:oracle:thin:@ip:port/name',

@@ -45,8 +45,8 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
     updateDbConn(newData);
     dataChange && dataChange(newData, 'dbConn');
   };
-  const addConn = () => {
-    const empty = {
+  const addConn = (conn) => {
+    const empty = conn || {
       ...emptyDbConn,
       defKey: Math.uuid(),
       type: defaultDb,
@@ -62,6 +62,13 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
     updateDefaultConn(empty.defKey);
     dataChange && dataChange(empty.defKey, 'profile.default.dbConn');
     dataChange && dataChange(newData, 'dbConn');
+  };
+  const copyConn = () => {
+    const newData = dbConn.filter(d => d.defKey === defaultConn)[0];
+    addConn({
+      ...newData,
+      defKey: Math.uuid(),
+    });
   };
   const deleteConn = () => {
     const index = dbConn.findIndex(d => d.defKey === defaultConn);
@@ -161,8 +168,15 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
         <span className={`${currentPrefix}-dbconnect-left-header-opt`}>
           <IconTitle
             type='fa-plus'
-            onClick={addConn}
+            onClick={() => addConn()}
             title={FormatMessage.string({id: 'dbConnect.add'})}
+          />
+          <IconTitle
+            title={FormatMessage.string({id: 'dbConnect.copy'})}
+            type='fa-copy'
+            onClick={copyConn}
+            disable={!defaultConn}
+            style={{opacity: !defaultConn ? 0.48 : 1}}
           />
           <IconTitle
             title={FormatMessage.string({id: 'dbConnect.delete'})}
