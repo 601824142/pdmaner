@@ -7,6 +7,7 @@ export default {
     },
     toolbar: {
         save: '保存',
+        refresh: '刷新',
         saveAs: '另存为',
         undo: '撤销',
         redo: '重做',
@@ -217,6 +218,8 @@ export default {
     closeConfirm: '退出当前项目将会丢失所有未保存的数据，请确定已经执行保存操作！',
     exitConfirmTitle: '关闭确认',
     exitConfirm: '是否关闭软件？',
+    refreshConfirmTitle: '刷新项目',
+    refreshConfirm: '刷新当前项目将会丢失当前打开的项目数据，是否继续？',
     deleteConfirmTitle: '删除确认',
     importConfirm: '导入操作会覆盖当前项目是否继续？',
     deleteConfirm: '删除操作不可撤销是否继续？',

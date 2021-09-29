@@ -132,11 +132,11 @@ const mapDispatchToProps = (dispatch) => {
     saveUserData: (data) => {
       dispatch(saveUserConfigSome(data));
     },
-    openTemplate: (h, title) => {
-      dispatch(openDemoProject(h, title, pageType[2]));
+    openTemplate: (h, t, title) => {
+      dispatch(openDemoProject(h, t, title, pageType[2]));
     },
-    open: (title, path, suffix, ignoreConfig) => {
-      dispatch(openProject(title, pageType[2], path, suffix, ignoreConfig));
+    open: (title, path, suffix, isDemoProject) => {
+      dispatch(openProject(title, pageType[2], path, suffix, isDemoProject));
     },
     close: () => {
       dispatch(closeProject(pageType[1]));

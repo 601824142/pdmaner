@@ -24,6 +24,7 @@ export const close = () => {
 // 3.开启大小调整
 export const resizable = (resizable) => {
   win?.setResizable(resizable);
+  win?.setMinimumSize(1180, 600)
   if (!resizable) {
     center();
   }

@@ -98,6 +98,7 @@ export const img = (data, relationType, dataSource, needCalc = true, groups) => 
       };
     });
     graph.on('render:done', () => {
+      graph.centerContent();
       res(dom);
     });
     graph.fromJSON({cells});

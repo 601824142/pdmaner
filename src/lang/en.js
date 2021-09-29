@@ -7,6 +7,7 @@ export default {
     },
     toolbar: {
         save: 'save',
+        refresh: 'refresh',
         saveAs: 'saveAs',
         undo: 'undo',
         redo: 'redo',
@@ -217,6 +218,8 @@ export default {
     closeConfirm: 'quitting the current project will lose all unsaved data, please make sure that the save operation has been executed!',
     exitConfirmTitle: 'Closing confirmation',
     exitConfirm: 'Do you want to close the software?',
+    refreshConfirmTitle: 'Refresh project',
+    refreshConfirm: 'Refreshing the current project will lose the currently open project data. Do you want to continue?',
     deleteConfirmTitle: 'Delete confirm',
     importConfirm: 'Import operation will overwrite current project whether to continue?',
     deleteConfirm: 'Delete cannot be undone, is continue ?',

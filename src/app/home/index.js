@@ -16,8 +16,8 @@ export default React.memo(({prefix, open, create, rename, updateHistory, openTem
   const _open = (path) => {
     open(FormatMessage.string({id: 'readProject'}), path);
   };
-  const _openTemplate = (data) => {
-    openTemplate(data, FormatMessage.string({id: 'readProject'}));
+  const _openTemplate = (data, t) => {
+    openTemplate(data, t, FormatMessage.string({id: 'readProject'}));
   };
   const _create = (data, path) => {
     create(data, path, FormatMessage.string({id: 'createProject'}));
@@ -43,6 +43,7 @@ export default React.memo(({prefix, open, create, rename, updateHistory, openTem
       config={restProps?.config}
     /> : <Main
       {...restProps}
+      openTemplate={_openTemplate}
       prefix={currentPrefix}
       open={open}
     />}

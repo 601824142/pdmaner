@@ -64,6 +64,12 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
             { key: 'saveAs', name: FormatMessage.string({id: 'toolbar.saveAs'})},
           ]}/>
       <GroupIcon
+        className={`${currentPrefix}-head-db`}
+        title={FormatMessage.string({id: 'toolbar.refresh'})}
+        onClick={() => iconClick(null, 'refresh')}
+        icon='fa-refresh'
+      />
+      <GroupIcon
         title={FormatMessage.string({id: 'toolbar.undo'})}
         onClick={() => iconClick(null, 'undo')}
         icon='icon-bianzu4'
