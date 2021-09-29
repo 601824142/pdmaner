@@ -8,12 +8,12 @@ Graph.registerEdge('erdRelation-img', {
       excludeShapes: ['group-img'],
     },
   },
-  connector: {
+  /*connector: {
     name: 'jumpover',
     args: {
       type: 'cubic',
     },
-  },
+  },*/
   zIndex: 2,
   attrs: {
     line: {
