@@ -399,8 +399,6 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         cells: calcCellData(data?.canvasData?.cells || [], dataSourceRef.current, updateFields,
           getTableGroup(), commonPorts, relationType, commonEntityPorts),
       });
-      graphRef.current.centerContent();
-      isInit.current = true;
     } else {
       // 需要更新数据表相关的节点
       const cells = graphRef.current.getCells();
@@ -453,6 +451,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       }
     };
     const graph = new Graph({
+      async: true,
       container,
       autoResize: false,
       snapline: true,
@@ -692,6 +691,12 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     });
     graph.bindKey(['ctrl+shift+z','command+shift+z'], () => {
       graph.redo({redo: true});
+    });
+    graph.on('render:done', () => {
+      if (!isInit.current) {
+        graphRef.current.centerContent();
+        isInit.current = true;
+      }
     });
     graphRef.current = graph;
     dndRef.current = new Dnd({
