@@ -43,37 +43,32 @@ export const isFullScreenable = () => {
 // 6.设置窗口最大化
 export const maximize = (flag) => {
   if (flag) {
-    if (process.platform === 'darwin') {
-      win.setFullScreen(true);
-     // win.setWindowButtonVisibility(true);
-    } else {
-      win.maximize();
-    }
+    win.maximize();
   } else {
-    if (process.platform === 'darwin') {
-      win.setFullScreen(false);
-     // win.setWindowButtonVisibility(false);
-    } else {
-      win.unmaximize();
-    }
+    win.unmaximize();
   }
+};
+
+// 7.设置窗口全屏
+export const fullScreen = (flag) => {
+  win.setFullScreen(flag);
 };
 
 // 7.监听窗口最大化
 export const maximizeChange = (enter, leave) => {
   win?.on('enter-full-screen', () => {
    // win.setWindowButtonVisibility(true);
-    enter && enter();
+    enter && enter('enter-full-screen');
   });
   win?.on('leave-full-screen', () => {
    // win.setWindowButtonVisibility(false);
-    leave && leave();
+    leave && leave('leave-full-screen');
   });
   win?.on('unmaximize', () => {
-    leave && leave();
+    leave && leave('unmaximize');
   });
   win?.on('maximize', () => {
-    enter && enter();
+    enter && enter('maximize');
   });
 };
 
