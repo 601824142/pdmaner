@@ -111,8 +111,8 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
       },
     });
   };
-  const openTemplateClick = (data) => {
-    openTemplate(data);
+  const openTemplateClick = (data, t) => {
+    openTemplate(data, t);
   };
   const onProjectClick = (h) => {
     importProject(h.path);
@@ -325,7 +325,7 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
                   const p = template[t];
                   return <div
                     key={p.name}
-                    onClick={() => openTemplateClick(p)}
+                    onClick={() => openTemplateClick(p, t)}
                     className={`${currentPrefix}-home-container-body-right-list-tab-item`}
                   >
                     <div className={`${currentPrefix}-home-container-body-right-list-tab-item-title`}>

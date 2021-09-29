@@ -57,7 +57,7 @@ const core = (state = {}, action) => {
       };
     case CREATE_PROJECT_SUCCESS:
     case READ_PROJECT_SUCCESS:
-      if (action.data.ignoreConfig) {
+      if (action.data.isDemoProject) {
         return {
           ...action.data,
           info: state.info,

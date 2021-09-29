@@ -17,6 +17,7 @@ import emptyProject from '../../lib/emptyProjectTemplate';
 import { version } from '../../../package';
 import {reduceProject, transformationData} from '../../lib/datasource_util';
 import {setMemoryCache} from '../../lib/cache';
+import * as template from '../../lib/template';
 
 /*
 * 核心的action 负责整个项目的保存和删除
@@ -65,11 +66,11 @@ const saveProjectFail = (err) => {
   };
 };
 
-const readProjectSuccess = (data, versionsData, path, ignoreConfig) => {
+const readProjectSuccess = (data, versionsData, path, isDemoProject) => {
   return {
     type: READ_PROJECT_SUCCESS,
     data: {
-      ignoreConfig,
+      isDemoProject,
       info: path,
       data,
       versionsData,
@@ -240,7 +241,7 @@ export const closeProject = (type) => {
   };
 };
 
-export const readProject = (path, title, getState, type, ignoreConfig) => {
+export const readProject = (path, title, getState, type, isDemoProject) => {
   return (dispatch) => {
     dispatch(openLoading(title)); // 开启全局loading
     readJsonPromise(path)
@@ -251,7 +252,7 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
           const err = new Error(allLangData[config.lang].invalidProjectData);
           dispatch(readProjectFail(err));
           dispatch(closeLoading(STATUS[2], err));
-        } else if (!ignoreConfig) {
+        } else if (!isDemoProject) {
           const newData = transformationData(data);
           // 将打开的项目记录存储到用户信息中
           addHistory({
@@ -272,7 +273,7 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
         } else {
           const newData = transformationData(data);
           setMemoryCache('data', newData);
-          dispatch(readProjectSuccess(newData, [], path, ignoreConfig));
+          dispatch(readProjectSuccess(newData, [], path, isDemoProject));
           dispatch(closeLoading(STATUS[1], null, '', type));
         }
       })
@@ -283,17 +284,22 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
   };
 };
 
-export const openDemoProject = (h, title, type) => {
-  return (dispatch) => {
+export const openDemoProject = (h, t, title, type) => {
+  return (dispatch, getState) => {
     dispatch(openLoading(title));
-    const data = reduceProject(h, 'defKey');
+    let tempH = h;
+    let isDemoProject = t || getState().core.isDemoProject;
+    if (!tempH) {
+      tempH = template[isDemoProject];
+    }
+    const data = reduceProject(tempH, 'defKey');
     setMemoryCache('data', data);
-    dispatch(readProjectSuccess(data, [], '', true));
+    dispatch(readProjectSuccess(data, [], '', isDemoProject));
     dispatch(closeLoading(STATUS[1], null, '', type));
   };
 };
 
-export const openProject = (title, type, path, suffix, ignoreConfig) => {
+export const openProject = (title, type, path, suffix, isDemoProject) => {
   // 从系统中选择项目 无需传递路径
   return (dispatch, getState) => {
     if (path) {
@@ -301,7 +307,7 @@ export const openProject = (title, type, path, suffix, ignoreConfig) => {
     } else {
       const config = getState()?.config?.data[0];
       openProjectFilePath(allLangData[config.lang].invalidProjectFile, suffix).then((filePath) => {
-        readProject(filePath, title, getState, type, ignoreConfig)(dispatch);
+        readProject(filePath, title, getState, type, isDemoProject)(dispatch);
       }).catch((err) => {
         dispatch(readProjectFail(err));
       });

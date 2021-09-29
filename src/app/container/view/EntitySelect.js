@@ -7,7 +7,7 @@ export default React.memo(({prefix, dataSource, data, onChange}) => {
   useEffect(() => {
     const entities = dataSource?.entities || [];
     const tempRefEntities =
-      data?.refEntities?.filter(ref => entities.findIndex(e => e.id === ref) > -1);
+      data?.refEntities?.filter(ref => entities.findIndex(e => e.id === ref) > -1) || [];
     updateEntityRefs(tempRefEntities);
     onChange && onChange(tempRefEntities);
   }, [dataSource?.entities?.length]);

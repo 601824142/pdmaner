@@ -57,8 +57,10 @@ import {compareVersion} from '../../lib/update';
 
 const TabItem = Tab.TabItem;
 
-const Index = React.memo(({getUserData, open, config, common, prefix, projectInfo,
+const Index = React.memo(({getUserData, open, openTemplate, config, common, prefix, projectInfo,
                             ...restProps}) => {
+  const isRefreshRef = useRef(false);
+  const [mainId, setMainId] = useState(Math.uuid());
   const [tabs, updateTabs] = useState([]);
   const autoSaveRef = useRef(null);
   const isResize = useRef({status: false});
@@ -97,6 +99,32 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
   const [menuType, setMenuType] = useState('1');
   const projectInfoRef = useRef(projectInfo);
   projectInfoRef.current = projectInfo;
+  const refreshProject = () => {
+    Modal.confirm({
+      title: FormatMessage.string({id: 'refreshConfirmTitle'}),
+      message: FormatMessage.string({id: 'refreshConfirm'}),
+      onOk:() => {
+        isRefreshRef.current = true;
+        if (projectInfoRef.current) {
+          open(FormatMessage.string({id: 'readProject'}), projectInfoRef.current);
+        } else {
+          openTemplate(null, null, FormatMessage.string({id: 'readProject'}));
+        }
+      },
+    });
+  };
+  useEffect(() => {
+    if(isRefreshRef.current) {
+      isRefreshRef.current = false;
+      updateTabs((pre) => {
+        return pre.filter((p) => {
+          const { name } = allType.filter(t => t.type === p.type)[0];
+          return restProps.dataSource[name].findIndex(d => d.id === p.menuKey) > -1;
+        });
+      });
+      setMainId(Math.uuid());
+    }
+  }, [restProps.dataSource]);
   const saveProject = (saveAs, callback) => {
     const isSaveAs = saveAs || !projectInfoRef.current;
     const newData = updateAllData(dataSourceRef.current,
@@ -1206,6 +1234,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
     console.log(key);
     switch (key) {
       case 'save': saveProject();break;
+      case 'refresh': refreshProject();break;
       case 'saveAs': saveProject(true);break;
       case 'pdman': importFromPDMan('pdman');break;
       case 'importDDL': importFromPb('DDL');break;
@@ -1512,6 +1541,7 @@ const Index = React.memo(({getUserData, open, config, common, prefix, projectInf
       >
         {
           <Tab
+            key={mainId}
             menuClick={dropDownMenuClick}
             dropDownMenus={dropDownMenus}
             position='top'
