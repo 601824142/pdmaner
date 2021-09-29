@@ -18,7 +18,9 @@ function createWindow() {
     minHeight: 600,
     frame: false,
     resizable: false,
+    show: false,
     //titleBarStyle: 'customButtonsOnHover',
+    backgroundColor: 'transparent',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -50,6 +52,9 @@ function createWindow() {
         )
     );
   }
+  win.on('ready-to-show', function () {
+    win.show();
+  });
   let dataCache = {};
   const sendMessage = (reason) => {
     if (dataCache.data && dataCache.info) {
