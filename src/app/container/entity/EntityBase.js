@@ -6,6 +6,7 @@ import {
   MultipleSelect,
   Text, Message, Modal,Icon,
 } from 'components';
+import _ from 'lodash/object';
 
 import { addDomResize, removeDomResize } from '../../../lib/listener';
 
@@ -15,8 +16,8 @@ import {getPrefix} from '../../../lib/prefixUtil';
 
 
 export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHeaders,
-                             dataChange, FieldsExtraOpt, updateDataSource, param,
-                             hasRender, hasDestory, getDataSource, openDict}) => {
+                             dataChange, FieldsExtraOpt, updateDataSource, param, getRestData,
+                             hasRender, hasDestory, getDataSource, openDict, type}) => {
   const Option = MultipleSelect.Option;
   const id = useMemo(() => Math.uuid(), []);
   const [size, setSize] = useState({width: 0});
@@ -37,15 +38,34 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
   };
   const getGroups = () => {
     return (dataSource?.viewGroups || [])
-        .filter(g => (g?.refEntities || []).includes(data.defKey))
-        .map(g => g.defKey);
+        .filter(g => (g?.[type === 'entity' ? 'refEntities' : 'refViews'] || []).includes(data.id))
+        .map(g => g.id);
   };
   const [checkValues, setCheckValues] = useState(() => {
     return getGroups();
   });
   useEffect(() => {
     setCheckValues(getGroups());
-  }, [dataSource?.viewGroups, data]);
+  }, [dataSource?.viewGroups]);
+  useEffect(() => {
+    if (type === 'view') {
+      // 删除数据表
+      const allEntities = dataSource?.entities?.map(e => e.id);
+      tableRef.current.updateTableData((pre) => {
+        const tempFields = pre?.fields?.map((f) => {
+          if (!allEntities.includes(f.refEntity)) {
+            return _.omit(f, ['refEntity', 'refEntityField']);
+          }
+          return f;
+        });
+        dataChange && dataChange(tempFields, 'fields');
+        return {
+          ...pre,
+          fields: tempFields,
+        };
+      });
+    }
+  }, [dataSource?.entities?.length]);
   const currentPrefix = getPrefix(prefix);
   const onDragOver = (e) => {
     e.preventDefault();
@@ -54,23 +74,26 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
     const dragData = e.dataTransfer.getData('fields');
     if (dragData) {
       const newFields = JSON.parse(dragData);
-      const result = {};
+      const result = {success: 0};
       tableRef.current.updateTableData((pre) => {
         const success = newFields
             .filter(f => (pre.fields || []).findIndex(eFiled => eFiled.defKey === f.defKey) < 0);
         result.success = success.length;
         result.hidden = 0;
-        const finalFields = (pre.fields || [])
+        if (success.length > 0) {
+          const finalFields = (pre.fields || [])
             .concat(success.map(s => ({
               ...s,
               isStandard: true,
-              __key: Math.uuid(),
+              id: Math.uuid(),
             })));
-        dataChange && dataChange(finalFields, 'fields');
-        return {
-          ...pre,
-          fields: finalFields,
-        };
+          dataChange && dataChange(finalFields, 'fields');
+          return {
+            ...pre,
+            fields: finalFields,
+          };
+        }
+        return pre;
       });
       if (result.success === newFields.length) {
         Message.success({title: FormatMessage.string({id: 'optSuccess'})});
@@ -158,7 +181,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
                   <FormatMessage id='tableBase.nameTemplate'/>
                 </span>
                 <span className={`${currentPrefix}-form-item-component`}>
-                  <Input defaultValue={data.nameTemplate || '{code}[{name}]'} onChange={e => onChange(e, 'nameTemplate')}/>
+                  <Input defaultValue={data.nameTemplate || '{defKey}[{defName}]'} onChange={e => onChange(e, 'nameTemplate')}/>
                 </span>
               </div>
               <div className={`${currentPrefix}-form-item`}>
@@ -175,7 +198,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
                 >
                     {
                     dataSource?.viewGroups?.map(v => (
-                      <Option key={v.defKey} value={v.defKey}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
+                      <Option key={v.id} value={v.id}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
                   }
                   </MultipleSelect>
                 </span>
@@ -229,6 +252,7 @@ export default React.memo(({prefix, data, dataSource, BaseExtraCom, customerHead
           style={{width: size.width, height: '100%'}}
         >
           <EntityFields
+            getRestData={getRestData}
             openDict={openDict}
             hasRender={hasRender}
             hasDestory={hasDestory}

@@ -1,7 +1,8 @@
-import React, {useMemo, useEffect, useRef, useState} from 'react';
+import React, {useMemo, useEffect, useRef, useState, useCallback} from 'react';
 import {
   Table,
 } from 'components';
+import  _ from 'lodash/object';
 import {addDomResize, removeDomResize} from '../../../lib/listener';
 import {getPrefix} from '../../../lib/prefixUtil';
 import {
@@ -13,14 +14,9 @@ import {
 
 export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataSource}) => {
   const id = useMemo(() => Math.uuid(), []);
-  const standardFieldsRef = useRef((dataSource.standardFields || []).map((g) => {
-    return {
-      ...g,
-      __key: Math.uuid(),
-      fields: (g.fields || []).map(f => ({...f, __key: Math.uuid()})),
-    };
-  }));
-  const newDataRef = useRef(standardFieldsRef.current);
+  const tableRef = useRef(null);
+  const standardFields = useMemo(() => (dataSource.standardFields || []), []);
+  const newDataRef = useRef(standardFields);
   const [width, setWidth] = useState(0);
   const resizeDomRef = useRef(null);
   useEffect(() => {
@@ -34,9 +30,9 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
   const currentPrefix = getPrefix(prefix);
   const tableDataChange = (groupData, tableData) => {
     newDataRef.current = newDataRef.current.map((g) => {
-      if (g.__key === groupData.__key) {
+      if (g.id === groupData.id) {
         return {
-          ...g,
+          ..._.omit(g, ['children']),
           fields: tableData,
         };
       }
@@ -47,10 +43,8 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
   const tableDataGroupChange = (groupData) => {
     newDataRef.current = groupData.map((g) => {
       return {
-        defKey: g.defKey,
-        defName: g.defName,
-        fields: newDataRef.current.filter(f => f.__key === g.__key)[0]?.fields || [],
-        __key: g.__key,
+        ..._.omit(g, ['children']),
+        fields: newDataRef.current.filter(f => f.id === g.id)[0]?.fields || [],
       };
     });
     dataChange && dataChange(newDataRef.current);
@@ -86,13 +80,32 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
   };
   const onAdd = () => {
     return new Promise((res) => {
-      res([getChildren({...emptyStandardGroup, __key: Math.uuid()})]);
+      res([getChildren({...emptyStandardGroup, id: Math.uuid()})]);
     });
   };
-  const data = {
-    headers: getStandardGroupColumns(),
-    fields: standardFieldsRef.current.map(g => getChildren(g)),
+  useEffect(() => {
+    const data = {
+      headers: getStandardGroupColumns(),
+      fields: standardFields.map(g => getChildren(g)),
+    };
+    tableRef.current.updateTableData((pre) => {
+      const temp = pre.fields ? pre : data;
+      return {
+        ...temp,
+        fields: (temp.fields || []).map(g => getChildren(g)),
+      };
+    });
+  }, [width]);
+  const ready = (table) => {
+    tableRef.current = table;
   };
+  const search = useCallback((f, value) => {
+    const reg = new RegExp((value || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
+    if (f.fields && f.fields.some(field => reg.test(field.defName) || reg.test(field.defKey))) {
+      return true;
+    }
+    return reg.test(f.defName) || reg.test(f.defKey);
+  }, []);
   return <div className={`${currentPrefix}-standard-fields`} ref={resizeDomRef}>
     <Table
       {...commonProps}
@@ -104,7 +117,8 @@ export default React.memo(({prefix, dataChange, dataSource, twinkle, updateDataS
       style={{width: '100%'}}
       tableDataChange={tableDataGroupChange}
       expand
-      data={data}
+      ready={ready}
+      search={search}
     />
   </div>;
 });

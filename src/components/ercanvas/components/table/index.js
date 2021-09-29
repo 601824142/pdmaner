@@ -19,8 +19,8 @@ const Table = forwardRef(({node}, ref) => {
     store?.data?.updateFields(store.data.originKey, JSON.parse(e.dataTransfer.getData('fields')));
   };
   const validateSelected = (f, {targetPort, sourcePort}) => {
-    const fieldTargetPort = `${f.defKey}${separator}in`;
-    const fieldSourcePort = `${f.defKey}${separator}out`;
+    const fieldTargetPort = `${f.id}${separator}in`;
+    const fieldSourcePort = `${f.id}${separator}out`;
     return targetPort === fieldTargetPort
         || targetPort === fieldSourcePort
         || sourcePort === fieldTargetPort
@@ -31,7 +31,7 @@ const Table = forwardRef(({node}, ref) => {
     if (h.refKey === 'primaryKey') {
       if (f[h.refKey]) {
         return '<PK>';
-      } else if (allFk.includes(f.defKey)) {
+      } else if (allFk.includes(f.id)) {
         return '<FK>';
       }
     } else if (h.refKey === 'notNull') {
@@ -87,7 +87,7 @@ const Table = forwardRef(({node}, ref) => {
       {
         data.fields.map((f) => {
           return <div
-            key={`${f.defKey}${f.defName}`}
+            key={`${f.id}${f.defName}`}
             className={`${validateSelected(f, store.data) ? 'chiner-er-table-body-selected' : ''} ${f.primaryKey ? 'chiner-er-table-body-primary' : ''}`}>
             {
               data.headers.map((h) => {

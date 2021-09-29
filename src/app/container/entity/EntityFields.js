@@ -4,7 +4,8 @@ import { Table } from 'components';
 
 export default React.memo(({data, dataSource, update, FieldsExtraOpt,customerHeaders,
                              dataChange, offsetHeight, updateDataSource, ready, freeze, param,
-                             hasRender, hasDestory, getDataSource, openDict, defaultGroups}) => {
+                             hasRender, hasDestory, getDataSource, openDict, defaultGroups,
+                             getRestData}) => {
   const tableRef = useRef(null);
   useEffect(() => {
     hasRender && hasRender({
@@ -17,8 +18,8 @@ export default React.memo(({data, dataSource, update, FieldsExtraOpt,customerHea
     };
   }, []);
   return <Table
+    getRestData={getRestData}
     ref={tableRef}
-    forceUpdate
     twinkle={param?.defKey}
     customerHeaders={customerHeaders}
     freeze={freeze}

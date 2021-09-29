@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, {useState, useMemo, useRef, useEffect} from 'react';
 import {Step, Button, FormatMessage, Modal, Terminal} from 'components';
 
 import DbSelect from './DbSelect';
@@ -10,6 +10,7 @@ import {connectDB, getLogPath, showItemInFolder} from '../../../../lib/middle';
 
 export default React.memo(({prefix, dataSource, dataChange, config, onClose, onOk}) => {
   const dealDataRef = useRef(null);
+  const parserRef = useRef(null);
   const [currentKey, updateCurrentKey] = useState(1);
   const parseDbRef = useRef(null);
   const dbConn = dataSource?.dbConn || [];
@@ -40,7 +41,7 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
   const parseFinish = (data) => {
     parseData.data = data;
     updateCurrentKey(3);
-    dealDataRef.current.refresh();
+    dealDataRef.current?.refresh();
   };
   const pre = () => {
     updateCurrentKey(1);
@@ -48,11 +49,11 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
   const onOK = (e, {updateStatus}) => {
     updateStatus('loading');
     const selectedTable = dealDataRef.current.getData()
-        .reduce((a, b) => a.concat(b.fields.map(f => ({...f, group: b.defKey}))), []);
+        .reduce((a, b) => a.concat(b.fields.map(f => ({...f, group: b.id}))), []);
     if (selectedTable.length > 0) {
       const properties = (dbConn.filter(d => d.defKey === dbData.defKey)[0] || {})?.properties
         || {};
-      connectDB(dataSource, config, {
+      parserRef.current = connectDB(dataSource, config, {
         ...properties,
         tables: selectedTable.map(t => t.originDefKey).join(','),
       }, 'DBReverseGetTableDDL', (data) => {
@@ -77,12 +78,14 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
               return {
                 ...d,
                 group,
+                fields: (d.fields || []).map(f => ({...f, defKey: f.defKey?.toLocaleLowerCase()})),
                 defKey: d.defKey.toLocaleLowerCase(),
               };
             } else if (dbData.flag === 'UPPERCASE') {
               return {
                 ...d,
                 group,
+                fields: (d.fields || []).map(f => ({...f, defKey: f.defKey?.toLocaleUpperCase()})),
                 defKey: d.defKey.toLocaleUpperCase(),
               };
             }
@@ -91,14 +94,22 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
               group,
             };
           });
-          onOk(tempData, dbData.defKey);
+          onOk(tempData.map(t => ({
+            ...t,
+            id: Math.uuid(),
+            fields: (t.fields || []).map(f => ({...f, id: Math.uuid()})),
+          })), dbData.defKey);
         }
       });
     } else {
       onOk([], dbData.defKey);
     }
   };
-
+  useEffect(() => {
+    return () => {
+      parserRef.current?.kill(0);
+    };
+  }, []);
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-dbreverseparse-db`}>
     <Step

@@ -31,23 +31,30 @@ export default React.memo(forwardRef(({prefix, getGraph, dataSource}, ref) => {
   }, []);
   useEffect(() => {
     if (searchValue) {
-      const reg = new RegExp((searchValue).replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
+      const reg = new RegExp((searchValue)?.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig');
       setCells((getGraph()?.toJSON({diff: true}).cells || [])
         .map((c) => {
           if (c.originKey) {
-            const entity = (dataSource?.entities || []).filter(e => e.defKey === c.originKey)[0];
-            if (entity && (reg.test(entity.defKey) || reg.test(entity.defName))) {
-              return {
-                name: `${entity.defKey.replace(reg, str)}[${entity.defName.replace(reg, str)}]`,
-                value: c.id,
-              };
+            const entity = (dataSource?.entities || []).filter(e => e.id === c.originKey)[0];
+            if (entity) {
+              const tempDisplayMode = entity.nameTemplate || '{defKey}[{defName}]';
+              const finalName = tempDisplayMode.replace(/\{(\w+)\}/g, (match, word) => {
+                return entity[word] || entity.defKey || '';
+              });
+              if (reg.test(finalName)) {
+                return {
+                  name: finalName.replace(reg, str),
+                  value: c.id,
+                };
+              }
+              return null;
             }
             return null;
           } else if (c.label) {
-            const finalLabel = c.label.replace(/[-\/\\^$*+?.()|[\]{}#]|<[^>]*>|\r|\r\n/g, '');
+            const finalLabel = c.label?.replace(/[-\/\\^$*+?.()|[\]{}#]|<[^>]*>|\r|\r\n/g, '');
             if (reg.test(finalLabel)) {
               return {
-                name: finalLabel.replace(reg, str),
+                name: finalLabel?.replace(reg, str),
                 value: c.id,
               };
             }

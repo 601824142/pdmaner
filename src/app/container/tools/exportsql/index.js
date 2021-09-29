@@ -31,7 +31,7 @@ export default React.memo(({prefix, dataSource, templateType}) => {
   const [dataType, setDataType] = useState('all');
   const currentPrefix = getPrefix(prefix);
   const dataTypeSupports = _.get(dataSource, 'profile.dataTypeSupports', []);
-  const defaultDb = _.get(dataSource, 'profile.default.db', dataTypeSupports[0]);
+  const defaultDb = _.get(dataSource, 'profile.default.db', dataTypeSupports[0]?.id);
   const codeTemplates = _.get(dataSource, 'profile.codeTemplates', []);
   const [codeData, setCodeData] = useState(() => {
     return getAllDataSQLByFilter(dataSource,
@@ -121,10 +121,10 @@ export default React.memo(({prefix, dataSource, templateType}) => {
           >
               {dataTypeSupports
               .map(type => (<Option
-                key={type}
-                value={type}
+                key={type.id}
+                value={type.id}
               >
-                {type}
+                {type.defKey}
               </Option>))}
             </Select>
           </span>

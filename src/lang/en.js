@@ -141,6 +141,7 @@ export default {
     entityUniqueDefKeyError: 'The data table/view already exists, please modify it. The duplicate data table/view has [{entities}]',
     entityHideInGraphSizeError: 'Please select the typical attribute fields that can represent the business meaning of this table, and limit them to [{size}], The overrun data entity has[{entities}],If you need to modify it, please modify it through "Settings > SystemParameter > relation show field size"',
     formValidateMessage: 'Asterisk is required, cannot be empty!',
+    defKeyValidateMessage: 'entity/view/dict cannot be empty',
     entityAndViewUniquenessCheck: 'required cannot be duplicate!',
     showGroup: 'GROUP',
     emptyGroup: 'There is no grouping data for now. Click to create a new grouping',
@@ -454,7 +455,7 @@ export default {
     database: {
         templateError: 'Database template error, please refer to dot.js configuration template information',
         templateEdit: 'template edit',
-        applyFor: 'name',
+        defKey: 'defKey',
         type: 'type',
         defaultDbError: 'Default database can only have one',
         nameError: 'Data name or Code cannot be empty',
@@ -547,6 +548,7 @@ export default {
             success: 'config success',
             error: 'config error',
             placeholder: 'If it is not filled in, it will be automatically read from the environment variable of the system',
+            notFoundJDK: 'no JDK is detected, please install the JDK first (if it has been installed, please check whether the environment variables are configured correctly, or go to system [setting] -> [SystemParameter] -> [JAVA_HOME] to specify the JDK path)',
         },
         DictSQLTemplate: 'dict SQL template',
         JVMLabel: 'JVM Parameters',
@@ -595,6 +597,7 @@ export default {
         test: 'test',
         add: 'add',
         delete: 'delete',
+        copy: 'copy',
         demoDbConnect: {
             mysql: 'jdbc:mysql://ip:port/name?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC',
             oracle: 'jdbc:oracle:thin:@ip:port/name',

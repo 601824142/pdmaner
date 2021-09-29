@@ -8,19 +8,19 @@ const Item = React.memo(({prefix, d, onGroupChange, defaultSelected,
                            checkBoxChange, group}) => {
   return <tr
     className={`${prefix}-listselect-right-item`}
-    key={d.defKey}
+    key={d.id}
   >
     <td>{i + 1}</td>
     <td>
-      {defaultSelected.includes(d.defKey) &&
+      {defaultSelected.includes(d.id) &&
       <Icon
         className={`${prefix}-listselect-right-item-disable`}
         title={FormatMessage.string({id: 'components.listSelect.disable'})}
         type='icon-xinxi'
       />}
       <Checkbox
-        onChange={e => checkBoxChange(e, d.defKey)}
-        checked={checked.includes(d.defKey)}
+        onChange={e => checkBoxChange(e, d.id)}
+        checked={checked.includes(d.id)}
       >
         <span>
           {`${d.defKey}[${d.defName || d.defKey}]`}
@@ -32,11 +32,11 @@ const Item = React.memo(({prefix, d, onGroupChange, defaultSelected,
         allowClear={allowClear}
         value={group}
         notAllowEmpty={notAllowEmpty}
-        onChange={e => onGroupChange(e, d.defKey)}
+        onChange={e => onGroupChange(e, d.id)}
       >
         {
           currentGroup.map((g) => {
-            return <Option value={g.defKey} key={g.defKey}>
+            return <Option value={g.id} key={g.id}>
               {`${g.defName}${g.defKey ? `(${g.defKey})` : ''}`}
             </Option>;
           })
@@ -45,8 +45,8 @@ const Item = React.memo(({prefix, d, onGroupChange, defaultSelected,
     </td>
   </tr>;
 }, (pre, next) => {
-  return ((pre.checked.includes(pre.d.defKey) && next.checked.includes(next.d.defKey)) ||
-    (!pre.checked.includes(pre.d.defKey) && !next.checked.includes(next.d.defKey))) &&
+  return ((pre.checked.includes(pre.d.id) && next.checked.includes(next.d.id)) ||
+    (!pre.checked.includes(pre.d.id) && !next.checked.includes(next.d.id))) &&
     (pre.group === next.group);
 });
 
@@ -58,7 +58,7 @@ export default React.memo(({prefix, newData, onRemove, allowClear,
     const keys = [].concat(key);
     setDataGroup((pre) => {
       return pre.map((f) => {
-        if (keys.includes(f.defKey)) {
+        if (keys.includes(f.id)) {
           return {
             ...f,
             group: e.target.value,
@@ -85,7 +85,7 @@ export default React.memo(({prefix, newData, onRemove, allowClear,
     };
     const onOK = () => {
       if (!group) {
-        if (!currentGroup.some(g => g.defKey === '')) {
+        if (!currentGroup.some(g => g.id === '')) {
           Modal.error({
             title: FormatMessage.string({id: 'components.listSelect.groupNotAllowEmpty'}),
             message: FormatMessage.string({id: 'components.listSelect.groupNotAllowEmpty'}),
@@ -119,7 +119,7 @@ export default React.memo(({prefix, newData, onRemove, allowClear,
       >
         {
           currentGroup.map((g) => {
-            return <Option value={g.defKey} key={g.defKey}>
+            return <Option value={g.id} key={g.id}>
               {`${g.defName}${g.defKey ? `(${g.defKey})` : ''}`}
             </Option>;
           })
@@ -138,12 +138,12 @@ export default React.memo(({prefix, newData, onRemove, allowClear,
     });
   };
   useEffect(() => {
-    setChecked(pre => pre.filter(p => newData.findIndex(d => d.defKey === p) > -1));
+    setChecked(pre => pre.filter(p => newData.findIndex(d => d.id === p) > -1));
   }, [newData]);
   useEffect(() => {
     setDataGroup((pre) => {
       return newData.map((f) => {
-        const current = pre.filter(p => p.defKey === f.defKey)[0];
+        const current = pre.filter(p => p.id === f.id)[0];
         if (current) {
           return {
             ...f,
@@ -178,7 +178,7 @@ export default React.memo(({prefix, newData, onRemove, allowClear,
           </div>
               : <table><tbody>
                 {newData.filter(d => !!d.defKey).map((d, i) => {
-                const group = dataGroup.filter(dg => dg.defKey === d.defKey)[0]?.group || '';
+                const group = dataGroup.filter(dg => dg.id === d.id)[0]?.group || '';
                 return <Item
                   checkBoxChange={checkBoxChange}
                   checked={checked}
@@ -188,7 +188,7 @@ export default React.memo(({prefix, newData, onRemove, allowClear,
                   notAllowEmpty={notAllowEmpty}
                   onGroupChange={_onGroupChange}
                   prefix={prefix}
-                  key={`${d.defKey}${i}`}
+                  key={`${d.id}${i}`}
                   d={d}
                   currentGroup={currentGroup}
                   onRemove={onRemove}

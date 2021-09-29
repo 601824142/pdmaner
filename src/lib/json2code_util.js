@@ -6,12 +6,7 @@ import doT from 'dot';
 
 import { separator, msgSeparator } from '../../profile';
 import {firstUp} from './string';
-export const packageDataSource = (dataSource) => {
-  return {
-    ...dataSource,
-    entities: (dataSource?.entities || [])
-  }
-};
+import {transform} from './datasource_util';
 // 获取所有的数据表信息（包含真实的type）
 const mapDataSourceEntities = (dataSource, datatype, domains, code, currentCode, path = 'entities') => {
   return _.get(dataSource, path, []).map((entity) => {
@@ -20,24 +15,11 @@ const mapDataSourceEntities = (dataSource, datatype, domains, code, currentCode,
       fields: (entity.fields || []).map(field => {
         return {
           ...field,
-          ...getFieldData(datatype, domains, field, code),
+          ...transform(datatype, domains, field, code),
         }
       })
     }
   });
-};
-// 根据数据库类型 返回真实的数据类型
-export const getFieldData = (datatype, domains, field, code) => {
-  const domain = domains.filter(d => d.defKey === field.domain)[0];
-  if (domain) {
-    const type = datatype.filter(d => d.defKey === domain.applyFor)[0];
-    return {
-      type: type?.[code] || field.type,
-      len: domain.len,
-      scale: domain.scale,
-    };
-  }
-  return {};
 };
 // 根据模板数据生成代码
 const getTemplateString = (template, templateData) => {
@@ -186,21 +168,32 @@ const getTemplateString = (template, templateData) => {
 };
 // 生成增量代码数据
 const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) => {
-  const datatype = _.get(dataSource, 'dataTypeMapping.mappings', []);
-  const domains = _.get(dataSource, 'domains', []);
   // 获取该数据库下的模板信息
   const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
   const template = allTemplate.filter(t => t.applyFor === code)[0]?.[templateShow] || '';
   const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
   // 构造新的数据表传递给模板
+  const fields = (dataTable.fields || []);
+  const indexes = (dataTable.indexes || []);
   const tempDataTable = {
     ...dataTable,
-    fields: (dataTable.fields || []).map(field => {
+    fields: templateShow === 'createIndex' ? fields : fields.map(field => {
       return {
         ...field,
-        ...getFieldData(datatype, domains, field, code),
+        ...transform(field, dataSource, code),
       }
-    })
+    }),
+    indexes: templateShow === 'createIndex' ? indexes.map(i => {
+      return {
+        ...i,
+        fields: (i.fields || []).map(f => {
+          return {
+            ...f,
+            fieldDefKey: fields.filter(field => field.id === f.fieldDefKey)[0]?.defKey,
+          };
+        }),
+      }
+    }) : indexes,
   };
   const name = templateShow === 'createView' ? 'view' : 'entity';
   const templateData = {
@@ -245,7 +238,7 @@ const generateUpdateSql = (dataSource, changesData = [], code, oldDataSource) =>
       fields: (entity.fields || []).map(field => {
         return {
           ...field,
-          ...getFieldData(datatype, domains, field, code),
+          ...transform(field, dataSource, code),
         }
       })
     }
@@ -1389,7 +1382,7 @@ export const getDataByTemplate = (data, template) => {
 };
 // 获取项目的一些配置信息
 const getDataSourceProfile = (data) => {
-  const dataSource = packageDataSource(data);
+  const dataSource = {...data};
   const datatype = _.get(dataSource, 'dataTypeMapping.mappings', []);
   const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
   const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';') || ';';
@@ -1403,15 +1396,14 @@ const getDataSourceProfile = (data) => {
 // 获取所有数据表的全量脚本（filter）
 export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) => {
   // 获取全量脚本（删表，建表，建索引，表注释）
-  const { dataSource, datatype, allTemplate, sqlSeparator } = getDataSourceProfile(data);
-  const domains = _.get(dataSource, 'domains', []);
+  const { dataSource, allTemplate, sqlSeparator } = getDataSourceProfile(data);
   const getTemplate = (templateShow) => {
     return allTemplate.filter(t => t.applyFor === code)[0]?.[templateShow] || '';
   };
   const getFilterData = (name) => {
     return (dataSource[name] || []).filter(e => {
       if (filterDefKey) {
-        return (filterDefKey[name] || []).includes(e.defKey);
+        return (filterDefKey[name] || []).includes(e.id);
       }
       return true;
     }).map(e => ({
@@ -1439,10 +1431,27 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
           fields: (e.fields || []).map(field => {
             return {
               ...field,
-              ...getFieldData(datatype, domains, field, code)
+              ...transform(field, dataSource, code)
             }
-          })
+          }),
+          indexes: (e.indexes || []).map(i => {
+            return {
+              ...i,
+              fields: (i.fields || []).map(f => {
+                const field = (e.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
+                return {
+                  ...f,
+                  fieldDefKey: field?.defKey || '',
+                };
+              })
+            }
+          }),
         };
+        if (name === 'view') {
+          childData.refEntities = dataSource?.entities
+            ?.filter(e => childData?.refEntities.includes(e.id))
+            ?.map(e => e.defKey);
+        }
         data = {
           entity: childData,
           view: childData,
@@ -1451,8 +1460,8 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
       const templateData = {
         ...data,
         group: (dataSource.viewGroups || [])
-            .filter(g => g[e.groupType].includes(e.defKey))
-            .map(g => _.omit(g, ['defKey', 'defName'])),
+            .filter(g => g[e.groupType].includes(e.id))
+            .map(g => _.pick(g, ['defKey', 'defName'])),
         separator: sqlSeparator
       };
       if (tempTemplate.includes('createTable')) {

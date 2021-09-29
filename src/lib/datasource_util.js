@@ -7,20 +7,6 @@ import { separator } from '../../profile';
 import {firstUp} from './string';
 import {compareVersion} from './update';
 
-export const removeUnlessFields = (data, fields = []) => {
-  if (Array.isArray(data)) {
-    return data.map(d => removeUnlessFields(d, fields));
-  } else if (data && typeof data === 'object') {
-    const tempData = _.omit(data, fields);
-    return Object.keys(tempData).reduce((a, b) => {
-      const tempA = {...a};
-      tempA[b] = removeUnlessFields(tempData[b], fields);
-      return tempA;
-    }, {});
-  }
-  return data;
-};
-
 export const allType = [
   { type: 'entity', name: 'entities', defKey: 'defKey' },
   { type: 'view', name: 'views', defKey: 'defKey' },
@@ -42,8 +28,7 @@ export const filterEdge = (allNodes, c) => {
 };
 
 export const updateAllData = (dataSource, tabs) => {
-  // 整理项目中所有的关系图数据 去除无效的关系图数据 更新所有的tab数据
-  const needReplace = [];
+  // 整理项目中所有的关系图数据 去除无效的关系图数据
   let tempData = {...dataSource};
   const allTabData = getAllTabData();
   let message = '';
@@ -60,20 +45,23 @@ export const updateAllData = (dataSource, tabs) => {
   const size = _.get(dataSource, 'profile.relationFieldSize', 15);
   tabs.map(t => {
     const typeName = t.type === 'entity' ? 'entities' : 'views';
+    const oldData = tempData[typeName].filter(e => e.id === t.tabKey.split(separator)[0])[0];
     return {
       type: t.type,
       key: t.tabKey,
-      data: getDataByTabId(t.tabKey)?.data
-          || tempData[typeName].filter(e => e.defKey === t.tabKey.split(separator)[0])[0]
-          || []
+      oldData,
+      data: getDataByTabId(t.tabKey)?.data || oldData || {}
     }
   }).forEach(t => {
+    if (!t.data.defKey) {
+      message = FormatMessage.string({id: 'defKeyValidateMessage'});
+    }
     if (t.type === 'entity' || t.type === 'view') {
       const keys = (t.data?.fields || []).map(f => f.defKey);
       if(!(t.data.fields.filter(f => !f.hideInGraph).length <= size)) {
         sizeError.push(t.data.defKey);
       }
-      if (keys.length !== new Set(keys).size) {
+      if (keys.filter(k => !!k).length !== new Set(keys).size) {
         const fields = t.data?.fields || [];
         const repeat = fields.reduce((a, b) => {
           if (fields.filter(f => f.defKey === b.defKey).length > 1 && !a.includes(b.defKey)) {
@@ -85,7 +73,7 @@ export const updateAllData = (dataSource, tabs) => {
       }
       // 判断数据表或者视图重复
       const newDefKey = t.data?.defKey;
-      if (newDefKey !== t.key.split(separator)[0]) {
+      if (newDefKey !== t.oldData?.defKey) {
         // 不能跟当前打开的TAB的key重复
         // 不能跟已经存在的key重复
         if (!currentDefKey[t.type].includes(newDefKey)) {
@@ -134,7 +122,7 @@ export const updateAllData = (dataSource, tabs) => {
           if (!tempPre[type]) {
             tempPre[type] = [];
           }
-          tempPre[type].push({...allTabData[next].data, __key: allTabData[next].key});
+          tempPre[type].push({...allTabData[next].data});
         }
         return tempPre;
       }, {});
@@ -147,11 +135,11 @@ export const updateAllData = (dataSource, tabs) => {
         tempData = {
           ...tempData,
           [type.name]: _.get(tempData, type.name, []).map((d) => {
-            const currentData = tabsAllData[type.type].filter(t => t.__key === d[type.defKey])[0];
+            const currentData = tabsAllData[type.type].filter(t => t.id === d.id)[0];
             if (currentData) {
               if (type.type === 'diagram') {
                 const allNodes = currentData?.cells || [];
-                return _.omit({
+                return {
                   ...d,
                   canvasData: {
                     cells: allNodes.map(c => {
@@ -202,22 +190,15 @@ export const updateAllData = (dataSource, tabs) => {
                       };
                     }),
                   },
-                }, ['__key']);
-              } else if (currentData[type.defKey] !== d[type.defKey]){
-                needReplace.push({
-                  old: d[type.defKey],
-                  oldData: d,
-                  newData: currentData,
-                  new: currentData[type.defKey],
-                  type: type.type
-                });
+                };
               }
               if (currentData.group) {
+                // 如果包含分组的修改
                 viewGroups = viewGroups.map((g) => {
                   const tempRefs = (g?.[`ref${firstUp(type.name)}`] || [])
-                      .filter((key) => key !== currentData.defKey);
-                  if (currentData.group.includes(g.defKey)) {
-                    tempRefs.push(d[type.defKey]);
+                      .filter((key) => key !== currentData.id);
+                  if (currentData.group.includes(g.id)) {
+                    tempRefs.push(d.id);
                   }
                   return {
                     ...g,
@@ -225,7 +206,7 @@ export const updateAllData = (dataSource, tabs) => {
                   };
                 });
               }
-              return removeUnlessFields(_.omit(currentData, 'group'), ['__key'])
+              return currentData;
             }
             return d;
           }),
@@ -234,11 +215,10 @@ export const updateAllData = (dataSource, tabs) => {
     });
     if (flag) {
       return {
-        dataSource: {
-          ...updateAllEntity(updateAllViewFiledRefEntity(updateAllDiagrams(tempData, needReplace), needReplace), needReplace),
-          viewGroups: updateAllGroups(viewGroups, needReplace),
-        },
-        replace: needReplace,
+        dataSource: updateAllEntity({
+          ...tempData,
+          viewGroups,
+        }, tabsAllData?.diagram || []),
         result: {
           status: true,
         },
@@ -246,7 +226,6 @@ export const updateAllData = (dataSource, tabs) => {
     }
     return {
       dataSource,
-      replace: [],
       result: {
         status: true,
       },
@@ -255,10 +234,10 @@ export const updateAllData = (dataSource, tabs) => {
   return { result: { status: false, message } };
 };
 
-const updateAllEntity = (dataSource, needReplace) => {
+const updateAllEntity = (dataSource, diagrams) => {
   const calcCorrelations = () => {
-    return (dataSource.diagrams || []).reduce((a, b) => {
-      const cells = b.canvasData?.cells || [];
+    return (diagrams || []).reduce((a, b) => {
+      const cells = b?.cells || [];
       const allTable = cells.filter(c => c.shape === 'table');
       return a.concat(cells.filter(c => c.shape === 'erdRelation').map(cell => {
         const sourceId = _.get(cell, 'source.cell', '');
@@ -266,17 +245,17 @@ const updateAllEntity = (dataSource, needReplace) => {
         const relation = (cell.relation || '').split(':');
         const status = relation[0]?.includes('n');
         const myEntity = allTable
-            .filter(t => t.id === (status ? sourceId : targetId))[0]?.originKey;
+          .filter(t => t.id === (status ? sourceId : targetId))[0]?.originKey;
         const refEntity = allTable
-            .filter(t => t.id === (status ? targetId : sourceId))[0]?.originKey;
+          .filter(t => t.id === (status ? targetId : sourceId))[0]?.originKey;
         if (myEntity && refEntity) {
           return {
             myEntity,
             myField: _.get(cell, status ? 'source.port' : 'target.port', '')
-                .split(separator)[0],
+              .split(separator)[0],
             refEntity,
             refField: _.get(cell, status ? 'target.port' : 'source.port', '')
-                .split(separator)[0],
+              .split(separator)[0],
             myRows: (status ? relation[0] : relation[1]) || '',
             refRows: (status ? relation[1] : relation[0]) || '',
             innerType: '',
@@ -287,222 +266,44 @@ const updateAllEntity = (dataSource, needReplace) => {
     }, []);
   };
   const correlations = calcCorrelations();
-  const dictChange = needReplace.filter(n => n.type === 'dict');
   return {
     ...dataSource,
     entities: (dataSource.entities || []).map(e => {
       const current = correlations
-          .filter(c => c.myEntity === e.defKey)
-          .map(c => _.omit(c, 'myEntity'));
-      return {
-        ...e,
-        fields: (e.fields || []).map(f => {
-          if (f.refDict) {
-            const newDict = dictChange.filter(d => d.old === f.refDict)[0];
-            if (newDict) {
-              return {
-                ...f,
-                refDict: newDict.new,
-              };
-            }
-            return f;
-          }
-          return f;
-        }),
-        correlations: current,
-      }
-    })
-  };
-};
-
-const updateAllGroups = (viewGroups, replace) => {
-  if (replace.length === 0){
-    return viewGroups;
-  }
-  const data = {
-    refEntities : replace.filter(r => r.type === 'entity'),
-    refDicts : replace.filter(r => r.type === 'dict'),
-    refViews : replace.filter(r => r.type === 'view'),
-  }
-  return (viewGroups || []).map(g => {
-    return {
-      ...g,
-      ...['refEntities', 'refDicts', 'refViews'].reduce((a, b) => {
+        .filter(c => c.myEntity === e.id)
+        .map(c => _.omit(c, 'myEntity'));
+      if (current) {
         return {
-          ...a,
-          [b]: (g[b] || []).map(r => {
-            const oldIndex = data[b].findIndex(e => e.old === r);
-            if (oldIndex > -1) {
-              return data[b][oldIndex].new;
-            }
-            return r;
-          })
-        }
-      }, {}),
-    }
-  });
-};
-
-export const updateAllDiagrams = (dataSource, replace) => {
-  return {
-    ...dataSource,
-    diagrams: (dataSource.diagrams || []).map(d => {
-      return {
-        ...d,
-        canvasData: {
-          ...d?.canvasData,
-          cells: (d?.canvasData?.cells || []).map(c => {
-            if (c.originKey) {
-              const updateEntity = replace.filter(n => n.type === 'entity' && n.old === c.originKey)[0];
-              if (updateEntity) {
-                return {
-                  ...c,
-                  originKey: updateEntity.new,
-                };
-              }
-              return c;
-            }
-            return c;
-          }),
+          ...e,
+          correlations: current,
         }
       }
+      return e;
     })
   };
-}
-
-export const updateAllViewFiledRefEntity = (dataSource, replace) => {
-  const entityChange = replace.filter(r => r.type === 'entity')
-      .reduce((a, b) => {
-        const tempA = {...a};
-        tempA[b.old] = b;
-        return tempA;
-      }, {});
-  const changeKeys = Object.keys(entityChange);
-  if (changeKeys.length === 0) {
-    return dataSource;
-  }
-  return {
-    ...dataSource,
-    views: (dataSource.views || []).map(v => {
-      if ((v.refEntities || []).some(e => changeKeys.includes(e))){
-        return {
-          ...v,
-          refEntities: (v.refEntities || []).map(e => {
-            return entityChange[e]?.new || e;
-          }),
-          fields: (v.fields || []).map(f => {
-            if (entityChange[f.refEntity]) {
-              const index = entityChange[f.refEntity]
-                  ?.newData
-                  ?.fields
-                  ?.findIndex(nF => nF.defKey === f.refEntityField)
-              if (index > -1) {
-                return {
-                  ...f,
-                  refEntity: entityChange[f.refEntity].new,
-                };
-              }
-              return {
-                ...f,
-                refEntity: '',
-                refEntityField: ''
-              };
-            }
-            return f;
-          }),
-        };
-      }
-      return v;
-    }),
-  }
-};
-
-const refactorAllFields = (dataSource, fuc) => {
-  const allData = getAllTabData();
-  let tempDataSource = {...dataSource};
-  // 视图和数据表
-  const names = [{key: 'entity', keys: 'entities'}, {key: 'view', keys: 'views'}];
-  names.forEach((name) => {
-    const currentCacheData = Object.keys(allData)
-      .filter(d => (allData[d].type === name.key)).map(d => ({tabKey: d, data: allData[d].data || {}}));
-    tempDataSource = {
-      ...tempDataSource,
-      [name.keys]: _.get(dataSource, name.keys, [])
-        .map((e) => {
-          const entity = currentCacheData.filter(cache => cache.data.defKey === e.defKey)[0];
-          let tempEntity = {...e};
-          if (entity) {
-            tempEntity = {
-              ...tempEntity,
-              ...entity.data,
-            };
-          }
-          tempEntity = {
-            ...tempEntity,
-            fields: (tempEntity?.fields || []).map(f => fuc(f)),
-          };
-          if (entity) {
-            setDataByTabId(entity.tabKey, {
-              key: e.defKey,
-              type: name.key,
-              data: tempEntity,
-            }); // 重新更新缓存
-          }
-          return tempEntity;
-        }),
-    }
-  });
-  const otherFields = ['profile.default.entityInitFields', 'standardFields'];
-  // 标准字段库
-  // 默认字段库
-  otherFields.forEach((other) => {
-    tempDataSource = _.set(tempDataSource, other, _.get(tempDataSource, other, [])
-      .map(f => fuc(f)));
-  });
-  return tempDataSource;
-}
-
-export const updateAllFieldsUiHint = (dataSource, changes) => {
-  return refactorAllFields(dataSource, (f) => {
-    const change = changes.filter(c => c.old === f.uiHint)[0];
-    return {
-      ...f,
-      uiHint: change ? change.new : (typeof f.uiHint === 'object' ? '' : f.uiHint),
-    };
-  });
-};
-
-export const updateAllFieldsType = (dataSource, oldDomain, newDomain) => {
-  // 默认数据库发生变化时 所有的数据类型全部更换 需要从缓存读取数据进行替换
-  const mapFields = (f) => {
-    return {
-      ...f,
-      domain: f.domain === oldDomain ? newDomain : (f.domain || ''),
-    };
-  };
-  return refactorAllFields(dataSource, mapFields);
 };
 
 export const importFields = (entities, fields, data, useDefaultFields, onlyEntityFields) => {
   const allFields = [...(data?.fields || [])].filter(f => !f.refEntity); // 过滤掉从实体中获取的
   if (useDefaultFields) {
-    allFields.push(...emptyProjectTemplate.profile.default.entityInitFields);
+    allFields.push(...emptyProjectTemplate.profile.default.entityInitFields
+      .map(f => ({...f, id: Math.uuid()})));
   }
   const allFieldKeys = allFields.map(f => f.defKey);
   const newFields = fields.map((v) => {
     const splitArray = v.split(separator);
     const entity = splitArray[0];
     const field = splitArray[1];
-    const tempEntity = entities?.filter(e => e.defKey === entity)[0] || {};
-    const tempField = tempEntity?.fields?.filter(f => f.defKey === field)[0] || {};
+    const tempEntity = entities?.filter(e => e.id === entity)[0] || {};
+    const tempField = tempEntity?.fields?.filter(f => f.id === field)[0] || {};
     const tempKey = validateKey(tempField.defKey, allFieldKeys);
     allFieldKeys.push({defKey: tempKey});
     return {
       ...tempField,
+      id: Math.uuid(),
       defKey: tempKey,
       refEntity: entity,
       refEntityField: field,
-      __key: Math.uuid(),
     };
   });
   return onlyEntityFields ? newFields : newFields.concat(allFields);
@@ -620,12 +421,17 @@ export const emptyDomain = {
   len: '',
   scale: '',
   uiHint: '',
+  id: ''
 };
 
 export const emptyDataType = {
   defKey: '',
   defName: '',
 };
+
+export const emptyDataTypeSupport = {
+  defKey: '',
+}
 
 export const emptyCodeTemplate = {
   applyFor: '',
@@ -637,6 +443,7 @@ export const emptyDict = {
   defName: '',
   sort: '',
   intro: '',
+  id: '',
   items: [],
 };
 
@@ -665,9 +472,9 @@ export const validateStandardFields = (data) => {
   const fields = data.reduce((a, b) => a.concat(b.fields), []);
   const fieldKeys = fields.map(d => d.defKey);
   return (groupKeys.length === new Set(groupKeys).size)
-      && (groupKeys.length === groupKeys.map(g => !!g).length)
+      && (groupKeys.length === groupKeys.filter(g => !!g).length)
       && (fieldKeys.length === new Set(fieldKeys).size)
-      && (fieldKeys.length === fieldKeys.map(g => !!g).length);
+      && (fieldKeys.length === fieldKeys.filter(g => !!g).length);
 }
 
 export const validateDictBase = (dict) => {
@@ -729,9 +536,9 @@ export const validateFields = (fields) => {
 };
 
 export const getEntityOrViewByName = (dataSource, name) => {
-  const entity = (dataSource?.entities || []).filter(e => e.defKey === name)[0];
+  const entity = (dataSource?.entities || []).filter(e => e.id === name)[0];
   if (!entity) {
-    return (dataSource?.views || []).filter(e => e.defKey === name)[0];
+    return (dataSource?.views || []).filter(e => e.id === name)[0];
   }
   return entity;
 };
@@ -842,6 +649,7 @@ export const getViewColumn = () => {
 
 export const getEmptyEntity = (fields = [], properties = {}) => {
   return {
+    id: Math.uuid(),
     defKey: '',
     defName: '',
     comment: '',
@@ -883,6 +691,8 @@ export const getEmptyView = () => {
 export const emptyDiagram = {
   defKey: '',
   defName: '',
+  id: '',
+  relationType: 'field',
   canvasData: {}
 };
 
@@ -1155,32 +965,90 @@ export  const getTextWidth = (text, font, weight = 'normal') => {
   return Math.ceil(width);
 };
 
-export  const calcNodeData = (nodeData, dataSource, groups) => {
-  // 节点源数据
+export const reset = (f, dataSource, [key, id]) => {
+  // domains,dicts,uiHint
+  // 将defKey重置回去
+  return {
+    ...f,
+    domain: f.domain ? (dataSource.domains.filter(d => d[key] === f.domain)[0]?.[id] || '') : '',
+    refDict: f.refDict ? (dataSource.dicts.filter(d => d[key] === f.refDict)[0]?.[id] || '') : '',
+    uiHint: f.uiHint ? (dataSource.uiHint.filter(d => d[key] === f.uiHint)[0]?.[id] || '') : '',
+  };
+};
+
+export const transform = (f, dataSource, code) => {
   // 获取该数据表需要显示的字段
   const domains = dataSource?.domains || [];
-  const getDomain = (domain) => {
-    return domains.filter(d => d.defKey === domain)[0]?.defName || domain;
-  };
+  const entities = dataSource?.entities || [];
+  const mappings = dataSource?.dataTypeMapping?.mappings || [];
+  const db = _.get(dataSource, 'profile.default.db', _.get(dataSource, 'profile.dataTypeSupports[0].id'));
+  const dicts = dataSource?.dicts || [];
+  const uiHints = _.get(dataSource, 'profile.uiHint', []);
+  const temp = {};
+  if (f.domain){
+    // 转换数据域
+    const domain = domains.filter(dom => dom.id === f.domain)[0] || { len: '', scale: '' };
+    const dataType = mappings.filter(m => m.id === domain.applyFor)[0]?.[code || db] || '';
+    temp.len = domain.len === undefined ? '' : domain.len;
+    temp.scale = domain.scale === undefined ? '' : domain.scale;
+    temp.type = dataType;
+    temp.domain = domain.defName || domain.defKey;
+  }
+  // 转换数据字典
+  if (f.refDict) {
+    const dict = dicts.filter(d => d.id === f.refDict)[0];
+    temp.refDict = dict?.defName || dict?.defKey;
+  }
+  // 转换UI建议
+  if (f.uiHint) {
+    const uiHint = uiHints.filter(u => u.id === f.uiHint)[0];
+    temp.uiHint = uiHint?.defName || uiHint?.defKey;
+  }
+  // 转换引用数据表  如果是视图
+  if (entities && f.refEntity) {
+    const entity = entities.filter(e => e.id === f.refEntity)[0];
+    if (entity) {
+      const field = (entity.fields || []).filter(fie => f.refEntityField === fie.id)[0];
+      temp.refEntity = entity.defKey || '';
+      temp.refEntityField = field?.defKey || '';
+    }
+  }
+  return temp;
+};
+
+export  const calcNodeData = (preData, nodeData, dataSource, groups) => {
+  // 节点源数据
   const headers = nodeData?.headers.filter(h => !h.hideInGraph);
   const fields = (nodeData?.fields || []).filter(f => !f.hideInGraph)
-      .map(f => ({...f, domain: getDomain(f.domain)}));
+      .map(f => ({...f, ...transform(f, dataSource)}));
   // 计算表头的宽度
-  const headerWidth = getTextWidth(
-      `${nodeData.defKey}${nodeData.count > 0 ? `:${nodeData.count}` : ''}(${nodeData.defName})`,
-      12, 'bold') + 20;
+  const headerText = `${nodeData.defKey}${nodeData.count > 0 ? `:${nodeData.count}` : ''}(${nodeData.defName})`;
+  const headerWidth = getTextWidth(headerText, 12, 'bold') + 20;
   // 计算每一列最长的内容
   const maxWidth = {};
   const defaultWidth = {
     primaryKey: 30,// 主键和外键的默认宽度
     notNull: 70,// 非空默认宽度
   }
+  const preFields = preData?.fields || [];
   fields.forEach((f) => {
+    const preF = preFields.filter(p => p.id === f.id)[0];
     Object.keys(f).forEach((fName) => {
       if (!maxWidth[fName]) {
         maxWidth[fName] = 0;
       }
-      const fieldWidth = defaultWidth[fName] || getTextWidth((f[fName] || '').toString(), 12);
+      const getFieldWidth = () => {
+        const fieldValue = (f[fName] || '').toString();
+        if (preF) {
+          const preFieldValue = (preF[fName] || '').toString();
+          if (preFieldValue === fieldValue && preData.maxWidth) {
+            return preData.maxWidth[fName] || 0;
+          }
+          return getTextWidth(fieldValue, 12);
+        }
+        return getTextWidth(fieldValue, 12);
+      };
+      const fieldWidth = defaultWidth[fName] || getFieldWidth();
       if (maxWidth[fName] < fieldWidth) {
         maxWidth[fName] = fieldWidth;
       }
@@ -1209,11 +1077,11 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
       return a.concat([{
         group: 'in',
         args: { x: 0, y: 40 + i * 23 },
-        id: `${b.defKey}${separator}in`,
+        id: `${b.id}${separator}in`,
       }, {
         group: 'out',
         args: { x: 0 + width, y: 40 + i * 23 },
-        id: `${b.defKey}${separator}out`,
+        id: `${b.id}${separator}out`,
       }]);
     }, [])
         .concat([
@@ -1250,6 +1118,30 @@ export  const calcNodeData = (nodeData, dataSource, groups) => {
     headers,
     ports,
   };
+};
+
+export const mapData2Table = (n, dataSource, updateFields, groups, commonPorts,
+                              relationType, commonEntityPorts) => {
+  const nodeData = dataSource?.entities?.filter(e => e.id === n.originKey)[0];
+  if (nodeData) {
+    const { width, height, fields, headers, maxWidth, ports } = calcNodeData(n.data, nodeData, dataSource, groups);
+    return {
+      ...n,
+      size: {
+        width,
+        height,
+      },
+      ports: relationType === 'entity' ? (n.ports || commonEntityPorts) : ports,
+      updateFields,
+      data: {
+        ...nodeData,
+        fields,
+        headers,
+        maxWidth,
+      },
+    };
+  }
+  return nodeData;
 };
 
 export const calcCellData = (cells = [], dataSource, updateFields, groups, commonPorts,
@@ -1291,26 +1183,8 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
     }
   });
   const nodes = cells.filter(c => c.shape === 'table').map((n) => {
-    const nodeData = dataSource?.entities?.filter(e => e.defKey === n.originKey)[0];
-    if (nodeData) {
-      const { width, height, fields, headers, maxWidth, ports } = calcNodeData(nodeData, dataSource, groups);
-      return {
-        ...n,
-        size: {
-          width,
-          height,
-        },
-        ports: relationType === 'entity' ? (n.ports || commonEntityPorts) : ports,
-        updateFields,
-        data: {
-          ...nodeData,
-          fields,
-          headers,
-          maxWidth,
-        },
-      };
-    }
-    return nodeData;
+    return mapData2Table(n, dataSource, updateFields, groups, commonPorts,
+      relationType, commonEntityPorts);
   }).filter(n => !!n);
   const allNodes = (nodes || []).concat(remarks || []).concat(polygon || []);
   const edges = cells.filter(c => c.shape === 'erdRelation')
@@ -1393,6 +1267,9 @@ export const transformationData = (oldDataSource) => {
       };
     }
   }
+  if (compareVersion('3.5.0', oldDataSource.version.split('.'))) {
+    tempDataSource = reduceProject(tempDataSource, 'defKey');
+  }
   return tempDataSource;
 };
 
@@ -1414,3 +1291,376 @@ export const emptyDictSQLTemplate =  {
   content: ''
 };
 
+export const calcField = (f, entities = [], dicts = [], domains = [], uiHint = [], type) => {
+  const other = {};
+  if (f.refEntity) {
+    const newEntity = entities.filter(e => f.refEntity === e[type])[0];
+    if (newEntity) {
+      other.refEntity = newEntity.id || '';
+      other.refEntityField = newEntity
+        .fields?.filter(field => field[type] === f.refEntityField)[0]?.id || '';
+    }
+  }
+  return {
+    ...f,
+    refDict: f.refDict ? dicts.filter(d => d[type] === f.refDict)[0]?.id : (f.refDict || ''),
+    domain: f.domain ? domains.filter(d => d[type] === f.domain)[0]?.id : (f.domain || ''),
+    uiHint: f.uiHint ? uiHint.filter(u => u[type] === f.uiHint)[0]?.id : (f.uiHint || ''),
+    id: Math.uuid(),
+    old: type === 'defKey' ? f.defKey : f.id,
+    ...other,
+  };
+};
+
+export const calcDomains = (domains = [], mapping = [], type) => {
+  return domains.map(d => {
+    return {
+      ...d,
+      applyFor: mapping.filter(m => m[type] === d.applyFor)[0]?.id || d.applyFor,
+    };
+  })
+};
+
+export const calcEntityOrView = (data = [], dicts, domains, uiHint, entities, type) => {
+  const tempData = data.map(d => ({
+    ...d,
+    old: type === 'defKey' ? d.defKey : d.id,
+    id: Math.uuid()
+  }));
+  const newData = tempData.map(e => {
+    const fields = e.fields?.map(f => calcField(f, entities || tempData, dicts, domains, uiHint, type)) || [];
+    return {
+      ...e,
+      fields,
+      indexes: e.indexes?.map(i => {
+        return {
+          ...i,
+          id: Math.uuid(),
+          fields: i.fields?.map(f => {
+            return {
+              ...f,
+              fieldDefKey: fields.filter(f => f[type] === f.fieldDefKey)[0]?.id,
+              id: Math.uuid(),
+            };
+          })
+        };
+      }) || [],
+    };
+  });
+  return newData.map(e => {
+    if (e.correlations) {
+      return {
+        ...e,
+        correlations: e.correlations?.map(c => {
+          const refEntity = newData.filter(e => e[type] === c.refEntity)[0];
+          if (!refEntity) {
+            return null;
+          }
+          return {
+            ...c,
+            myField: e.fields?.filter(f => f[type] === c.myField)[0]?.id || c.myField,
+            refEntity: refEntity.id,
+            refField: refEntity?.fields?.filter(f => f[type] === c.refField)[0]?.id || c.refField,
+          }
+        })?.filter(c => !!c),
+      };
+    }
+    return e;
+  })
+};
+
+export const reduceProject = (emptyProject, type) => {
+  const dataTypeSupports = emptyProject?.profile?.dataTypeSupports?.map(d => {
+      return {
+        defKey: type === 'defKey' ? d : d.defKey,
+        id: Math.uuid(),
+        old: type === 'defKey' ? d : d.id,
+      };
+    }) || [];
+  const codeTemplates = emptyProject.profile?.codeTemplates.map(c => {
+    return {
+      ...c,
+      applyFor: c.applyFor !== 'dictSQLTemplate' ? dataTypeSupports
+        .filter(d => d[type] === c.applyFor)[0]?.id : 'dictSQLTemplate',
+    };
+  }) || [];
+  const uiHint = emptyProject.profile?.uiHint?.map(u => {
+    return {
+      ...u,
+      old: type === 'defKey' ? u.defKey : u.id,
+      id: Math.uuid(),
+    };
+  }) || [];
+  const dbConn = emptyProject?.dbConn?.map(d => {
+    return {
+      ...d,
+      type: dataTypeSupports.filter(t => t.old === d.type)[0]?.id || d.type,
+    };
+  });
+  const mappings = emptyProject?.dataTypeMapping?.mappings?.map(m => {
+    return {
+      defKey: m.defKey,
+      defName: m.defName,
+      old: type === 'defKey' ? m.defKey : m.id,
+      id: Math.uuid(),
+      ...dataTypeSupports.reduce((pre, next) => {
+        return {
+          ...pre,
+          [next.id]: m[next.old],
+        };
+      }, {}),
+    };
+  });
+  const domains = calcDomains(emptyProject?.domains, mappings, type)
+    ?.map((d) => ({
+      ...d,
+      id: Math.uuid(),
+      old: type === 'defKey' ? d.defKey : d.id,
+    })) || [];
+  const dicts = emptyProject?.dicts?.map(d => {
+    return {
+      ...d,
+      old: type === 'defKey' ? d.defKey : d.id,
+      id: Math.uuid(),
+      items: (d.items || []).map(i => {
+        return {
+          ...i,
+          id: Math.uuid(),
+        };
+      }),
+    };
+  }) || [];
+  const entities = calcEntityOrView(emptyProject?.entities || [], dicts, domains, uiHint, null, type);
+  const calcId = (data = [], refKeys) => {
+    if (refKeys) {
+      return data
+        .filter(d => refKeys.includes(d[type]))
+        .map(d => d.id);
+    }
+    return [];
+  };
+  const getFieldId = (c, cells, name) => {
+    const cell = cells.filter(ce => ce.id === c[name]?.cell)[0];
+    const entity = entities.filter(e => e[type] === cell?.originKey)[0];
+    if (entity) {
+      const field = entity?.fields?.filter(f => f[type] === c[name]?.port?.split(separator)[0])[0];
+      return `${field?.id || ''}${separator}${c[name]?.port?.split(separator)[1]}`;
+    }
+    return c[name]?.port;
+  };
+  const diagrams = emptyProject?.diagrams?.map(d => {
+    return {
+      ...d,
+      old: type === 'defKey' ? d.defKey : d.id,
+      id: Math.uuid(),
+      canvasData: {
+        ...d.canvasData,
+        cells: (d.canvasData?.cells || []).map(c => {
+          if (c.shape === 'table') {
+            return {
+              ...c,
+              originKey: entities.filter(e => e[type] === c.originKey)[0]?.id,
+            };
+          } else if (c.shape === 'erdRelation') {
+            return {
+              ...c,
+              target: {
+                ...c.target,
+                port: getFieldId(c, d.canvasData?.cells, 'target'),
+              },
+              source: {
+                ...c.source,
+                port: getFieldId(c, d.canvasData?.cells, 'source'),
+              },
+            };
+          }
+          return c;
+        })
+      }
+    };
+  }) || [];
+  const views = calcEntityOrView(emptyProject?.views || [], dicts, domains, uiHint, entities, type).map(v => {
+    return {
+      ...v,
+      refEntities: (v.refEntities ? entities.filter(e => {
+        return v.refEntities.includes(e[type])
+      }): []).map(e => e.id),
+    };
+  });
+  return {
+    ...emptyProject,
+    profile: {
+      ...emptyProject.profile,
+      default: {
+        ...emptyProject.profile?.default,
+        db: (dataTypeSupports || []).filter(d => d[type] === emptyProject.profile?.default?.db)[0]?.id || '',
+        entityInitFields: emptyProject.profile
+          ?.default?.entityInitFields?.map(f => {
+            return calcField(f, entities, dicts, domains, uiHint, type);
+          }).map(f => _.omit(f, 'old'))
+      },
+      dataTypeSupports: dataTypeSupports.map(d => _.omit(d, 'old')),
+      codeTemplates,
+      uiHint: uiHint.map(u => _.omit(u, 'old')),
+    },
+    dicts: dicts.map(d => _.omit(d, 'old')),
+    entities: entities.map(d => {
+      return {
+        ..._.omit(d, 'old'),
+        fields: (d.fields || []).map(f => ({..._.omit(f, 'old')}))
+      };
+    }),
+    views: views.map(v => {
+      return {
+        ..._.omit(v, 'old'),
+        fields: (v.fields || []).map(f => ({..._.omit(f, 'old')}))
+      };
+    }),
+    dataTypeMapping: {
+      ...emptyProject?.dataTypeMapping,
+      mappings: mappings.map(m => _.omit(m, 'old')),
+    },
+    dbConn,
+    domains: domains.map(d => _.omit(d, 'old')),
+    viewGroups: emptyProject?.viewGroups?.map(v => {
+      return {
+        ...v,
+        id: Math.uuid(),
+        refEntities: calcId(entities, v.refEntities),
+        refDicts: calcId(dicts, v.refDicts),
+        refViews: calcId(views, v.refViews),
+        refDiagrams: calcId(diagrams, v.refDiagrams),
+      };
+    }),
+    diagrams: diagrams.map(d => _.omit(d, 'old')),
+    standardFields: (emptyProject?.standardFields || []).map(g => {
+      return {
+        ...g,
+        id: Math.uuid(),
+        fields: (g.fields || []).map(f => {
+          return calcField(f, entities, dicts, domains, uiHint, type);
+        }).map(f => _.omit(f, ['old', '__key']))
+      };
+    })
+  }
+};
+
+
+export const findExits = (pre = [], next = []) => {
+  // 先找出已经存在的
+  return next.map((d) => {
+    const index = pre.findIndex(cd => cd.defKey === d.defKey);
+    if (index >= 0) {
+      // 已经存在的需要替换掉id
+      return {
+        old: d.id,
+        new: pre[index].id,
+      };
+    }
+    return null;
+  }).filter(d => !!d);
+};
+
+// 需要替换domain的applyFor
+// 实体和视图以及关系图
+// 1.替换数据域,更新applyFor
+export const replaceDomainsApplyFor = (domains, replace) => {
+  return domains.map(d => {
+    const needReplace = replace.filter(r => r.old === d.applyFor)[0];
+    if (needReplace){
+      return {
+        ...d,
+        applyFor: needReplace.new,
+      };
+    }
+    return d;
+  });
+}
+// 2.替换实体或者视图
+export const replaceEntitiesOrViews = (data, replace, entities = []) => {
+  const getEntityAndField = (entityId, fieldId) => {
+    const refEntity = replace.entities.filter(r => r.old === entityId)[0]?.new;
+    if (refEntity) {
+      const oldEntity = entities.filter(e => entityId === e.id)[0];
+      const newEntity = entities.filter(e => refEntity === e.id)[0];
+      if (newEntity && oldEntity) {
+        const oldField = oldEntity.fields?.filter(f => f.id === fieldId)[0]?.defKey;
+        const newField = newEntity.fields?.filter(f => f.defKey === oldField)[0]?.id;
+        return {
+          entity: refEntity,
+          field: newField
+        };
+      }
+    }
+    return {
+      entity: entityId,
+      field: fieldId,
+    };
+  };
+  const replaceField = (f) => {
+    const other = {};
+    if (f.refEntity) {
+      const { entity, field } = getEntityAndField(f.refEntity, f.refEntityField);
+      other.refEntity = entity || '';
+      other.refEntityField = field || '';
+    }
+    return {
+      ...f,
+      refDict: replace.dicts.filter(r => r.old === f.refDict)[0]?.new || f.refDict,
+      domain: replace.domains.filter(r => r.old === f.domain)[0]?.new || f.domain,
+      uiHint: replace.uiHint.filter(r => r.old === f.uiHint)[0]?.new || f.uiHint,
+      ...other,
+    };
+  }
+  return data.map(e => {
+    const otherData = {};
+    const tempE = replace.entities.filter(re => re.old === e.id)[0];
+    if (e.refEntities) {
+      otherData.refEntities = e.refEntities.map(re => {
+        const ref = replace.entities.filter(ret => ret.old === re)[0];
+        if (ref) {
+          return ref.new;
+        }
+        return re;
+      });
+    }
+    if (e.correlations) {
+      otherData.correlations = e.correlations?.map(c => {
+        const my = getEntityAndField(e.id, c.myField);
+        const ref = getEntityAndField(c.refEntity, c.refField);
+        return {
+          ...c,
+          myField: my.field,
+          refEntity: ref.entity,
+          refField: ref.field,
+        }
+      });
+    }
+    return {
+      ...e,
+      id: tempE?.new || e.id,
+      fields: (e.fields || []).map(f => replaceField(f)),
+      ...otherData,
+    };
+  })
+};
+// 3.替换关系图
+export const replaceDiagrams = (data, replace) => {
+  return data?.map(d => {
+    return {
+      ...d,
+      canvasData: {
+        ...d.canvasData,
+        cells: (d.canvasData?.cells || []).map(c => {
+          if (c.shape === 'table') {
+            return {
+              ...c,
+              originKey: replace.filter(r => r.old === c.originKey)[0]?.new || c.originKey,
+            };
+          }
+          return c;
+        })
+      }
+    };
+  })
+}

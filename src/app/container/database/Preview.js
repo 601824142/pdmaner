@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import {CodeHighlight, CodeEditor, FormatMessage, openModal, Button} from 'components';
-import _ from 'lodash/object';
 
-
-import {getDemoTemplateData, getDataByTemplate, getFieldData} from '../../../lib/json2code_util';
+import {getDemoTemplateData, getDataByTemplate} from '../../../lib/json2code_util';
+import { transform } from '../../../lib/datasource_util';
 import './style/index.less';
 import {getPrefix} from '../../../lib/prefixUtil';
 import DotHelp from './DotHelp';
@@ -33,9 +32,6 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
   let jsonData = JSON.parse(demoData);
   if ('view' in jsonData || 'entity' in jsonData) {
     const name = 'view' in jsonData ? 'view' : 'entity';
-    const currentCode = _.get(dataSource, 'profile.default.db', '');
-    const datatype = _.get(dataSource, 'dataTypeMapping.mappings', []);
-    const domains = _.get(dataSource, 'domains', []);
     jsonData = {
       ...jsonData,
       [name]: {
@@ -43,7 +39,7 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
         fields: (jsonData[name].fields || []).map((f) => {
           return {
             ...f,
-            ...getFieldData(datatype, domains, f, currentCode),
+            ...transform(f, dataSource),
           };
         }),
       },

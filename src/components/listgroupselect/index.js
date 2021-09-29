@@ -13,16 +13,16 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
   const currentGroup = useMemo(() => {
     return groups
         .concat(data
-            .filter(d => groups.findIndex(g => g.defKey === d.defKey) < 0)
+            .filter(d => groups.findIndex(g => g.id === d.id) < 0)
             .map(g => ({...g, fields: []})));
   },[groups]);
   const newData = useMemo(() => data.reduce((a, b) => {
-    return a.concat(b.fields.map(f => ({...f, group: b.defKey})));
+    return a.concat(b.fields.map(f => ({...f, group: b.id})));
   }, []), [data]);
   const currentData = arrayData || groups.reduce((a, b) => a.concat(b.fields), [groups]);
-  const newDataKeys = useMemo(() => newData.map(n => n.defKey), [newData]);
+  const newDataKeys = useMemo(() => newData.map(n => n.id), [newData]);
   const repeatData = useMemo(() => currentData.map(f => f.defKey)
-      .filter(f => newDataKeys.includes(f)), [data, groups]);
+      .filter(f => newData.map(n => n.defKey).includes(f)), [data, groups]);
   const [checked, setChecked] = useState([...defaultSelected]);
   useEffect(() => {
     setChecked([...defaultSelected]);
@@ -30,18 +30,19 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
   const checkedRef = useRef(null);
   checkedRef.current = checked;
   const importDataRef = useRef([...newData]);
+  importDataRef.current = [...newData];
   useImperativeHandle(ref, () => {
     return {
       getData: () => {
-        const current = importDataRef.current.filter(f => checkedRef.current.includes(f.defKey));
+        const current = importDataRef.current.filter(f => checkedRef.current.includes(f.id));
         return currentGroup.map((g) => {
           const currentFields = current
-              .filter(c => c.group === g.defKey)
+              .filter(c => c.group === g.id)
               .map(c => _.omit(c, ['group']));
           return {
             ...g,
             fields: g.fields
-                .filter(f => currentFields.findIndex(c => c.defKey === f.defKey) < 0)
+                .filter(f => currentFields.findIndex(c => c.id === f.id) < 0)
                 .concat(currentFields),
           };
         });
@@ -53,14 +54,14 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
       setChecked([...defaultSelected || []]);
     } else {
       setChecked(() => {
-        return [...new Set(importDataRef.current.map(d => d.defKey))];
+        return [...new Set(importDataRef.current.map(d => d.id))];
       });
     }
   };
-  const _onGroupChange = (e, defKey) => {
-    const keys = [].concat(defKey);
+  const _onGroupChange = (e, id) => {
+    const keys = [].concat(id);
     importDataRef.current = importDataRef.current.map((f) => {
-      if (keys.includes(f.defKey)) {
+      if (keys.includes(f.id)) {
         return {
           ...f,
           group: e.target.value,
@@ -74,12 +75,12 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
       return pre.filter(p => !keys.includes(p));
     });
   };
-  const _checkBoxChange = (e, defKey) => {
+  const _checkBoxChange = (e, id) => {
     setChecked((pre) => {
       if (!e.target.checked) {
-        return pre.filter(p => p !== defKey);
+        return pre.filter(p => p !== id);
       }
-      return pre.concat(defKey);
+      return pre.concat(id);
     });
   };
   const calcType = () => {
@@ -112,7 +113,7 @@ export default React.memo(forwardRef(({allowClear = false, notAllowEmpty = true,
         defaultSelected={defaultSelected}
         currentGroup={currentGroup}
         newData={[...new Set(checked)].map((c) => {
-          return newData.filter(d => d.defKey === c)[0];
+          return newData.filter(d => d.id === c)[0];
         }).filter(d => !!d)}
         prefix={currentPrefix}
         onGroupChange={_onGroupChange}

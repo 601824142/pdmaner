@@ -4,21 +4,21 @@ import {Checkbox, FormatMessage, SearchInput} from 'components';
 const Item = React.memo(({prefix, repeatData, checkBoxChange, checked, d, i, defaultSelected}) => {
   return <tr
     className={`${prefix}-listselect-left-item ${prefix}-listselect-left-item-${repeatData.includes(d.defKey) ? 'repeat' : 'normal'}`}
-    key={d.defKey}
+    key={d.id}
   >
     <td>{i + 1}</td>
     <td>
       <Checkbox
-        disable={(defaultSelected || []).includes(d.defKey)}
-        onChange={e => checkBoxChange(e, d.defKey)}
-        checked={checked.includes(d.defKey)}
+        disable={(defaultSelected || []).includes(d.id)}
+        onChange={e => checkBoxChange(e, d.id)}
+        checked={checked.includes(d.id)}
     >
         {`${d.defKey}[${d.defName || d.defKey}]`}{repeatData.includes(d.defKey) ? <div>[{FormatMessage.string({id: 'components.listSelect.repeatMessage'})}]</div> : ''}
       </Checkbox></td>
   </tr>;
 }, (pre, next) => {
-  return (pre.checked.includes(pre.d.defKey) && next.checked.includes(next.d.defKey)) ||
-      (!pre.checked.includes(pre.d.defKey) && !next.checked.includes(next.d.defKey));
+  return (pre.checked.includes(pre.d.id) && next.checked.includes(next.d.id)) ||
+      (!pre.checked.includes(pre.d.id) && !next.checked.includes(next.d.id));
 });
 
 export default React.memo(({prefix, newData, checkBoxChange,
@@ -45,7 +45,7 @@ export default React.memo(({prefix, newData, checkBoxChange,
               defaultSelected={defaultSelected}
               i={i}
               prefix={prefix}
-              key={`${d.defKey}${i}`}
+              key={`${d.id}${i}`}
               d={d}
               checkBoxChange={checkBoxChange}
               repeatData={repeatData}

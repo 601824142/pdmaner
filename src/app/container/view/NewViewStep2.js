@@ -16,9 +16,9 @@ export default React.memo(forwardRef(({data = [], onChange, getData}, ref) => {
     <Tree
       placeholder={FormatMessage.string({id: 'view.fieldSearchPlaceholder'})}
       dataSource={treeData.map(e => ({
-          key: e.defKey,
+          key: e.id,
           value: `${e.defKey}-${e.defName}`,
-          children: (e?.fields || []).map(f => ({key: `${e.defKey}${separator}${f.defKey}`, value: `${f.defKey}-${f.defName}`})),
+          children: (e?.fields || []).map(f => ({key: `${e.id}${separator}${f.id}`, value: `${f.defKey}-${f.defName}`})),
         }))}
       onChange={value => onChange(value, 'fields')}
     />

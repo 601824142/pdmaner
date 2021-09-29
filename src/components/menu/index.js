@@ -92,14 +92,14 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     }
     updatePosition({left: e.clientX, top: e.clientY});
   };
-  const getClassName = (baseClass, key, childKey, type) => {
+  const getClassName = (baseClass, key, childKey, type, offset) => {
     let tempClass = '';
-    if (expandMenu.includes(key)) {
+    if (expandMenu.includes(key) || offset) {
       tempClass = `${baseClass}show`;
     } else {
       tempClass = `${baseClass}hidden`;
     }
-    if (selectedMenu.some(s => (s.key === childKey) && (s.type === type))) {
+    if (offset === undefined && selectedMenu.some(s => (s.key === childKey) && (s.type === type))) {
       tempClass += ` ${baseClass}selected`;
     }
     if (insert === childKey) {
@@ -107,11 +107,12 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     }
     return tempClass;
   };
-  const tempDragTable = (e, child, key, i) => {
+  const tempDragTable = (e, child, key, i, parentKey) => {
     if (e.currentTarget.nodeName === 'SPAN') {
       startRef.current = {
         index: i,
         type: child.type,
+        parentKey,
       };
       e.stopPropagation();
     } else {
@@ -119,25 +120,28 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
       dragTable && dragTable(e, key);
     }
   };
-  const rowOnDragOver = (e, key) => {
-    updateInsert(key);
+  const rowOnDragOver = (e, key, pKey) => {
+    if ((startRef.current.parentKey === pKey) && (key !== pKey)){
+      updateInsert(key);
+    }
     e.preventDefault();
+    e.stopPropagation();
   };
-  const rowOnDrop = (i, child, parentKey, menu) => {
-    if ((child.type === startRef.current.type) &&
+  const rowOnDrop = (e, i, group, parentKey, menu) => {
+    if ((startRef.current.parentKey === parentKey) &&
         (startRef.current.index > -1) && (startRef.current.index !== i)) {
-      const name = allType.concat({ type: 'dataType', name: 'profile.dataTypeSupports', defKey: '' }).filter(t => t.type === child.type)[0];
+      const name = allType.concat({ type: 'dataType', name: 'profile.dataTypeSupports', defKey: 'defKey' }).filter(t => t.type === startRef.current.type)[0];
       if (name) {
-        if (parentKey) {
+        if (group) {
           update && update({
             ...dataSource,
             viewGroups: (dataSource.viewGroups || []).map((g) => {
-              if (g.defKey === parentKey) {
+              if (g.id === group) {
                 const refName = `ref${firstUp(name.name)}`;
                 return {
                   ...g,
                   [refName]: moveArrayPosition(g[refName]
-                          .filter(c => menu.children.findIndex(m => m.defKey === c) > -1),
+                          .filter(c => menu.children.findIndex(m => m.id === c) > -1),
                       startRef.current.index, i > startRef.current.index ? i : i + 1),
                 };
               }
@@ -151,15 +155,23 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
                 name.name,
                 moveArrayPosition(_.get(dataSource, name.name)
                         .filter(c => menu.children
-                          .findIndex(m => m.defKey === (name.type === 'dataType' ? c : c.defKey)) > -1),
+                          .findIndex(m => m.id === c.id) > -1),
                     startRef.current.index, i > startRef.current.index ? i : i + 1),
             ),
           });
         }
+      } else {
+        update && update({
+          ...dataSource,
+          viewGroups: moveArrayPosition(dataSource.viewGroups || [],
+            startRef.current.index, i > startRef.current.index ? i : i + 1),
+        });
       }
     }
     startRef.current = { index: -1 };
     updateInsert('');
+    e.preventDefault();
+    e.stopPropagation();
   };
   const onContextMenuClick = (...args) => {
     contextMenuClick && contextMenuClick(...args, (type) => {
@@ -176,6 +188,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
           m.type === 'mapping' ||
           m.type === 'domain' ||
           m.type === 'diagram' ||
+          m.type === 'groups' ||
           m.type === 'dataType';
     } else if (draggable){
       return m.type === 'entity';
@@ -185,13 +198,17 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
   useEffect(() => {
     //updateSelectedMenu([]);
   }, [groupType]);
-  const getMenuItem = (parentMenu, menu = parentMenu, offsetNumber = 0) => {
+  const getMenuItem = (parentMenu, menu = parentMenu, offsetNumber = 0, pI) => {
     const parentKey = menu === parentMenu ? null : parentMenu[defKey];
+    const ulDraggable = getDraggable(menu);
     return (
       <ul
-        className={`${currentPrefix}-menu-container-fold-item-child-${(expandMenu.includes(parentMenu[defKey]) || offsetNumber === 0) ? 'show' : 'hidden'}`}
+        className={getClassName(itemBase, parentMenu[defKey],
+          menu[defKey],  menu[defKey], offsetNumber === 0)}
         key={menu[defKey]}
         onContextMenu={e => _onContextMenu(e, menu[defKey], menu.type, parentKey)}
+        onDragOver={e => rowOnDragOver(e, menu[defKey], parentKey)}
+        onDrop={e => rowOnDrop(e, pI, parentKey, parentKey, menu)}
       >
         <span
           style={{paddingLeft: 8 * offsetNumber}}
@@ -207,13 +224,31 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
               {getName && getName(menu) || menu[defName]}{menu.type !== 'groups' && `(${menu[children].length})`}
             </span>
           </span>
-          <Icon
-            style={{
-              transform: `${expandMenu.includes(menu[defKey]) ? 'rotate(0deg)' : 'rotate(90deg)'}`,
-            }}
-            type='fa-angle-down'
-            className={`${currentPrefix}-menu-container-fold-item-right`}
-          />
+          <span className={`${currentPrefix}-menu-container-fold-item-right-group`}>
+            <Icon
+              style={{
+                transform: `${expandMenu.includes(menu[defKey]) ? 'rotate(0deg)' : 'rotate(90deg)'}`,
+              }}
+              type='fa-angle-down'
+              className={`${currentPrefix}-menu-container-fold-item-right`}
+            />
+            {
+              ulDraggable && <span
+                className={`${currentPrefix}-menu-container-fold-item-drag`}
+                draggable
+                onDragStart={e => tempDragTable(e, menu, menu[defKey], pI, parentKey)}
+              >
+                <div>
+                  <span>{}</span>
+                  <span>{}</span>
+                  <span>{}</span>
+                  <span>{}</span>
+                  <span>{}</span>
+                  <span>{}</span>
+                </div>
+              </span>
+            }
+          </span>
         </span>
         {
           (menu[children] || []).filter(child => !!child).map((child, i) => {
@@ -228,10 +263,10 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
               onDoubleClick={e => onDoubleMenuClick(e, key, child.type, parentKey, menu.icon)}
               onClick={e => onMenuClick(e ,key, child.type, parentKey, null, menu)}
               className={getClassName(itemBase, menu[defKey], key, child.type)}
-              onDragStart={e => tempDragTable(e, child, key, i)}
+              onDragStart={e => tempDragTable(e, child, key, i, menu[defKey])}
               draggable={draggableStatus}
-              onDragOver={e => rowOnDragOver(e, key)}
-              onDrop={() => rowOnDrop(i, child, parentKey, menu)}
+              onDragOver={e => rowOnDragOver(e, key, menu[defKey])}
+              onDrop={e => rowOnDrop(e, i, parentKey, menu[defKey], menu)}
             >
               <span
                 style={{paddingLeft: 8 * (offsetNumber + 1)}}
@@ -243,7 +278,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
                 draggableStatus && <span
                   className={`${currentPrefix}-menu-container-fold-item-drag`}
                   draggable
-                  onDragStart={e => tempDragTable(e, child, key, i)}
+                  onDragStart={e => tempDragTable(e, child, key, i, menu[defKey])}
                 >
                   <div>
                     <span>{}</span>
@@ -270,7 +305,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         parent = d.type === 'refViews' ? 'views' : 'entities';
         parents = group ? [group, `${group}${separator}${parent}`] : [parent];
         updateSelectedMenu([{
-          key: d.defKey,
+          key: d.id,
           parentKey: group,
           type: d.type === 'refViews' ? 'view' : 'entity',
         }]);
@@ -279,7 +314,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         parent = 'dicts';
         parents = group ? [group, `${group}${separator}${parent}`] : [parent];
         updateSelectedMenu([{
-          key: d.defKey,
+          key: d.id,
           parentKey: group,
           type: 'dict',
         }]);
@@ -294,16 +329,16 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     };
     switch (key){
       case 'entities':
-        positionData.defKey = d.defKey;
+        positionData.id = d.id;
         jumpPosition(positionData, key);break;
       case 'dicts':
-        positionData.defKey = d.defKey;
+        positionData.id = d.id;
         jumpPosition(positionData, key);break;
       case 'fields':
-        positionData.defKey = d.entity;
+        positionData.id = d.entity;
         jumpPosition(positionData, 'entities');break;
       case 'dictItems':
-        positionData.defKey = d.dict;
+        positionData.id = d.dict;
         jumpPosition(positionData, 'dicts');break;
       default: break;
     }
@@ -321,8 +356,8 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         icon: 'dict.svg',
       },
     };
-    const param = (key === 'fields' || key === 'dictItems') ? {defKey: d.defKey} : null;
-    doubleMenuClick && doubleMenuClick(positionData.defKey,
+    const param = (key === 'fields' || key === 'dictItems') ? {defKey: d.id} : null;
+    doubleMenuClick && doubleMenuClick(positionData.id,
         typeMap[d.type].type, d.groups[0], typeMap[d.type].icon, param);
   };
   useImperativeHandle(ref, () => {
@@ -341,13 +376,18 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
       updatePosition({left: e.clientX, top: e.clientY});
     }
   };
+  const onMouseLeave = () => {
+    updateInsert('');
+  };
   return (
     <div
+      onMouseLeave={onMouseLeave}
       className={`${currentPrefix}-menu-container-fold`}
       onContextMenu={_createGroup}
     >
       {
-        menus.length === 0 ? emptyData : <ul>{menus.map(menu => getMenuItem(menu))}</ul>
+        menus.length === 0 ? emptyData : <ul>{menus
+          .map((menu, i) => getMenuItem(menu, menu, 0, i))}</ul>
       }
       <ContextMenu menuClick={onContextMenuClick} menus={contextMenus} position={position}/>
     </div>
@@ -357,7 +397,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
 Menu.defaultProps = {
   fieldNames: {
     icon: 'icon',
-    defKey: 'defKey',
+    defKey: 'id',
     defName: 'defName',
     children: 'children',
   },

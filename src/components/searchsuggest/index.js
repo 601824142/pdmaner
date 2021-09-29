@@ -35,7 +35,7 @@ export default React.memo(({placeholder, prefix, dataSource,
   const allData = useMemo(() => {
     const getGroup = (type, d) => {
       return (dataSource.viewGroups || [])
-          .filter(g => (g[type] || []).includes(d.defKey))
+          .filter(g => (g[type] || []).includes(d.id))
           .map(g => g.defName || g.defKey || '');
     };
     const entityData = (dataSource.entities || [])
@@ -76,7 +76,7 @@ export default React.memo(({placeholder, prefix, dataSource,
               ...f,
               type: b.type,
               groups: b.groups,
-              entity: b.defKey,
+              entity: b.id,
               suggest: `${f.defKey}-${f.defName}@${b.defKey}-${b.defName}${groups ? `@${groups}` : ''}`,
             };
           }));
@@ -101,7 +101,7 @@ export default React.memo(({placeholder, prefix, dataSource,
               ...i,
               type: b.type,
               groups: b.groups,
-              dict: b.defKey,
+              dict: b.id,
               suggest: `${i.defKey}-${i.defName}@${b.defKey}-${b.defName}${groups ? `@${groups}` : ''}`,
             };
           }));
@@ -113,7 +113,7 @@ export default React.memo(({placeholder, prefix, dataSource,
           return a.concat(b.fields.map((f) => {
             return {
               ...f,
-              groups: [b.defKey],
+              groups: [b.id],
               suggest: `${f.defKey}-${f.defName}@${b.defKey}-${b.defName}`,
             };
           }));

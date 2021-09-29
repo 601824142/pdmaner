@@ -7,7 +7,7 @@ import './style/index.less';
 export default React.memo(({dataSource, dictKey, tabDataChange, tabKey,
                              hasRender, hasDestory, param}) => {
   const dictData = (dataSource?.dicts || [])
-    .filter(d => d.defKey === dictKey)[0] || emptyDict;
+    .filter(d => d.id === dictKey)[0] || emptyDict;
   useEffect(() => () => {
     removeDataByTabId(tabKey);
   }, []);

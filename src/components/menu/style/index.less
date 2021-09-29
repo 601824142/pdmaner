@@ -13,6 +13,20 @@
     & > ul {
       display: inline-block;
       min-width: 100%;
+      .@{prefix}-menu-container-fold-item {
+        .@{prefix}-menu-container-fold-item-right-group > .@{prefix}-menu-container-fold-item-drag {
+          height: 20px;
+          padding: 0 20px;
+          position: absolute;
+          background: transparent;
+          top: -3px;
+        }
+        &:hover {
+          .@{prefix}-menu-container-fold-item-right-group > .@{prefix}-menu-container-fold-item-drag {
+            opacity: 1;
+          }
+        }
+      }
       li {
         position: relative;
         white-space: nowrap;
@@ -38,6 +52,7 @@
       padding: 5px;
       white-space: nowrap;
       &-drag {
+        display: inline-block;
         background: @background-color;
         position: sticky;
         padding: 5px 20px;
@@ -67,7 +82,7 @@
         background: @third-primary-color;
         color: @primary-color;
       }
-      & > span {
+      & > span:first-child {
         i:first-child {
           width: 14px;
           margin-left: 8px;
@@ -91,8 +106,13 @@
       }
       &-right {
         transition: transform 0.3s;
-        position: sticky;
-        right: 8px;
+        &-group {
+          display: flex;
+          flex-direction: row;
+          position: sticky;
+          right: 8px;
+          align-items: center;
+        }
       }
       &-child {
         &-selected {

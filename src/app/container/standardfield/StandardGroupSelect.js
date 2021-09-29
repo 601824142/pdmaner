@@ -9,7 +9,7 @@ export default React.memo(forwardRef(({current, prefix}, ref) => {
   const onChange = (e, type) => {
     if (type === 'group') {
       setGroup({
-        ...current.filter(c => c.defKey === e.target.value)[0] || {},
+        ...current.filter(c => c.id === e.target.value)[0] || {},
         group: e.target.value,
       });
     } else {
@@ -24,7 +24,10 @@ export default React.memo(forwardRef(({current, prefix}, ref) => {
   };
   useImperativeHandle(ref,() => {
     return {
-      getGroup: () => group,
+      getGroup: () => ({
+        ...group,
+          id: group.id || Math.uuid(),
+      }),
     };
   }, [group]);
   return <div className={`${currentPrefix}-standard-fields-select`}>
@@ -36,10 +39,10 @@ export default React.memo(forwardRef(({current, prefix}, ref) => {
         <FormatMessage id='standardFields.selectGroup'/>
       </span>
       <span className={`${currentPrefix}-form-item-component`}>
-        <Select onChange={e => onChange(e, 'group')}>
+        <Select onChange={e => onChange(e, 'group')} defaultValue=''>
           {
         current.map(c =>
-          <Option key={c.defKey} value={c.defKey}>{c.defName}({c.defKey})</Option>)
+          <Option key={c.id} value={c.id}>{c.defName}({c.defKey})</Option>)
       }
         </Select>
       </span>

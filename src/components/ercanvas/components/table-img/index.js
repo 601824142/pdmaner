@@ -13,7 +13,7 @@ const Table = forwardRef(({node}, ref) => {
     if (h.refKey === 'primaryKey') {
       if (f[h.refKey]) {
         return '<PK>';
-      } else if (allFk.includes(f.defKey)) {
+      } else if (allFk.includes(f.id)) {
         return '<FK>';
       }
     }
@@ -50,7 +50,7 @@ const Table = forwardRef(({node}, ref) => {
       {
         data.fields.map((f) => {
           return <div
-            key={`${f.defKey}${f.defName}`}
+            key={`${f.id}${f.defName}`}
             style={{
               padding: '2.5px 4px 2.5px 4px',
               fontSize: '12px',

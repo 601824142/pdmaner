@@ -64,7 +64,7 @@ const Header = React.memo(({
 });
 
 const Tab = React.memo((
-  {prefix, defaultActiveKey, onChange, closeTab, excess, dropDownMenus, menuClick,
+  {prefix, defaultActiveKey, onChange, closeTab, excess, dropDownMenus, menuClick, empty,
     children = [], position, forwardRef, ...restProps}) => {
   const [activeKey, updateActiveKey] = useState();
   const _headerItemClick = (key) => {
@@ -80,32 +80,36 @@ const Tab = React.memo((
   return (
     <div className={`${currentPrefix}-tab ${currentPrefix}-tab-${position}`} ref={forwardRef}>
       {
-        position === 'top' ? <div className={`${currentPrefix}-tab-header-container`}>
-          <Header
-            currentPrefix={currentPrefix}
-            position={position}
-            tabChildren={children}
-            closeTab={_closeTab}
-            headerItemClick={_headerItemClick}
-            dropDownMenus={dropDownMenus}
-            menuClick={menuClick}
-            activeKey={key}
-          />
-        </div> : <Header
-          currentPrefix={currentPrefix}
-          position={position}
-          tabChildren={children}
-          closeTab={_closeTab}
-          headerItemClick={_headerItemClick}
-          dropDownMenus={dropDownMenus}
-          menuClick={menuClick}
-          activeKey={key}
-        />
+        children.length > 0 ? <>
+          {
+            position === 'top' ? <div className={`${currentPrefix}-tab-header-container`}>
+              <Header
+                currentPrefix={currentPrefix}
+                position={position}
+                tabChildren={children}
+                closeTab={_closeTab}
+                headerItemClick={_headerItemClick}
+                dropDownMenus={dropDownMenus}
+                menuClick={menuClick}
+                activeKey={key}
+              />
+            </div> : <Header
+              currentPrefix={currentPrefix}
+              position={position}
+              tabChildren={children}
+              closeTab={_closeTab}
+              headerItemClick={_headerItemClick}
+              dropDownMenus={dropDownMenus}
+              menuClick={menuClick}
+              activeKey={key}
+            />
+          }
+          <div className={`${prefix}-tab-content`}>
+            {children.map(c => React.cloneElement(c, {activeKey: key, currentKey: c.key}))}
+            {excess}
+          </div>
+        </> : <>{empty}<div style={{display: 'none'}}>{excess}</div></>
       }
-      <div className={`${prefix}-tab-content`} style={{display: children.length > 0 ? 'block' : 'none'}}>
-        {children.map(c => React.cloneElement(c, {activeKey: key, currentKey: c.key}))}
-        {excess}
-      </div>
     </div>
   );
 });

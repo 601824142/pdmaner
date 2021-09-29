@@ -15,7 +15,7 @@ import allLangData from '../../lang';
 import { projectSuffix } from '../../../profile';
 import emptyProject from '../../lib/emptyProjectTemplate';
 import { version } from '../../../package';
-import {transformationData} from '../../lib/datasource_util';
+import {reduceProject, transformationData} from '../../lib/datasource_util';
 import {setMemoryCache} from '../../lib/cache';
 
 /*
@@ -155,66 +155,76 @@ export const autoSaveProject = (data) => {
   };
 };
 
+let isSaving = false;
+
 export const saveProject = (data, saveAs, callback) => {
-  // 此处为异步操作
-  const time = moment().format('YYYY-M-D HH:mm:ss');
-  const tempData = {
-    ...data,
-    createdTime: saveAs ? time : data.createdTime || time,
-    updatedTime: time,
-    version,
-  };
-  return (dispatch, getState) => {
-    //dispatch(openLoading(title)); // 开启全局loading
-    const info = getState()?.core?.info;
-    const getName = (p) => {
-      const name = basename(p, '.json');
-      return name.split('.')[0];
+  if (!isSaving) {
+    isSaving = true;
+    // 此处为异步操作
+    const time = moment().format('YYYY-M-D HH:mm:ss');
+    const tempData = {
+      ...data,
+      createdTime: saveAs ? time : data.createdTime || time,
+      updatedTime: time,
+      version,
     };
-    if (saveAs) {
-      saveJsonPromiseAs(tempData, (d, f) => {
-        const oldData = JSON.parse(d.toString().replace(/^\uFEFF/, ''));
-        oldData.name = getName(f);
-        return JSON.stringify(oldData, null, 2);
-      }).then((path) => {
-        const name = getName(path);
-        addHistory({
-          describe: tempData.describe || '',
-          name,
-          avatar: tempData.avatar || '',
-          path,
-        }, (err) => {
-          if (!err) {
-            tempData.name = name;
-            setMemoryCache('data', tempData);
-            callback && callback();
-            dispatch(saveProjectSuccess(tempData));
-            dispatch(updateProjectInfo(path));
-          } else {
+    return (dispatch, getState) => {
+      //dispatch(openLoading(title)); // 开启全局loading
+      const info = getState()?.core?.info;
+      const getName = (p) => {
+        const name = basename(p, '.json');
+        return name.split('.')[0];
+      };
+      if (saveAs) {
+        saveJsonPromiseAs(tempData, (d, f) => {
+          const oldData = JSON.parse(d.toString().replace(/^\uFEFF/, ''));
+          oldData.name = getName(f);
+          return JSON.stringify(oldData, null, 2);
+        }).then((path) => {
+          const name = getName(path);
+          addHistory({
+            describe: tempData.describe || '',
+            name,
+            avatar: tempData.avatar || '',
+            path,
+          }, (err) => {
+            isSaving = false;
+            if (!err) {
+              tempData.name = name;
+              setMemoryCache('data', tempData);
+              callback && callback();
+              dispatch(saveProjectSuccess(tempData));
+              dispatch(updateProjectInfo(path));
+            } else {
+              callback && callback(err);
+              dispatch(saveProjectFail(err));
+            }
+          })(dispatch, getState);
+        })
+          .catch((err) => {
+            isSaving = false;
             callback && callback(err);
             dispatch(saveProjectFail(err));
-          }
-        })(dispatch, getState);
-      })
-        .catch((err) => {
-          callback && callback(err);
-          dispatch(saveProjectFail(err));
-        });
-    } else {
-      saveJsonPromise(info, tempData)
-        .then(() => {
-          getBackupAllFile(getState(), () => {
-            setMemoryCache('data', tempData);
-            callback && callback();
-            dispatch(saveProjectSuccess(tempData));
           });
-        })
-        .catch((err) => {
-          callback && callback(err);
-          dispatch(saveProjectFail(err));
-        });
-    }
-  };
+      } else {
+        saveJsonPromise(info, tempData)
+          .then(() => {
+            getBackupAllFile(getState(), () => {
+              isSaving = false;
+              setMemoryCache('data', tempData);
+              callback && callback();
+              dispatch(saveProjectSuccess(tempData));
+            });
+          })
+          .catch((err) => {
+            isSaving = false;
+            callback && callback(err);
+            dispatch(saveProjectFail(err));
+          });
+      }
+    };
+  }
+  return () => {};
 };
 
 export const close = () => {
@@ -276,8 +286,9 @@ export const readProject = (path, title, getState, type, ignoreConfig) => {
 export const openDemoProject = (h, title, type) => {
   return (dispatch) => {
     dispatch(openLoading(title));
-    setMemoryCache('data', h);
-    dispatch(readProjectSuccess(h, [], '', true));
+    const data = reduceProject(h, 'defKey');
+    setMemoryCache('data', data);
+    dispatch(readProjectSuccess(data, [], '', true));
     dispatch(closeLoading(STATUS[1], null, '', type));
   };
 };
@@ -321,7 +332,7 @@ export const createProject = (data, path, title, type) => {
       } else {
         const time = moment().format('YYYY-M-D HH:mm:ss');
         const newData = {
-          ...emptyProject,
+          ...reduceProject(emptyProject, 'defKey'),
           ...data,
           version,
           createdTime: time,

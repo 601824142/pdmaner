@@ -141,6 +141,7 @@ export default {
     entityUniqueDefKeyError: '数据表或视图已经存在，请修改,重复数据表或视图有[{entities}]',
     entityHideInGraphSizeError: '关系图显示字段请选择能够代表本表业务含义的典型属性字段，限制为[{size}]个,超限数据表有[{entities}]，如需修改，请通过："设置->系统参数->关系图最大展示字段数"进行修改',
     formValidateMessage: '带星号为必输项，不能为空！',
+    defKeyValidateMessage: '数据表/视图/字典代码不能为空',
     entityAndViewUniquenessCheck: '必输项不能重复！',
     showGroup: '分组模式',
     emptyGroup: '暂无分组数据，点击创建新分组',
@@ -454,7 +455,7 @@ export default {
     database: {
         templateError: '数据库模板出错，请参考Dot.js配置模板信息',
         templateEdit: '模板配置',
-        applyFor: '数据库或代码',
+        defKey: '数据库或代码',
         type: '类型',
         defaultDbError: '默认数据库只能有一个',
         nameError: '数据库或代码不能为空',
@@ -547,6 +548,7 @@ export default {
             success: '配置成功',
             error: '配置失败',
             placeholder: '不填将自动从系统的环境变量中读取',
+            notFoundJDK: '未检测到JDK，请先安装JDK(如果已经安装，请检查环境变量是否配置正确或者前往系统【设置】-> 【系统参数】->【JAVA_HOME】指定JDK路径)',
         },
         DictSQLTemplate: '数据字典SQL模板',
         JVMLabel: 'JVM参数',
@@ -604,6 +606,7 @@ export default {
         test: '测试',
         add: '新增',
         delete: '删除',
+        copy: '复制',
         demoDbConnect: {
             mysql: 'jdbc:mysql://IP地址:端口号/数据库名?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC',
             oracle: 'jdbc:oracle:thin:@IP地址:端口号/数据库名',

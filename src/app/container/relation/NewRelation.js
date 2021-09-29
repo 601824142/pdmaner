@@ -72,7 +72,7 @@ export default React.memo(({prefix, dataSource, dataChange, data}) => {
           >
             {
               dataSource?.viewGroups?.map(v => (
-                <Option key={v.defKey} value={v.defKey}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
+                <Option key={v.id} value={v.id}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
             }
           </MultipleSelect>
         </span>

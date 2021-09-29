@@ -15,7 +15,7 @@ export default React.memo(({prefix, dataSource, dataChange, data, onOK, onCancel
   const step2Ref = useRef(null);
   const getData = () => {
     return dataSource?.entities?.filter(e =>
-        cacheData?.refEntities?.includes(e.defKey)) || [];
+        cacheData?.refEntities?.includes(e.id)) || [];
   };
   const _onChange = (value, name, otherName) => {
     let tempValue = value;
@@ -55,7 +55,7 @@ export default React.memo(({prefix, dataSource, dataChange, data, onOK, onCancel
               >
                 {
                   dataSource?.entities?.map(v => (
-                    <Option key={v.defKey} value={v.defKey}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
+                    <Option key={v.id} value={v.id}>{`${v.defKey}(${v.defName || v.defKey})`}</Option>))
                 }
               </MultipleSelect>
             </div>),

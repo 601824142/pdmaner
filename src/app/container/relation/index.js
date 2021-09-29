@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 
 import { ErCanvas } from 'components';
 import { addDomResize, removeDomResize } from '../../../lib/listener';
-import { getDataByTabId, removeDataByTabId } from '../../../lib/cache';
+import { removeDataByTabId } from '../../../lib/cache';
 
 const Relation = React.memo(({dataSource, renderReady, diagramKey, validateTableStatus,
                                tabDataChange, tabKey, activeKey, updateDataSource, openEntity,
@@ -12,16 +12,7 @@ const Relation = React.memo(({dataSource, renderReady, diagramKey, validateTable
   const offsetWidth = 305;
   const offsetHeight = 148;
   const [id] = useState(Math.uuid());
-  const currentRelation = useMemo(() =>
-    (dataSource?.diagrams || []).filter(d => d.defKey === diagramKey)[0], [dataSource]);
-  const data = useMemo(() => {
-    const tabData = getDataByTabId(tabKey);
-    if (tabData) {
-      return tabData.data;
-    } else {
-      return currentRelation?.canvasData;
-    }
-  }, [dataSource]);
+  const data = useMemo(() => (dataSource?.diagrams || []).filter(d => d.id === diagramKey)[0], []);
   const getCurrentSize = () => {
     const rect = relationRef.current?.getBoundingClientRect() || {};
     return {
@@ -44,10 +35,14 @@ const Relation = React.memo(({dataSource, renderReady, diagramKey, validateTable
     renderReady && renderReady(cav);
   };
   const dataChange = (canvasData) => {
+    console.log(canvasData);
     tabDataChange && tabDataChange({
       type: 'diagram',
       key: diagramKey,
-      data: canvasData,
+      data: {
+        ...canvasData,
+        id: diagramKey,
+      },
     });
   };
   return <div style={{width: '100%', height: '100%'}} ref={relationRef}>
@@ -69,7 +64,7 @@ const Relation = React.memo(({dataSource, renderReady, diagramKey, validateTable
       changes={changes}
       versionsData={versionsData}
       save={save}
-      relationType={currentRelation?.relationType}
+      relationType={data?.relationType}
       getDataSource={getDataSource}
       openDict={openDict}
       selectionChanged={selectionChanged}

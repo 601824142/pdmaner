@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, {useState, useRef, useImperativeHandle, forwardRef, useMemo, useEffect} from 'react';
 import moment from 'moment';
 
 import {
@@ -16,7 +16,7 @@ import StandardFieldsEdit from './StandardFieldsEdit';
 import StandardFieldsListSelect from './StandardFieldsListSelect';
 import {getPrefix} from '../../../lib/prefixUtil';
 import { separator } from '../../../../profile';
-import { validateStandardFields } from '../../../lib/datasource_util';
+import {validateStandardFields, reset} from '../../../lib/datasource_util';
 import './style/index.less';
 
 const OptHelp = ({currentPrefix}) => {
@@ -28,6 +28,7 @@ const OptHelp = ({currentPrefix}) => {
 export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, ref) => {
   const currentPrefix = getPrefix(prefix);
   const [fold, setFold] = useState(true);
+  const [expandMenu, setExpandMenu] = useState([]);
   const [filterValue, setFilterValue] = useState('');
   const [selectFields, setSelectFields] = useState([]);
   const listSelectRef = useRef([]);
@@ -62,14 +63,17 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
   const onChange = (e) => {
     setFilterValue(e.target.value);
   };
-  const finalData = (dataSource.standardFields || []).map((g) => {
+  const finalData = useMemo(() => (dataSource.standardFields || []).map((g) => {
     const reg = new RegExp((filterValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
     return {
       ...g,
       fields: (g.fields || [])
           .filter(f => reg.test(getKey(f))),
     };
-  });
+  }), [dataSource.standardFields, filterValue]);
+  useEffect(() => {
+    setExpandMenu(finalData.map(d => d.id));
+  }, [filterValue]);
   const onClick = (d) => {
     let tempData;
     let modal;
@@ -78,12 +82,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
         if (validateStandardFields(tempData)) {
           tempData && updateDataSource({
             ...dataSourceRef.current,
-            standardFields: tempData.map((group) => {
-              return {
-                ..._.omit(group, ['__key']),
-                fields: (group.fields || []).map(f => _.omit(f, ['__key'])),
-              };
-            }),
+            standardFields: tempData,
           });
           modal.close();
         } else {
@@ -103,13 +102,13 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       tempData = data;
     };
     let twinkle;
-    if (d?.defKey) {
-      const defKey = d?.defKey;
+    if (d?.id) {
+      const id = d?.id;
       const group = d?.groups?.[0];
       if (group) {
-        twinkle = group + separator + defKey;
+        twinkle = group + separator + id;
       } else {
-        twinkle = defKey;
+        twinkle = id;
       }
     }
     modal = openModal(<StandardFieldsEdit
@@ -134,7 +133,10 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
   const exportStandardFields = () => {
     const standardFields = _.get(dataSource, 'standardFields', []);
     Download(
-        [JSON.stringify(standardFields, null, 2)],
+        [JSON.stringify(standardFields.map(s => ({
+          ...s,
+          fields: s.fields?.map(f => reset(f, dataSource,['id', 'defKey'])),
+        })), null, 2)],
         'application/json',
       `${dataSource.name}-${FormatMessage.string({id: 'standardFields.standardFieldsLib'})}-${moment().format('YYYYMDHHmmss')}.json`,
      );
@@ -142,7 +144,11 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
   const importStandardFields = () => {
     Upload('application/json', (data) => {
       try {
-        const dataObj = JSON.parse(data);
+        const dataObj = JSON.parse(data).map(d => ({
+          ...d,
+          id: Math.uuid(),
+          fields: (d.fields || []).map(f => reset({...f, id: Math.uuid()}, dataSource, ['defKey', 'id'])),
+        }));
         let modal;
         const onOk = () => {
           updateDataSource({
@@ -187,6 +193,14 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
     };
   }, [dataSource]);
   const type = activeKey.split(separator)[1];
+  const onGroupClick = (id) => {
+    setExpandMenu((pre) => {
+      if (pre.includes(id)) {
+        return pre.filter(p => p !== id);
+      }
+      return pre.concat(id);
+    });
+  };
   return <div
     style={{display: (type === 'entity' || type === 'diagram') ? 'block' : 'none'}}
     className={`${currentPrefix}-standard-fields-list-${fold ? 'fold' : 'unfold'}`}
@@ -215,9 +229,9 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
           <Tooltip title={<OptHelp currentPrefix={currentPrefix}/>} force placement='topLeft'>
             <IconTitle type='icon-xinxi'/>
           </Tooltip>
-          <IconTitle title={FormatMessage.string({id: 'standardFields.importStandardFieldsLib'})} type='icon-daoru' onClick={importStandardFields}/>
-          <IconTitle title={FormatMessage.string({id: 'standardFields.exportStandardFieldsLib'})} type='icon-daochu' onClick={exportStandardFields}/>
-          <IconTitle title={FormatMessage.string({id: 'standardFields.setting'})} type='icon-weihu' onClick={onClick}/>
+          <IconTitle title={<FormatMessage id='standardFields.importStandardFieldsLib'/>} type='icon-daoru' onClick={importStandardFields}/>
+          <IconTitle title={<FormatMessage id='standardFields.exportStandardFieldsLib'/>} type='icon-daochu' onClick={exportStandardFields}/>
+          <IconTitle title={<FormatMessage id='standardFields.setting'/>} type='icon-weihu' onClick={onClick}/>
         </span>
       </div>
     }
@@ -231,21 +245,32 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
             <FormatMessage id='standardFields.standardFieldsLibEmpty'/>
           </div>
             : finalData.map((g) => {
-              return <div key={g.defKey}>
-                <span className={`${currentPrefix}-standard-fields-list-group`}>
+              return <div key={g.id}>
+                <span
+                  onClick={() => onGroupClick(g.id)}
+                  className={`${currentPrefix}-standard-fields-list-group`}
+                >
                   <Icon type='icon-shuju2'/>
                   <span>{g.defName}({g.defKey})</span>
+                  <Icon
+                    style={{
+                     transform: `${expandMenu.includes(g.id) ? 'rotate(0deg)' : 'rotate(90deg)'}`,
+                   }}
+                    type='fa-angle-down'
+                    className={`${currentPrefix}-standard-fields-list-group-icon`}
+                 />
                 </span>
                 {
                   (g.fields || []).map((f) => {
                     const key = getKey(f);
-                    const selected = selectFields.findIndex(s => getKey(s) === key) >= 0;
+                    const selected = selectFields.findIndex(s => s.id === f.id) >= 0;
                     return <div
+                      style={{display: expandMenu.includes(g.id) ? 'block' : 'none'}}
                       onDragStart={onDragStart}
                       draggable={selected}
                       className={`${currentPrefix}-standard-fields-list-content-${selected ? 'selected' : 'unselected'}`}
                       onClick={e => onItemClick(e, f)}
-                      key={key}
+                      key={f.id}
                     >
                       {key}
                     </div>;
