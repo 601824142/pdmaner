@@ -1387,6 +1387,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     dataSource.dicts,
     dataSource.uiHint,
     dataSource.entities,
+    dataSource?.profile.default.db,
   ]);
   useEffect(() => {
     const dom = document.getElementById(id);
