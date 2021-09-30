@@ -274,56 +274,59 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     cavRef.redo();
   };
   const exportWord = () => {
-    if (projectInfo) {
-      selectWordFile(dataSourceRef.current)
-        .then(([dir, template]) => {
-          //restProps.openLoading(FormatMessage.string({id: 'toolbar.exportWord'}));
-          restProps.openLoading(FormatMessage.string({id: 'toolbar.exportWordStep1'}));
-          imgAll(dataSourceRef.current).then((imgDir) => {
-            restProps.openLoading(FormatMessage.string({id: 'toolbar.exportWordStep2'}));
-            connectDB(dataSourceRef.current, configRef.current, {
-              sinerFile: projectInfo,
-              docxTpl: template,
-              imgDir: imgDir,
-              imgExt: '.png',
-              outFile: dir,
-            }, 'GenDocx', (result) => {
-              if (result.status === 'FAILED') {
-                const termReady = (term) => {
-                  term.write(typeof result.body === 'object' ? JSON.stringify(result.body, null, 2)
-                    : result.body);
-                };
-                restProps.closeLoading();
-                Modal.error({
-                  bodyStyle: {width: '80%'},
-                  contentStyle: {width: '100%', height: '100%'},
-                  title: FormatMessage.string({id: 'optFail'}),
-                  message: <div>
-                    <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
-                    <Terminal termReady={termReady}/>
-                  </div>,
-                });
-              } else {
-                restProps.closeLoading();
-                Modal.success({
-                  title: FormatMessage.string({
-                    id: 'toolbar.exportSuccess',
-                  }),
-                  message: FormatMessage.string({
-                    id: 'toolbar.exportPath',
-                    data: {path: dir},
-                  }),
-                });
-              }
-            });
+    selectWordFile(dataSourceRef.current)
+      .then(([dir, template]) => {
+        const length = dataSourceRef.current.diagrams?.length || 0;
+        let count = 0;
+        restProps.openLoading(FormatMessage.string({
+          id: 'toolbar.exportWordStep1',
+          data: { count, length },
+        }));
+        imgAll(dataSourceRef.current, () => {
+          count += 1;
+          restProps.openLoading(FormatMessage.string({
+            id: 'toolbar.exportWordStep1',
+            data: { count, length },
+          }));
+        }).then((imgDir) => {
+          restProps.openLoading(FormatMessage.string({id: 'toolbar.exportWordStep2'}));
+          connectDB(dataSourceRef.current, configRef.current, {
+            sinerFile: projectInfo,
+            docxTpl: template,
+            imgDir: imgDir,
+            imgExt: '.png',
+            outFile: dir,
+          }, 'GenDocx', (result) => {
+            if (result.status === 'FAILED') {
+              const termReady = (term) => {
+                term.write(typeof result.body === 'object' ? JSON.stringify(result.body, null, 2)
+                  : result.body);
+              };
+              restProps.closeLoading();
+              Modal.error({
+                bodyStyle: {width: '80%'},
+                contentStyle: {width: '100%', height: '100%'},
+                title: FormatMessage.string({id: 'optFail'}),
+                message: <div>
+                  <div style={{textAlign: 'center'}}><FormatMessage id='dbConnect.log'/><a onClick={showItemInFolder}>{getLogPath()}</a></div>
+                  <Terminal termReady={termReady}/>
+                </div>,
+              });
+            } else {
+              restProps.closeLoading();
+              Modal.success({
+                title: FormatMessage.string({
+                  id: 'toolbar.exportSuccess',
+                }),
+                message: FormatMessage.string({
+                  id: 'toolbar.exportPath',
+                  data: {path: dir},
+                }),
+              });
+            }
           });
         });
-    } else {
-      Modal.error({
-        title: FormatMessage.string({id: 'optFail'}),
-        message: FormatMessage.string({id: 'toolbar.exportWordTplProject'}),
       });
-    }
   };
   const exportImg = () => {
     const cavRef = getCurrentCav();

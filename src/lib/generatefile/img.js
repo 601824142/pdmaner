@@ -108,7 +108,7 @@ export const img = (data, relationType, dataSource, needCalc = true, groups) => 
   })
 };
 
-export const imgAll = (dataSource) => {
+export const imgAll = (dataSource, callBack) => {
   if ((dataSource.diagrams || []).length === 0){
     return new Promise((res, rej) => {
       saveTempImages([])
@@ -151,6 +151,7 @@ export const imgAll = (dataSource) => {
                     .replace(/^data:image\/\w+;base64,/, ""),
                 'base64');
             res({fileName: d.defKey, data: dataBuffer});
+            callBack && callBack();
           });
         })
       });

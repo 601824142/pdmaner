@@ -357,7 +357,14 @@ export const execFileCmd = (cmd, params, cb) => {
 
 export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
   // 创建临时文件
+  const tempParams = {...params};
   const outFile = `${execJarOut}${moment().unix()}.json`;
+  const sinerFile = `${execJarOut}${moment().unix()}-siner.json`;
+  if ('sinerFile' in tempParams) {
+    // 需要创建临时项目文件
+    fs.writeFileSync(sinerFile, JSON.stringify(dataSource));
+    tempParams.sinerFile = sinerFile;
+  }
   console.log(outFile);
   const getParam = (params) => {
     const paramArray = [];
@@ -376,12 +383,12 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
   const jvm = ('jvm' in (config || {})) ? config.jvm : defaultJVM;
   const jar = ipcRenderer.sendSync('jarPath');
   const tempValue = javaHome ? `${javaHome}${path.sep}bin${path.sep}java` : 'java';
-  const customerDriver = _.get(params, 'customer_driver', '');
+  const customerDriver = _.get(tempParams, 'customer_driver', '');
   const commend = [
     '-Dfile.encoding=utf-8',
     ...jvm.split(' '),
     '-jar', jar, cmd,
-    ...getParam(params),
+    ...getParam(tempParams),
   ];
   if (customerDriver) {
     commend.unshift(`-Xbootclasspath/a:${customerDriver}`);
@@ -391,6 +398,14 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
       maxBuffer: 100 * 1024 * 1024, // 100M
     },
     (error, stdout, stderr) => {
+      if('sinerFile' in tempParams) {
+        // 删除临时项目文件
+        deleteFile(sinerFile);
+      }
+      if (params.imgDir) {
+        // 删除临时文件夹
+        deleteDirectoryFile(params.imgDir);
+      }
       if (error) {
         let tempError = (stdout || stderr || error.message);
         if (/spawn .* ENOENT/.test(tempError)) {
@@ -411,10 +426,6 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
         }).finally(() => {
           // 删除该文件
           deleteFile(outFile);
-          // 删除临时文件夹
-          if (params.imgDir) {
-            deleteDirectoryFile(params.imgDir);
-          }
         });
       }
       //const result = (stdout || stderr || error.message);
