@@ -458,19 +458,19 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
               let pasteFields = JSON.parse(value);
               if (validate) {
                 // 获取父组件的校验
-                pasteFields = validate(pasteFields);
+                pasteFields = validate(pasteFields.map(f => _.omit(f, 'id')));
               } else {
                 // 使用默认的校验
                 pasteFields = validateFields(pasteFields);
               }
               // 过滤重复字段
-              const fieldKeys = fields.map(f => f.id);
-              const pasteFieldKeys = pasteFields.map(f => f.id);
+              const fieldKeys = fields.map(f => f.defKey);
+              const pasteFieldKeys = pasteFields.map(f => f.defKey);
               const realFieldKeys = [...new Set(pasteFieldKeys
                   .filter(key => !fieldKeys.includes(key)))];
               const finalFields = realFieldKeys.map((k) => {
                 return {
-                  ...pasteFields.filter(f => f.id === k)[0],
+                  ...pasteFields.filter(f => f.defKey === k)[0],
                   id: Math.uuid(),
                 };
               });
