@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS {{=it.entity.defKey}};
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{{=it.entity.defKey}}]') AND type in (N'U')) DROP TABLE [dbo].[{{=it.entity.defKey}}];
 CREATE TABLE {{=it.entity.defKey}}(
 {{ pkList = [] ; }}
 {{~it.entity.fields:field:index}}
     {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}
-    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' AUTO_INCREMENT' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}
+    {{=field.defKey}} {{=field.type}}{{?field.len>0 && field.type!='INT' && field.type!='uniqueidentifier'}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' IDENTITY(1,1)' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}
 {{~}}
 {{? pkList.length >0 }}
     PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})
