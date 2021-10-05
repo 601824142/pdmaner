@@ -361,6 +361,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
           }
           return {
             ...f,
+            len: f.len === null ? '' : f.len,
+            scale: f.scale === null ? '' : f.scale,
             domain: '',
           };
         }),
