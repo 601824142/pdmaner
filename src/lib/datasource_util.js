@@ -1195,6 +1195,20 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
   return (groupNodes || []).concat(nodes || []).concat(edges || []).concat(remarks || []).concat(polygon || []);
 };
 
+const getHeaders = (d, type) => {
+  if (d.headers && d.headers.length > 0) {
+    return d.headers;
+  }
+  return type === 'entity' ? getEmptyEntity().headers : getEmptyView().headers;
+}
+export const updateHeaders = (d, type) => {
+  return _.omit({
+    ...d,
+    nameTemplate: d.nameTemplate || getEmptyEntity().nameTemplate,
+    headers: getHeaders(d, type),
+  }, ['rowNo', 'group']);
+}
+
 
 export const transformationData = (oldDataSource) => {
   // 某些场景下需要对原始项目进行兼容 统一在此处进行转换操作
@@ -1272,19 +1286,6 @@ export const transformationData = (oldDataSource) => {
     tempDataSource = reduceProject(tempDataSource, 'defKey');
   }
   if (compareVersion('3.5.2', oldDataSource.version.split('.'))) {
-    const getHeaders = (d, type) => {
-      if (d.headers && d.headers.length > 0) {
-        return d.headers;
-      }
-      return type === 'entity' ? getEmptyEntity().headers : getEmptyView().headers;
-    }
-    const updateHeaders = (d, type) => {
-      return _.omit({
-        ...d,
-        nameTemplate: d.nameTemplate || getEmptyEntity().nameTemplate,
-        headers: getHeaders(d, type),
-      }, ['rowNo', 'group']);
-    };
     tempDataSource = {
       ...tempDataSource,
       entities: (tempDataSource.entities || []).map(d => updateHeaders(d, 'entity')),

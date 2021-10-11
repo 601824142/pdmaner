@@ -213,6 +213,8 @@ export const saveFile = (data, filters, fileValidate, options, refactor) => {
         }).catch((err) => {
           rej(err);
         })
+      } else {
+        rej(new Error());
       }
     }).catch((err) => {
       rej(err);

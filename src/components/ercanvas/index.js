@@ -10,7 +10,6 @@ import RelationEditor from './RelationEditor';
 import {
   getEmptyEntity,
   generatorTableKey,
-  getFullColumns,
   calcCellData, calcNodeData, mapData2Table,
 } from '../../lib/datasource_util';
 import { separator } from '../../../profile';
