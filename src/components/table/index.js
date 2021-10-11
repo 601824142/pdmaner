@@ -72,7 +72,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
     }
     return {};
   }, [domains, mapping, db]);
-  const [{ headers = [], fields = [], ...restData }, updateTableData] = useState({
+  const [{ fields = [], ...restData }, updateTableData] = useState({
     ...data,
     headers: data.headers || allColumns,
   });
@@ -90,7 +90,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
   insertFieldRef.current = insertField;
   const standardGroupRef = useRef(null);
   const tempHeaders = useMemo(() => {
-    return headers.map((h) => {
+    return restData.headers.map((h) => {
       let refKey = h.refKey || h.newCode;
       const column = allColumns.filter(c => c.newCode === refKey)[0] || {};
       return {
@@ -99,7 +99,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
         refKey,
       };
     });
-  }, [headers, allColumns]);
+  }, [restData.headers, allColumns]);
   const cellClick = (h, f) => {
     if (h !== 'domain' || (h === 'domain' && !selectedFieldsRef.current.includes(f.id))) {
       updateSelectedFields((pre) => {
@@ -162,11 +162,11 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
   };
   const hiddenFields = ['hideInGraph', 'isStandard'];
   const updateTableDataByHeader = (key, type, value, i) => {
-    let newHeaders = [...headers];
+    let newHeaders = [...tempHeaders];
     if (type === 'move') {
       newHeaders = value;
     } else if (type === 'freeze'){
-      const tempIndex = headers.findIndex(h => h?.refKey === key);
+      const tempIndex = tempHeaders.findIndex(h => h?.refKey === key);
       newHeaders = newHeaders.map((h, index) => {
         if ((i > freezeCount.left - 1) ? index >= tempIndex : index <= tempIndex) {
           return {
@@ -804,7 +804,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
     }
   };
   const moveHeader = (type) => {
-    const freezeIndex = headers.map((h, i) => {
+    const freezeIndex = tempHeaders.map((h, i) => {
       if (h.freeze) {
         return i;
       }
@@ -815,7 +815,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
         selectedColumns,
         type === 'left' ? -1 : 1,
         'refKey')
-        .concat(headers.filter(h => hiddenFields.includes(h.refKey))).map((h, i) => {
+        .concat(tempHeaders.filter(h => hiddenFields.includes(h.refKey))).map((h, i) => {
           return {
             ...h,
             freeze: freezeIndex.includes(i),
@@ -934,7 +934,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
               prefix={currentPrefix}
               dataSource={dataSource}
               getRestData={getRestData}
-              data={{fields, headers}}
+              data={{fields, headers: tempHeaders}}
               onChange={importFields}
             />
             </span>}

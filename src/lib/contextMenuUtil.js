@@ -700,7 +700,7 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
       const config = getOptConfig(dataType);
       const validate = (dataType === 'mapping' || dataType === 'dataType')
         ? validateItemInclude : validateItem;
-      const newData = (data?.data || []).filter(e => validate(e, config.emptyData, ['rowNo']));
+      const newData = (data?.data || []).filter(e => validate(e, config.emptyData));
       const newDataKeys = newData.map(e => e[config.key]);
       const oldData = _.get(dataSource, config.mainKey, []).filter((e) => {
         if (data?.type === 'cut') {
@@ -774,8 +774,8 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
             viewGroups: newGroupData ? newGroupData : (dataSource.viewGroups || []),
           });
         }
+        Message.success({title: FormatMessage.string({id: 'pasteSuccess'})});
       }
-      Message.success({title: FormatMessage.string({id: 'pasteSuccess'})});
     } catch (e) {
       Message.warring({title: FormatMessage.string({id: 'pasteWarring'})});
     }

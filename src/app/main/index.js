@@ -208,7 +208,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     updateTabs((pre) => {
       return pre.filter(t => !tabKeys.includes(t.tabKey));
     });
-    cavRefArray.current = cavRefArray.current.filter(c => !tabKeys.includes(c.tabKey));
+    cavRefArray.current = cavRefArray.current.filter(c => !tabKeys.includes(c.key));
     updateActiveKey((pre) => {
       return newActiveKey || pre;
     });

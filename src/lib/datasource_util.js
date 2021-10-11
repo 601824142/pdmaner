@@ -498,10 +498,9 @@ export const validateItemInclude = (item, empty) => {
   return fieldNames.every(f => itemNames.includes(f));
 };
 
-export const validateItem = (item, empty, exclude = []) => {
+export const validateItem = (item, empty) => {
   const fieldNames = Object.keys(empty);
   return !Object.keys(item)
-    .filter(i => !exclude.includes(i))
     .some(n => !fieldNames.includes(n));
 };
 
@@ -1020,7 +1019,7 @@ export const transform = (f, dataSource, code) => {
 
 export  const calcNodeData = (preData, nodeData, dataSource, groups) => {
   // 节点源数据
-  const headers = nodeData?.headers.filter(h => !h.hideInGraph);
+  const headers = (nodeData?.headers || []).filter(h => !h.hideInGraph);
   const fields = (nodeData?.fields || []).filter(f => !f.hideInGraph)
       .map(f => ({...f, ...transform(f, dataSource)}));
   // 计算表头的宽度
@@ -1271,6 +1270,26 @@ export const transformationData = (oldDataSource) => {
   }
   if (compareVersion('3.5.0', oldDataSource.version.split('.'))) {
     tempDataSource = reduceProject(tempDataSource, 'defKey');
+  }
+  if (compareVersion('3.5.2', oldDataSource.version.split('.'))) {
+    const getHeaders = (d, type) => {
+      if (d.headers && d.headers.length > 0) {
+        return d.headers;
+      }
+      return type === 'entity' ? getEmptyEntity().headers : getEmptyView().headers;
+    }
+    const updateHeaders = (d, type) => {
+      return _.omit({
+        ...d,
+        nameTemplate: d.nameTemplate || getEmptyEntity().nameTemplate,
+        headers: getHeaders(d, type),
+      }, ['rowNo', 'group']);
+    };
+    tempDataSource = {
+      ...tempDataSource,
+      entities: (tempDataSource.entities || []).map(d => updateHeaders(d, 'entity')),
+      views: (tempDataSource.views || []).map(d => updateHeaders(d, 'view')),
+    };
   }
   return tempDataSource;
 };
