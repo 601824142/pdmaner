@@ -154,8 +154,36 @@ export default React.memo(({prefix, newData, onRemove, allowClear,
       });
     });
   }, [newData]);
+  const _iconClick = (t) => {
+    if (t === 'all') {
+      setChecked([...defaultSelected || []]);
+    } else {
+      setChecked(() => {
+        return [...newData.map(d => d.id)];
+      });
+    }
+  };
+  const calcType = () => {
+    if (checked.length === newData.length) {
+      return 'all';
+    } else if (checked.length === 0) {
+      return 'normal';
+    }
+    return 'ind';
+  };
+  const finalType = calcType();
   return <div className={`${prefix}-listselect-right`}>
     <div className={`${prefix}-listselect-right-opt`}>
+      {
+        newData.length > 0 && <span className={`${prefix}-listselect-right-opt-selected`} onClick={() => _iconClick(finalType)}>
+          <span className={`${prefix}-listselect-opt-${finalType}`}>
+            {}
+          </span>
+          <span>
+            {FormatMessage.string({id: 'components.listSelect.all'})}
+          </span>
+        </span>
+      }
       <IconTitle
         disable={checked.filter(c => !defaultSelected.includes(c)).length === 0}
         title={FormatMessage.string({id: 'components.listSelect.remove'})}

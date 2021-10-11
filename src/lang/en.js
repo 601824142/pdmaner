@@ -691,6 +691,7 @@ components: {
         disable: 'The data table used in the diagram is required',
         group: 'group',
         groupNotAllowEmpty: 'group not allow empty',
+        all: 'all',
     },
 },
 projectTemplate: {

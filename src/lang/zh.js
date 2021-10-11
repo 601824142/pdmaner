@@ -698,6 +698,7 @@ export default {
             disable: '关系图中使用的数据表为必选数据表',
             group: '分组',
             groupNotAllowEmpty: '分组不能为空',
+            all: '全选',
         },
     },
     projectTemplate: {
