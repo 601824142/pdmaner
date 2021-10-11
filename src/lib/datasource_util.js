@@ -1341,7 +1341,7 @@ export const calcEntityOrView = (data = [], dicts, domains, uiHint, entities, ty
           fields: i.fields?.map(f => {
             return {
               ...f,
-              fieldDefKey: fields.filter(f => f[type] === f.fieldDefKey)[0]?.id,
+              fieldDefKey: fields.filter(fie => fie.old === f.fieldDefKey)[0]?.id,
               id: Math.uuid(),
             };
           })
