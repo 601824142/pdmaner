@@ -1274,7 +1274,12 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           properties: getEntityInitProperties(),
         };
       } else {
-        empty = dataSourceRef.current?.entities?.filter(entity => entity.id === key)[0];
+        const dataSourceEntity = dataSourceRef.current?.entities
+          ?.filter(entity => entity.id === key)[0];
+        empty = {
+          ...dataSourceEntity,
+          headers: dataSourceEntity.headers || getEmptyEntity().headers,
+        };
         count = graph.getNodes().filter(n => n.data?.id === key).length;
       }
       if (!empty) {

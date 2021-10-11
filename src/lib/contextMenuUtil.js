@@ -697,33 +697,30 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
     let data = {};
     try {
       data = JSON.parse(value);
-    } catch (e) {
-      Message.warring({title: FormatMessage.string({id: 'pasteWarring'})});
-    }
-    const config = getOptConfig(dataType);
-    const validate = (dataType === 'mapping' || dataType === 'dataType')
+      const config = getOptConfig(dataType);
+      const validate = (dataType === 'mapping' || dataType === 'dataType')
         ? validateItemInclude : validateItem;
-    const newData = (data?.data || []).filter(e => validate(e, config.emptyData));
-    const newDataKeys = newData.map(e => e[config.key]);
-    const oldData = _.get(dataSource, config.mainKey, []).filter((e) => {
-      if (data?.type === 'cut') {
-        return !newDataKeys.includes(e[config.key]);
-      }
-      return true;
-    });
-    const newGroupData = config.viewRefs && (dataSource?.viewGroups || []).map(v => {
-      if (data?.type === 'cut') {
-        return {
-          ...v,
-          [config.viewRefs]: (v[config.viewRefs] || []).filter(k => !newDataKeys.includes(k)),
+      const newData = (data?.data || []).filter(e => validate(e, config.emptyData, ['rowNo']));
+      const newDataKeys = newData.map(e => e[config.key]);
+      const oldData = _.get(dataSource, config.mainKey, []).filter((e) => {
+        if (data?.type === 'cut') {
+          return !newDataKeys.includes(e[config.key]);
         }
-      }
-      return v;
-    });
-    let tempCodeTemplates = [];
-    const codeTemplates = (dataSource.profile.codeTemplates || []);
-    const allKeys = oldData.map(e => e.defKey);
-    const realData = newData
+        return true;
+      });
+      const newGroupData = config.viewRefs && (dataSource?.viewGroups || []).map(v => {
+        if (data?.type === 'cut') {
+          return {
+            ...v,
+            [config.viewRefs]: (v[config.viewRefs] || []).filter(k => !newDataKeys.includes(k)),
+          }
+        }
+        return v;
+      });
+      let tempCodeTemplates = [];
+      const codeTemplates = (dataSource.profile.codeTemplates || []);
+      const allKeys = oldData.map(e => e.defKey);
+      const realData = newData
         .map((e) => {
           const key = validateKey(e.defKey, allKeys);
           allKeys.push(key);
@@ -743,42 +740,45 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
             defKey: key,
           };
         });
-    if (realData.length === 0) {
-      Message.warring({title: FormatMessage.string({id: 'pasteWarring'})});
-    } else {
-      const mainKeys = config.mainKey.split('.');
-      let tempNewData = {};
-      if (mainKeys.length > 1) {
-        tempNewData = _.set(dataSource, mainKeys, oldData.concat(realData));
+      if (realData.length === 0) {
+        Message.warring({title: FormatMessage.string({id: 'pasteWarring'})});
       } else {
-        tempNewData[config.mainKey] = oldData.concat(realData);
-      }
-      if (dataType === 'dataType') {
-        tempNewData.profile.codeTemplates = codeTemplates.concat(tempCodeTemplates);
-      }
-      if (parentKey) {
-        updateDataSource({
-          ...dataSource,
-          ...tempNewData,
-          viewGroups: newGroupData ? newGroupData.map((v) => {
-            if (v.id === parentKey) {
-              return {
-                ...v,
-                [config.viewRefs]: (v[config.viewRefs] || []).concat(realData.map(e => e[config.key])),
+        const mainKeys = config.mainKey.split('.');
+        let tempNewData = {};
+        if (mainKeys.length > 1) {
+          tempNewData = _.set(dataSource, mainKeys, oldData.concat(realData));
+        } else {
+          tempNewData[config.mainKey] = oldData.concat(realData);
+        }
+        if (dataType === 'dataType') {
+          tempNewData.profile.codeTemplates = codeTemplates.concat(tempCodeTemplates);
+        }
+        if (parentKey) {
+          updateDataSource({
+            ...dataSource,
+            ...tempNewData,
+            viewGroups: newGroupData ? newGroupData.map((v) => {
+              if (v.id === parentKey) {
+                return {
+                  ...v,
+                  [config.viewRefs]: (v[config.viewRefs] || []).concat(realData.map(e => e[config.key])),
+                }
               }
-            }
-            return v;
-          }) : (dataSource.viewGroups || [])
-        });
-      } else {
-        updateDataSource({
-          ...dataSource,
-          ...tempNewData,
-          viewGroups: newGroupData ? newGroupData : (dataSource.viewGroups || []),
-        });
+              return v;
+            }) : (dataSource.viewGroups || [])
+          });
+        } else {
+          updateDataSource({
+            ...dataSource,
+            ...tempNewData,
+            viewGroups: newGroupData ? newGroupData : (dataSource.viewGroups || []),
+          });
+        }
       }
+      Message.success({title: FormatMessage.string({id: 'pasteSuccess'})});
+    } catch (e) {
+      Message.warring({title: FormatMessage.string({id: 'pasteWarring'})});
     }
-    Message.success({title: FormatMessage.string({id: 'pasteSuccess'})});
   });
 };
 

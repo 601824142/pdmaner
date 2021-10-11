@@ -498,9 +498,11 @@ export const validateItemInclude = (item, empty) => {
   return fieldNames.every(f => itemNames.includes(f));
 };
 
-export const validateItem = (item, empty) => {
+export const validateItem = (item, empty, exclude = []) => {
   const fieldNames = Object.keys(empty);
-  return !Object.keys(item).some(n => !fieldNames.includes(n));
+  return !Object.keys(item)
+    .filter(i => !exclude.includes(i))
+    .some(n => !fieldNames.includes(n));
 };
 
 export const validateIndexes = (indexes) => {
