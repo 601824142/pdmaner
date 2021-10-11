@@ -37,7 +37,6 @@ import {
   updateAllData,
   allType,
   pdman2sino,
-  getFullColumns,
   emptyDictSQLTemplate,
   reduceProject,
   findExits,
@@ -395,6 +394,13 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       entities: originEntities.concat(calcDomain(addEntities, dbKey, finalDomains)
           .map(e => ({
             ...updateHeaders(e, 'entity'),
+            fields: (e.fields || []).map((f, i) => {
+              return {
+                ...f,
+                hideInGraph: i >
+                  (parseInt(dataSourceRef.current.profile.relationFieldSize, 10) - 1),
+              };
+            }),
             indexes: e.indexes?.map((i) => {
               return {
                 ...i,
@@ -503,9 +509,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
           };
           const finalEntities = originEntities.concat(
             replaceEntitiesOrViews(addEntities, commonReplace)
-            .map((e) => {
-              return _.omit(e, ['group']);
-            }));
+              .map(e => updateHeaders(e, 'entity')));
           const addEntityKeys = tempAddEntities.map(e => e.id);
           const newDataSource = {
             ...dataSourceRef.current,
@@ -513,10 +517,10 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
               ...dataSourceRef.current.profile,
               uiHint,
             },
-            entities: finalEntities.map(e => updateHeaders(e, 'entity')),
+            entities: finalEntities,
             views: originViews
-              .concat(replaceEntitiesOrViews(addViews, commonReplace, finalEntities))
-              .map(e => updateHeaders(e, 'view')),
+              .concat(replaceEntitiesOrViews(addViews, commonReplace, finalEntities)
+              .map(e => updateHeaders(e, 'view'))),
             dicts,
             domains: replaceDomainsApplyFor(domains, replaceMappings),
             viewGroups: finalViewGroups.map((g) => {
