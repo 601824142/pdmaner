@@ -956,13 +956,12 @@ export  const getTextWidth = (text, font, weight = 'normal') => {
     dom = document.createElement('div');
     dom.setAttribute('id', 'calcTextWidth');
     dom.style.display = 'inline-block';
+    dom.style.fontWeight = weight;
+    dom.style.fontSize = `${font}px`;
     document.body.appendChild(dom);
   }
-  dom.style.fontWeight = weight;
-  dom.style.fontSize = `${font}px`;
   dom.innerText = text;
   const width =  dom.getBoundingClientRect().width;
-  document.body.removeChild(dom);
   return Math.ceil(width);
 };
 
