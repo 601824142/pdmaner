@@ -122,16 +122,20 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
       const newData = {
         ...pre,
         fields: pre.fields.map((field) => {
-         if (f.id === field.id) {
-            let others = {};
-            if (name === 'domain') {
-              // 选择数据域 重置手动设置的数据
-              others = {
+          if (name === 'domain') {
+            if (selectedFieldsRef.current.includes(field.id) || (f.id === field.id)) {
+              return {
+                ...field,
+                [name]: value,
                 type: value ? '' : f.type,
                 len: value ? '' : f.len,
                 scale: value ? '' : f.scale,
               };
-            } else if (name === 'primaryKey' && value) {
+            }
+            return field;
+          } else if(f.id === field.id) {
+            let others = {};
+            if (name === 'primaryKey' && value) {
               others = {
                 notNull: true,
               };
