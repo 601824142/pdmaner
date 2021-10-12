@@ -1,10 +1,6 @@
 import * as Component from 'components';
 import { addBodyEvent, removeBodyEvent } from './listener';
 
-const removeTempInput = (input) => {
-  input.parentElement.removeChild(input);
-};
-
 // 复制方法
 export const Copy = (data, successMessage) => {
   const value = typeof data !== 'string' ? JSON.stringify(data) : data;
