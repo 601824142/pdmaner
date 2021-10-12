@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import _ from 'lodash/object';
 
-import { ToolBar, Icon, Modal, openModal, Button, FormatMessage, SearchInput, Tooltip } from 'components';
+import {Icon, Modal, openModal, Button, FormatMessage, SearchInput, Tooltip } from 'components';
 // eslint-disable-next-line import/extensions,import/named
 
 // eslint-disable-next-line import/named
@@ -177,9 +177,6 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
   };
   const reg = new RegExp((searchValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
   return <div className={`${currentPrefix}-home-container`}>
-    <div className={`${currentPrefix}-home-toolbar`}>
-      <ToolBar resizeable title={FormatMessage.string({id: 'system.title'})}/>
-    </div>
     <div className={`${currentPrefix}-home-container-body`}>
       <div className={`${currentPrefix}-home-container-body-left`}>
         <div className={`${currentPrefix}-home-container-body-left-logo`}>

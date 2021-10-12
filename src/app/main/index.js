@@ -8,7 +8,6 @@ import {
   Loading,
   openModal,
   Message,
-  ToolBar,
   Icon,
   Modal,
   FormatMessage,
@@ -1427,13 +1426,6 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   const createGroupMenu = getMenu('add', '', 'groups', [], groupType, '');
   console.log(tabs);
   return <Loading visible={common.loading} title={common.title}>
-    <div className={`${currentPrefix}-main-toolbar`}>
-      <ToolBar
-        resizeable
-        title={<FormatMessage id='system.title'/>}
-        info={projectInfo || <FormatMessage id='system.template'/>}
-      />
-    </div>
     <HeaderTool
       dataSource={restProps.dataSource}
       ref={headerToolRef}
