@@ -150,7 +150,7 @@ export const imgAll = (dataSource, callBack) => {
             const dataBuffer = Buffer.from(canvas.toDataURL('image/png')
                     .replace(/^data:image\/\w+;base64,/, ""),
                 'base64');
-            res({fileName: d.defKey, data: dataBuffer});
+            res({fileName: d.id, data: dataBuffer});
             callBack && callBack();
           });
         })
