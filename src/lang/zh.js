@@ -141,7 +141,7 @@ export default {
     entityUniqueDefKeyError: '数据表或视图已经存在，请修改,重复数据表或视图有[{entities}]',
     entityHideInGraphSizeError: '关系图显示字段请选择能够代表本表业务含义的典型属性字段，限制为[{size}]个,超限数据表有[{entities}]，如需修改，请通过："设置->系统参数->关系图最大展示字段数"进行修改',
     formValidateMessage: '带星号为必输项，不能为空！',
-    defKeyValidateMessage: '数据表/视图/字典代码不能为空',
+    defKeyValidateMessage: '{name}代码不能为空',
     entityAndViewUniquenessCheck: '必输项不能重复！',
     showGroup: '分组模式',
     emptyGroup: '暂无分组数据，点击创建新分组',

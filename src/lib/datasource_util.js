@@ -44,7 +44,7 @@ export const updateAllData = (dataSource, tabs) => {
   };
   const size = _.get(dataSource, 'profile.relationFieldSize', 15);
   tabs.map(t => {
-    const typeName = t.type === 'entity' ? 'entities' : 'views';
+    const typeName = allType.filter(all => t.type === all.type)[0]?.name;
     const oldData = tempData[typeName].filter(e => e.id === t.tabKey.split(separator)[0])[0];
     return {
       type: t.type,
@@ -54,7 +54,11 @@ export const updateAllData = (dataSource, tabs) => {
     }
   }).forEach(t => {
     if (!t.data.defKey && t.type !== 'diagram') {
-      message = FormatMessage.string({id: 'defKeyValidateMessage'});
+      message = FormatMessage.string({
+        id: 'defKeyValidateMessage',
+        data: {
+          name: `${FormatMessage.string({id: `menus.${t.type}`})}[${t.oldData.defName || t.oldData.defKey}]`,
+        }});
     }
     if (t.type === 'entity' || t.type === 'view') {
       const keys = (t.data?.fields || []).map(f => f.defKey);
