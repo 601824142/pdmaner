@@ -966,6 +966,7 @@ export  const getTextWidth = (text, font, weight = 'normal') => {
   }
   dom.innerText = text;
   const width =  dom.getBoundingClientRect().width;
+  dom.innerText = '';
   return Math.ceil(width);
 };
 
