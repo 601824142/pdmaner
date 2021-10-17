@@ -44,7 +44,7 @@ export const updateAllData = (dataSource, tabs) => {
   };
   const size = _.get(dataSource, 'profile.relationFieldSize', 15);
   tabs.map(t => {
-    const typeName = t.type === 'entity' ? 'entities' : 'views';
+    const typeName = allType.filter(all => t.type === all.type)[0]?.name;
     const oldData = tempData[typeName].filter(e => e.id === t.tabKey.split(separator)[0])[0];
     return {
       type: t.type,
@@ -54,7 +54,11 @@ export const updateAllData = (dataSource, tabs) => {
     }
   }).forEach(t => {
     if (!t.data.defKey && t.type !== 'diagram') {
-      message = FormatMessage.string({id: 'defKeyValidateMessage'});
+      message = FormatMessage.string({
+        id: 'defKeyValidateMessage',
+        data: {
+          name: `${FormatMessage.string({id: `menus.${t.type}`})}[${t.oldData.defName || t.oldData.defKey}]`,
+        }});
     }
     if (t.type === 'entity' || t.type === 'view') {
       const keys = (t.data?.fields || []).map(f => f.defKey);
@@ -500,7 +504,8 @@ export const validateItemInclude = (item, empty) => {
 
 export const validateItem = (item, empty) => {
   const fieldNames = Object.keys(empty);
-  return !Object.keys(item).some(n => !fieldNames.includes(n));
+  return !Object.keys(item)
+    .some(n => !fieldNames.includes(n));
 };
 
 export const validateIndexes = (indexes) => {
@@ -955,13 +960,13 @@ export  const getTextWidth = (text, font, weight = 'normal') => {
     dom = document.createElement('div');
     dom.setAttribute('id', 'calcTextWidth');
     dom.style.display = 'inline-block';
+    dom.style.fontWeight = weight;
+    dom.style.fontSize = `${font}px`;
     document.body.appendChild(dom);
   }
-  dom.style.fontWeight = weight;
-  dom.style.fontSize = `${font}px`;
   dom.innerText = text;
   const width =  dom.getBoundingClientRect().width;
-  document.body.removeChild(dom);
+  dom.innerText = '';
   return Math.ceil(width);
 };
 
@@ -1018,7 +1023,7 @@ export const transform = (f, dataSource, code) => {
 
 export  const calcNodeData = (preData, nodeData, dataSource, groups) => {
   // 节点源数据
-  const headers = nodeData?.headers.filter(h => !h.hideInGraph);
+  const headers = (nodeData?.headers || []).filter(h => !h.hideInGraph);
   const fields = (nodeData?.fields || []).filter(f => !f.hideInGraph)
       .map(f => ({...f, ...transform(f, dataSource)}));
   // 计算表头的宽度
@@ -1194,6 +1199,20 @@ export const calcCellData = (cells = [], dataSource, updateFields, groups, commo
   return (groupNodes || []).concat(nodes || []).concat(edges || []).concat(remarks || []).concat(polygon || []);
 };
 
+const getHeaders = (d, type) => {
+  if (d.headers && d.headers.length > 0) {
+    return d.headers;
+  }
+  return type === 'entity' ? getEmptyEntity().headers : getEmptyView().headers;
+}
+export const updateHeaders = (d, type) => {
+  return _.omit({
+    ...d,
+    nameTemplate: d.nameTemplate || getEmptyEntity().nameTemplate,
+    headers: getHeaders(d, type),
+  }, ['rowNo', 'group']);
+}
+
 
 export const transformationData = (oldDataSource) => {
   // 某些场景下需要对原始项目进行兼容 统一在此处进行转换操作
@@ -1270,6 +1289,13 @@ export const transformationData = (oldDataSource) => {
   if (compareVersion('3.5.0', oldDataSource.version.split('.'))) {
     tempDataSource = reduceProject(tempDataSource, 'defKey');
   }
+  if (compareVersion('3.5.2', oldDataSource.version.split('.'))) {
+    tempDataSource = {
+      ...tempDataSource,
+      entities: (tempDataSource.entities || []).map(d => updateHeaders(d, 'entity')),
+      views: (tempDataSource.views || []).map(d => updateHeaders(d, 'view')),
+    };
+  }
   return tempDataSource;
 };
 
@@ -1339,7 +1365,7 @@ export const calcEntityOrView = (data = [], dicts, domains, uiHint, entities, ty
           fields: i.fields?.map(f => {
             return {
               ...f,
-              fieldDefKey: fields.filter(f => f[type] === f.fieldDefKey)[0]?.id,
+              fieldDefKey: fields.filter(fie => fie.old === f.fieldDefKey)[0]?.id,
               id: Math.uuid(),
             };
           })

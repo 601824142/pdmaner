@@ -205,7 +205,7 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
 };
 // 获取所有变更数据代码
 const generateUpdateSql = (dataSource, changesData = [], code, oldDataSource) => {
-  const currentCode = _.get(dataSource, 'profile.default.db', []);
+  const currentCode = _.get(dataSource, 'profile.default.db', '');
   const datatype = _.get(dataSource, 'dataTypeMapping.mappings', []);
   const domains = _.get(dataSource, 'domains', []);
   const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);

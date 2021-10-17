@@ -5,7 +5,7 @@ import path from 'path';
 import moment from 'moment';
 import * as _ from 'lodash/object';
 import { projectSuffix } from '../../profile';
-import { defaultJVM } from './datasource_util';
+import {defaultJVM, transform} from './datasource_util';
 import { FormatMessage } from 'components';
 const { execFile } = require('child_process');
 
@@ -213,6 +213,8 @@ export const saveFile = (data, filters, fileValidate, options, refactor) => {
         }).catch((err) => {
           rej(err);
         })
+      } else {
+        rej(new Error());
       }
     }).catch((err) => {
       rej(err);
@@ -361,8 +363,25 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
   const outFile = `${execJarOut}${moment().unix()}.json`;
   const sinerFile = `${execJarOut}${moment().unix()}-siner.json`;
   if ('sinerFile' in tempParams) {
-    // 需要创建临时项目文件
-    fs.writeFileSync(sinerFile, JSON.stringify(dataSource));
+    // 需要创建临时项目文件 转换字段
+    const updateFields = (data) => {
+      return (data || []).map(e => {
+        return {
+          ...e,
+          fields: (e.fields || []).map(f => {
+            return {
+              ...f,
+              ...transform(f, dataSource),
+            };
+          })
+        }
+      })
+    };
+    fs.writeFileSync(sinerFile, JSON.stringify({
+      ...dataSource,
+      entities: updateFields(dataSource.entities),
+      views: updateFields(dataSource.views),
+    }));
     tempParams.sinerFile = sinerFile;
   }
   console.log(outFile);

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Loading, Modal, FormatMessage } from 'components';
+import { Loading, Modal, FormatMessage, ToolBar } from 'components';
 import './style/index.less';
 import {fail, pageType} from '../../lib/variable';
 import Main from '../main';
@@ -32,6 +32,11 @@ export default React.memo(({prefix, open, create, rename, updateHistory, openTem
     Modal.error({title: FormatMessage.string({id: 'optFail'}), message: restProps?.common?.result.toString()});
   }
   return <Loading visible={restProps?.common.loading} title={restProps?.common.title}>
+    <ToolBar
+      resizeable
+      title={<FormatMessage id='system.title'/>}
+      info={!(type === pageType[2]) ? '' : (restProps.projectInfo || <FormatMessage id='system.template'/>)}
+    />
     {!(type === pageType[2]) ? <Home
       updateHistory={updateHistory}
       importProject={_open}

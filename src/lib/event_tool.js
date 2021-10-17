@@ -1,35 +1,29 @@
 import * as Component from 'components';
-
-const creatTempInput = () => {
-  const input = document.createElement('textarea');
-  document.body.appendChild(input);
-  input.style.opacity = '0';
-  return input;
-};
-
-const removeTempInput = (input) => {
-  input.parentElement.removeChild(input);
-};
+import { addBodyEvent, removeBodyEvent } from './listener';
 
 // 复制方法
 export const Copy = (data, successMessage) => {
-  const input = creatTempInput();
-  input.value = typeof data !== 'string' ? JSON.stringify(data) : data;
-  input.select();
+  const value = typeof data !== 'string' ? JSON.stringify(data) : data;
+  const id = Math.uuid();
+  addBodyEvent('oncopy', id, (e) => {
+    e.clipboardData.setData('text', value);
+    e.preventDefault();
+    removeBodyEvent('oncopy', id);
+  });
   if (document.execCommand('copy')) {
     Component.Message.success({title: successMessage});
   }
-  removeTempInput(input);
 };
 
 // 粘贴方法
 export const Paste = (cb) => {
-  const input = creatTempInput();
-  input.focus();
-  if (document.execCommand('paste')) {
-    cb && cb(input.value);
-  }
-  removeTempInput(input);
+  const id = Math.uuid();
+  addBodyEvent('onpaste', id, (e) => {
+    cb && cb(e.clipboardData.getData('text'));
+    e.preventDefault();
+    removeBodyEvent('onpaste', id);
+  });
+  document.execCommand('paste');
 };
 
 // 全局保存方法ctrl+s

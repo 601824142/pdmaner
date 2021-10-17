@@ -8,7 +8,6 @@ import {
   Loading,
   openModal,
   Message,
-  ToolBar,
   Icon,
   Modal,
   FormatMessage,
@@ -37,12 +36,11 @@ import {
   updateAllData,
   allType,
   pdman2sino,
-  getFullColumns,
   emptyDictSQLTemplate,
   reduceProject,
   findExits,
   replaceDiagrams,
-  replaceEntitiesOrViews, replaceDomainsApplyFor, calcDomains, reset,
+  replaceEntitiesOrViews, replaceDomainsApplyFor, calcDomains, reset, updateHeaders,
 } from '../../lib/datasource_util';
 import {clearAllTabData, setDataByTabId} from '../../lib/cache';
 import { Save } from '../../lib/event_tool';
@@ -208,7 +206,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     updateTabs((pre) => {
       return pre.filter(t => !tabKeys.includes(t.tabKey));
     });
-    cavRefArray.current = cavRefArray.current.filter(c => !tabKeys.includes(c.tabKey));
+    cavRefArray.current = cavRefArray.current.filter(c => !tabKeys.includes(c.key));
     updateActiveKey((pre) => {
       return newActiveKey || pre;
     });
@@ -369,13 +367,6 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       };
     });
   };
-  const getHeaders = () => {
-    return getFullColumns()
-      .map(h => ({
-        refKey: h.newCode,
-        hideInGraph: h.relationNoShow,
-      }));
-  };
   const calcRepeat = (pre, next, type, needOrigin) => {
     const origin =  type === 'entity' ? pre
       .filter(p => next.findIndex(n => n.defKey === p.defKey) < 0) : pre;
@@ -399,7 +390,31 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     injectDataSource({
       ...dataSourceRef.current,
       domains: finalDomains,
-      entities: originEntities.concat(calcDomain(addEntities, dbKey, finalDomains)),
+      entities: originEntities.concat(calcDomain(addEntities, dbKey, finalDomains)
+          .map(e => ({
+            ...updateHeaders(e, 'entity'),
+            fields: (e.fields || []).map((f, i) => {
+              return {
+                ...f,
+                hideInGraph: i >
+                  (parseInt(dataSourceRef.current.profile.relationFieldSize, 10) - 1),
+              };
+            }),
+            indexes: e.indexes?.map((i) => {
+              return {
+                ...i,
+                id: Math.uuid(),
+                fields: i.fields?.map((fi) => {
+                  return {
+                    ...fi,
+                    fieldDefKey: (e.fields || [])
+                      .filter(fie => fie.defKey === fi.fieldDefKey)[0]?.id,
+                    id: Math.uuid(),
+                  };
+                }),
+              };
+            }) || [],
+          }))),
       viewGroups: (dataSourceRef.current.viewGroups || []).map((g) => {
         const currentGroupData = addEntities.filter(d => d.group === g.id).map(d => d.id);
         return {
@@ -441,7 +456,6 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
             .reduce((a, b) => a.concat((b.fields || [])
               .map(f => ({
                 ...f,
-                headers: f.headers || getHeaders(),
                 group: b.id,
               }))), [])), 'entity', true);
           const tempDiagrams = (dataSourceRef.current?.diagrams || []);
@@ -494,9 +508,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
           };
           const finalEntities = originEntities.concat(
             replaceEntitiesOrViews(addEntities, commonReplace)
-            .map((e) => {
-              return _.omit(e, ['group']);
-            }));
+              .map(e => updateHeaders(e, 'entity')));
           const addEntityKeys = tempAddEntities.map(e => e.id);
           const newDataSource = {
             ...dataSourceRef.current,
@@ -506,7 +518,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
             },
             entities: finalEntities,
             views: originViews
-              .concat(replaceEntitiesOrViews(addViews, commonReplace, finalEntities)),
+              .concat(replaceEntitiesOrViews(addViews, commonReplace, finalEntities)
+              .map(e => updateHeaders(e, 'view'))),
             dicts,
             domains: replaceDomainsApplyFor(domains, replaceMappings),
             viewGroups: finalViewGroups.map((g) => {
@@ -605,10 +618,11 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
           const [domains] = calcRepeat(dataSourceRef.current.domains,
             calcDomains(result.body?.domains || [], dataSourceRef.current.dataTypeMapping?.mappings, 'defKey'));
           const entities = ((type === 'PD' ? result.body?.tables : result.body) || []).map((t) => {
+            const fields = (t.fields || []).map(f => ({...f, id: Math.uuid()}));
             return {
               ...t,
               id: Math.uuid(),
-              fields: (t.fields || []).map(f => ({...f, id: Math.uuid()})),
+              fields,
             };
           });
           let modal;
@@ -620,7 +634,6 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
               .reduce((a, b) => a.concat((b.fields || [])
                 .map(f => ({
                   ...f,
-                  headers: f.headers || getHeaders(),
                   group: b.id,
                 }))), [])), domains, null, modal);
           };
@@ -1413,13 +1426,6 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   const createGroupMenu = getMenu('add', '', 'groups', [], groupType, '');
   console.log(tabs);
   return <Loading visible={common.loading} title={common.title}>
-    <div className={`${currentPrefix}-main-toolbar`}>
-      <ToolBar
-        resizeable
-        title={<FormatMessage id='system.title'/>}
-        info={projectInfo || <FormatMessage id='system.template'/>}
-      />
-    </div>
     <HeaderTool
       dataSource={restProps.dataSource}
       ref={headerToolRef}

@@ -115,9 +115,11 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         parentKey,
       };
       e.stopPropagation();
-    } else {
+    } else if(child.type === 'entity'){
       e.preventDefault();
       dragTable && dragTable(e, key);
+    } else {
+      e.preventDefault();
     }
   };
   const rowOnDragOver = (e, key, pKey) => {

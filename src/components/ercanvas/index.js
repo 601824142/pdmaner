@@ -10,7 +10,6 @@ import RelationEditor from './RelationEditor';
 import {
   getEmptyEntity,
   generatorTableKey,
-  getFullColumns,
   calcCellData, calcNodeData, mapData2Table,
 } from '../../lib/datasource_util';
 import { separator } from '../../../profile';
@@ -606,11 +605,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       let initData = {};
       if (type === 'create') {
         initData = {
-          headers: getFullColumns()
-            .map(h => ({
-              refKey: h.newCode,
-              hideInGraph: h.relationNoShow,
-            })),
+          headers: getEmptyEntity().headers,
           fields: getEntityInitFields(),
           properties: getEntityInitProperties(),
         };
@@ -1274,7 +1269,11 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           properties: getEntityInitProperties(),
         };
       } else {
-        empty = dataSourceRef.current?.entities?.filter(entity => entity.id === key)[0];
+        const dataSourceEntity = dataSourceRef.current?.entities
+          ?.filter(entity => entity.id === key)[0];
+        empty = {
+          ...dataSourceEntity,
+        };
         count = graph.getNodes().filter(n => n.data?.id === key).length;
       }
       if (!empty) {
@@ -1352,8 +1351,8 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       }
     };
     renderReady && renderReady({
-      undo: () => graph.undo({undo: true}),
-      redo: () => graph.redo({redo: true}),
+      undo: () => graphRef.current.undo({undo: true}),
+      redo: () => graphRef.current.redo({redo: true}),
       startDrag,
       startRemarkDrag,
       startGroupNodeDrag,
@@ -1364,7 +1363,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       getScaleNumber,
       updateColor,
       exportImg: () => {
-        img(graph.toJSON().cells, relationType,null, false).then((dom) => {
+        img(graphRef.current.toJSON().cells, relationType,null, false).then((dom) => {
           html2canvas(dom).then((canvas) => {
             document.body.removeChild(dom.parentElement.parentElement);
             const diagram = (dataSourceRef.current?.diagrams || [])

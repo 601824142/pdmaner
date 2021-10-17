@@ -2,10 +2,12 @@ import React, { forwardRef } from 'react';
 import { Graph, Markup } from '@antv/x6';
 import '@antv/x6-react-shape';
 import marked from 'marked';
+import { renderer } from '../util';
 
 const EditNode = forwardRef(({node}, ref) => {
   const label = node.getProp('label');
   const getLabel = () => {
+    marked.use({ renderer });
     return marked(label);
   };
   return <div
