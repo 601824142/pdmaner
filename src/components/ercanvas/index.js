@@ -1370,7 +1370,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             const diagram = (dataSourceRef.current?.diagrams || [])
                 .filter(d => d.id === diagramKey)[0] || {};
 
-            let clippedCanvas = clipCanvasEmptyPadding(canvas, 30);
+            const clippedCanvas = clipCanvasEmptyPadding(canvas, 30);
 
             DataUri.downloadDataUri(clippedCanvas.toDataURL('image/png'),
                 `${dataSourceRef.current.name}-${diagram.defKey}[${diagram.defName || diagram.defKey}]-${moment().format('YYYYMDHHmmss')}.png`);

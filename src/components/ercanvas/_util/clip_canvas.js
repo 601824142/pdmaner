@@ -7,23 +7,17 @@
  * @param y      像素纵坐标
  * @return       boolean
  */
-function isEmptyPixel(pixels, width, x, y) {
-  let index = (y * width + x) * 4;
-  const r = pixels.data[index + 0];
+const isEmptyPixel = (pixels, width, x, y) => {
+  const index = (y * width + x) * 4;
+  const r = pixels.data[index];
   const g = pixels.data[index + 1];
   const b = pixels.data[index + 2];
   const a = pixels.data[index + 3] / 255;
-
   if (a === 0) {
     return true;
   }
-
-  if (r === 255 && g === 255 && b === 255) {
-    return true;
-  }
-
-  return false;
-}
+  return r === 255 && g === 255 && b === 255;
+};
 
 /*
  * 探索图片中非空白内容的边界
@@ -33,8 +27,8 @@ function isEmptyPixel(pixels, width, x, y) {
  * @param height 原始图片高度
  * @return       bound
  */
-function findBound(pixels, width, height) {
-  let bound = {
+const findBound = (pixels, width, height) => {
+  const bound = {
     top: null,
     left: null,
     right: null,
@@ -96,7 +90,7 @@ function findBound(pixels, width, height) {
     }
   }
   return bound;
-}
+};
 
 /*
  * 裁剪 canvas 中的图片，去除四周的空白。
@@ -106,13 +100,13 @@ function findBound(pixels, width, height) {
  * @return        裁剪后的画布
  */
 const clipCanvasEmptyPadding = (canvas, padding) => {
-  let ctx = canvas.getContext('2d'),
+  const ctx = canvas.getContext('2d'),
     width = canvas.width,
     height = canvas.height,
     pixels = ctx.getImageData(0, 0, width, height);
 
   // 探索边界
-  let bound = findBound(pixels, width, height);
+  const bound = findBound(pixels, width, height);
 
   // 增加 padding
   bound.top -= padding;
@@ -128,12 +122,12 @@ const clipCanvasEmptyPadding = (canvas, padding) => {
   bound.right = bound.right > width ? width : bound.right;
 
   // 裁剪
-  let trimHeight = bound.bottom - bound.top,
+  const trimHeight = bound.bottom - bound.top,
     trimWidth = bound.right - bound.left,
     trimmed = ctx.getImageData(bound.left, bound.top, trimWidth, trimHeight);
 
   // 拷贝图片到新 canvas
-  let copy = document.createElement('canvas').getContext('2d');
+  const copy = document.createElement('canvas').getContext('2d');
   copy.canvas.width = trimWidth;
   copy.canvas.height = trimHeight;
   copy.putImageData(trimmed, 0, 0);

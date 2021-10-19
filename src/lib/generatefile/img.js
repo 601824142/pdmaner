@@ -4,6 +4,7 @@ import _ from 'lodash/object';
 import { calcCellData } from '../datasource_util';
 import html2canvas from 'html2canvas';
 import { saveTempImages } from '../middle';
+import clipCanvasEmptyPadding from 'components/ercanvas/_util/clip_canvas';
 
 export const img = (data, relationType, dataSource, needCalc = true, groups) => {
   return new Promise((res) => {
@@ -147,7 +148,8 @@ export const imgAll = (dataSource, callBack) => {
         }).then((dom) => {
           html2canvas(dom).then((canvas) => {
             document.body.removeChild(dom.parentElement.parentElement);
-            const dataBuffer = Buffer.from(canvas.toDataURL('image/png')
+            const clippedCanvas = clipCanvasEmptyPadding(canvas, 30);
+            const dataBuffer = Buffer.from(clippedCanvas.toDataURL('image/png')
                     .replace(/^data:image\/\w+;base64,/, ""),
                 'base64');
             res({fileName: d.id, data: dataBuffer});
