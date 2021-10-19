@@ -18,6 +18,7 @@ import {getPrefix} from '../../lib/prefixUtil';
 import { img } from '../../lib/generatefile/img';
 import LabelEditor from './LabelEditor';
 import FindEntity from './FindEntity';
+import clipCanvasEmptyPadding from './_util/clip_canvas';
 
 const { Dnd } = Addon;
 
@@ -1368,7 +1369,10 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             document.body.removeChild(dom.parentElement.parentElement);
             const diagram = (dataSourceRef.current?.diagrams || [])
                 .filter(d => d.id === diagramKey)[0] || {};
-            DataUri.downloadDataUri(canvas.toDataURL('image/png'),
+
+            let clippedCanvas = clipCanvasEmptyPadding(canvas, 30);
+
+            DataUri.downloadDataUri(clippedCanvas.toDataURL('image/png'),
                 `${dataSourceRef.current.name}-${diagram.defKey}[${diagram.defName || diagram.defKey}]-${moment().format('YYYYMDHHmmss')}.png`);
           });
         });
