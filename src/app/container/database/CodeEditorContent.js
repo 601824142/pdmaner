@@ -7,7 +7,7 @@ import {platform} from '../../../lib/middle';
 export default ({prefix, onChange, value, templateShow,
                              templateType, dataTypeSupport, dataSource, ...restProps}) => {
   const codeType = dataSource?.profile?.dataTypeSupports?.
-  filter(d => d.id === dataTypeSupport)[0]?.defKey;
+  filter(d => d.id === dataTypeSupport)[0];
   const [codeData, updateCodeData] = useState(value);
   const codeChange = (e) => {
     onChange && onChange(e);
@@ -33,7 +33,8 @@ export default ({prefix, onChange, value, templateShow,
       modal = openModal(<Preview
         dataSource={dataSource}
         template={codeData}
-        mode={templateType === 'appCode' ? codeType : 'SQL'}
+        db={codeType?.id}
+        mode={templateType === 'appCode' ? codeType?.defKey : 'SQL'}
         templateShow={templateShow}
         templateChange={templateChange}
       />, {

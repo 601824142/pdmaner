@@ -520,10 +520,16 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             },
           });
         },
-        validateConnection({targetPort, targetView, sourcePort}) {
+        validateConnection({targetPort, targetView, sourcePort,sourceCell}) {
           if (targetView) {
             const node = targetView.cell;
             changePortsVisible(true, node, sourcePort);
+            if (sourcePort) {
+              // 阻止自连
+              if ((sourcePort === targetPort) && (sourceCell === node)) {
+                return false;
+              }
+            }
             if (sourcePort && sourcePort.includes('extend')) {
               return targetPort.includes('extend');
             }
@@ -1099,7 +1105,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graph.on('edge:mouseenter', ({edge}) => {
       const sourceNode = edge.getSourceCell();
       const targetNode = edge.getTargetCell();
-      sourceNode.setProp('sourcePort', edge.getSourcePortId(), { ignoreHistory : true});
+      sourceNode?.setProp('sourcePort', edge.getSourcePortId(), { ignoreHistory : true});
       targetNode?.setProp('targetPort', edge.getTargetPortId(), { ignoreHistory : true});
       edge.attr('line/stroke', currentColor.current.selected, { ignoreHistory : true});
     });

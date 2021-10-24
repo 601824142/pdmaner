@@ -7,7 +7,7 @@ import './style/index.less';
 import {getPrefix} from '../../../lib/prefixUtil';
 import DotHelp from './DotHelp';
 
-export default React.memo(({prefix, template, mode, templateShow = 'createTable', dataSource, templateChange}) => {
+export default React.memo(({prefix, template, mode, templateShow = 'createTable', db, dataSource, templateChange}) => {
   const style = {width: 'auto', height: 'calc(100vh - 80px)'};
   const openDotHelp = () => {
     let modal;
@@ -39,7 +39,7 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
         fields: (jsonData[name].fields || []).map((f) => {
           return {
             ...f,
-            ...transform(f, dataSource),
+            ...transform(f, dataSource, db, 'defKey'),
           };
         }),
       },
