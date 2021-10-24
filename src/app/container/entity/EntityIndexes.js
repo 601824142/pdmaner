@@ -6,6 +6,8 @@ import { emptyIndex } from '../../../lib/datasource_util';
 import {getPrefix} from '../../../lib/prefixUtil';
 
 export default React.memo(({ prefix, data, dataChange }) => {
+  const dataPropsRef = useRef(data);
+  dataPropsRef.current = data;
   const tableRef = useRef({});
   const commonProps = {
     // 禁用表头拖动排序
@@ -59,7 +61,7 @@ export default React.memo(({ prefix, data, dataChange }) => {
         }
       };
       const onOK = () => {
-        res(data?.fields?.filter(f => checkedFields.includes(f.id))
+        res(dataPropsRef.current?.fields?.filter(f => checkedFields.includes(f.id))
             .map(field => ({
               fieldDefKey: field.id,
               ascOrDesc: 'A',
@@ -74,7 +76,7 @@ export default React.memo(({ prefix, data, dataChange }) => {
       };
       const currentIndex = stateData.current.filter(i => i.id === d.id)[0];
       modal = openModal(<div className={`${currentPrefix}-entity-indexes-right-import`}>{
-        data?.fields?.filter(f => !(currentIndex?.fields || [])
+        dataPropsRef.current?.fields?.filter(f => !(currentIndex?.fields || [])
           .map(dF => dF.fieldDefKey).includes(f.id))
           .map(f => (
             <div

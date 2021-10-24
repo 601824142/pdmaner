@@ -981,7 +981,7 @@ export const reset = (f, dataSource, [key, id]) => {
   };
 };
 
-export const transform = (f, dataSource, code) => {
+export const transform = (f, dataSource, code, type = 'id') => {
   // 获取该数据表需要显示的字段
   const domains = dataSource?.domains || [];
   const entities = dataSource?.entities || [];
@@ -992,28 +992,28 @@ export const transform = (f, dataSource, code) => {
   const temp = {};
   if (f.domain){
     // 转换数据域
-    const domain = domains.filter(dom => dom.id === f.domain)[0] || { len: '', scale: '' };
+    const domain = domains.filter(dom => dom[type] === f.domain)[0] || { len: '', scale: '' };
     const dataType = mappings.filter(m => m.id === domain.applyFor)[0]?.[code || db] || '';
     temp.len = domain.len === undefined ? '' : domain.len;
     temp.scale = domain.scale === undefined ? '' : domain.scale;
     temp.type = dataType;
-    temp.domain = domain.defName || domain.defKey;
+    temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
   }
   // 转换数据字典
   if (f.refDict) {
-    const dict = dicts.filter(d => d.id === f.refDict)[0];
+    const dict = dicts.filter(d => d[type] === f.refDict)[0];
     temp.refDict = dict?.defName || dict?.defKey;
   }
   // 转换UI建议
   if (f.uiHint) {
-    const uiHint = uiHints.filter(u => u.id === f.uiHint)[0];
+    const uiHint = uiHints.filter(u => u[type] === f.uiHint)[0];
     temp.uiHint = uiHint?.defName || uiHint?.defKey;
   }
   // 转换引用数据表  如果是视图
   if (entities && f.refEntity) {
-    const entity = entities.filter(e => e.id === f.refEntity)[0];
+    const entity = entities.filter(e => e[type] === f.refEntity)[0];
     if (entity) {
-      const field = (entity.fields || []).filter(fie => f.refEntityField === fie.id)[0];
+      const field = (entity.fields || []).filter(fie => f.refEntityField === fie[type])[0];
       temp.refEntity = entity.defKey || '';
       temp.refEntityField = field?.defKey || '';
     }
@@ -1309,7 +1309,7 @@ export const validateNeedSave = (dataSource) => {
   return false;
 };
 
-export const defaultJVM = '-Xms512m -Xmx2048m -XX:MaxPermSize=256m -XX:-UseGCOverheadLimit';
+export const defaultJVM = '-Xms512m -Xmx2048m -XX:-UseGCOverheadLimit';
 
 export const emptyDictSQLTemplate =  {
   type: "dbDDL",
