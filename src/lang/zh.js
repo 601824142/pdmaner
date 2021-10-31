@@ -217,6 +217,8 @@ export default {
     closeConfirm: '退出当前项目将会丢失所有未保存的数据，请确定已经执行保存操作！',
     exitConfirmTitle: '关闭确认',
     exitConfirm: '是否关闭软件？',
+    saveConfirmTitle: '关闭确认',
+    saveConfirm: '当前内容尚未保存，是否关闭？',
     refreshConfirmTitle: '刷新项目',
     refreshConfirm: '刷新当前项目将会丢失当前打开的项目数据，是否继续？',
     deleteConfirmTitle: '删除确认',
@@ -589,7 +591,7 @@ export default {
         },
         ModelLabel: '模型默认显示模式',
         ModelLabelMessage: '(重启或重新打开项目后生效)',
-        relationFieldSize: '关系图最大展示字段数',
+        relationFieldSize: '关系图最多允许展示字段数',
         relationType: '关系图连线对象',
     },
     dbConnect: {

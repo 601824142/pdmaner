@@ -745,7 +745,7 @@ export const pdman2sino = (data, projectName) => {
       const javaIndex = applyArray.findIndex(p => p.toLocaleLowerCase() === 'java');
       // 取java的mapping或者第一个
       const applyFor = (apply[applyArray[javaIndex]]
-        || apply[applyArray[0]] || {})?.type.toLocaleLowerCase()?.replace(/\(\d+,*\d*\)/g, '');
+        || apply[applyArray[0]] || {})?.type?.toLocaleLowerCase()?.replace(/\(\d+,*\d*\)/g, '');
       if (!applyFor) {
         // 不存在任何的domain 无效的dataType
         return null;
@@ -1003,6 +1003,7 @@ export const transform = (f, dataSource, code, type = 'id') => {
   if (f.refDict) {
     const dict = dicts.filter(d => d[type] === f.refDict)[0];
     temp.refDict = dict?.defName || dict?.defKey;
+    temp.refDictData = dict || {};
   }
   // 转换UI建议
   if (f.uiHint) {

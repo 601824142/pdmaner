@@ -678,8 +678,10 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
               entities: (dataSourceRef.current.entities || []).concat(keys),
             });
             keys.push({defKey: newKey});
-            c.setProp('originKey', Math.uuid(), {ignoreHistory : true});
+            const entityId = Math.uuid();
+            c.setProp('originKey', entityId, {ignoreHistory : true});
             c.setData({defKey: newKey}, {ignoreHistory : true, relation: true});
+            c.setData({id: newKey}, {ignoreHistory : true, relation: true});
             return {
               data: c.data,
             };
@@ -956,7 +958,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
               {
                 title: <FormatMessage id='canvas.edge.setRelation'/>,
                 buttons: [
-                  <Button key='onOK' onClick={onOK}>
+                  <Button key='onOK' onClick={onOK} type='primary'>
                     <FormatMessage id='button.ok'/>
                   </Button>,
                   <Button key='onCancel' onClick={onCancel}>
@@ -995,7 +997,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             {
               title: <FormatMessage id='canvas.edge.relationLabel'/>,
               buttons: [
-                <Button key='onOK' onClick={onOK}>
+                <Button key='onOK' onClick={onOK} type='primary'>
                   <FormatMessage id='button.ok'/>
                 </Button>,
                 <Button key='onCancel' onClick={onCancel}>
@@ -1169,7 +1171,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             title: cellData.defName || cellData.defKey,
             width: '80%',
             buttons: [
-              <Button key='onSave' onClick={onOK}>
+              <Button key='onSave' onClick={onOK} type='primary'>
                 <FormatMessage id='button.save'/>
               </Button>,
               <Button key='onCancel' onClick={onCancel}>

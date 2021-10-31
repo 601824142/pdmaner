@@ -217,6 +217,8 @@ export default {
     closeConfirm: 'quitting the current project will lose all unsaved data, please make sure that the save operation has been executed!',
     exitConfirmTitle: 'Closing confirmation',
     exitConfirm: 'Do you want to close the software?',
+    saveConfirmTitle: 'Closing confirmation',
+    saveConfirm: 'The current content has not been saved. Do you want to close it?',
     refreshConfirmTitle: 'Refresh project',
     refreshConfirm: 'Refreshing the current project will lose the currently open project data. Do you want to continue?',
     deleteConfirmTitle: 'Delete confirm',
@@ -589,7 +591,7 @@ export default {
         },
         ModelLabel: 'default display label',
         ModelLabelMessage: '(Take effect after restarting or reopening the project)',
-        relationFieldSize: 'relation show field size',
+        relationFieldSize: 'The maximum number of fields allowed in the diagram',
         relationType: 'relation type',
     },
     dbConnect: {

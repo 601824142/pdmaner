@@ -375,7 +375,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
     modal && modal.close();
   };
   const buttons = modalData.refName === 'refViews' ? [] : [
-    <Button key='onOK' onClick={onOK}>
+    <Button key='onOK' onClick={onOK} type='primary'>
       <FormatMessage id='button.ok'/>
     </Button>,
     <Button key='onCancel' onClick={onCancel}>
@@ -989,7 +989,7 @@ const moveOpt = (dataSource, menu, updateDataSource) => {
     {
       title: FormatMessage.string({id: 'group.selectGroup'}),
       buttons: [
-        <Button key='onOK' onClick={onOK}>
+        <Button type='primary' key='onOK' onClick={onOK}>
           <FormatMessage id='button.ok'/>
         </Button>,
         <Button key='onCancel' onClick={onCancel}>

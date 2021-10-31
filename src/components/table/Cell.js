@@ -35,7 +35,7 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
       onChange={remarkDetailChange}
     />, {
       title: Component.FormatMessage.string({id: name === 'intro' ? 'dict.item.intro' : 'fieldRemarkDetail'}),
-      buttons: [<Button key='ok' onClick={() => onOk(modal)}>{Component.FormatMessage.string({id: 'button.ok'})}</Button>,
+      buttons: [<Button type='primary' key='ok' onClick={() => onOk(modal)}>{Component.FormatMessage.string({id: 'button.ok'})}</Button>,
         <Button key='cancel' onClick={() => onCancel(modal)}>{Component.FormatMessage.string({id: 'button.cancel'})}</Button>],
     });
   };
@@ -97,7 +97,7 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
       width: '80%',
       bodyStyle: {width: '80%'},
       buttons: [
-        <Button key='ok' onClick={onOK}>{FormatMessage.string({id: 'button.ok'})}</Button>,
+        <Button type='primary' key='ok' onClick={onOK}>{FormatMessage.string({id: 'button.ok'})}</Button>,
         <Button key='cancel' onClick={onCancel}>{FormatMessage.string({id: 'button.cancel'})}</Button>],
     });
   };

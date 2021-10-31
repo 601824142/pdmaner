@@ -42,7 +42,7 @@ import {
   replaceDiagrams,
   replaceEntitiesOrViews, replaceDomainsApplyFor, calcDomains, reset, updateHeaders,
 } from '../../lib/datasource_util';
-import {clearAllTabData, setDataByTabId} from '../../lib/cache';
+import {clearAllTabData, getDataByTabId, setDataByTabId} from '../../lib/cache';
 import { Save } from '../../lib/event_tool';
 
 import './style/index.less';
@@ -196,20 +196,33 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     activeTabStack.current.push(menuKey);
   };
   const _tabClose = (tabKey) => {
-    const tabKeys = [].concat(tabKey);
-    // 重新设置激活的tab页
-    let newActiveKey = null;
-    activeTabStack.current = activeTabStack.current.filter(k => !tabKeys.includes(k));
-    if (tabKeys.includes(activeKey)) {
-      newActiveKey = activeTabStack.current[activeTabStack.current.length - 1];
+    const closeTab = () => {
+      const tabKeys = [].concat(tabKey);
+      // 重新设置激活的tab页
+      let newActiveKey = null;
+      activeTabStack.current = activeTabStack.current.filter(k => !tabKeys.includes(k));
+      if (tabKeys.includes(activeKey)) {
+        newActiveKey = activeTabStack.current[activeTabStack.current.length - 1];
+      }
+      updateTabs((pre) => {
+        return pre.filter(t => !tabKeys.includes(t.tabKey));
+      });
+      cavRefArray.current = cavRefArray.current.filter(c => !tabKeys.includes(c.key));
+      updateActiveKey((pre) => {
+        return newActiveKey || pre;
+      });
+    };
+    if (getDataByTabId(tabKey)) {
+      Modal.confirm({
+        title: FormatMessage.string({id: 'saveConfirmTitle'}),
+        message: FormatMessage.string({id: 'saveConfirm'}),
+        onOk:() => {
+          closeTab();
+        },
+      });
+    } else {
+      closeTab();
     }
-    updateTabs((pre) => {
-      return pre.filter(t => !tabKeys.includes(t.tabKey));
-    });
-    cavRefArray.current = cavRefArray.current.filter(c => !tabKeys.includes(c.key));
-    updateActiveKey((pre) => {
-      return newActiveKey || pre;
-    });
   };
   const _tabCloseOther = (tabKey) => {
     activeTabStack.current = [tabKey];

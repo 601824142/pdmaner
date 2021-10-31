@@ -615,6 +615,46 @@ export const getDemoTemplateData = (templateShow) => {
           "hideInGraph": false,
           "domain": "Dict",
           "refDict": "Gender",
+          "refDictData": {
+            "defKey": "Gender",
+            "defName": "性别",
+            "intro": "",
+            "items": [
+              {
+                "defKey": "M",
+                "defName": "男",
+                "intro": "",
+                "parentKey": "",
+                "enabled": true,
+                "attr1": "",
+                "attr2": "",
+                "attr3": "",
+                "sort": "1"
+              },
+              {
+                "defKey": "F",
+                "defName": "女",
+                "intro": "",
+                "parentKey": "",
+                "enabled": true,
+                "attr1": "",
+                "attr2": "",
+                "attr3": "",
+                "sort": "2"
+              },
+              {
+                "defKey": "U",
+                "defName": "未知",
+                "intro": "",
+                "parentKey": "",
+                "enabled": true,
+                "attr1": "",
+                "attr2": "",
+                "attr3": "",
+                "sort": "3"
+              }
+            ]
+          },
           "type": ""
         },
         {

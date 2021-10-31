@@ -89,7 +89,7 @@ export default React.memo(({ prefix, data, dataChange }) => {
       }</div>, {
         title: FormatMessage.string({id: 'tableEdit.importFields'}),
         buttons: [
-          <Button key='onOK' onClick={onOK}>
+          <Button key='onOK' onClick={onOK} type='primary'>
             <FormatMessage id='button.ok'/>
           </Button>,
           <Button key='onCancel' onClick={onCancel}>
