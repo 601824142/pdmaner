@@ -215,7 +215,7 @@ export default React.memo(({placeholder, prefix, dataSource,
     />, {
       title: <FormatMessage id='components.searchSuggest.moreList'/>,
       buttons: [
-        <Button key='onOK' onClick={onOK}>
+        <Button key='onOK' onClick={onOK} type='primary'>
           <FormatMessage id='button.close'/>
         </Button>],
     });

@@ -174,7 +174,7 @@ Modal.confirm = ({title, message, onOk}) => {
     title: <span><Icon type='fa-question'/>{title}</span>,
     status: 'warring',
     buttons: [
-      <Button key='onOK' onClick={onOK}>
+      <Button key='onOK' onClick={onOK} type='primary'>
         <FormatMessage id='button.ok'/>
       </Button>,
       <Button key='onCancel' onClick={onCancel}>

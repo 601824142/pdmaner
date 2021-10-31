@@ -40,7 +40,7 @@ export default ({prefix, onChange, value, templateShow,
       />, {
         fullScreen: true,
         title: FormatMessage.string({id: 'database.templateEditOpt.previewEdit'}),
-        buttons: [<Button key='ok' onClick={onOk}>
+        buttons: [<Button type='primary' key='ok' onClick={onOk}>
           <FormatMessage id='button.ok'/>
         </Button>,
           <Button key='cancel' onClick={onCancel}>

@@ -610,7 +610,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
         current={current}
       />, {
         title: Component.FormatMessage.string({id: 'standardFields.selectGroup'}),
-        buttons: [<Component.Button key='ok' onClick={onOk}>
+        buttons: [<Component.Button type='primary' key='ok' onClick={onOk}>
           <Component.FormatMessage id='button.ok'/>
         </Component.Button>,
           <Component.Button key='cancel' onClick={onCancel}>

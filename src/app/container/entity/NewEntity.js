@@ -75,7 +75,7 @@ export default React.memo(({prefix, dataSource, dataChange, isNewView,
     }</div>, {
       title: FormatMessage.string({id: 'tableBase.selectFields'}),
       buttons: [
-        <Button key='onOK' onClick={onOK}>
+        <Button key='onOK' onClick={onOK} type='primary'>
           <FormatMessage id='button.ok'/>
         </Button>,
         <Button key='onCancel' onClick={onCancel}>

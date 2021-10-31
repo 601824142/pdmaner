@@ -47,7 +47,7 @@ export default React.memo(({prefix, dataSource, data, onChange}) => {
     </div>, {
       title: FormatMessage.string({id: 'view.selectEntity'}),
       buttons: [
-        <Button key='onOK' onClick={onOK}>
+        <Button key='onOK' onClick={onOK} type='primary'>
           <FormatMessage id='button.ok'/>
         </Button>,
         <Button key='onCancel' onClick={onCancel}>

@@ -46,7 +46,7 @@ export default React.memo(({prefix, dataSource, onChange, defaultSelected}) => {
     </div>, {
       title: <FormatMessage id='components.modalInput.select'/>,
       buttons: [
-        <Button key='onOK' onClick={onOK}>
+        <Button key='onOK' onClick={onOK} type='primary'>
           <FormatMessage id='button.ok'/>
         </Button>,
         <Button key='onCancel' onClick={onCancel}>
