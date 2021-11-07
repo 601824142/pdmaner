@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 require('@electron/remote/main').initialize();
+const { autoUpdater } =require("electron-updater");
 
 // 保持一个对于 window 对象的全局引用，如果你不这样做，
 // 当 JavaScript 对象被垃圾回收， window 会被自动地关闭
@@ -70,6 +71,24 @@ function createWindow() {
       });
     }
   }
+  autoUpdater.setFeedURL('http://chiner-release.httpchk.com');
+  // 更新下载进度事件
+  autoUpdater.on('download-progress', function (progressObj) {
+    //与渲染进程通信
+    win.webContents.send('updateProgress', progressObj);
+    win.setProgressBar(progressObj.percent / 100);
+  })
+  autoUpdater.on('error', (err) => {
+    win.webContents.send('updateEnd')
+    win.setProgressBar(-1);
+  })
+  autoUpdater.on('update-downloaded', function () {
+    win.setProgressBar(-1);
+    autoUpdater.quitAndInstall();
+  })
+  ipcMain.on('update', () => {
+    autoUpdater.checkForUpdates()
+  });
   ipcMain.on('data', (e, args ) => {
     try {
       const argData = JSON.parse(args);

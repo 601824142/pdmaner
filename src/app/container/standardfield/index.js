@@ -118,6 +118,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       dataSource={dataSource}
       updateDataSource={updateDataSource}
     />, {
+      closeable: false,
       bodyStyle: {width: '80%'},
       title: FormatMessage.string({id: 'standardFields.editStandardFields'}),
       buttons: [

@@ -106,6 +106,8 @@ export default {
     welcome: 'welcome to use',
     welcomeVersionTitle: 'checkVersionData...',
     newVersion: 'New version found',
+    download: 'Downloading the latest version...',
+    newVersionError: 'Version download failed, please try to download manually by clicking the download link',
     version: {
         number: 'NewVersionNumber',
         date: 'UpdateDate',
@@ -621,6 +623,7 @@ export default {
             guassdb: 'jdbc:postgresql://ip:port/name',
             kingbase: 'jdbc:kingbase8://ip:port/name',
             maxcompute: 'jdbc:odps:http://ip:port/api?project=name&accessId=ACCESS_ID&accessKey=ACCESS_KEY',
+            sqlite: 'jdbc:sqlite:/path/db-file-name (MAC or Linux) jdbc:sqlite://path/db-file-name (Windows)',
         },
         configExample: 'config example:',
         connectSuccess: 'connectSuccess',

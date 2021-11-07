@@ -145,7 +145,7 @@ Modal.warring = ({title}) => {
   return openModal(title, {small: true, status: 'error'});
 };
 
-Modal.info = ({title, message, bodyStyle, contentStyle, closeable}) => {
+Modal.info = ({title, message, bodyStyle, contentStyle, closeable, buttons}) => {
   return openModal(<React.Fragment>
     <div style={{overflow: 'auto', padding: '5px 0px 15px 0px'}}>{message}</div>
   </React.Fragment>, {
@@ -155,6 +155,7 @@ Modal.info = ({title, message, bodyStyle, contentStyle, closeable}) => {
     bodyStyle,
     contentStyle,
     closeable,
+    buttons,
   });
 };
 

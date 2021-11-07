@@ -13,14 +13,14 @@ if ([].concat(process.argv).splice(2, process.argv.length).includes('--web')) {
 var cpDir = [
   {
     from: path.resolve(__dirname, '../public'),
-    to: path.resolve(__dirname, '../build')
+    to: path.resolve(__dirname, '../app/build')
   }
 ];
 
 if (platform === 'json') {
   cpDir.push({
     from: path.resolve(__dirname, '../src/main.js'),
-    to: path.resolve(__dirname, '../build')
+    to: path.resolve(__dirname, '../app/build')
   });
 }
 
@@ -50,7 +50,7 @@ module.exports = {
     }
   },
   output: {
-    path: path.resolve(__dirname, '../build'),
+    path: path.resolve(__dirname, '../app/build'),
     filename: "[name].[chunkhash:8].min.js"
   },
   plugins: [

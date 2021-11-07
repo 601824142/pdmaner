@@ -397,7 +397,12 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     if (!isInit.current) {
       graphRef.current.fromJSON({
         cells: calcCellData(data?.canvasData?.cells || [], dataSourceRef.current, updateFields,
-          getTableGroup(), commonPorts, relationType, commonEntityPorts),
+          getTableGroup(), commonPorts, relationType, commonEntityPorts).map((n) => {
+            return {
+              ...n,
+              position: null,
+            };
+        }),
       });
     } else {
       // 需要更新数据表相关的节点

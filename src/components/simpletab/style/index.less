@@ -13,6 +13,10 @@
   &-block {
 
   }
+  &-add {
+    cursor: pointer;
+    margin: 0 10px;
+  }
   &-titles {
     background: @home-background;
     &-left {
@@ -52,7 +56,10 @@
         background: @background-color;
         border-radius: 8px 8px 0 0;
         color: @primary-color;
-        box-shadow: 2px -2px 3px @primary-color
+        box-shadow: 2px -2px 3px @primary-color;
+        & > span:first-child {
+          margin-right: 5px;
+        }
       }
       .@{prefix}-simple-tab-titles-title-default {
         margin-top: 5px;
@@ -60,6 +67,9 @@
         display: inline-block;
         cursor: pointer;
         color: @font-color;
+        & > span:first-child {
+          margin-right: 5px;
+        }
       }
     }
     &-block {

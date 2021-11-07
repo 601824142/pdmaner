@@ -29,12 +29,14 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
   const dbChange = (e, name, key) => {
     const newData = dbConn.map((d) => {
       if (d.defKey === key) {
+        const dataTypeSupport = dataTypeSupports
+          .filter(dataType => dataType.id === e.target.value)[0];
         return {
           ...d,
           [name]: e.target.value,
           properties: name === 'type' ? {
-            driver_class_name: url[e.target.value?.toLocaleLowerCase()]?.driverClass || '',
-            url: url[e.target.value?.toLocaleLowerCase()]?.url || '',
+            driver_class_name: url[dataTypeSupport.defKey?.toLocaleLowerCase()]?.driverClass || '',
+            url: url[dataTypeSupport.defKey?.toLocaleLowerCase()]?.url || '',
             password: '',
             username: '',
           } : d.properties,
@@ -46,13 +48,15 @@ export default React.memo(({prefix, dataSource, config, dataChange, lang}) => {
     dataChange && dataChange(newData, 'dbConn');
   };
   const addConn = (conn) => {
+    const dataTypeSupport = dataTypeSupports
+      .filter(dataType => dataType.id === defaultDb)[0];
     const empty = conn || {
       ...emptyDbConn,
       defKey: Math.uuid(),
       type: defaultDb,
       properties: {
-        driver_class_name: url[defaultDb?.toLocaleLowerCase()]?.driverClass || '',
-        url: url[defaultDb?.toLocaleLowerCase()]?.url || '',
+        driver_class_name: url[dataTypeSupport?.defKey?.toLocaleLowerCase()]?.driverClass || '',
+        url: url[dataTypeSupport?.defKey?.toLocaleLowerCase()]?.url || '',
         password: '',
         username: '',
       },

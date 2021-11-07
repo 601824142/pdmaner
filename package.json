@@ -2,7 +2,6 @@
   "name": "chiner",
   "version": "3.5.4",
   "description": "CHINER-元数建模",
-  "main": "build/main.js",
   "scripts": {
     "test": "jest",
     "electron": "electron ./src/main",
@@ -30,6 +29,7 @@
     "@electron/remote": "1.2.1",
     "crypto": "1.0.1",
     "dot": "1.1.2",
+    "electron-updater": "4.3.9",
     "html2canvas": "1.0.0-rc.7",
     "jquery": "3.2.1",
     "lodash": "4.17.15",
@@ -95,16 +95,16 @@
     "webpack-dev-server": "2.11.1"
   },
   "build": {
+    "publish": {
+      "provider": "generic",
+      "url": "http://chiner-release.httpchk.com"
+    },
     "appId": "chiner",
     "productName": "CHINER元数建模",
     "artifactName": "${productName}-${os}_v${version}.${ext}",
     "directories": {
-      "buildResources": "build",
       "output": "dist"
     },
-    "files": [
-      "build/"
-    ],
     "npmRebuild": false,
     "asar": true,
     "asarUnpack": [
@@ -113,7 +113,7 @@
       "build/template/"
     ],
     "dmg": {
-      "icon": "build/icon.icns",
+      "icon": "app/build/icon.icns",
       "contents": [
         {
           "x": 410,
@@ -129,7 +129,7 @@
       ]
     },
     "win": {
-      "icon": "build/icon.ico",
+      "icon": "app/build/icon.ico",
       "target": [
         {
           "target": "nsis",
@@ -141,10 +141,11 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
     },
     "linux": {
-      "icon": "build/256x256.png",
+      "icon": "app/build/256x256.png",
       "target": [
         "zip",
         "deb",
