@@ -1,0 +1,20 @@
+{
+  "name": "chiner",
+  "version": "3.5.4",
+  "description": "CHINER-元数建模",
+  "main": "./build/main.js",
+  "repository": {
+    "type": "git",
+    "url": "empty"
+  },
+  "author": {
+    "name": "qliu",
+    "email": "qliu@405go.cn"
+  },
+  "homepage": "empty",
+  "license": "ISC",
+  "dependencies": {
+    "@electron/remote": "1.2.1",
+    "electron-updater": "4.3.9"
+  }
+}

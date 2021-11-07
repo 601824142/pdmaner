@@ -106,6 +106,8 @@ export default {
     welcome: '欢迎使用',
     welcomeVersionTitle: '检测版本信息...',
     newVersion: '发现新版本',
+    download: '正在下载最新版本...',
+    newVersionError: '版本下载失败，请尝试点击下载链接手动下载',
     version: {
         number: '新版本号',
         date: '更新时间',
@@ -621,6 +623,7 @@ export default {
             guassdb: 'jdbc:postgresql://IP地址:端口号/数据库名',
             kingbase: 'jdbc:kingbase8://IP地址:端口号/数据库名',
             maxcompute: 'jdbc:odps:http://IP地址:端口号/api?project=项目名&accessId=ACCESS_ID&accessKey=ACCESS_KEY',
+            sqlite: 'jdbc:sqlite:/path/db-file-name (MAC以及Linux) jdbc:sqlite://path/db-file-name (Windows)',
         },
         configExample: '配置示例：',
         connectSuccess: '连接成功',

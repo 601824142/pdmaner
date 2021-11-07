@@ -18,6 +18,7 @@ import { version } from '../../../package';
 import {reduceProject, transformationData} from '../../lib/datasource_util';
 import {setMemoryCache} from '../../lib/cache';
 import * as template from '../../lib/template';
+import {compareVersion} from '../../lib/update';
 
 /*
 * 核心的action 负责整个项目的保存和删除
@@ -292,7 +293,8 @@ export const openDemoProject = (h, t, title, type) => {
     if (!tempH) {
       tempH = template[isDemoProject];
     }
-    const data = reduceProject(tempH, 'defKey');
+    const data = compareVersion('3.5.0', tempH.version.split('.'))
+      ? reduceProject(tempH, 'defKey') : tempH;
     setMemoryCache('data', data);
     dispatch(readProjectSuccess(data, [], '', isDemoProject));
     dispatch(closeLoading(STATUS[1], null, '', type));

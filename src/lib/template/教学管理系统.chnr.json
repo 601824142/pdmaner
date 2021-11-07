@@ -1,14 +1,14 @@
 {
-  "name": "教学管理系统案例",
+  "name": "教学管理系统",
   "describe": "教学管理系统参考案例",
   "avatar": "",
-  "version": "3.3.0",
-  "createdTime": "2021-9-14 17:08:09",
-  "updatedTime": "2021-9-14 17:09:45",
+  "version": "3.5.3",
+  "createdTime": "2021-11-6 06:57:15",
+  "updatedTime": "2021-11-6 07:33:00",
   "dbConns": [],
   "profile": {
     "default": {
-      "db": "MYSQL",
+      "db": "29D1CE08-4C35-4D2D-AAA9-23D93305B52E",
       "dbConn": "",
       "entityInitFields": [
         {
@@ -23,13 +23,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "refDict": "",
+          "uiHint": "",
+          "id": "ADB3AD14-6603-43E2-8261-114E32442B5B"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "type": "",
           "len": 32,
           "scale": "",
@@ -37,13 +40,16 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "refDict": "",
+          "uiHint": "",
+          "id": "92BF430E-01FA-4AEF-944F-25A142632654"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "type": "",
           "len": 32,
           "scale": "",
@@ -51,13 +57,16 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "refDict": "",
+          "uiHint": "",
+          "id": "C8BE2C7A-8251-4ADD-BB4F-411C5754DA62"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "type": "",
           "len": "",
           "scale": "",
@@ -65,13 +74,16 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "refDict": "",
+          "uiHint": "",
+          "id": "4E471FD6-3E73-4A90-B660-51598A482409"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "type": "",
           "len": 32,
           "scale": "",
@@ -79,13 +91,16 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "refDict": "",
+          "uiHint": "",
+          "id": "0DC24AA9-4CD0-45D8-95CF-FA546BE343AB"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "type": "",
           "len": "",
           "scale": "",
@@ -93,7 +108,10 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "refDict": "",
+          "uiHint": "",
+          "id": "09F64AC4-4DEE-428F-AF64-4C103884E1AC"
         }
       ],
       "entityInitProperties": {
@@ -110,81 +128,118 @@
       "delimiter": ""
     },
     "dataTypeSupports": [
-      "MYSQL",
-      "ORACLE",
-      "SQLServer",
-      "PostgreSQL",
-      "DB2",
-      "DM",
-      "GaussDB",
-      "Kingbase",
-      "MaxCompute",
-      "JAVA",
-      "C#"
+      {
+        "defKey": "MYSQL",
+        "id": "29D1CE08-4C35-4D2D-AAA9-23D93305B52E"
+      },
+      {
+        "defKey": "ORACLE",
+        "id": "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542"
+      },
+      {
+        "defKey": "SQLServer",
+        "id": "BFC87171-C74F-494A-B7C2-76B9C55FACC9"
+      },
+      {
+        "defKey": "PostgreSQL",
+        "id": "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022"
+      },
+      {
+        "defKey": "DB2",
+        "id": "89504F5D-94BF-4C9E-8B2E-44F37305FED5"
+      },
+      {
+        "defKey": "DM",
+        "id": "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307"
+      },
+      {
+        "defKey": "GaussDB",
+        "id": "592C7013-143D-4E7B-AF64-0D7BF1E28230"
+      },
+      {
+        "defKey": "Kingbase",
+        "id": "77BD85E5-9D0D-4096-8427-CBA306FC9C6A"
+      },
+      {
+        "defKey": "MaxCompute",
+        "id": "11D1FB71-A587-4217-89BA-611B8A1F83E0"
+      },
+      {
+        "defKey": "SQLite",
+        "id": "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1"
+      },
+      {
+        "defKey": "JAVA",
+        "id": "797A1496-D649-4261-89B4-544132EC3F36"
+      },
+      {
+        "defKey": "C#",
+        "id": "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30"
+      }
     ],
     "codeTemplates": [
       {
         "type": "dbDDL",
-        "applyFor": "MYSQL",
+        "applyFor": "29D1CE08-4C35-4D2D-AAA9-23D93305B52E",
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}} {{= field.notNull ? 'NOT NULL' : '' }} {{= field.autoIncrement ? 'AUTO_INCREMENT' : '' }} {{= field.defaultValue ? it.func.join('DEFAULT',field.defaultValue,' ') : '' }} COMMENT '{{=it.func.join(field.defName,field.comment,';')}}' {{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n)  COMMENT = '{{=it.func.join(it.entity.defName,it.entity.comment,';') }}';\n$blankline\n",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
       },
       {
         "type": "dbDDL",
-        "applyFor": "ORACLE",
+        "applyFor": "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542",
         "createTable": "CREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? '' : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
       },
       {
         "type": "dbDDL",
-        "applyFor": "SQLServer",
+        "applyFor": "BFC87171-C74F-494A-B7C2-76B9C55FACC9",
         "createTable": "IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{{=it.entity.defKey}}]') AND type in (N'U'))\nDROP TABLE [dbo].[{{=it.entity.defKey}}];\n\nCREATE TABLE [dbo].[{{=it.entity.defKey}}](\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' IDENTITY(1,1)' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n){{=it.separator}}\n$blankline\n{{? it.entity.defKey || it.entity.defName}}EXEC sp_addextendedproperty 'MS_Description', '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}', 'SCHEMA', dbo, 'table', {{=it.entity.defKey}}, null, null;{{?}}\n{{~it.entity.fields:field:index}}\nEXEC sp_addextendedproperty 'MS_Description', '{{=it.func.join(field.defName,field.comment,';')}}', 'SCHEMA', dbo, 'table', {{=it.entity.defKey}}, 'column', {{=field.defKey}};\n{{~}}\n",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
       },
       {
         "type": "dbDDL",
-        "applyFor": "PostgreSQL",
+        "applyFor": "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022",
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' AUTO_INCREMENT' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
       },
       {
         "type": "appCode",
-        "applyFor": "JAVA",
+        "applyFor": "797A1496-D649-4261-89B4-544132EC3F36",
         "content": "package cn.com.chiner.entity;\n$blankline\nimport javax.persistence.*;\nimport java.io.Serializable;\nimport java.util.Date;\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n /**\n * @author : http://www.chiner.pro\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\n@Table(name=\"{{=it.entity.defKey}}\")\npublic class {{=it.func.camel(it.entity.defKey,true) }} implements Serializable,Cloneable{\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    {{? field.primaryKey }}\n    @Id\n    @GeneratedValue\n    {{?}}\n    private {{=field.type}} {{=it.func.camel(field.defKey,false)}} ;\n{{~}}\n$blankline\n\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public {{=field.type}} get{{=it.func.camel(field.defKey,true)}}(){\n        return this.{{=it.func.camel(field.defKey,false)}};\n    }\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public void set{{=it.func.camel(field.defKey,true)}}({{=field.type}} {{= it.func.camel(field.defKey,false) }}){\n        this.{{=it.func.camel(field.defKey,false)}}={{=it.func.camel(field.defKey,false)}};\n    }\n{{~}}\n}"
       },
       {
         "type": "dbDDL",
-        "applyFor": "DB2",
+        "applyFor": "89504F5D-94BF-4C9E-8B2E-44F37305FED5",
         "createTable": "CREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? '' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
       },
       {
         "type": "dbDDL",
-        "applyFor": "DM",
+        "applyFor": "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307",
         "createTable": "CREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? '' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ','('+field.defaultValue+')',' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
       },
       {
         "type": "appCode",
-        "applyFor": "C#",
+        "applyFor": "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30",
         "content": "using System;\nusing System.Collections.Generic;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n/*\n * @author : http://www.chiner.com.cn\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace Chiner.Application\n{\n    public partial class {{=it.func.camel(it.entity.defKey,true) }}\n    {\n    \n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}} { get; set; }\n        $blankline\n        {{~}}\n        \n    }\n}"
       },
       {
         "type": "dbDDL",
-        "applyFor": "GaussDB",
+        "applyFor": "592C7013-143D-4E7B-AF64-0D7BF1E28230",
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' AUTO_INCREMENT' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
       },
       {
         "type": "dbDDL",
-        "applyFor": "Kingbase",
+        "applyFor": "77BD85E5-9D0D-4096-8427-CBA306FC9C6A",
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
@@ -196,9 +251,16 @@
       },
       {
         "type": "dbDDL",
-        "applyFor": "MaxCompute",
+        "applyFor": "11D1FB71-A587-4217-89BA-611B8A1F83E0",
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}} {{= field.notNull ? 'NOT NULL' : '' }} {{= field.autoIncrement ? 'AUTO_INCREMENT' : '' }} {{= field.defaultValue ? it.func.join('DEFAULT',field.defaultValue,' ') : '' }} COMMENT '{{=it.func.join(field.defName,field.comment,';')}}' {{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n)  COMMENT = '{{=it.func.join(it.entity.defName,it.entity.comment,';') }}';\n$blankline\n",
         "createIndex": "",
+        "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
+      },
+      {
+        "applyFor": "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1",
+        "type": "dbDDL",
+        "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}} {{= field.notNull ? 'NOT NULL' : '' }} {{= field.autoIncrement ? 'AUTOINCREMENT' : '' }} {{= field.defaultValue ? it.func.join('DEFAULT',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }} --{{=it.func.join(field.defName,field.comment,';')}}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n)  ; --{{=it.func.join(it.entity.defName,it.entity.comment,';') }}\n$blankline\n",
+        "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
       }
     ],
@@ -209,11 +271,13 @@
     "uiHint": [
       {
         "defKey": "Input",
-        "defName": "普通输入框"
+        "defName": "普通输入框",
+        "id": "642D2E0A-8846-4549-BE56-8C0473F26EDE"
       },
       {
         "defKey": "Select",
-        "defName": "下拉输入框"
+        "defName": "下拉输入框",
+        "id": "FB111359-2B73-4443-926C-08A98E446448"
       },
       {
         "data": [
@@ -221,7 +285,8 @@
           ""
         ],
         "defKey": "CheckBox",
-        "defName": "复选框"
+        "defName": "复选框",
+        "id": "0CB8A6C9-1115-4FC0-B51E-5C028065082F"
       },
       {
         "data": [
@@ -229,7 +294,8 @@
           ""
         ],
         "defKey": "RadioBox",
-        "defName": "单选框"
+        "defName": "单选框",
+        "id": "5C04987A-260F-4B7C-A5D5-22A181AAE9CA"
       },
       {
         "data": [
@@ -237,23 +303,28 @@
           ""
         ],
         "defKey": "Double",
-        "defName": "小数输入"
+        "defName": "小数输入",
+        "id": "8D5BAFE4-E15C-4707-A047-8EE59C58E70F"
       },
       {
         "defKey": "Integer",
-        "defName": "整数输入"
+        "defName": "整数输入",
+        "id": "9999AF2A-A44E-415C-A2DC-D7C613BD0073"
       },
       {
         "defKey": "Money",
-        "defName": "金额输入"
+        "defName": "金额输入",
+        "id": "2B0C3D0C-7BAF-4B36-81AD-9362B5E5DC2E"
       },
       {
         "defKey": "Date",
-        "defName": "日期输入"
+        "defName": "日期输入",
+        "id": "E4D94E14-F695-487F-AFC2-4D888009B7DA"
       },
       {
         "defKey": "DataYearMonth",
-        "defName": "年月输入"
+        "defName": "年月输入",
+        "id": "936927E3-DD2D-4096-87FD-074CDE278D59"
       },
       {
         "data": [
@@ -261,7 +332,8 @@
           ""
         ],
         "defKey": "Text",
-        "defName": "长文本输入"
+        "defName": "长文本输入",
+        "id": "D89DD4F1-ADAC-4469-BF8D-B3FF41AE7963"
       },
       {
         "data": [
@@ -269,7 +341,8 @@
           ""
         ],
         "defKey": "RichText",
-        "defName": "富文本输入"
+        "defName": "富文本输入",
+        "id": "C134EB1F-4CFF-49E0-882F-2C6FB275CB20"
       }
     ]
   },
@@ -361,8 +434,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "9651B83A-2208-4F1E-A870-C3C4E1FAF103"
         },
         {
           "defKey": "COLLEGE_NAME",
@@ -375,8 +451,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "04BE6748-E056-428D-BFA8-B04F4CE843B3"
         },
         {
           "defKey": "SHORT_NAME",
@@ -389,8 +468,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "41E142D0-1539-4E99-83D7-41672E03BFEE"
         },
         {
           "defKey": "INTRO",
@@ -403,8 +485,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DescText",
-          "type": "VARCHAR"
+          "domain": "3E948CEC-3070-472C-AF92-F3CA11EC9D15",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "53B857E0-25ED-4666-8437-FD8C68748C85"
         },
         {
           "defKey": "PROFESSION_NUMBER",
@@ -417,8 +502,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int",
-          "type": "INT"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "BDDAC28C-5DF2-4551-9FEA-D956D7C510EA"
         },
         {
           "defKey": "STUDENT_NUMBER",
@@ -431,8 +519,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int",
-          "type": "INT"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "9993DFC9-B6DD-4A15-9DA5-EE7DEE011A4D"
         },
         {
           "defKey": "PRESIDENT",
@@ -445,8 +536,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "CC08D659-F79E-4A52-B274-5E07B7533A72"
         },
         {
           "defKey": "TENANT_ID",
@@ -459,14 +553,17 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "8EB6E9A5-6DA4-44DC-8519-E100B189651E"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "Int",
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -474,13 +571,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "INT"
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "913C460B-E48B-4563-886B-C0CC71E5A54B"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -488,13 +588,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "3D37BF7C-E283-47DA-870E-002AB6DB6704"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -502,13 +605,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "2B8ED950-CDCE-4323-BD61-CBE0173AE679"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -516,13 +622,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "43FD5A95-5EE1-4316-B708-AC61B32FE9AE"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -530,10 +639,15 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "1868F7F4-8F4D-403D-ABA0-60D89BE37066"
         }
       ],
-      "correlations": []
+      "correlations": [],
+      "id": "26B8D13E-BE37-4E20-8496-13A586E84581",
+      "indexes": []
     },
     {
       "defKey": "SIMS_MAJOR",
@@ -692,8 +806,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "8707AEB9-3EC5-4EEA-9E14-99BAF28B46B4"
         },
         {
           "defKey": "MAJOR_NAME",
@@ -706,8 +823,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "3577A78C-D13B-416D-8026-E2CED2929199"
         },
         {
           "defKey": "SHORT_NAME",
@@ -720,8 +840,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "C2157568-FF44-4BE8-A231-5B98E50DFCEE"
         },
         {
           "defKey": "ESTAB_DATE",
@@ -734,8 +857,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DateTime",
-          "type": "DATETIME"
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "52DCCDBE-1220-4AF6-A7B6-F7CCE61114CB"
         },
         {
           "defKey": "INTRO",
@@ -748,8 +874,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DescText",
-          "type": "VARCHAR"
+          "domain": "3E948CEC-3070-472C-AF92-F3CA11EC9D15",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "61C9D879-BD45-408A-BAEC-577E220D67A2"
         },
         {
           "defKey": "TUITION_FEE",
@@ -762,8 +891,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Money",
-          "type": "DECIMAL"
+          "domain": "C3B1681B-99F9-4818-9E80-DE1652A51D85",
+          "type": "DECIMAL",
+          "refDict": "",
+          "uiHint": "",
+          "id": "5B5A5E16-AC5E-4184-B561-AEF2D381C898"
         },
         {
           "defKey": "TENANT_ID",
@@ -776,14 +908,17 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "2618820B-865E-4C80-BFEA-50AD5FB1D5D6"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "Int",
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -791,13 +926,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "INT"
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "E3CDC9C7-9DDD-46C4-A617-D253C745E5C7"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -805,13 +943,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "9BFE70DA-2B5E-4443-A792-CD9F7B200D35"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -819,13 +960,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "660F4ED1-87F4-4C4A-BEA9-E744A2C0CA51"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -833,13 +977,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "96E1502E-EA6D-4D86-8782-92D6AC604CA9"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -847,10 +994,15 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "3B7186B6-989F-4C9F-B8ED-F36D20713363"
         }
       ],
-      "correlations": []
+      "correlations": [],
+      "id": "C2F51B91-7C24-4CB4-8406-706F4851EB0B",
+      "indexes": []
     },
     {
       "defKey": "SIMS_CLASS",
@@ -935,8 +1087,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "D793F097-1364-49FD-B02C-D4EBBA5A055A"
         },
         {
           "defKey": "MAJOR_ID",
@@ -949,8 +1104,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "63130D1B-63C8-491C-B36D-5603A30BFB37"
         },
         {
           "defKey": "CLASS_ID",
@@ -963,8 +1121,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "6D6BC6AA-8114-4B91-8A2C-4B5FEACEB347"
         },
         {
           "defKey": "CLASS_NAME",
@@ -977,8 +1138,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "782EC244-02B2-4661-BC21-615F7A468BA8"
         },
         {
           "defKey": "STUDENT_NUMBER",
@@ -991,8 +1155,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int",
-          "type": "INT"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "85A3FDFD-6131-42F4-A85E-4509E2F81458"
         },
         {
           "defKey": "ADVISER",
@@ -1005,8 +1172,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "6BB204C7-1363-4EB4-94B3-555F47C28754"
         },
         {
           "defKey": "ESTAB_DATE",
@@ -1019,8 +1189,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DateTime",
-          "type": "DATETIME"
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "54763240-9F13-4490-99D7-CCC0F86A110E"
         },
         {
           "defKey": "YEAR_NUMBER",
@@ -1033,8 +1206,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int",
-          "type": "INT"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "118E8C4B-0630-4DCD-96C3-186D0AC6FC66"
         },
         {
           "defKey": "TENANT_ID",
@@ -1047,14 +1223,17 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "9484FAE7-B93C-451B-859B-F7563E218A92"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "Int",
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -1062,13 +1241,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "INT"
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "45833E99-76D8-483A-B303-DC4C1699DCAE"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -1076,13 +1258,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "71FAA0D7-FC33-4FE7-A8A2-E9C4BBDB7EDD"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -1090,13 +1275,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "18F2D7E1-428D-4138-9990-D7FDF7D34D34"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -1104,13 +1292,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "B6DA6C8A-2FF6-4759-B610-D5374035FEBE"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -1118,27 +1309,32 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "1DAB3A13-B7D2-46AD-8DE1-89DA5ADDB3DE"
         }
       ],
       "correlations": [
         {
-          "myField": "COLLEGE_ID",
-          "refEntity": "SIMS_COLLEGE",
-          "refField": "COLLEGE_ID",
+          "myField": "D793F097-1364-49FD-B02C-D4EBBA5A055A",
+          "refEntity": "26B8D13E-BE37-4E20-8496-13A586E84581",
+          "refField": "9651B83A-2208-4F1E-A870-C3C4E1FAF103",
           "myRows": "n",
           "refRows": "1",
           "innerType": ""
         },
         {
-          "myField": "MAJOR_ID",
-          "refEntity": "SIMS_MAJOR",
-          "refField": "MAJOR_ID",
+          "myField": "63130D1B-63C8-491C-B36D-5603A30BFB37",
+          "refEntity": "C2F51B91-7C24-4CB4-8406-706F4851EB0B",
+          "refField": "8707AEB9-3EC5-4EEA-9E14-99BAF28B46B4",
           "myRows": "n",
           "refRows": "1",
           "innerType": ""
         }
-      ]
+      ],
+      "id": "C698249E-307D-4087-9EC4-3BABCFC00660",
+      "indexes": []
     },
     {
       "defKey": "SIMS_STUDENT",
@@ -1232,8 +1428,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "84ADFE5C-3750-4E38-AC46-7AD11E869B41"
         },
         {
           "defKey": "CLASS_ID",
@@ -1246,8 +1445,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "1BCE9672-14BA-4B2B-B8C6-222CC6CF0F61"
         },
         {
           "defKey": "STUDENT_ID",
@@ -1260,8 +1462,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "5FAE5CA5-B7A6-40C3-878D-1BB3D4A45B5C"
         },
         {
           "defKey": "STUDENT_NAME",
@@ -1274,8 +1479,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "51D4FD5A-9EFB-4318-A5D6-6317D630D043"
         },
         {
           "defKey": "ENG_NAME",
@@ -1288,8 +1496,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "6A9A2D74-E294-497E-8A0F-0DF671A7F4EE"
         },
         {
           "defKey": "ID_CARD_NO",
@@ -1302,8 +1513,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString",
-          "type": "VARCHAR"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "47AEF665-86ED-40A2-88DB-79BF561CCE32"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -1316,8 +1530,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString",
-          "type": "VARCHAR"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "8D412D1B-5BE4-4031-8293-EE7EA4E65BCE"
         },
         {
           "defKey": "GENDER",
@@ -1330,9 +1547,11 @@
           "autoIncrement": false,
           "defaultValue": "'M'",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Gender",
-          "type": "VARCHAR"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "BF9E20E0-80D3-486D-BD58-5FADCF3E4A1D",
+          "type": "VARCHAR",
+          "uiHint": "",
+          "id": "C1960E6F-08D3-4773-BF97-57AB8D86FD5C"
         },
         {
           "defKey": "MONTHLY_SALARY",
@@ -1345,8 +1564,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Money",
-          "type": "DECIMAL"
+          "domain": "C3B1681B-99F9-4818-9E80-DE1652A51D85",
+          "type": "DECIMAL",
+          "refDict": "",
+          "uiHint": "",
+          "id": "7D073DAB-3675-40A5-BDA5-E6D6F0B75CA7"
         },
         {
           "defKey": "BIRTH",
@@ -1359,8 +1581,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DateTime",
-          "type": "DATETIME"
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "F705D168-2A65-4C82-8135-DDC85032F855"
         },
         {
           "defKey": "AVATAR",
@@ -1373,8 +1598,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int",
-          "type": "INT"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "F5F7AACF-2046-4879-9095-098FD2020E9A"
         },
         {
           "defKey": "HEIGHT",
@@ -1387,8 +1615,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int",
-          "type": "INT"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "050036B4-0F46-4E58-9375-805208E87A71"
         },
         {
           "defKey": "WEIGHT",
@@ -1401,8 +1632,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int",
-          "type": "INT"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "AB6E2104-5A5C-4B24-8C27-BF9082C87004"
         },
         {
           "defKey": "NATION",
@@ -1415,9 +1649,11 @@
           "autoIncrement": false,
           "defaultValue": "'01'",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "GBNation",
-          "type": "VARCHAR"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "115EDEFC-0323-410E-81AB-CCAB8879837A",
+          "type": "VARCHAR",
+          "uiHint": "",
+          "id": "60841340-4D1A-4366-B8CC-CCE3B009DD87"
         },
         {
           "defKey": "POLITICAL",
@@ -1430,9 +1666,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Political",
-          "type": "VARCHAR"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "06EED564-BBA9-4747-8D73-AF809A330CB8",
+          "type": "VARCHAR",
+          "uiHint": "",
+          "id": "BD431E79-93A8-4FB7-83D4-046DA0A54F76"
         },
         {
           "defKey": "MARITAL",
@@ -1445,9 +1683,11 @@
           "autoIncrement": false,
           "defaultValue": "'UNMARRIED'",
           "hideInGraph": true,
-          "domain": "Dict",
-          "refDict": "Marital",
-          "type": "VARCHAR"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "EA1587B7-3954-437A-BFE0-FCB0453BCABA",
+          "type": "VARCHAR",
+          "uiHint": "",
+          "id": "1BE185DC-216C-4264-A594-9FC766DD8F82"
         },
         {
           "defKey": "DOMICILE_PLACE_PROVINCE",
@@ -1460,8 +1700,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString",
-          "type": "VARCHAR"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "59F27EDC-6256-4778-9F80-17027C3FA2CA"
         },
         {
           "defKey": "DOMICILE_PLACE_CITY",
@@ -1474,8 +1717,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString",
-          "type": "VARCHAR"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "2D97524F-666A-4E6D-89B5-44598FEDE0FF"
         },
         {
           "defKey": "DOMICILE_PLACE_ADDRESS",
@@ -1488,8 +1734,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString",
-          "type": "VARCHAR"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "AB597B75-9A96-4A23-ACB5-44ACF237AFA0"
         },
         {
           "defKey": "HOBBY",
@@ -1502,8 +1751,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString",
-          "type": "VARCHAR"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "8D847450-A7A0-4DA4-AF6D-0890CF77C4A6"
         },
         {
           "defKey": "INTRO",
@@ -1516,8 +1768,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DescText",
-          "type": "VARCHAR"
+          "domain": "3E948CEC-3070-472C-AF92-F3CA11EC9D15",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "1BFC4737-B5E1-4FD2-8388-C027B604EEC7"
         },
         {
           "defKey": "PRESENT_ADDRESS",
@@ -1530,8 +1785,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString",
-          "type": "VARCHAR"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "DDD1F108-23F0-4754-805E-E01F0129DFFF"
         },
         {
           "defKey": "EMAIL",
@@ -1544,8 +1802,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DefaultString",
-          "type": "VARCHAR"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "40AFC519-70CE-4477-A1AD-0A44A3A591C5"
         },
         {
           "defKey": "ENTRY_DATE",
@@ -1558,8 +1819,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "DateTime",
-          "type": "DATETIME"
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "35AD45EE-6BCF-4D86-8EDB-F49037D746CA"
         },
         {
           "defKey": "STATUS",
@@ -1572,9 +1836,11 @@
           "autoIncrement": false,
           "defaultValue": "'Normal'",
           "hideInGraph": true,
-          "domain": "Dict",
-          "refDict": "StudentStatus",
-          "type": "VARCHAR"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "4642BC5F-02EE-4E17-A60C-CF22F86A0282",
+          "type": "VARCHAR",
+          "uiHint": "",
+          "id": "82343970-31F4-4457-A2F8-876B058FED17"
         },
         {
           "defKey": "TENANT_ID",
@@ -1587,14 +1853,17 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "8BB51B25-9448-4415-B11C-E698B873C8F2"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "Int",
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -1602,13 +1871,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "INT"
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "7188C7FB-468C-4C26-8368-70425DB901C1"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -1616,13 +1888,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "44F67AB1-1058-4098-8BA9-709A25F74F69"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -1630,13 +1905,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "674F8100-E364-40E0-817B-EE3A41BF45C5"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -1644,13 +1922,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "35782438-EA32-47AA-955C-1B2AD50F8E7A"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -1658,14 +1939,17 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "41AFEC1A-F0E0-4BD9-8F72-BF3DF29B7B7C"
         }
       ],
       "correlations": [
         {
-          "myField": "CLASS_ID",
-          "refEntity": "SIMS_CLASS",
-          "refField": "CLASS_ID",
+          "myField": "1BCE9672-14BA-4B2B-B8C6-222CC6CF0F61",
+          "refEntity": "C698249E-307D-4087-9EC4-3BABCFC00660",
+          "refField": "6D6BC6AA-8114-4B91-8A2C-4B5FEACEB347",
           "myRows": "n",
           "refRows": "1",
           "innerType": ""
@@ -1679,14 +1963,17 @@
           "comment": "",
           "fields": [
             {
-              "fieldDefKey": "STUDENT_NAME",
-              "ascOrDesc": "A"
+              "fieldDefKey": "51D4FD5A-9EFB-4318-A5D6-6317D630D043",
+              "ascOrDesc": "A",
+              "id": "417852EB-4D7B-4D09-8916-1C4B88B7D3D4"
             },
             {
-              "fieldDefKey": "ENG_NAME",
-              "ascOrDesc": "A"
+              "fieldDefKey": "6A9A2D74-E294-497E-8A0F-0DF671A7F4EE",
+              "ascOrDesc": "A",
+              "id": "933B0DD4-ACE2-4B93-964F-795F3AF35BB7"
             }
-          ]
+          ],
+          "id": "72F8D1D3-4C8E-4FE1-9676-8E56FC1A3652"
         },
         {
           "defKey": "idx_smis_student_cert",
@@ -1695,12 +1982,15 @@
           "comment": "",
           "fields": [
             {
-              "fieldDefKey": "ID_CARD_NO",
-              "ascOrDesc": "A"
+              "fieldDefKey": "47AEF665-86ED-40A2-88DB-79BF561CCE32",
+              "ascOrDesc": "A",
+              "id": "407B309C-7A25-415D-A265-E443EDA5A897"
             }
-          ]
+          ],
+          "id": "3EE040D0-4E06-4834-899B-C6B1FB304019"
         }
-      ]
+      ],
+      "id": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84"
     },
     {
       "defKey": "SIMS_TEACHER",
@@ -1788,8 +2078,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "EFD22F94-E1D0-4CAD-947D-E856A997D7B5"
         },
         {
           "defKey": "TEACHER_ID",
@@ -1802,8 +2095,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "C5916046-F140-4B0C-BF84-EBD7DDB38EAA"
         },
         {
           "defKey": "TEACHER_NAME",
@@ -1816,8 +2112,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "EAA04B36-6088-4677-8694-DE53A75DE0AD"
         },
         {
           "defKey": "GENDER",
@@ -1830,9 +2129,11 @@
           "autoIncrement": false,
           "defaultValue": "'M'",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Gender",
-          "type": "VARCHAR"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "BF9E20E0-80D3-486D-BD58-5FADCF3E4A1D",
+          "type": "VARCHAR",
+          "uiHint": "",
+          "id": "1F013EA0-19A0-45DB-9801-9F6D8E206B76"
         },
         {
           "defKey": "BIRTH",
@@ -1845,8 +2146,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DateTime",
-          "type": "DATETIME"
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "86F51625-13F1-42F3-9414-CA3108880DAE"
         },
         {
           "defKey": "GRADUATE_INSTITUTION",
@@ -1859,8 +2163,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "C10DFCF8-3EC4-4B85-BAA7-ACEC989D842F"
         },
         {
           "defKey": "PRACTICE_YEARS",
@@ -1873,8 +2180,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int",
-          "type": "INT"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "D789B585-FFD8-440E-BEE2-46FB298F49A7"
         },
         {
           "defKey": "POLITICAL",
@@ -1887,10 +2197,12 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Political",
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "06EED564-BBA9-4747-8D73-AF809A330CB8",
           "isStandard": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "uiHint": "",
+          "id": "569930CE-0BF2-412B-87B1-131FEF19F0E9"
         },
         {
           "defKey": "MARITAL",
@@ -1903,10 +2215,12 @@
           "autoIncrement": false,
           "defaultValue": "'UNMARRIED'",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Marital",
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "EA1587B7-3954-437A-BFE0-FCB0453BCABA",
           "isStandard": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "uiHint": "",
+          "id": "68CDDFDD-3B15-4797-BEF9-519D3D67FEDD"
         },
         {
           "defKey": "AVATAR",
@@ -1919,8 +2233,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString",
-          "type": "VARCHAR"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "CDB182D2-3DE7-4661-AFEE-FA2ADF2437AF"
         },
         {
           "defKey": "INTRO",
@@ -1933,8 +2250,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DescText",
-          "type": "VARCHAR"
+          "domain": "3E948CEC-3070-472C-AF92-F3CA11EC9D15",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "69530973-3EC7-4A60-A685-01D4782D3AF4"
         },
         {
           "defKey": "TENANT_ID",
@@ -1947,14 +2267,17 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "A3D6FC1B-32DE-4D6B-BD54-B21408409AA9"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "Int",
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -1962,13 +2285,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "INT"
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "938DCFBD-1497-43A4-AFD4-F4C3FACC9227"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -1976,13 +2302,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "39A27481-D4F9-47DB-961E-0E4483589B72"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -1990,13 +2319,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "2D819E14-1585-4F45-B7AE-6E67FAF5A927"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -2004,13 +2336,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "681DBA6D-A86C-44C4-A7B5-8E83FF22F78D"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -2018,19 +2353,24 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "7376A655-992A-4C94-BAFC-494DA519737D"
         }
       ],
       "correlations": [
         {
-          "myField": "COLLEGE_ID",
-          "refEntity": "SIMS_COLLEGE",
-          "refField": "COLLEGE_ID",
+          "myField": "EFD22F94-E1D0-4CAD-947D-E856A997D7B5",
+          "refEntity": "26B8D13E-BE37-4E20-8496-13A586E84581",
+          "refField": "9651B83A-2208-4F1E-A870-C3C4E1FAF103",
           "myRows": "n",
           "refRows": "1",
           "innerType": ""
         }
-      ]
+      ],
+      "id": "536B8B19-C2B3-45D1-ADA8-402C0083FC31",
+      "indexes": []
     },
     {
       "defKey": "SIMS_LESSON",
@@ -2115,8 +2455,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "3D337B5E-182D-45C7-9752-E2DD4D7CF2BD"
         },
         {
           "defKey": "LESSON_NAME",
@@ -2129,8 +2472,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "4ECC9FC7-C811-492C-96E3-47C16AFB500A"
         },
         {
           "defKey": "INTRO",
@@ -2143,8 +2489,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DescText",
-          "type": "VARCHAR"
+          "domain": "3E948CEC-3070-472C-AF92-F3CA11EC9D15",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "CCCF9A57-4961-4239-9C04-640F56A2B1C1"
         },
         {
           "defKey": "HOURS",
@@ -2157,8 +2506,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int",
-          "type": "INT"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "E76DF7AC-75A3-485A-8622-D851D8ACD418"
         },
         {
           "defKey": "SCORE",
@@ -2171,8 +2523,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int",
-          "type": "INT"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "4AE396AA-8851-4031-9CA3-272E0823298F"
         },
         {
           "defKey": "TENANT_ID",
@@ -2185,14 +2540,17 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "C86A2449-A8A2-4891-88E0-0E54B799BDD7"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "Int",
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -2200,13 +2558,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "INT"
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "CFABB61A-ED91-4F0A-AF2F-5292F2F509DA"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -2214,13 +2575,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "D3CF6A33-7127-49B9-92DB-72A36639DFDC"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -2228,13 +2592,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "3BEDED99-A539-485E-BA83-20660B129B3A"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -2242,13 +2609,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "CCDB961E-09C0-49E9-89BE-21B17588DF53"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -2256,10 +2626,15 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "DCD8E749-4B83-42DB-A65A-694C927E2824"
         }
       ],
-      "correlations": []
+      "correlations": [],
+      "id": "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
+      "indexes": []
     },
     {
       "defKey": "SIMS_INSTRUCT",
@@ -2344,8 +2719,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "EBB91947-AC9D-426E-B38E-5EE460002796"
         },
         {
           "defKey": "CLASS_ID",
@@ -2358,8 +2736,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "A23704D2-7128-41A2-988C-D20CB984FA83"
         },
         {
           "defKey": "LESSON_ID",
@@ -2372,8 +2753,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "AE73CBE3-577D-4457-8987-5BEFDECAEED9"
         },
         {
           "defKey": "TEACHER_ID",
@@ -2386,8 +2770,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "E50C225A-7597-47DB-9057-878F1B491F21"
         },
         {
           "defKey": "TENANT_ID",
@@ -2400,14 +2787,17 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "D6AFA91F-9A45-44E5-9907-7EBD9253B598"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "Int",
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -2415,13 +2805,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "INT"
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "5CE25044-60C5-4692-85DE-D6928C7103A1"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -2429,13 +2822,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "D76C1177-91E3-4D45-B61D-F43EDC7D59E8"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -2443,13 +2839,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "D178B020-A55A-4A8A-85E5-611F598031BD"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -2457,13 +2856,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "3251E42F-8A56-40E7-AE16-F88611EC466A"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -2471,35 +2873,40 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "AAB91339-8543-4432-B27C-2AB5FFD5D38F"
         }
       ],
       "correlations": [
         {
-          "myField": "LESSON_ID",
-          "refEntity": "SIMS_LESSON",
-          "refField": "LESSON_ID",
+          "myField": "AE73CBE3-577D-4457-8987-5BEFDECAEED9",
+          "refEntity": "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
+          "refField": "3D337B5E-182D-45C7-9752-E2DD4D7CF2BD",
           "myRows": "n",
           "refRows": "1",
           "innerType": ""
         },
         {
-          "myField": "LESSON_ID",
-          "refEntity": "SIMS_TEACHER",
-          "refField": "TEACHER_ID",
+          "myField": "AE73CBE3-577D-4457-8987-5BEFDECAEED9",
+          "refEntity": "536B8B19-C2B3-45D1-ADA8-402C0083FC31",
+          "refField": "C5916046-F140-4B0C-BF84-EBD7DDB38EAA",
           "myRows": "n",
           "refRows": "1",
           "innerType": ""
         },
         {
-          "myField": "CLASS_ID",
-          "refEntity": "SIMS_CLASS",
-          "refField": "CLASS_ID",
+          "myField": "A23704D2-7128-41A2-988C-D20CB984FA83",
+          "refEntity": "C698249E-307D-4087-9EC4-3BABCFC00660",
+          "refField": "6D6BC6AA-8114-4B91-8A2C-4B5FEACEB347",
           "myRows": "n",
           "refRows": "1",
           "innerType": ""
         }
-      ]
+      ],
+      "id": "1A50AEEB-F956-4275-AE11-5D6F1F471FBE",
+      "indexes": []
     },
     {
       "defKey": "SIMS_EXAM",
@@ -2584,8 +2991,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "C5D96022-B0B0-4F9C-B3E1-6E1F69662E9F"
         },
         {
           "defKey": "STUDENT_ID",
@@ -2598,8 +3008,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "0C5A31BB-2855-4BB9-84D1-7E63B37A71E1"
         },
         {
           "defKey": "LESSON_ID",
@@ -2612,8 +3025,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "F7FD7836-4E62-47EF-90FE-6B80674A2DDD"
         },
         {
           "defKey": "EXAM_DATE",
@@ -2626,8 +3042,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DateTime",
-          "type": "DATETIME"
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "C4C00F8D-9255-44B7-8406-401117E97A05"
         },
         {
           "defKey": "EXAM_NAME",
@@ -2640,8 +3059,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "53CAC6C4-CB01-4D8D-8E01-2912EA85EDD6"
         },
         {
           "defKey": "EXAM_SCORE",
@@ -2654,8 +3076,11 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Double",
-          "type": "DECIMAL"
+          "domain": "FF4459C5-6B45-4DBF-8FC0-E06239BC05B4",
+          "type": "DECIMAL",
+          "refDict": "",
+          "uiHint": "",
+          "id": "FA59122E-20A1-47EB-9BE9-31F90A029AAD"
         },
         {
           "defKey": "TENANT_ID",
@@ -2668,14 +3093,17 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "2C59F43F-9649-4789-A44F-7DED0435CAB5"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "Int",
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -2683,13 +3111,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "INT"
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "25143244-C289-446B-8670-BC8C10DA503E"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -2697,13 +3128,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "632BFB89-3714-4971-834D-61004D3F0ED7"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -2711,13 +3145,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "68E8278F-B0B9-4C76-9B80-0B0E0C1993B6"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -2725,13 +3162,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "VARCHAR"
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "898B48FA-AA9F-48FE-92FD-919EB8C619C8"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -2739,27 +3179,32 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": "DATETIME"
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "D2975854-EE5C-471D-8E14-94D7CC3DB514"
         }
       ],
       "correlations": [
         {
-          "myField": "LESSON_ID",
-          "refEntity": "SIMS_LESSON",
-          "refField": "LESSON_ID",
+          "myField": "F7FD7836-4E62-47EF-90FE-6B80674A2DDD",
+          "refEntity": "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
+          "refField": "3D337B5E-182D-45C7-9752-E2DD4D7CF2BD",
           "myRows": "n",
           "refRows": "1",
           "innerType": ""
         },
         {
-          "myField": "STUDENT_ID",
-          "refEntity": "SIMS_STUDENT",
-          "refField": "STUDENT_ID",
+          "myField": "0C5A31BB-2855-4BB9-84D1-7E63B37A71E1",
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refField": "5FAE5CA5-B7A6-40C3-878D-1BB3D4A45B5C",
           "myRows": "n",
           "refRows": "1",
           "innerType": ""
         }
-      ]
+      ],
+      "id": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
+      "indexes": []
     },
     {
       "defKey": "SIMS_CLASS_FEE",
@@ -2864,13 +3309,16 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "refDict": "",
+          "uiHint": "",
+          "id": "7222587D-6678-44EC-991F-4B5ABC2FCE2B"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "type": "VARCHAR",
           "len": 32,
           "scale": "",
@@ -2878,13 +3326,16 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "refDict": "",
+          "uiHint": "",
+          "id": "977349F1-D737-4E88-B58B-6FD8BEF6F17E"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "type": "VARCHAR",
           "len": 32,
           "scale": "",
@@ -2892,13 +3343,16 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "refDict": "",
+          "uiHint": "",
+          "id": "983BB0C9-941A-4109-BB63-59E99F467709"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "type": "DATETIME",
           "len": "",
           "scale": "",
@@ -2906,13 +3360,16 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "refDict": "",
+          "uiHint": "",
+          "id": "CF34CD2D-E74C-418F-9FCE-83E419CDE22B"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "type": "VARCHAR",
           "len": 32,
           "scale": "",
@@ -2920,13 +3377,16 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "refDict": "",
+          "uiHint": "",
+          "id": "8F5AF2F8-092F-46B1-86D7-68C965F73395"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "type": "DATETIME",
           "len": "",
           "scale": "",
@@ -2934,11 +3394,15 @@
           "notNull": false,
           "autoIncrement": false,
           "defaultValue": "",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "refDict": "",
+          "uiHint": "",
+          "id": "F3CACD53-C52B-4529-8882-9FC94B55B75E"
         }
       ],
       "correlations": [],
-      "indexes": []
+      "indexes": [],
+      "id": "9EA974A6-DD40-46E3-AC70-60B992352CF7"
     }
   ],
   "views": [
@@ -3029,10 +3493,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "STUDENT_ID",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "5FAE5CA5-B7A6-40C3-878D-1BB3D4A45B5C",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "2AE46886-6281-428E-BE5F-8583268CB3EA"
         },
         {
           "defKey": "STUDENT_NAME",
@@ -3045,10 +3512,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "STUDENT_NAME",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "51D4FD5A-9EFB-4318-A5D6-6317D630D043",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "AD7F1687-E91E-4EC6-973B-99A10AD6520D"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -3061,10 +3531,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "MOBILE_PHONE",
-          "type": "VARCHAR"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "8D412D1B-5BE4-4031-8293-EE7EA4E65BCE",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "99CEDCC6-D947-40DA-909C-23FFBE56900F"
         },
         {
           "defKey": "GENDER",
@@ -3077,11 +3550,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Gender",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "GENDER",
-          "type": "VARCHAR"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "BF9E20E0-80D3-486D-BD58-5FADCF3E4A1D",
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "C1960E6F-08D3-4773-BF97-57AB8D86FD5C",
+          "type": "VARCHAR",
+          "uiHint": "",
+          "id": "A9D232D6-8491-4648-9045-5D282E8A1A91"
         },
         {
           "defKey": "LESSON_NAME",
@@ -3094,10 +3569,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
-          "refEntity": "SIMS_LESSON",
-          "refEntityField": "LESSON_NAME",
-          "type": "VARCHAR"
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
+          "refEntity": "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
+          "refEntityField": "4ECC9FC7-C811-492C-96E3-47C16AFB500A",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "96555C8C-DA61-48E2-807C-47667C7D0469"
         },
         {
           "defKey": "LESSON_ID",
@@ -3110,10 +3588,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
-          "refEntity": "SIMS_LESSON",
-          "refEntityField": "LESSON_ID",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "refEntity": "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
+          "refEntityField": "3D337B5E-182D-45C7-9752-E2DD4D7CF2BD",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "7E45A4DA-D3FA-47CB-8D59-F0D1AF72D7C9"
         },
         {
           "defKey": "EXAM_DATE",
@@ -3126,10 +3607,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DateTime",
-          "refEntity": "SIMS_EXAM",
-          "refEntityField": "EXAM_DATE",
-          "type": "DATETIME"
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
+          "refEntity": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
+          "refEntityField": "C4C00F8D-9255-44B7-8406-401117E97A05",
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "3E27A0D3-AB5C-47CD-B5FB-2BAA1B2D0312"
         },
         {
           "defKey": "EXAM_SCORE",
@@ -3142,10 +3626,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Double",
-          "refEntity": "SIMS_EXAM",
-          "refEntityField": "EXAM_SCORE",
-          "type": "DECIMAL"
+          "domain": "FF4459C5-6B45-4DBF-8FC0-E06239BC05B4",
+          "refEntity": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
+          "refEntityField": "FA59122E-20A1-47EB-9BE9-31F90A029AAD",
+          "type": "DECIMAL",
+          "refDict": "",
+          "uiHint": "",
+          "id": "2AD0455A-A799-4114-B146-E9D0DF195338"
         },
         {
           "defKey": "TENANT_ID",
@@ -3158,16 +3645,19 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "domain": "IdOrKey",
-          "refEntity": "SIMS_EXAM",
-          "refEntityField": "TENANT_ID",
-          "type": "VARCHAR"
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
+          "refEntity": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
+          "refEntityField": "2C59F43F-9649-4789-A44F-7DED0435CAB5",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "EF6683DA-F7F1-495D-87CA-D29F5C150237"
         },
         {
           "defKey": "REVISION",
           "defName": "乐观锁",
           "comment": "",
-          "domain": "Int",
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -3175,15 +3665,18 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "refEntity": "SIMS_EXAM",
-          "refEntityField": "REVISION",
-          "type": "INT"
+          "refEntity": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
+          "refEntityField": "25143244-C289-446B-8670-BC8C10DA503E",
+          "type": "INT",
+          "refDict": "",
+          "uiHint": "",
+          "id": "EE36FB43-C366-46F2-B5B8-711DF756FF3F"
         },
         {
           "defKey": "CREATED_BY",
           "defName": "创建人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -3191,15 +3684,18 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "refEntity": "SIMS_EXAM",
-          "refEntityField": "CREATED_BY",
-          "type": "VARCHAR"
+          "refEntity": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
+          "refEntityField": "632BFB89-3714-4971-834D-61004D3F0ED7",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "6B2F5029-590E-47AC-8861-DD195F09580C"
         },
         {
           "defKey": "CREATED_TIME",
           "defName": "创建时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -3207,15 +3703,18 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "refEntity": "SIMS_EXAM",
-          "refEntityField": "CREATED_TIME",
-          "type": "DATETIME"
+          "refEntity": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
+          "refEntityField": "68E8278F-B0B9-4C76-9B80-0B0E0C1993B6",
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "F65EDC3D-6B2E-465F-943A-85336CB75F9F"
         },
         {
           "defKey": "UPDATED_BY",
           "defName": "更新人",
           "comment": "",
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "len": 32,
           "scale": "",
           "primaryKey": false,
@@ -3223,15 +3722,18 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "refEntity": "SIMS_EXAM",
-          "refEntityField": "UPDATED_BY",
-          "type": "VARCHAR"
+          "refEntity": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
+          "refEntityField": "898B48FA-AA9F-48FE-92FD-919EB8C619C8",
+          "type": "VARCHAR",
+          "refDict": "",
+          "uiHint": "",
+          "id": "3276F868-CDFB-4B64-82E2-0D71C6C5AE0D"
         },
         {
           "defKey": "UPDATED_TIME",
           "defName": "更新时间",
           "comment": "",
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "len": "",
           "scale": "",
           "primaryKey": false,
@@ -3239,17 +3741,22 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "refEntity": "SIMS_EXAM",
-          "refEntityField": "UPDATED_TIME",
-          "type": "DATETIME"
+          "refEntity": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
+          "refEntityField": "D2975854-EE5C-471D-8E14-94D7CC3DB514",
+          "type": "DATETIME",
+          "refDict": "",
+          "uiHint": "",
+          "id": "B3104ABE-49EA-4FCD-81C2-3C8AFF8156D6"
         }
       ],
       "correlations": [],
       "refEntities": [
-        "SIMS_STUDENT",
-        "SIMS_EXAM",
-        "SIMS_LESSON"
-      ]
+        "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+        "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
+        "6B1610FB-364F-4514-95D6-9DDA681BFC61"
+      ],
+      "id": "DD60F248-86A6-450C-BA20-B4990DCCAF44",
+      "indexes": []
     },
     {
       "defKey": "V_CLASS_STUDENT",
@@ -3336,10 +3843,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
           "type": "VARCHAR",
-          "refEntity": "SIMS_CLASS",
-          "refEntityField": "CLASS_NAME"
+          "refEntity": "C698249E-307D-4087-9EC4-3BABCFC00660",
+          "refEntityField": "782EC244-02B2-4661-BC21-615F7A468BA8",
+          "refDict": "",
+          "uiHint": "",
+          "id": "3498EA92-4BFC-4FCA-9A0B-36821731881B"
         },
         {
           "defKey": "ENG_NAME",
@@ -3352,10 +3862,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "ENG_NAME"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "6A9A2D74-E294-497E-8A0F-0DF671A7F4EE",
+          "refDict": "",
+          "uiHint": "",
+          "id": "46AFA304-8F05-4003-933A-F222A14DAE3B"
         },
         {
           "defKey": "STUDENT_NAME",
@@ -3368,10 +3881,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "STUDENT_NAME"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "51D4FD5A-9EFB-4318-A5D6-6317D630D043",
+          "refDict": "",
+          "uiHint": "",
+          "id": "FD734B03-A001-42BA-A5E4-1074EF86ABE4"
         },
         {
           "defKey": "STUDENT_ID",
@@ -3384,10 +3900,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "STUDENT_ID"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "5FAE5CA5-B7A6-40C3-878D-1BB3D4A45B5C",
+          "refDict": "",
+          "uiHint": "",
+          "id": "13684B95-755D-4A0B-B4F2-2C4BED526108"
         },
         {
           "defKey": "CLASS_ID",
@@ -3400,10 +3919,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "CLASS_ID"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "1BCE9672-14BA-4B2B-B8C6-222CC6CF0F61",
+          "refDict": "",
+          "uiHint": "",
+          "id": "D2418A3E-8B2B-471D-8B49-1A1889C996C7"
         },
         {
           "defKey": "COLLEGE_ID",
@@ -3416,10 +3938,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "IdOrKey",
+          "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "COLLEGE_ID"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "84ADFE5C-3750-4E38-AC46-7AD11E869B41",
+          "refDict": "",
+          "uiHint": "",
+          "id": "CB009570-D1A4-484F-BA1B-8E3B8DA11190"
         },
         {
           "defKey": "ADVISER",
@@ -3432,10 +3957,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Name",
+          "domain": "54611CCC-CA4B-42E1-9F32-4944C85B85A6",
           "type": "VARCHAR",
-          "refEntity": "SIMS_CLASS",
-          "refEntityField": "ADVISER"
+          "refEntity": "C698249E-307D-4087-9EC4-3BABCFC00660",
+          "refEntityField": "6BB204C7-1363-4EB4-94B3-555F47C28754",
+          "refDict": "",
+          "uiHint": "",
+          "id": "36FA87FF-9A78-4CCC-9576-943AD907F66A"
         },
         {
           "defKey": "ID_CARD_NO",
@@ -3448,10 +3976,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString",
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "ID_CARD_NO"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "47AEF665-86ED-40A2-88DB-79BF561CCE32",
+          "refDict": "",
+          "uiHint": "",
+          "id": "704904CA-C612-4CC2-9891-15DF38676B0C"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -3464,10 +3995,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString",
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "MOBILE_PHONE"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "8D412D1B-5BE4-4031-8293-EE7EA4E65BCE",
+          "refDict": "",
+          "uiHint": "",
+          "id": "FDAF2E38-0782-48F4-8FBD-A840778E13F8"
         },
         {
           "defKey": "GENDER",
@@ -3480,11 +4014,13 @@
           "autoIncrement": false,
           "defaultValue": "'M'",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Gender",
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "BF9E20E0-80D3-486D-BD58-5FADCF3E4A1D",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "GENDER"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "C1960E6F-08D3-4773-BF97-57AB8D86FD5C",
+          "uiHint": "",
+          "id": "E39A19BE-19C8-42A7-A599-9F879B756060"
         },
         {
           "defKey": "MARITAL",
@@ -3497,11 +4033,13 @@
           "autoIncrement": false,
           "defaultValue": "'UNMARRIED'",
           "hideInGraph": true,
-          "domain": "Dict",
-          "refDict": "Marital",
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "EA1587B7-3954-437A-BFE0-FCB0453BCABA",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "MARITAL"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "1BE185DC-216C-4264-A594-9FC766DD8F82",
+          "uiHint": "",
+          "id": "9AFA5CE4-7670-47D3-BCCB-84FB7A44FE90"
         },
         {
           "defKey": "POLITICAL",
@@ -3514,11 +4052,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Political",
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "06EED564-BBA9-4747-8D73-AF809A330CB8",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "POLITICAL"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "BD431E79-93A8-4FB7-83D4-046DA0A54F76",
+          "uiHint": "",
+          "id": "6118A8F8-12FA-4C68-90FF-15CC55754D08"
         },
         {
           "defKey": "BIRTH",
@@ -3531,18 +4071,22 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DateTime",
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
           "type": "",
-          "refEntity": "SIMS_STUDENT",
-          "refEntityField": "BIRTH"
+          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
+          "refEntityField": "F705D168-2A65-4C82-8135-DDC85032F855",
+          "refDict": "",
+          "uiHint": "",
+          "id": "D2D1BD75-0343-4270-81EE-C9B2E0B6AC96"
         }
       ],
       "correlations": [],
       "indexes": [],
       "refEntities": [
-        "SIMS_CLASS",
-        "SIMS_STUDENT"
-      ]
+        "C698249E-307D-4087-9EC4-3BABCFC00660",
+        "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84"
+      ],
+      "id": "81C7ED2A-2A19-4649-BB0F-B730BDF0D1EC"
     }
   ],
   "dicts": [
@@ -3560,7 +4104,8 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "1"
+          "sort": "1",
+          "id": "3622D417-DA1A-408F-BEE1-11D328D534A0"
         },
         {
           "defKey": "F",
@@ -3571,7 +4116,8 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "2"
+          "sort": "2",
+          "id": "380A0790-64A7-481E-831C-32F7BEE1502B"
         },
         {
           "defKey": "U",
@@ -3582,9 +4128,11 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "3"
+          "sort": "3",
+          "id": "FA239F4D-1276-40D9-B230-F66BD35C3C27"
         }
-      ]
+      ],
+      "id": "BF9E20E0-80D3-486D-BD58-5FADCF3E4A1D"
     },
     {
       "defKey": "Political",
@@ -3599,7 +4147,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "61F3145A-7599-4CCB-B298-D5EE788107BE"
         },
         {
           "defKey": "20",
@@ -3609,7 +4158,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "ED16D25A-AB2F-4FA0-BB48-2B9031FA28C4"
         },
         {
           "defKey": "30",
@@ -3619,7 +4169,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "0FB7974A-AE11-438F-86E0-B163316F9272"
         },
         {
           "defKey": "40",
@@ -3629,7 +4180,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "7D247234-7E97-45B1-8C56-4A17A370854A"
         },
         {
           "defKey": "90",
@@ -3639,9 +4191,11 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "DA65D752-AF04-4A11-81D8-14A38692A64A"
         }
-      ]
+      ],
+      "id": "06EED564-BBA9-4747-8D73-AF809A330CB8"
     },
     {
       "defKey": "Marital",
@@ -3657,7 +4211,8 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "1"
+          "sort": "1",
+          "id": "20EE81BC-74EE-47DA-A56F-9663B23F44BD"
         },
         {
           "defKey": "MARRIED",
@@ -3668,7 +4223,8 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "2"
+          "sort": "2",
+          "id": "4DCA10A8-417E-4A8D-BDF6-0A278C060ADC"
         },
         {
           "defKey": "WIDOWED",
@@ -3679,7 +4235,8 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "3"
+          "sort": "3",
+          "id": "826062A7-057C-4892-B338-06459F5B808D"
         },
         {
           "defKey": "DIVORCE",
@@ -3690,7 +4247,8 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "4"
+          "sort": "4",
+          "id": "B23200B4-5E59-4F5E-A779-D981A040FA32"
         },
         {
           "defKey": "UNSPECIFIED",
@@ -3701,9 +4259,11 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "5"
+          "sort": "5",
+          "id": "A7928FE2-349A-4702-9682-2EF7205E077B"
         }
-      ]
+      ],
+      "id": "EA1587B7-3954-437A-BFE0-FCB0453BCABA"
     },
     {
       "defKey": "StudentStatus",
@@ -3719,7 +4279,8 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "1"
+          "sort": "1",
+          "id": "E9CA1CC9-8851-4F6B-86BA-B9CF0E44EB73"
         },
         {
           "defKey": "Graduated",
@@ -3730,7 +4291,8 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "2"
+          "sort": "2",
+          "id": "DEC51D7C-99DF-430C-817D-0499862D3CCC"
         },
         {
           "defKey": "Studied",
@@ -3741,7 +4303,8 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "3"
+          "sort": "3",
+          "id": "8853D6B6-75D3-4479-9006-FC731CD85B20"
         },
         {
           "defKey": "Stop",
@@ -3752,9 +4315,11 @@
           "attr1": "",
           "attr2": "",
           "attr3": "",
-          "sort": "4"
+          "sort": "4",
+          "id": "C74BA8CF-1DC6-4C79-BAAC-F11EB9C6AF01"
         }
-      ]
+      ],
+      "id": "4642BC5F-02EE-4E17-A60C-CF22F86A0282"
     },
     {
       "defKey": "GBNation",
@@ -3769,7 +4334,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "9224DF53-F7C0-447D-B8ED-0A39F799EE19"
         },
         {
           "defKey": "02",
@@ -3779,7 +4345,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "D57818E3-9206-45BB-AE79-27C64A4AB80F"
         },
         {
           "defKey": "03",
@@ -3789,7 +4356,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "0A1A3CA9-6D68-4E15-8BD0-9A2FF428D804"
         },
         {
           "defKey": "04",
@@ -3799,7 +4367,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "7CC6B6BE-47EA-460E-ACFA-C377468DEA11"
         },
         {
           "defKey": "05",
@@ -3809,7 +4378,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "A666D51F-D249-4FAC-B1F3-78C371836CB3"
         },
         {
           "defKey": "06",
@@ -3819,7 +4389,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "A0C9E1BA-D87B-4695-ADFA-287FDA32BB5A"
         },
         {
           "defKey": "07",
@@ -3829,7 +4400,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "149B5B9E-C1D1-4790-8CCF-0ED5F4B25172"
         },
         {
           "defKey": "08",
@@ -3839,7 +4411,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "F9A3E65C-BF4D-4C6B-ADB7-8C9CF0487360"
         },
         {
           "defKey": "09",
@@ -3849,7 +4422,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "14F17DE4-E96A-460B-98A6-F84EC8CF9885"
         },
         {
           "defKey": "10",
@@ -3859,7 +4433,8 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "8A81AB18-B1BF-4797-A6E5-DEDB2C6566B0"
         },
         {
           "defKey": "11",
@@ -3869,16 +4444,19 @@
           "enabled": true,
           "attr1": "",
           "attr2": "",
-          "attr3": ""
+          "attr3": "",
+          "id": "7D460947-FBD2-4E4D-8366-3B38DCAF09D1"
         }
-      ]
+      ],
+      "id": "115EDEFC-0323-410E-81AB-CCAB8879837A"
     },
     {
       "defKey": "GradeLevel",
       "defName": "受教育程度",
       "sort": "",
       "intro": "",
-      "items": []
+      "items": [],
+      "id": "9E7C9788-B805-4C7D-8531-FD1D9DC79B05"
     }
   ],
   "viewGroups": [],
@@ -3888,92 +4466,104 @@
       {
         "defKey": "string",
         "defName": "字串",
-        "JAVA": "String",
-        "ORACLE": "VARCHAR2",
-        "MYSQL": "VARCHAR",
-        "SQLServer": "VARCHAR",
-        "PostgreSQL": "VARCHAR",
-        "DB2": "VARCHAR",
-        "DM": "VARCHAR2",
-        "C#": "string",
-        "GaussDB": "VARCHAR",
-        "Kingbase": "VARCHAR",
-        "MaxCompute": "STRING"
+        "id": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
+        "29D1CE08-4C35-4D2D-AAA9-23D93305B52E": "VARCHAR",
+        "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542": "VARCHAR2",
+        "BFC87171-C74F-494A-B7C2-76B9C55FACC9": "VARCHAR",
+        "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022": "VARCHAR",
+        "89504F5D-94BF-4C9E-8B2E-44F37305FED5": "VARCHAR",
+        "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307": "VARCHAR2",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "VARCHAR",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "VARCHAR",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "STRING",
+        "797A1496-D649-4261-89B4-544132EC3F36": "String",
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "string",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "TEXT"
       },
       {
         "defKey": "double",
         "defName": "小数",
-        "JAVA": "Double",
-        "ORACLE": "DECIMAL",
-        "MYSQL": "DECIMAL",
-        "SQLServer": "DECIMAL",
-        "PostgreSQL": "NUMERIC",
-        "DB2": "DECIMAL",
-        "DM": "DECIMAL",
-        "C#": "float",
-        "GaussDB": "NUMERIC",
-        "Kingbase": "NUMERIC",
-        "MaxCompute": "DOUBLE"
+        "id": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E",
+        "29D1CE08-4C35-4D2D-AAA9-23D93305B52E": "DECIMAL",
+        "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542": "DECIMAL",
+        "BFC87171-C74F-494A-B7C2-76B9C55FACC9": "DECIMAL",
+        "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022": "NUMERIC",
+        "89504F5D-94BF-4C9E-8B2E-44F37305FED5": "DECIMAL",
+        "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307": "DECIMAL",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "NUMERIC",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "NUMERIC",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "DOUBLE",
+        "797A1496-D649-4261-89B4-544132EC3F36": "Double",
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "float",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "REAL"
       },
       {
         "defKey": "int",
         "defName": "整数",
-        "JAVA": "Integer",
-        "ORACLE": "INT",
-        "MYSQL": "INT",
-        "SQLServer": "INT",
-        "PostgreSQL": "INTEGER",
-        "DB2": "INT",
-        "DM": "INTEGER",
-        "C#": "float",
-        "GaussDB": "INTEGER",
-        "Kingbase": "INT4",
-        "MaxCompute": "INT"
+        "id": "1D764C4A-6F9F-421E-B11A-6F3E23B51811",
+        "29D1CE08-4C35-4D2D-AAA9-23D93305B52E": "INT",
+        "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542": "INT",
+        "BFC87171-C74F-494A-B7C2-76B9C55FACC9": "INT",
+        "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022": "INTEGER",
+        "89504F5D-94BF-4C9E-8B2E-44F37305FED5": "INT",
+        "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307": "INTEGER",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "INTEGER",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "INT4",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "INT",
+        "797A1496-D649-4261-89B4-544132EC3F36": "Integer",
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "float",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "INTEGER"
       },
       {
         "defKey": "date",
         "defName": "日期",
-        "JAVA": "Date",
-        "ORACLE": "DATE",
-        "MYSQL": "DATETIME",
-        "SQLServer": "DATETIME",
-        "PostgreSQL": "DATE",
-        "DB2": "DATE",
-        "DM": "DATE",
-        "C#": "date",
-        "GaussDB": "DATE",
-        "Kingbase": "DATE",
-        "MaxCompute": "DATETIME"
+        "id": "89D69E81-EA34-42EE-9FA2-93B8BD27E098",
+        "29D1CE08-4C35-4D2D-AAA9-23D93305B52E": "DATETIME",
+        "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542": "DATE",
+        "BFC87171-C74F-494A-B7C2-76B9C55FACC9": "DATETIME",
+        "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022": "DATE",
+        "89504F5D-94BF-4C9E-8B2E-44F37305FED5": "DATE",
+        "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307": "DATE",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "DATE",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "DATE",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "DATETIME",
+        "797A1496-D649-4261-89B4-544132EC3F36": "Date",
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "date",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "NUMERIC"
       },
       {
         "defKey": "bytes",
         "defName": "二进制",
-        "JAVA": "byte[]",
-        "ORACLE": "BLOB",
-        "MYSQL": "BLOB",
-        "PostgreSQL": "BYTEA",
-        "SQLServer": "VARBINARY",
-        "DB2": "BLOB",
-        "DM": "BLOB",
-        "C#": "binary",
-        "GaussDB": "BYTEA",
-        "Kingbase": "BYTEA",
-        "MaxCompute": "BINARY"
+        "id": "D516E75B-90F5-4741-B9B3-A186A263F04C",
+        "29D1CE08-4C35-4D2D-AAA9-23D93305B52E": "BLOB",
+        "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542": "BLOB",
+        "BFC87171-C74F-494A-B7C2-76B9C55FACC9": "VARBINARY",
+        "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022": "BYTEA",
+        "89504F5D-94BF-4C9E-8B2E-44F37305FED5": "BLOB",
+        "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307": "BLOB",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "BYTEA",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "BYTEA",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "BINARY",
+        "797A1496-D649-4261-89B4-544132EC3F36": "byte[]",
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "binary",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "NONE"
       },
       {
         "defKey": "largeText",
         "defName": "大文本",
-        "JAVA": "String",
-        "ORACLE": "CLOB",
-        "MYSQL": "TEXT",
-        "SQLServer": "TEXT",
-        "PostgreSQL": "TEXT",
-        "DB2": "CLOB",
-        "DM": "CLOB",
-        "C#": "string",
-        "GaussDB": "TEXT",
-        "Kingbase": "TEXT",
-        "MaxCompute": "STRING"
+        "id": "B17BDED3-085F-40E1-9019-3B79CF2BF075",
+        "29D1CE08-4C35-4D2D-AAA9-23D93305B52E": "TEXT",
+        "A4E23CB7-BB01-4BD1-9F71-F73F3E15A542": "CLOB",
+        "BFC87171-C74F-494A-B7C2-76B9C55FACC9": "TEXT",
+        "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022": "TEXT",
+        "89504F5D-94BF-4C9E-8B2E-44F37305FED5": "CLOB",
+        "0BBCABA5-B8E4-41B0-B8E4-8F5EA6029307": "CLOB",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "TEXT",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "TEXT",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "STRING",
+        "797A1496-D649-4261-89B4-544132EC3F36": "String",
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "string",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "TEXT"
       }
     ]
   },
@@ -3981,82 +4571,92 @@
     {
       "defKey": "DefaultString",
       "defName": "默认字串",
-      "applyFor": "string",
+      "applyFor": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
       "len": 255,
       "scale": "",
-      "uiHint": ""
+      "uiHint": "",
+      "id": "9092C4E0-1A54-4859-ABBB-5B62DBC27573"
     },
     {
       "defKey": "IdOrKey",
       "defName": "主键标识",
-      "applyFor": "string",
+      "applyFor": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
       "len": 32,
       "scale": "",
-      "uiHint": ""
+      "uiHint": "",
+      "id": "16120F75-6AA7-4483-868D-F07F511BB081"
     },
     {
       "defKey": "Name",
       "defName": "名称",
-      "applyFor": "string",
+      "applyFor": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
       "len": 90,
       "scale": "",
-      "uiHint": ""
+      "uiHint": "",
+      "id": "54611CCC-CA4B-42E1-9F32-4944C85B85A6"
     },
     {
       "defKey": "Int",
       "defName": "整数",
-      "applyFor": "int",
+      "applyFor": "1D764C4A-6F9F-421E-B11A-6F3E23B51811",
       "len": "",
       "scale": "",
-      "uiHint": ""
+      "uiHint": "",
+      "id": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E"
     },
     {
       "defKey": "Double",
       "defName": "小数",
-      "applyFor": "double",
+      "applyFor": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E",
       "len": 24,
       "scale": 6,
-      "uiHint": ""
+      "uiHint": "",
+      "id": "FF4459C5-6B45-4DBF-8FC0-E06239BC05B4"
     },
     {
       "defKey": "Money",
       "defName": "金额",
-      "applyFor": "double",
+      "applyFor": "1A0BDC09-0792-4174-9E8E-80BE8DF44B8E",
       "len": 24,
       "scale": 6,
-      "uiHint": ""
+      "uiHint": "",
+      "id": "C3B1681B-99F9-4818-9E80-DE1652A51D85"
     },
     {
       "defKey": "DateTime",
       "defName": "日期时间",
-      "applyFor": "date",
+      "applyFor": "89D69E81-EA34-42EE-9FA2-93B8BD27E098",
       "len": "",
       "scale": "",
-      "uiHint": ""
+      "uiHint": "",
+      "id": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC"
     },
     {
       "defKey": "YesNo",
       "defName": "是否",
-      "applyFor": "string",
+      "applyFor": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
       "len": "1",
       "scale": "",
-      "uiHint": ""
+      "uiHint": "",
+      "id": "6F7C1C5C-D159-41E6-BF9D-54DEEFA79AFF"
     },
     {
       "defKey": "Dict",
       "defName": "数据字典",
-      "applyFor": "string",
+      "applyFor": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
       "len": "32",
       "scale": "",
-      "uiHint": ""
+      "uiHint": "",
+      "id": "73FD2BAD-2358-4336-B96D-45DC897BD792"
     },
     {
       "defKey": "DescText",
       "defName": "描述文本",
-      "applyFor": "string",
+      "applyFor": "FC9790A7-36B8-4A48-8F9A-BC1042BCFE64",
       "len": "900",
       "scale": "",
-      "uiHint": ""
+      "uiHint": "",
+      "id": "3E948CEC-3070-472C-AF92-F3CA11EC9D15"
     }
   ],
   "diagrams": [
@@ -4121,7 +4721,7 @@
               "y": 459.999999999998
             },
             "count": 0,
-            "originKey": "SIMS_LESSON",
+            "originKey": "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
             "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
           },
           {
@@ -4132,7 +4732,7 @@
               "y": 414.999999999998
             },
             "count": 0,
-            "originKey": "SIMS_TEACHER",
+            "originKey": "536B8B19-C2B3-45D1-ADA8-402C0083FC31",
             "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
           },
           {
@@ -4143,7 +4743,7 @@
               "y": 242.999999999998
             },
             "count": 0,
-            "originKey": "SIMS_INSTRUCT",
+            "originKey": "1A50AEEB-F956-4275-AE11-5D6F1F471FBE",
             "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
           },
           {
@@ -4154,7 +4754,7 @@
               "y": 242.999999999998
             },
             "count": 0,
-            "originKey": "SIMS_MAJOR",
+            "originKey": "C2F51B91-7C24-4CB4-8406-706F4851EB0B",
             "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
           },
           {
@@ -4165,7 +4765,7 @@
               "y": 19.99999999999801
             },
             "count": 0,
-            "originKey": "SIMS_COLLEGE",
+            "originKey": "26B8D13E-BE37-4E20-8496-13A586E84581",
             "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
           },
           {
@@ -4176,7 +4776,7 @@
               "y": 19.99999999999801
             },
             "count": 0,
-            "originKey": "SIMS_CLASS",
+            "originKey": "C698249E-307D-4087-9EC4-3BABCFC00660",
             "fontColor": "#555555",
             "fillColor": "#dce775",
             "parent": "de986735-cd84-4bd5-b50f-6b5a70df984d"
@@ -4189,7 +4789,7 @@
               "y": 19.99999999999801
             },
             "count": 0,
-            "originKey": "SIMS_EXAM",
+            "originKey": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
             "fillColor": "#9acc98",
             "parent": "02b64cef-3ee3-48a5-9867-9dc4e9726bfd"
           },
@@ -4198,11 +4798,11 @@
             "shape": "erdRelation",
             "source": {
               "cell": "56317816-819f-41ea-a6ef-bdcd0027fb68",
-              "port": "COLLEGE_ID%out"
+              "port": "9651B83A-2208-4F1E-A870-C3C4E1FAF103%out"
             },
             "target": {
               "cell": "6210b0eb-8566-4b64-885b-f1b00d6078d7",
-              "port": "COLLEGE_ID%in"
+              "port": "D793F097-1364-49FD-B02C-D4EBBA5A055A%in"
             },
             "relation": "1:n",
             "vertices": [],
@@ -4224,11 +4824,11 @@
             "shape": "erdRelation",
             "source": {
               "cell": "6210b0eb-8566-4b64-885b-f1b00d6078d7",
-              "port": "CLASS_ID%out"
+              "port": "6D6BC6AA-8114-4B91-8A2C-4B5FEACEB347%out"
             },
             "target": {
               "cell": "9a5658de-7e28-4815-95c2-ccf5ff90e6c1",
-              "port": "CLASS_ID%in"
+              "port": "1BCE9672-14BA-4B2B-B8C6-222CC6CF0F61%in"
             },
             "relation": "1:n",
             "vertices": [
@@ -4244,11 +4844,11 @@
             "shape": "erdRelation",
             "source": {
               "cell": "9972b579-d4c5-4520-9202-7a57bf539151",
-              "port": "MAJOR_ID%out"
+              "port": "8707AEB9-3EC5-4EEA-9E14-99BAF28B46B4%out"
             },
             "target": {
               "cell": "6210b0eb-8566-4b64-885b-f1b00d6078d7",
-              "port": "MAJOR_ID%in"
+              "port": "63130D1B-63C8-491C-B36D-5603A30BFB37%in"
             },
             "relation": "1:n",
             "vertices": [
@@ -4265,11 +4865,11 @@
             "shape": "erdRelation",
             "source": {
               "cell": "4a31fc9b-4f5a-4f2c-880b-409d433ba848",
-              "port": "LESSON_ID%out"
+              "port": "3D337B5E-182D-45C7-9752-E2DD4D7CF2BD%out"
             },
             "target": {
               "cell": "4bbe78ce-9511-471b-bea0-bcdfa333b636",
-              "port": "LESSON_ID%in"
+              "port": "AE73CBE3-577D-4457-8987-5BEFDECAEED9%in"
             },
             "relation": "1:n",
             "vertices": [
@@ -4286,11 +4886,11 @@
             "shape": "erdRelation",
             "source": {
               "cell": "444bdcfa-cc31-4b36-892b-9caef73cc863",
-              "port": "TEACHER_ID%out"
+              "port": "C5916046-F140-4B0C-BF84-EBD7DDB38EAA%out"
             },
             "target": {
               "cell": "4bbe78ce-9511-471b-bea0-bcdfa333b636",
-              "port": "LESSON_ID%out"
+              "port": "AE73CBE3-577D-4457-8987-5BEFDECAEED9%out"
             },
             "relation": "1:n",
             "fillColor": "#ACDAFC",
@@ -4301,11 +4901,11 @@
             "shape": "erdRelation",
             "source": {
               "cell": "942a65c8-c294-4ea4-98ec-1df43daa3ff5",
-              "port": "LESSON_ID%out"
+              "port": "3D337B5E-182D-45C7-9752-E2DD4D7CF2BD%out"
             },
             "target": {
               "cell": "26b28925-27ed-488d-b20d-2abbcafa5057",
-              "port": "LESSON_ID%out"
+              "port": "F7FD7836-4E62-47EF-90FE-6B80674A2DDD%out"
             },
             "relation": "1:n",
             "vertices": [
@@ -4332,11 +4932,11 @@
             "shape": "erdRelation",
             "source": {
               "cell": "56317816-819f-41ea-a6ef-bdcd0027fb68",
-              "port": "COLLEGE_ID%in"
+              "port": "9651B83A-2208-4F1E-A870-C3C4E1FAF103%in"
             },
             "target": {
               "cell": "444bdcfa-cc31-4b36-892b-9caef73cc863",
-              "port": "COLLEGE_ID%in"
+              "port": "EFD22F94-E1D0-4CAD-947D-E856A997D7B5%in"
             },
             "relation": "1:n",
             "vertices": [
@@ -4357,11 +4957,11 @@
             "shape": "erdRelation",
             "source": {
               "cell": "9a5658de-7e28-4815-95c2-ccf5ff90e6c1",
-              "port": "STUDENT_ID%out"
+              "port": "5FAE5CA5-B7A6-40C3-878D-1BB3D4A45B5C%out"
             },
             "target": {
               "cell": "26b28925-27ed-488d-b20d-2abbcafa5057",
-              "port": "STUDENT_ID%in"
+              "port": "0C5A31BB-2855-4BB9-84D1-7E63B37A71E1%in"
             },
             "relation": "1:n",
             "vertices": [
@@ -4382,11 +4982,11 @@
             "shape": "erdRelation",
             "source": {
               "cell": "6210b0eb-8566-4b64-885b-f1b00d6078d7",
-              "port": "CLASS_ID%in"
+              "port": "6D6BC6AA-8114-4B91-8A2C-4B5FEACEB347%in"
             },
             "target": {
               "cell": "4bbe78ce-9511-471b-bea0-bcdfa333b636",
-              "port": "CLASS_ID%in"
+              "port": "A23704D2-7128-41A2-988C-D20CB984FA83%in"
             },
             "relation": "1:n",
             "fillColor": "#ACDAFC",
@@ -4542,7 +5142,7 @@
               "y": 19.99999999999801
             },
             "count": 0,
-            "originKey": "SIMS_STUDENT",
+            "originKey": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
             "fontColor": "#0d0d0d",
             "fillColor": "#c00000",
             "parent": "02b64cef-3ee3-48a5-9867-9dc4e9726bfd"
@@ -4555,11 +5155,12 @@
               "y": 231.499999999998
             },
             "count": 1,
-            "originKey": "SIMS_LESSON",
+            "originKey": "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
             "parent": "02b64cef-3ee3-48a5-9867-9dc4e9726bfd"
           }
         ]
-      }
+      },
+      "id": "9427DD89-11C0-431F-9BB0-8353A2725174"
     },
     {
       "defKey": "KeyEntities",
@@ -5848,7 +6449,8 @@
             }
           }
         ]
-      }
+      },
+      "id": "BA37ED6E-4E0A-4D48-A976-60A129309FA5"
     }
   ],
   "standardFields": [
@@ -5868,7 +6470,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "refDict": "",
+          "uiHint": "",
+          "id": "A64A91C8-A41F-4113-92FB-7563D7EF054D"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -5882,7 +6487,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "refDict": "",
+          "uiHint": "",
+          "id": "479DA2AB-1974-411A-A81E-92FB939E75EB"
         },
         {
           "defKey": "GENDER",
@@ -5896,8 +6504,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Gender"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "BF9E20E0-80D3-486D-BD58-5FADCF3E4A1D",
+          "uiHint": "",
+          "id": "48473E29-6594-4912-AADE-C8AB44FCA3E9"
         },
         {
           "defKey": "BIRTH",
@@ -5911,7 +6521,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DateTime"
+          "domain": "7CFFA0D3-6A93-4DDC-BC10-DF21211064DC",
+          "refDict": "",
+          "uiHint": "",
+          "id": "2BD3D2EE-2411-49A6-983D-84B81057312F"
         },
         {
           "defKey": "AVATAR",
@@ -5925,7 +6538,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "refDict": "",
+          "uiHint": "",
+          "id": "FDD67CEE-4B52-4BD1-A1A3-9C5EBC6037E6"
         },
         {
           "defKey": "HEIGHT",
@@ -5939,7 +6555,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "refDict": "",
+          "uiHint": "",
+          "id": "CAAA0E79-41A1-4758-B481-D171168C4D68"
         },
         {
           "defKey": "WEIGHT",
@@ -5953,7 +6572,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Int"
+          "domain": "6BC8F04B-6CFA-4995-98D3-318F5CDD774E",
+          "refDict": "",
+          "uiHint": "",
+          "id": "575482CE-64A6-4CB9-99DC-8E126D190AAA"
         },
         {
           "defKey": "NATION",
@@ -5967,8 +6589,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "GBNation"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "115EDEFC-0323-410E-81AB-CCAB8879837A",
+          "uiHint": "",
+          "id": "15B0D75D-0B97-4985-A816-D0EAFA90446B"
         },
         {
           "defKey": "POLITICAL",
@@ -5982,8 +6606,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Political"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "06EED564-BBA9-4747-8D73-AF809A330CB8",
+          "uiHint": "",
+          "id": "F458E86D-84D6-45A1-9DD3-51E6C8170D7F"
         },
         {
           "defKey": "MARITAL",
@@ -5997,8 +6623,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Dict",
-          "refDict": "Marital"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "EA1587B7-3954-437A-BFE0-FCB0453BCABA",
+          "uiHint": "",
+          "id": "7275E578-6893-4922-AC69-95B261BFBD61"
         },
         {
           "defKey": "DOMICILE_PLACE_PROVINCE",
@@ -6012,7 +6640,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "refDict": "",
+          "uiHint": "",
+          "id": "F04BF130-3EC1-4E02-9DED-3214CA88E352"
         },
         {
           "defKey": "DOMICILE_PLACE_CITY",
@@ -6026,7 +6657,10 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "Dict"
+          "domain": "73FD2BAD-2358-4336-B96D-45DC897BD792",
+          "refDict": "",
+          "uiHint": "",
+          "id": "B97F5BC2-33DE-4857-9DB8-ECFD02C9040C"
         },
         {
           "defKey": "DOMICILE_PLACE_ADDRESS",
@@ -6040,9 +6674,13 @@
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": false,
-          "domain": "DefaultString"
+          "domain": "9092C4E0-1A54-4859-ABBB-5B62DBC27573",
+          "refDict": "",
+          "uiHint": "",
+          "id": "812ADF1D-8C03-40CA-B030-E539838FB889"
         }
-      ]
+      ],
+      "id": "F30202B9-4B5D-4CE7-87CE-B3890C84D3F2"
     }
   ],
   "dbConn": []

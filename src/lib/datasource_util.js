@@ -374,6 +374,11 @@ export const getDemoDbConnect = () => {
       driverClass: 'com.aliyun.odps.jdbc.OdpsDriver',
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.maxcompute'}),
     },
+    sqlite: {
+      defKey: 'SQLite',
+      driverClass: 'org.sqlite.JDBC',
+      url: FormatMessage.string({id: 'dbConnect.demoDbConnect.sqlite'}),
+    }
   }
 };
 
