@@ -106,6 +106,7 @@ export default {
     welcome: 'welcome to use',
     welcomeVersionTitle: 'checkVersionData...',
     newVersion: 'New version found',
+    update: 'Update now',
     download: 'Downloading the latest version...',
     newVersionError: 'Version download failed, please try to download manually by clicking the download link',
     version: {

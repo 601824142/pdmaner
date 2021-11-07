@@ -71,8 +71,8 @@ const Welcome = React.memo(({ prefix, getUserData, config, ...restProps }) => {
               closeable: !res.forceUpdate,
               bodyStyle: {width: 'auto'},
               contentStyle: {width: '800px'},
-              buttons: [<Button type='primary' key='ok' onClick={updateApp}>
-                立即更新
+              buttons: process.platform === 'darwin' ? [] : [<Button type='primary' key='ok' onClick={updateApp}>
+                {FormatMessage.string({id: 'update'})}
               </Button>],
             });
           }
