@@ -106,6 +106,7 @@ export default {
     welcome: '欢迎使用',
     welcomeVersionTitle: '检测版本信息...',
     newVersion: '发现新版本',
+    update: '立即更新',
     download: '正在下载最新版本...',
     newVersionError: '版本下载失败，请尝试点击下载链接手动下载',
     version: {
