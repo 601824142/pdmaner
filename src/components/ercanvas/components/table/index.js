@@ -91,11 +91,14 @@ const Table = forwardRef(({node}, ref) => {
             className={`${validateSelected(f, store.data) ? 'chiner-er-table-body-selected' : ''} ${f.primaryKey ? 'chiner-er-table-body-primary' : ''}`}>
             {
               data.headers.map((h) => {
+                const label = calcFKPKShow(f, h);
                 return <span
                   style={{width: data.maxWidth[h.refKey]}}
                   key={h.refKey}
                 >
-                  {calcFKPKShow(f, h)}
+                  {typeof label === 'string' ?
+                    label.replace(/\r|\n|\r\n/g, '')
+                    : label}
                 </span>;
               })
             }

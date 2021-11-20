@@ -31,7 +31,7 @@ Graph.registerEdge('erdRelation', {
       excludeShapes: ['group'],
     },
   },
-  zIndex: 2,
+  zIndex: 3,
  /* connector: {
     name: 'jumpover',
     args: {

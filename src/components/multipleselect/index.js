@@ -141,13 +141,20 @@ const MultipleSelect = React.memo(({prefix, children, dropdownRender, allowClear
     updateCheckValues([]);
     onChange && onChange([]);
   };
+  const getEmptyChildren = () => {
+    const firstChildren = [].concat(children)[0];
+    if (firstChildren && firstChildren.props.value === '') {
+      return firstChildren?.props?.children;
+    }
+    return '';
+  };
   return <div className={`${currentPrefix}-multiple-select`} onClick={selectClick} ref={selectRef}>
     <div className={`${currentPrefix}-multiple-select-data ${currentPrefix}-multiple-select-data-${disable ? 'disable' : 'default'} ${currentPrefix}-multiple-select-data-${visible ? 'focus' : 'normal'}`}>
       {simple ? <span
         title={selected[0]?.props?.children || ''}
         className={`${currentPrefix}-multiple-select-data-item-simple`}
           >{
-            searchValue ? '' : (selected[0]?.props?.children || finalCheckValues[0])
+            searchValue ? '' : (selected[0]?.props?.children || getEmptyChildren())
           }{allowClear && selected[0]
           && !disable && <span
             onClick={onClear}

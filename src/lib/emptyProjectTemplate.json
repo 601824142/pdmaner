@@ -111,7 +111,8 @@
       "Kingbase",
       "MaxCompute",
       "JAVA",
-      "C#"
+      "C#",
+      "SQLite"
     ],
     "codeTemplates": [
       {
@@ -203,6 +204,13 @@
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}} {{= field.notNull ? 'NOT NULL' : '' }} {{= field.autoIncrement ? 'AUTO_INCREMENT' : '' }} {{= field.defaultValue ? it.func.join('DEFAULT',field.defaultValue,' ') : '' }} COMMENT '{{=it.func.join(field.defName,field.comment,';')}}' {{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n)  COMMENT = '{{=it.func.join(it.entity.defName,it.entity.comment,';') }}';\n$blankline\n",
         "createIndex": "",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
+      },
+      {
+        "applyFor": "SQLite",
+        "type": "dbDDL",
+        "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}} {{= field.notNull ? 'NOT NULL' : '' }} {{= field.autoIncrement ? 'AUTOINCREMENT' : '' }} {{= field.defaultValue ? it.func.join('DEFAULT',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }} --{{=it.func.join(field.defName,field.comment,';')}}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n)  ; --{{=it.func.join(it.entity.defName,it.entity.comment,';') }}\n$blankline\n",
+        "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
+        "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
       }
     ],
     "generatorDoc": {
@@ -276,7 +284,8 @@
         "C#": "string",
         "GaussDB": "VARCHAR",
         "Kingbase": "VARCHAR",
-        "MaxCompute": "STRING"
+        "MaxCompute": "STRING",
+        "SQLite": "TEXT"
       },
       {
         "defKey": "double",
@@ -291,7 +300,8 @@
         "C#": "float",
         "GaussDB": "NUMERIC",
         "Kingbase": "NUMERIC",
-        "MaxCompute": "DOUBLE"
+        "MaxCompute": "DOUBLE",
+        "SQLite": "REAL"
       },
       {
         "defKey": "int",
@@ -306,7 +316,8 @@
         "C#": "float",
         "GaussDB": "INTEGER",
         "Kingbase": "INT4",
-        "MaxCompute": "INT"
+        "MaxCompute": "INT",
+        "SQLite": "INTEGER"
       },
       {
         "defKey": "date",
@@ -321,7 +332,8 @@
         "C#": "date",
         "GaussDB": "DATE",
         "Kingbase": "DATE",
-        "MaxCompute": "DATETIME"
+        "MaxCompute": "DATETIME",
+        "SQLite": "NUMERIC"
       },
       {
         "defKey": "bytes",
@@ -336,7 +348,8 @@
         "C#": "binary",
         "GaussDB": "BYTEA",
         "Kingbase": "BYTEA",
-        "MaxCompute": "BINARY"
+        "MaxCompute": "BINARY",
+        "SQLite": "NONE"
       },
       {
         "defKey": "largeText",
@@ -351,7 +364,8 @@
         "C#": "string",
         "GaussDB": "TEXT",
         "Kingbase": "TEXT",
-        "MaxCompute": "STRING"
+        "MaxCompute": "STRING",
+        "SQLite": "TEXT"
       }
     ]
   },

@@ -280,28 +280,16 @@
         "id": "FB111359-2B73-4443-926C-08A98E446448"
       },
       {
-        "data": [
-          "",
-          ""
-        ],
         "defKey": "CheckBox",
         "defName": "复选框",
         "id": "0CB8A6C9-1115-4FC0-B51E-5C028065082F"
       },
       {
-        "data": [
-          "",
-          ""
-        ],
         "defKey": "RadioBox",
         "defName": "单选框",
         "id": "5C04987A-260F-4B7C-A5D5-22A181AAE9CA"
       },
       {
-        "data": [
-          "",
-          ""
-        ],
         "defKey": "Double",
         "defName": "小数输入",
         "id": "8D5BAFE4-E15C-4707-A047-8EE59C58E70F"
@@ -327,19 +315,11 @@
         "id": "936927E3-DD2D-4096-87FD-074CDE278D59"
       },
       {
-        "data": [
-          "",
-          ""
-        ],
         "defKey": "Text",
         "defName": "长文本输入",
         "id": "D89DD4F1-ADAC-4469-BF8D-B3FF41AE7963"
       },
       {
-        "data": [
-          "",
-          ""
-        ],
         "defKey": "RichText",
         "defName": "富文本输入",
         "id": "C134EB1F-4CFF-49E0-882F-2C6FB275CB20"

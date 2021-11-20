@@ -233,7 +233,7 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
       </Component.MultipleSelect>
       <Component.Tooltip ref={tooltipRef} visible={f[name]} title={viewDict()} force placement='topLeft'>
         <span
-          className={`${currentPrefix}-table-dict-view-${f[name] ? 'normal' : 'disabled'}`}
+          className={`${currentPrefix}-table-dict-view-${(dicts || [])?.filter(d => d.id === f[name])[0] ? 'normal' : 'disabled'}`}
         >
           {Component.FormatMessage.string({id: 'dict.view'})}
         </span>

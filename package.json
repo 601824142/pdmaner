@@ -1,6 +1,6 @@
 {
   "name": "chiner",
-  "version": "3.5.5",
+  "version": "3.5.6",
   "description": "CHINER-元数建模",
   "scripts": {
     "test": "jest",
@@ -24,7 +24,7 @@
   "homepage": "empty",
   "license": "ISC",
   "dependencies": {
-    "@antv/x6": "1.18.3",
+    "@antv/x6": "1.28.1",
     "@antv/x6-react-shape": "1.3.5",
     "@electron/remote": "1.2.1",
     "crypto": "1.0.1",
@@ -103,8 +103,12 @@
     "productName": "CHINER元数建模",
     "artifactName": "${productName}-${os}_v${version}.${ext}",
     "directories": {
+      "buildResources": "app/build",
       "output": "dist"
     },
+    "files": [
+      "build/"
+    ],
     "npmRebuild": false,
     "asar": true,
     "asarUnpack": [
@@ -113,7 +117,7 @@
       "build/template/"
     ],
     "dmg": {
-      "icon": "app/build/icon.icns",
+      "icon": "icon.icns",
       "contents": [
         {
           "x": 410,
@@ -129,7 +133,7 @@
       ]
     },
     "win": {
-      "icon": "app/build/icon.ico",
+      "icon": "icon.ico",
       "target": [
         {
           "target": "nsis",
@@ -145,7 +149,7 @@
       "perMachine": false
     },
     "linux": {
-      "icon": "app/build/256x256.png",
+      "icon": "256x256.png",
       "target": [
         "zip",
         "deb",
