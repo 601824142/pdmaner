@@ -10,7 +10,7 @@ export default React.memo(({prefix, value, checkValues, children, onChange}) => 
   };
   const currentPrefix = getPrefix(prefix);
   return <span
-    className={`${currentPrefix}-multiple-select-option ${currentPrefix}-multiple-select-option-${checkValues.includes(value) ? 'check' : 'default'}`}
+    className={`${currentPrefix}-multiple-select-option ${currentPrefix}-multiple-select-option-${checkValues?.includes(value) ? 'check' : 'default'}`}
     onClick={onClick}
   >
     <span>{children}</span>

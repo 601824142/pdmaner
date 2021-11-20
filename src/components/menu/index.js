@@ -203,6 +203,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
   const getMenuItem = (parentMenu, menu = parentMenu, offsetNumber = 0, pI) => {
     const parentKey = menu === parentMenu ? null : parentMenu[defKey];
     const ulDraggable = getDraggable(menu);
+    const pName = `${getName && getName(menu) || menu[defName]}${menu.type !== 'groups' && `(${menu[children].length})`}`;
     return (
       <ul
         className={getClassName(itemBase, parentMenu[defKey],
@@ -213,6 +214,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         onDrop={e => rowOnDrop(e, pI, parentKey, parentKey, menu)}
       >
         <span
+          title={pName}
           style={{paddingLeft: 8 * offsetNumber}}
           className={`${currentPrefix}-menu-container-fold-item
           ${selectedMenu.some(s => s.key === menu[defKey] && s.type === menu.type) ? ` ${currentPrefix}-menu-container-fold-item-selected` : ''}`}
@@ -223,7 +225,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
             <span
               className={`${currentPrefix}-menu-container-fold-item-name ${currentPrefix}-menu-container-fold-item-name-parent`}
           >
-              {getName && getName(menu) || menu[defName]}{menu.type !== 'groups' && `(${menu[children].length})`}
+              {pName}
             </span>
           </span>
           <span className={`${currentPrefix}-menu-container-fold-item-right-group`}>
@@ -259,7 +261,9 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
               return getMenuItem(menu, child, offsetNumber + 1);
             }
             const draggableStatus = getDraggable(child);
+            const name = getName && getName(child) || child[defName];
             return (<li
+              title={name}
               key={`${child[defKey]}`}
               onContextMenu={e => _onContextMenu(e, key, child.type, parentKey)}
               onDoubleClick={e => onDoubleMenuClick(e, key, child.type, parentKey, menu.icon)}
@@ -274,7 +278,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
                 style={{paddingLeft: 8 * (offsetNumber + 1)}}
                 className={`${currentPrefix}-menu-container-fold-item-name-child`}
               >
-                {getName && getName(child) || child[defName]}
+                {name}
               </span>
               {
                 draggableStatus && <span

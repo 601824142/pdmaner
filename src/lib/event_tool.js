@@ -35,3 +35,7 @@ export const Save = (cb) => {
     }
   };
 };
+
+export const removeSave = () => {
+  window.onkeydown = null;
+}

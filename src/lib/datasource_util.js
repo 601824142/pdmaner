@@ -1,3 +1,4 @@
+import React from 'react';
 import * as _ from 'lodash/object';
 import moment from 'moment';
 import { FormatMessage } from 'components';
@@ -27,7 +28,7 @@ export const filterEdge = (allNodes, c) => {
   }).length === 2
 };
 
-export const updateAllData = (dataSource, tabs) => {
+export const updateAllData = (dataSource, tabs, openConfig) => {
   // 整理项目中所有的关系图数据 去除无效的关系图数据
   let tempData = {...dataSource};
   const allTabData = getAllTabData();
@@ -106,7 +107,8 @@ export const updateAllData = (dataSource, tabs) => {
       data: {
           size,
           entities: sizeError.join(','),
-      }}) + ';';
+      }});
+    message = <div>{message}<a onClick={openConfig}>[{FormatMessage.string({id: 'modify'})}]</a></div>;
   }
   if (repeatError.length > 0) {
     // 字段重复显示超限
@@ -969,7 +971,9 @@ export  const getTextWidth = (text, font, weight = 'normal') => {
     dom.style.fontSize = `${font}px`;
     document.body.appendChild(dom);
   }
-  dom.innerText = text;
+  dom.innerText = typeof text === 'string' ?
+    text.replace(/\r|\n|\r\n/g, '')
+    : text;
   const width =  dom.getBoundingClientRect().width;
   dom.innerText = '';
   return Math.ceil(width);
@@ -1300,6 +1304,31 @@ export const transformationData = (oldDataSource) => {
       ...tempDataSource,
       entities: (tempDataSource.entities || []).map(d => updateHeaders(d, 'entity')),
       views: (tempDataSource.views || []).map(d => updateHeaders(d, 'view')),
+    };
+  }
+  if (compareVersion('3.5.6', oldDataSource.version.split('.'))) {
+    tempDataSource = {
+      ...tempDataSource,
+      diagrams: (tempDataSource.diagrams || []).map(d => {
+        const originKeys = [];
+        return {
+          ...d,
+          canvasData: {
+            ...(d.canvasData || {}),
+            cells: (d.canvasData?.cells || []).map(c => {
+              if (c.shape === 'table') {
+                const count = originKeys.filter(k => k === c.originKey).length;
+                originKeys.push(c.originKey);
+                return {
+                  ...c,
+                  count,
+                };
+              }
+              return c;
+            }),
+          },
+        };
+      }),
     };
   }
   return tempDataSource;

@@ -429,9 +429,9 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       const currentNodeDom = node ? Array.from(container.querySelectorAll('.x6-node')).filter((n) => {
         return n.getAttribute('data-cell-id') === node.id;
       })[0] : container;
-      const ports = currentNodeDom.querySelectorAll(
+      const ports = currentNodeDom?.querySelectorAll(
           '.x6-port-body',
-      );
+      ) || [];
       for (let i = 0, len = ports.length; i < len; i += 1) {
         const portName = ports[i].getAttribute('port');
         if (source && source.includes('extend')) {
@@ -455,6 +455,19 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       container,
       autoResize: false,
       snapline: true,
+      translating: {
+        restrict(view) {
+          const cell = view.cell;
+          if (cell.isNode()) {
+            const parent = cell.getParent();
+            // 限制节点
+            if (parent && graph.isSelected(parent)) {
+              return parent.getBBox();
+            }
+          }
+          return null;
+        },
+      },
       history: {
         enabled: true,
         beforeAddCommand(event, args) {
@@ -748,13 +761,26 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
         dataChange && dataChange(graph.toJSON({diff: true}));
       }
     });
-    graph.on('cell:removed', () => {
+    graph.on('cell:removed', ({cell}) => {
+      if (cell.shape === 'table') {
+        const count = cell.getProp('count');
+        graph.batchUpdate('count', () => {
+          graph.getNodes()
+            .filter(n => n.shape === 'table' &&
+              n.getProp('count') &&
+              n.getProp('count') > count)
+            .forEach((n) => {
+            n.setProp('count', n.getProp('count') - 1);
+          });
+        });
+      }
       dataChange && dataChange(graph.toJSON({diff: true}));
     });
     graph.on('cell:added', () => {
       dataChange && dataChange(graph.toJSON({diff: true}));
     });
     graph.on('selection:changed', ({ added,removed }) => {
+      console.log(added);
       added.forEach((cell) => {
         if (cell.isNode()) {
           cell.attr('body', {
@@ -1099,7 +1125,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             },
           },
         },
-      ], null, { ignoreHistory : true});
+      ], {}, { ignoreHistory : true});
     });
     graph.on('edge:unselected', ({ edge }) => {
       edge.removeTools({ ignoreHistory : true});
@@ -1110,6 +1136,8 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       sourceNode?.setProp('sourcePort', edge.getSourcePortId(), { ignoreHistory : true});
       targetNode?.setProp('targetPort', edge.getTargetPortId(), { ignoreHistory : true});
       edge.attr('line/stroke', currentColor.current.selected, { ignoreHistory : true});
+      edge.attr('line/sourceMarker/fillColor', currentColor.current.selected, { ignoreHistory : true});
+      edge.attr('line/targetMarker/fillColor', currentColor.current.selected, { ignoreHistory : true});
     });
     graph.on('edge:mouseleave', ({edge}) => {
       const sourceNode = edge.getSourceCell();
@@ -1118,6 +1146,10 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       targetNode?.setProp('targetPort', '', { ignoreHistory : true});
       edge.attr('line/stroke', edge.getProp('fillColor') ||
           currentColor.current.fillColor, { ignoreHistory : true});
+      edge.attr('line/sourceMarker/fillColor', edge.getProp('fillColor') ||
+        currentColor.current.fillColor, { ignoreHistory : true});
+      edge.attr('line/targetMarker/fillColor', edge.getProp('fillColor') ||
+        currentColor.current.fillColor, { ignoreHistory : true});
     });
     graph.on('edge:change:labels', () => {
       dataChange && dataChange(graph.toJSON({diff: true}));
@@ -1223,7 +1255,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
               y: p.y,
             },
           },
-        ]);
+        ], {});
       }
       //openEntity(cell.getProp('originKey'), 'entity', null, 'entity.svg');
     });
@@ -1234,13 +1266,13 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
           updateDataSource && updateDataSource(addEntityData(cell, 'create'));
         }
       }
+      if (cell.shape === 'group') {
+        cell.toBack();
+      }
       if (options.undo && cell.isNode()) {
         cell.attr('body', {
           stroke: currentColor.current.border,
         }, { ignoreHistory : true});
-      }
-      if (cell.shape === 'group') {
-        cell.setZIndex(1, { ignoreHistory : true});
       }
     });
     graph.on('node:mouseenter', ({node}) => {

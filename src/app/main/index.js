@@ -43,7 +43,7 @@ import {
   replaceEntitiesOrViews, replaceDomainsApplyFor, calcDomains, reset, updateHeaders,
 } from '../../lib/datasource_util';
 import {clearAllTabData, getDataByTabId, setDataByTabId} from '../../lib/cache';
-import { Save } from '../../lib/event_tool';
+import {removeSave, Save} from '../../lib/event_tool';
 
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
@@ -126,7 +126,10 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   const saveProject = (saveAs, callback) => {
     const isSaveAs = saveAs || !projectInfoRef.current;
     const newData = updateAllData(dataSourceRef.current,
-        injectTempTabs.current.concat(tabsRef.current));
+        injectTempTabs.current.concat(tabsRef.current), () => {
+        // eslint-disable-next-line no-use-before-define
+        _openModal('config');
+      });
     if (newData.result.status) {
       restProps.save(newData.dataSource, FormatMessage.string({id: 'saveProject'}), isSaveAs, (err) => {
         if (!err) {
@@ -157,6 +160,9 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     Save(() => {
       saveProject();
     });
+    return () => {
+      removeSave();
+    };
   }, [restProps.dataSource, tabs]);
   const validateTableStatus = (key) => {
     return tabsRef.current.findIndex(t => t.tabKey === key) >= 0;
