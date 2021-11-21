@@ -1344,7 +1344,7 @@ export const validateNeedSave = (dataSource) => {
   return false;
 };
 
-export const defaultJVM = '-Xms512m -Xmx2048m -XX:-UseGCOverheadLimit';
+export const defaultJVM = '-Xms128m -Xmx1024m -XX:-UseGCOverheadLimit';
 
 export const emptyDictSQLTemplate =  {
   type: "dbDDL",
