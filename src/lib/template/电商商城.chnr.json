@@ -3418,7 +3418,7 @@
         "PostgreSQL": "NUMERIC",
         "DB2": "DECIMAL",
         "DM": "DECIMAL",
-        "C#": "float"
+        "C#": "decimal"
       },
       {
         "defKey": "int",
@@ -3430,7 +3430,7 @@
         "PostgreSQL": "INTEGER",
         "DB2": "INT",
         "DM": "INTEGER",
-        "C#": "float"
+        "C#": "int"
       },
       {
         "defKey": "date",
@@ -3442,7 +3442,7 @@
         "PostgreSQL": "DATE",
         "DB2": "DATE",
         "DM": "DATE",
-        "C#": "date"
+        "C#": "DateTime"
       },
       {
         "defKey": "bytes",
@@ -3454,7 +3454,7 @@
         "SQLServer": "VARBINARY",
         "DB2": "BLOB",
         "DM": "BLOB",
-        "C#": "binary"
+        "C#": "byte[]"
       },
       {
         "defKey": "largeText",
