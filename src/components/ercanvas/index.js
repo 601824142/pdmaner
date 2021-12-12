@@ -1142,7 +1142,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
     graph.on('edge:mouseleave', ({edge}) => {
       const sourceNode = edge.getSourceCell();
       const targetNode = edge.getTargetCell();
-      sourceNode.setProp('sourcePort','', { ignoreHistory : true});
+      sourceNode?.setProp('sourcePort','', { ignoreHistory : true});
       targetNode?.setProp('targetPort', '', { ignoreHistory : true});
       edge.attr('line/stroke', edge.getProp('fillColor') ||
           currentColor.current.fillColor, { ignoreHistory : true});

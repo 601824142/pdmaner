@@ -203,7 +203,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
   const getMenuItem = (parentMenu, menu = parentMenu, offsetNumber = 0, pI) => {
     const parentKey = menu === parentMenu ? null : parentMenu[defKey];
     const ulDraggable = getDraggable(menu);
-    const pName = `${getName && getName(menu) || menu[defName]}${menu.type !== 'groups' && `(${menu[children].length})`}`;
+    const pName = `${getName && getName(menu) || menu[defName]}${menu.type !== 'groups' ? `(${menu[children].length})` : ''}`;
     return (
       <ul
         className={getClassName(itemBase, parentMenu[defKey],
