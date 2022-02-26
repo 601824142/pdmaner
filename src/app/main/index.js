@@ -12,6 +12,8 @@ import {
   Modal,
   FormatMessage,
   Checkbox, Tooltip, Upload, Terminal, Download,
+  VersionListBar,
+  VersionInfoBar,
 } from 'components';
 import Dict from '../container/dict';
 import Entity from '../container/entity';
@@ -95,6 +97,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   const cavRefArray = useRef([]);
   const headerToolRef = useRef(null);
   const [menuType, setMenuType] = useState('1');
+  const [currentVersion, setCurrentVersion] = useState(null);
   const projectInfoRef = useRef(projectInfo);
   projectInfoRef.current = projectInfo;
   const refreshProject = () => {
@@ -1268,7 +1271,6 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     cavRef.updateColor(key, value);
   };
   const iconClick = (e, key) => {
-    console.log(key);
     switch (key) {
       case 'save': saveProject();break;
       case 'refresh': refreshProject();break;
@@ -1442,6 +1444,48 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       clear();
     };
   }, [config.autoSave]);
+  const renderOperatingFloor = () => {
+    if (menuType === '4') {
+      if (currentVersion) {
+        return (
+          <div>
+            <VersionInfoBar
+              {...currentVersion}
+            />
+          </div>
+        );
+      }
+      return <MessageHelp prefix={currentPrefix}/>;
+    }
+    return (
+      <Tab
+        key={mainId}
+        menuClick={dropDownMenuClick}
+        dropDownMenus={dropDownMenus}
+        position='top'
+        activeKey={activeKey}
+        closeTab={_tabClose}
+        onChange={_tabChange}
+        excess={standardFieldMemo}
+        empty={<MessageHelp prefix={currentPrefix}/>}
+      >
+        {tabs.map((t) => {
+          const title = getTabTitle(t);
+          return (
+            <TabItem
+              style={t.style}
+              key={t.tabKey}
+              title={title.title}
+              tooltip={title.tooltip}
+              icon={t.icon}
+            >
+              {getTabComponent(t)}
+            </TabItem>
+          );
+        })}
+      </Tab>
+    );
+  };
   const createGroupMenu = getMenu('add', '', 'groups', [], groupType, '');
   console.log(tabs);
   return <Loading visible={common.loading} title={common.title}>
@@ -1554,6 +1598,25 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
               />
             </div>
           </TabItem>
+          <TabItem key='4' title={FormatMessage.string({id: 'versionTab'})} icon='data_type.svg'>
+            <div
+              ref={menuContainerDataType}
+              className={`${currentPrefix}-home-menu-container`}
+            >
+              <div className={`${currentPrefix}-home-menu-header`}>
+                <span className={`${currentPrefix}-home-menu-header-title`}>
+                  <FormatMessage id='versionTab'/>
+                </span>
+              </div>
+              <VersionListBar
+                enableNew
+                onSelected={setCurrentVersion}
+                onEdit={() => {}}
+                onCreated={() => {}}
+                onDelete={() => {}}
+              />
+            </div>
+          </TabItem>
         </Tab>
         {
           menuType !== '3' && <div
@@ -1569,34 +1632,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
         ref={resizeOther}
         style={{width: `calc(100% - ${menuNorWidth + menuMinWidth}px)`}}
       >
-        {
-          <Tab
-            key={mainId}
-            menuClick={dropDownMenuClick}
-            dropDownMenus={dropDownMenus}
-            position='top'
-            activeKey={activeKey}
-            closeTab={_tabClose}
-            onChange={_tabChange}
-            excess={standardFieldMemo}
-            empty={<MessageHelp prefix={currentPrefix}/>}
-          >
-            {tabs.map((t) => {
-              const title = getTabTitle(t);
-              return (
-                <TabItem
-                  style={t.style}
-                  key={t.tabKey}
-                  title={title.title}
-                  tooltip={title.tooltip}
-                  icon={t.icon}
-                  >
-                  {getTabComponent(t)}
-                </TabItem>
-              );
-            })}
-          </Tab>
-        }
+        {renderOperatingFloor()}
       </div>
     </div>
   </Loading>;

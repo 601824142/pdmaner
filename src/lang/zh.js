@@ -300,6 +300,7 @@ export default {
     },
     modelTab: '模型',
     domainTab: '数据域',
+    versionTab: '版本管理',
     getUserConfigData: '正在获取用户配置信息...',
     button: {
         ok: '确定',
