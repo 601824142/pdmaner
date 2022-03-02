@@ -15,6 +15,20 @@
   .@{prefix}-form-item-label {
     width: 150px;
   }
+  &-tab {
+    border-top: 1px solid @primary-border-color;
+    & > div:first-child {
+      background: #FFFFFF;
+    }
+    & > div:first-child > span {
+      box-shadow: none;
+      border-radius: 0;
+      border: none;
+    }
+    & > div:first-child > span[class$='active'] {
+      border-bottom: 2px solid @primary-color;
+    }
+  }
 }
 .@{prefix}-message-component {
   display: flex;

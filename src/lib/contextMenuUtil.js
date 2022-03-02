@@ -510,10 +510,13 @@ const editOpt = (dataSource, menu, updateDataSource) => {
             }),
             codeTemplates: _.get(dataSource, 'profile.codeTemplates', []).map((t) => {
               if (t.applyFor === oldData.applyFor) {
+                const ddlFields = defaultTemplate.dbDDLTemplate.concat(defaultTemplate.versionTemplate);
+                const useFields = data.type === 'dbDDL' ? ddlFields
+                    : defaultTemplate.appCodeTemplate.concat(Object.keys(_.omit(data, [...ddlFields, 'applyFor', 'defKey', 'defaultDb', 'group', 'type'])));
                 return {
-                  ..._.omit(t, defaultTemplate.appCodeTemplate.concat(defaultTemplate.dbDDLTemplate)),
+                  applyFor: t.applyFor,
                   type: data.type,
-                  ...defaultTemplate[`${data.type}Template`].reduce((a, b) => {
+                  ...useFields.reduce((a, b) => {
                     const temp = {...a};
                     temp[b] = b in data ? data[b] : (oldData[b] || '');
                     return temp;

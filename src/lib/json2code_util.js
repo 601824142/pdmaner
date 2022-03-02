@@ -1405,6 +1405,40 @@ export const getDemoTemplateData = (templateShow) => {
         separator: ';'
       }, null, 2);
       break;
+    case 'deleteTable':
+      data = JSON.stringify({
+        defKey: demoTable.entity.defKey,
+        separator: ';'
+      }, null, 2);
+      break;
+    case 'renameTable':
+      data = JSON.stringify({
+        oldDefKey: demoTable.entity.defKey,
+        newDefKey: `${demoTable.entity.defKey}_NEW`,
+        separator: ';'
+      }, null, 2);
+      break;
+    case 'addField':
+      data = JSON.stringify({
+        newField: demoTable.entity.fields[1],
+        beforeDefKey: demoTable.entity.fields[0].defKey,
+        afterDefKey: demoTable.entity.fields[2].defKey,
+        separator: ';'
+      }, null, 2);
+      break;
+    case 'deleteField':
+      data = JSON.stringify({
+        field: demoTable.entity.fields[0],
+        separator: ';'
+      }, null, 2);
+      break;
+    case 'updateField':
+      data = JSON.stringify({
+        oldField: demoTable.entity.fields[0],
+        newField: demoTable.entity.fields[1],
+        separator: ';'
+      }, null, 2);
+      break;
     default:break;
   }
   return data;

@@ -85,9 +85,21 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
             />,
           },
           {
-            key: 'code',
-            title: FormatMessage.string({id: 'tableEdit.codes'}),
+            key: 'dbDDL',
+            title: FormatMessage.string({id: 'tableEdit.dbDDL'}),
             content: <EntityCode
+              codeType='dbDDL'
+              type={type}
+              group={group}
+              data={data} // 数据发生变化时需要更新
+              dataSource={dataSource}
+            />,
+          },
+          {
+            key: 'appCode',
+            title: FormatMessage.string({id: 'tableEdit.appCode'}),
+            content: <EntityCode
+              codeType='appCode'
               type={type}
               group={group}
               data={data} // 数据发生变化时需要更新

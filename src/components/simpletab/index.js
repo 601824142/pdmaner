@@ -5,7 +5,7 @@ import SimpleTabContent from './SimpleTabContent';
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 // 结构简单的TAB组件
-export default React.memo(({ prefix, options = [], tabActiveChange, type = 'top' }) => {
+export default React.memo(({ prefix, options = [], tabActiveChange, type = 'top', className = '' }) => {
   const [active, updateActive] = useState(() => {
     tabActiveChange && tabActiveChange(0);
     return 0;
@@ -15,7 +15,7 @@ export default React.memo(({ prefix, options = [], tabActiveChange, type = 'top'
     tabActiveChange && tabActiveChange(i);
   };
   const currentPrefix = getPrefix(prefix);
-  return <div className={`${currentPrefix}-simple-tab ${currentPrefix}-simple-tab-${type}`}>
+  return <div className={`${currentPrefix}-simple-tab ${currentPrefix}-simple-tab-${type} ${className}`}>
     <div className={`${currentPrefix}-simple-tab-titles ${currentPrefix}-simple-tab-titles-${type}`}>
       {
         options.map((o, i) => (

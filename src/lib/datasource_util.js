@@ -711,6 +711,7 @@ export const emptyDiagram = {
 export const defaultTemplate = {
   dbDDLTemplate: ['createTable', 'createIndex', 'createView'],
   appCodeTemplate: ['content'],
+  versionTemplate: ['deleteTable', 'renameTable', 'addField', 'deleteField', 'updateField'],
 };
 
 export const version2sino = (versionData, projectData) => {
