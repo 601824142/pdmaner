@@ -300,6 +300,7 @@ export default {
     },
     modelTab: 'model',
     domainTab: 'domain',
+    versionTab: 'version',
     getUserConfigData: 'getting user config data...',
     button: {
         ok: 'ok',
