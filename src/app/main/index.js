@@ -13,7 +13,7 @@ import {
   FormatMessage,
   Checkbox, Tooltip, Upload, Terminal, Download,
   VersionListBar,
-  VersionInfoBar,
+  VersionInfoBar, List,
 } from 'components';
 import Dict from '../container/dict';
 import Entity from '../container/entity';
@@ -29,6 +29,8 @@ import HeaderTool from './HeaderTool';
 import MessageHelp from './MessageHelp';
 import { separator } from '../../../profile';
 import { getMenu, getMenus, dealMenuClick } from '../../lib/contextMenuUtil';
+import { moveArrayPosition } from '../../lib/array_util';
+import AppCodeEdit from '../container/appcode/AppCodeEdit';
 //import { getCurrentVersionData } from '../../lib/datasource_version_util';
 //import { connectDB } from '../../lib/middle';
 //import { generateFile } from '../../lib/generatefile';
@@ -68,6 +70,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   const resizeOther = useRef(null);
   const menuContainerModel = useRef(null);
   const menuContainerDataType = useRef(null);
+  const menuContainerCode = useRef(null);
   const injectTempTabs = useRef([]);
   const activeTabStack = useRef([]);
   const importPdRef = useRef(null);
@@ -75,6 +78,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   tabsRef.current = tabs;
   const dataSourceRef = useRef({});
   dataSourceRef.current = restProps.dataSource;
+  const appCodeRef = useRef(null);
   const menuContainerWidth = 290;
   const menuMinWidth = 50;
   const menuNorWidth = parseFloat(dataSourceRef.current?.profile?.menuWidth)
@@ -943,7 +947,13 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       type: 'dataTypeSupport',
       icon: 'fa-database',
       defName: FormatMessage.string({id: 'project.dataTypeSupport'}),
-      children: (restProps.dataSource?.profile?.dataTypeSupports || []).map(d => ({...d, type: 'dataType'})),
+      children: (restProps.dataSource?.profile?.dataTypeSupports || [])
+          .filter((d) =>  {
+            const codeTemplate = (restProps.dataSource?.profile?.codeTemplates || [])
+                .filter(c => c.applyFor === d.id)[0];
+            return codeTemplate.type !== 'appCode';
+          })
+          .map(d => ({...d, type: 'dataType'})),
     },
   ], [restProps.dataSource, config]);
   const simpleMenu = useMemo(() => [
@@ -980,6 +990,15 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       children: (restProps.dataSource?.dicts || []).map(d => ({...d, type: 'dict'})),
     },
   ], [restProps.dataSource, config]);
+  const appCodeMenu = useMemo(() => (restProps.dataSource?.profile?.dataTypeSupports || [])
+          .map((d) => {
+            const template = (restProps.dataSource?.profile?.codeTemplates || [])
+                .filter(c => c.applyFor === d.id)[0];
+            if (template && template.type === 'appCode') {
+              return {...d, type: 'appCode'};
+            }
+            return null;
+          }).filter(d => !!d), [restProps.dataSource, config]);
   const groupMenu = useMemo(() => restProps.dataSource?.viewGroups?.map(v => ({
     ...v,
     type: 'groups',
@@ -999,6 +1018,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     modalAll: simpleMenu,
     modalGroup: groupMenu,
     domains: domainMenu,
+    appCode: appCodeMenu,
   };
   const tabDataChange = (data, t, injectTab) => {
     if (injectTab && (injectTempTabs.current.findIndex(it => it.tabKey === injectTab.tabKey) < 0)) {
@@ -1344,7 +1364,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   const _menuTypeChange = (key) => {
     if (key === '1') {
       currentMenu.current = menuModelRef.current;
-    } else {
+    } else if (key === '2') {
       currentMenu.current = menuDomainRef.current;
     }
     setMenuType(key);
@@ -1388,6 +1408,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
         resizeOther.current.style.width = `calc(100% - ${width}px)`;
         menuContainerModel.current.style.width = `${width - menuMinWidth}px`;
         menuContainerDataType.current.style.width = `${width - menuMinWidth}px`;
+        menuContainerCode.current.style.width = `${width - menuMinWidth}px`;
       }
     }
   };
@@ -1404,7 +1425,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     isResize.current.status = false;
   };
   const fold = () => {
-    setMenuType('3');
+    setMenuType('5');
     resizeContainer.current.style.minWidth = `${menuMinWidth}px`;
     resizeContainer.current.style.width = `${menuMinWidth}px`;
   };
@@ -1458,36 +1479,62 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       return <MessageHelp prefix={currentPrefix}/>;
     }
     return (
-      <Tab
-        key={mainId}
-        menuClick={dropDownMenuClick}
-        dropDownMenus={dropDownMenus}
-        position='top'
-        activeKey={activeKey}
-        closeTab={_tabClose}
-        onChange={_tabChange}
-        excess={standardFieldMemo}
-        empty={<MessageHelp prefix={currentPrefix}/>}
-      >
-        {tabs.map((t) => {
-          const title = getTabTitle(t);
-          return (
-            <TabItem
-              style={t.style}
-              key={t.tabKey}
-              title={title.title}
-              tooltip={title.tooltip}
-              icon={t.icon}
-            >
-              {getTabComponent(t)}
-            </TabItem>
-          );
-        })}
-      </Tab>
+      <>
+        <AppCodeEdit
+          updateDataSource={restProps.update}
+          empty={<MessageHelp prefix={currentPrefix}/>}
+          dataSource={restProps.dataSource}
+          ref={appCodeRef}
+          style={{display: menuType === '3' ? 'block' : 'none'}}
+        />
+        <Tab
+          style={{display: (menuType === '1' || menuType === '2') ? 'block' : 'none'}}
+          key={mainId}
+          menuClick={dropDownMenuClick}
+          dropDownMenus={dropDownMenus}
+          position='top'
+          activeKey={activeKey}
+          closeTab={_tabClose}
+          onChange={_tabChange}
+          excess={standardFieldMemo}
+          empty={<MessageHelp prefix={currentPrefix}/>}
+          >
+          {tabs.map((t) => {
+              const title = getTabTitle(t);
+              return (
+                <TabItem
+                  style={t.style}
+                  key={t.tabKey}
+                  title={title.title}
+                  tooltip={title.tooltip}
+                  icon={t.icon}
+                  >
+                  {getTabComponent(t)}
+                </TabItem>
+              );
+            })}
+        </Tab>
+      </>
     );
   };
   const createGroupMenu = getMenu('add', '', 'groups', [], groupType, '');
-  console.log(tabs);
+  const createAppCodeMenu = getMenu('add', '', 'appCode', [], '', '');
+  const onListDrop = (dropId, dragId) => {
+    const dataTypeSupports = dataSourceRef.current?.profile?.dataTypeSupports || [];
+    const dropIndex = dataTypeSupports.findIndex(d => d.id === dropId);
+    const dragIndex = dataTypeSupports.findIndex(d => d.id === dragId);
+    restProps.update({
+      ..._.set(
+          dataSourceRef.current,
+          'profile.dataTypeSupports',
+          moveArrayPosition(_.get(dataSourceRef.current, 'profile.dataTypeSupports'), dragIndex, dropIndex),
+      ),
+    });
+  };
+  const onDoubleClick = (id) => {
+    appCodeRef.current?.getData(id);
+    console.log(id);
+  };
   return <Loading visible={common.loading} title={common.title}>
     <HeaderTool
       dataSource={restProps.dataSource}
@@ -1510,14 +1557,12 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
         style={{
           width: menuNorWidth + menuMinWidth,
         }}>
-        {
-          menuType !== '3' && <span
-            onClick={fold}
-            className={`${currentPrefix}-home-fold`}
-          >
-            <Icon type='fa-angle-double-left '/>
-          </span>
-        }
+        <span
+          onClick={fold}
+          className={`${currentPrefix}-home-fold`}
+        >
+          <Icon type='fa-angle-double-left '/>
+        </span>
         <Tab activeKey={menuType} onChange={_menuTypeChange}>
           <TabItem key='1' title={FormatMessage.string({id: 'modelTab'})} icon='model.svg'>
             <div
@@ -1598,9 +1643,39 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
               />
             </div>
           </TabItem>
+          <TabItem key='3' title={FormatMessage.string({id: 'appCode'})} icon='fa-code'>
+            <div
+              ref={menuContainerCode}
+              className={`${currentPrefix}-home-menu-container`}
+            >
+              <div className={`${currentPrefix}-home-menu-header`}>
+                <span className={`${currentPrefix}-home-menu-header-title`}>
+                  <FormatMessage id='project.appCode'/>
+                </span>
+              </div>
+              <List
+                onDoubleClick={onDoubleClick}
+                onDrop={onListDrop}
+                ref={menuDomainRef}
+                draggable
+                prefix={prefix}
+                {...restProps}
+                onContextMenu={_onContextMenu}
+                contextMenus={contextMenus}
+                contextMenuClick={_contextMenuClick}
+                data={menus.appCode}
+                emptyData={<div
+                  onClick={() => _contextMenuClick(null, createAppCodeMenu)}
+                  className={`${currentPrefix}-home-menu-empty`}
+                >
+                  <FormatMessage id='emptyAppCode'/>
+                </div>}
+              />
+            </div>
+          </TabItem>
           <TabItem key='4' title={FormatMessage.string({id: 'versionTab'})} icon='data_type.svg'>
             <div
-              ref={menuContainerDataType}
+              ref={menuContainerCode}
               className={`${currentPrefix}-home-menu-container`}
             >
               <div className={`${currentPrefix}-home-menu-header`}>
@@ -1618,14 +1693,12 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
             </div>
           </TabItem>
         </Tab>
-        {
-          menuType !== '3' && <div
-            onMouseDown={onMouseDown}
-            className={`${currentPrefix}-home-resize-container-line`}
-          >
-            {}
-          </div>
-        }
+        <div
+          onMouseDown={onMouseDown}
+          className={`${currentPrefix}-home-resize-container-line`}
+        >
+          {}
+        </div>
       </div>
       <div
         className={`${currentPrefix}-home-resize-other`}

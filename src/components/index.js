@@ -44,3 +44,4 @@ export { default as Upload } from './upload';
 export { default as ListGroupSelect } from './listgroupselect';
 export { default as VersionListBar } from './versionListBar';
 export { default as VersionInfoBar } from './versionListBar/versionInfoBar';
+export { default as List } from './list';

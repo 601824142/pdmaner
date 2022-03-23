@@ -13,6 +13,7 @@ import SelectGroup from '../app/container/group/SelectGroup';
 import DataType from '../app/container/datatype';
 import Domain from '../app/container/domain';
 import Preview from '../app/container/database';
+import AppCode from '../app/container/appcode';
 import { getEmptyEntity, getEmptyView, emptyRelation, emptyGroup, emptyDomain, emptyDataType, emptyCodeTemplate,
   emptyDict, validateItem, validateKey, emptyDiagram, defaultTemplate, validateItemInclude, emptyDataTypeSupport,
  } from './datasource_util';
@@ -64,6 +65,7 @@ const menusType = {
   mapping: domainChildNormalOpt,
   dataTypeSupport: domainNormalOpt,
   dataType: domainChildNormalOpt,
+  appCode: normalOpt.concat('edit'),
 };
 
 export const getMenu = (m, key, type, selectedMenu, groupType, parentKey, tempType = type) => {
@@ -256,6 +258,19 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
       title: FormatMessage.string({id: 'menus.add.newDataTypeSupport'}),
       require: commonRequire,
     },
+    appCode: {
+      uniqueKey: 'defKey',
+      uniqueKeyNamePath: 'database.name',
+      empty: {
+        defKey: '',
+        id: Math.uuid()
+      },
+      dataPick: 'all',
+      component: AppCode,
+      allKeys: (dataSource?.profile?.dataTypeSupports || []).map(d => d.defKey),
+      title: FormatMessage.string({id: 'menus.add.newAppCode'}),
+      require: commonRequire,
+    },
   };
   const getRealType = () => {
     switch (dataType) {
@@ -274,6 +289,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
       case 'dataTypeMapping': return 'dataTypeMapping';
       case 'dataType':
       case 'dataTypeSupport': return 'dataTypeSupports';
+      case 'appCode': return 'appCode';
     }
   };
   const realType = getRealType();
@@ -332,7 +348,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
                 mappings: (dataSource?.[realType]?.mappings || []).concat(getData())
               }
             };
-          } else if (realType === 'dataTypeSupports') {
+          } else if (realType === 'dataTypeSupports' || realType === 'appCode') {
             const newData = getData();
             tempDataSource = {
               ...tempDataSource,
@@ -347,8 +363,8 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
                 },
                 codeTemplates: _.get(tempDataSource, 'profile.codeTemplates', []).concat({
                   applyFor: newData.id,
-                  type: newData.type || 'dbDDL',
-                  ...defaultTemplate[`${newData.type || 'dbDDL'}Template`].reduce((a, b) => {
+                  type: realType === 'appCode' ? 'appCode' : (newData.type || 'dbDDL'),
+                  ...defaultTemplate[`${realType === 'appCode' ? 'appCode' : (newData.type || 'dbDDL')}Template`].reduce((a, b) => {
                     const temp = {...a};
                     temp[b] = newData[b] || '';
                     return temp;
@@ -439,6 +455,9 @@ const editOpt = (dataSource, menu, updateDataSource) => {
         defaultDb: dataSource?.profile?.default?.db === dataKey,
         defKey: dataSource?.profile?.dataTypeSupports?.filter(d => d.id === temp.applyFor)[0]?.defKey
       };
+    } else if (dataType === 'appCode') {
+      name = 'profile.dataTypeSupports';
+      return dataSource?.profile?.dataTypeSupports?.filter(d => d.id === dataKey)[0]
     }
     return {};
   };
@@ -528,6 +547,23 @@ const editOpt = (dataSource, menu, updateDataSource) => {
           }
         };
         updateDataSource && updateDataSource(tempDataSource);
+      } else if (dataType === 'appCode') {
+        let tempDataSource = {
+          ...dataSource,
+          profile: {
+            ...dataSource.profile,
+            dataTypeSupports: (dataSource.profile?.dataTypeSupports || []).map((d) => {
+              if (d.id === oldData.id) {
+                return {
+                  ...d,
+                  defKey: data.defKey,
+                };
+              }
+              return d;
+            }),
+          }
+        };
+        updateDataSource && updateDataSource(tempDataSource);
       } else {
         let tempDataSource = {
           ...dataSource,
@@ -567,6 +603,13 @@ const domainData = [
     name: 'profile.dataTypeSupports',
     key: 'id',
     emptyData: emptyCodeTemplate,
+  },
+  {
+    type: 'appCode',
+    parentType: 'dataTypeSupport',
+    name: 'profile.dataTypeSupports',
+    key: 'id',
+    emptyData: emptyDataTypeSupport,
   }
 ];
 
@@ -604,7 +647,7 @@ const copyOpt = (dataSource, menu, type = 'copy', cb) => {
     if (domainIndex > -1) {
       // 数据域相关操作
       const { name, key } = domainData[domainIndex];
-      const selectKey = otherMenus.filter(m => m.type === dataType).map(m => m.key);
+      const selectKey = otherMenus.filter(m => m.type === dataType).map(m => m.key || m.id);
       tempTypeData = _.get(dataSource, name, []).filter(d => selectKey.includes(d[key]));
     } else {
       if (groupType === 'modalGroup') {
@@ -675,7 +718,7 @@ const getOptConfig = (dataType) => {
     emptyData: emptyDataType,
   };
   const dataTypeSupportConfig = {
-    type: ['dataType'],
+    type: ['dataType', 'appCode'],
     mainKey: 'profile.dataTypeSupports',
     key: 'id',
     emptyData: emptyDataTypeSupport,
@@ -701,7 +744,7 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
     try {
       data = JSON.parse(value);
       const config = getOptConfig(dataType);
-      const validate = (dataType === 'mapping' || dataType === 'dataType')
+      const validate = (dataType === 'mapping' || dataType === 'dataType' || dataType === 'appCode')
         ? validateItemInclude : validateItem;
       const newData = (data?.data || []).filter(e => validate(e, config.emptyData));
       const newDataKeys = newData.map(e => e[config.key]);
@@ -728,14 +771,14 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
           const key = validateKey(e.defKey, allKeys);
           allKeys.push(key);
           const id = Math.uuid();
-          if (dataType === 'dataType') {
+          if (dataType === 'dataType' || dataType === 'appCode') {
             tempCodeTemplates = tempCodeTemplates
-              .concat(codeTemplates.filter(c => c.applyFor === e.id)).map(c => {
+              .concat(codeTemplates.filter(c => c.applyFor === e.id).map(c => {
                 return {
                   ...c,
                   applyFor: id,
                 };
-              });
+              }));
           }
           return {
             ...e,
@@ -753,7 +796,7 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
         } else {
           tempNewData[config.mainKey] = oldData.concat(realData);
         }
-        if (dataType === 'dataType') {
+        if (dataType === 'dataType' || dataType === 'appCode') {
           tempNewData.profile.codeTemplates = codeTemplates.concat(tempCodeTemplates);
         }
         if (parentKey) {
@@ -809,8 +852,8 @@ const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
           }
         });
         Message.success({title: FormatMessage.string({id: 'deleteSuccess'})});
-      } else if(domain && domain.type === 'dataType') {
-        const deleteData = otherMenus.filter(m => m.type === dataType).map(m => m.key);
+      } else if(domain && (domain.type === 'dataType' || domain.type === 'appCode')) {
+        const deleteData = otherMenus.filter(m => m.type === dataType).map(m => m.key || m.id);
         const dataTypeSupports = (dataSource.profile?.dataTypeSupports || [])
           .filter(d => !deleteData.includes(d.id));
         const db = _.get(dataSource, 'profile.default.db');

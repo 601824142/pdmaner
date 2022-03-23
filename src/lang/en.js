@@ -95,6 +95,7 @@ export default {
             placeholder: 'The pixel is 56 * 56, and the size is within 10KB. Base64 can be used directly',
             validate: 'Invalid picture! Size cannot exceed 10KB, image pixel is 56 * 56',
         },
+        appCode: 'appCode',
     },
     quick: {
         save: 'save project',
@@ -149,6 +150,7 @@ export default {
     entityAndViewUniquenessCheck: 'required cannot be duplicate!',
     showGroup: 'GROUP',
     emptyGroup: 'There is no grouping data for now. Click to create a new grouping',
+    emptyAppCode: 'There is no data for now. Click to create a new appCode',
     hiddenGroup: 'SIMPLE',
     hiddenGroupInfo: 'It can be modified by setting / SystemParameter / default display label',
     moduleList: 'Data Model',
@@ -183,6 +185,7 @@ export default {
         mapping: 'mapping',
         dataTypeSupport: 'Database',
         dataType: 'Database',
+        appCode: 'appCode',
         add: {
             newEntity: 'New entity',
             newView: 'New view',
@@ -198,6 +201,7 @@ export default {
             newDomain: 'New domain',
             newDataType: 'New dataType',
             newDataTypeSupport: 'New Database',
+            newAppCode: 'New AppCode',
         },
         edit: {
             editRelation: 'Edit relation',
@@ -300,6 +304,7 @@ export default {
     },
     modelTab: 'model',
     domainTab: 'domain',
+    appCode: 'appCode',
     versionTab: 'version',
     getUserConfigData: 'getting user config data...',
     button: {
@@ -421,6 +426,13 @@ export default {
         defaultDbInfo: 'It is detected that you do not have a default database configured. The system will automatically specify a default database for you',
         dbDDL: 'dbDDL',
         appCode: 'appCode',
+    },
+    appCodeData: {
+        defKey: 'appCode',
+        content: 'default',
+        type: 'codeType',
+        add: 'Three keywords content/applyFor/type cannot be used',
+        validate: 'Code type cannot be duplicate or empty',
     },
     dict: {
         view: 'view',

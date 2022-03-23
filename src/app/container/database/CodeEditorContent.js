@@ -57,22 +57,6 @@ export default ({prefix, onChange, value, templateShow,
         a.href = href;
         a.click();
       }
-      //showTemplateFolder();
-      // src/lib/template/CodeTemplate
-      //Message.warring({title: FormatMessage.string({id: 'wait'})});
-      /*modal = openModal(<DefaultTemplate
-        templateChange={templateChange}
-      />, {
-        bodyStyle: { width: '80%' },
-        modalStyle: { overflow: 'hidden' },
-        title: FormatMessage.string({id: 'database.templateEditOpt.getTemplateByDefaultOrRemote'}),
-        buttons: [<Button key='ok' onClick={onOk}>
-          <FormatMessage id='database.templateEditOpt.useTemplate'/>
-        </Button>,
-          <Button key='cancel' onClick={onCancel}>
-            <FormatMessage id='button.cancel'/>
-          </Button>],
-      });*/
     }
   };
   return <div className={`${prefix}-code-editor-content`}>

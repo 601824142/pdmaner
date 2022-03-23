@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import AceEditor from 'react-ace';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -23,8 +23,9 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 
 export default React.memo(({mode = 'sql', theme = 'monokai', value, onChange,
-                             height, width, focus, firstLine, readOnly, onLoad}) => {
+                             height, width, focus, firstLine, readOnly, onLoad, blur}) => {
   const name = useMemo(() => Math.uuid(), []);
+  const aceRef = useRef(null);
   const _onLoad = (ace) => {
     focus && ace.focus();
     firstLine && ace.selection.moveCursorTo(0, 0);
@@ -42,8 +43,12 @@ export default React.memo(({mode = 'sql', theme = 'monokai', value, onChange,
       e.stopPropagation();
     }
   };
+  const onBlur = (e) => {
+    blur && blur(e, aceRef.current.editor);
+  };
   return <div onKeyDown={_onKeyDown}>
     <AceEditor
+      ref={aceRef}
       fontSize={14}
       height={height}
       width={width}
@@ -56,6 +61,7 @@ export default React.memo(({mode = 'sql', theme = 'monokai', value, onChange,
       enableLiveAutocompletion
       onLoad={_onLoad}
       readOnly={readOnly}
+      onBlur={onBlur}
     />
   </div>;
 });

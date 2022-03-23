@@ -13,6 +13,12 @@
   &-block {
 
   }
+  &-close {
+    display: none;
+    position: absolute;
+    right: -3px;
+    top: -3px;
+  }
   &-add {
     cursor: pointer;
     margin: 0 10px;
@@ -48,6 +54,7 @@
     }
     &-top {
       .@{prefix}-simple-tab-titles-title-active {
+        position: relative;
         display: inline-block;
         cursor: pointer;
         margin-top: 5px;
@@ -60,8 +67,14 @@
         & > span:first-child {
           margin-right: 5px;
         }
+        &:hover {
+          .@{prefix}-simple-tab-close {
+            display: inline;
+          }
+        }
       }
       .@{prefix}-simple-tab-titles-title-default {
+        position: relative;
         margin-top: 5px;
         padding: 5px 10px;
         display: inline-block;
@@ -69,6 +82,11 @@
         color: @font-color;
         & > span:first-child {
           margin-right: 5px;
+        }
+        &:hover{
+          .@{prefix}-simple-tab-close {
+            display: inline;
+          }
         }
       }
     }

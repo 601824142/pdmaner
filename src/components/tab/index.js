@@ -65,7 +65,7 @@ const Header = React.memo(({
 
 const Tab = React.memo((
   {prefix, defaultActiveKey, onChange, closeTab, excess, dropDownMenus, menuClick, empty,
-    children = [], position, forwardRef, ...restProps}) => {
+    children = [], position, forwardRef, style, ...restProps}) => {
   const [activeKey, updateActiveKey] = useState();
   const _headerItemClick = (key) => {
     updateActiveKey(key);
@@ -78,7 +78,7 @@ const Tab = React.memo((
   const currentPrefix = getPrefix(prefix);
   const key = ('activeKey' in restProps ? restProps?.activeKey : activeKey) || children[0]?.key;
   return (
-    <div className={`${currentPrefix}-tab ${currentPrefix}-tab-${position}`} ref={forwardRef}>
+    <div style={style} className={`${currentPrefix}-tab ${currentPrefix}-tab-${position}`} ref={forwardRef}>
       {
         children.length > 0 ? <>
           {

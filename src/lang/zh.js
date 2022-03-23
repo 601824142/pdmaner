@@ -95,6 +95,7 @@ export default {
             placeholder: '像素为64*64，大小为10KB以内，可直接使用base64',
             validate: '无效的图片！大小不能超过10KB，图片像素为56*56',
         },
+        appCode: '程序代码',
     },
     quick: {
         save: '保存项目',
@@ -149,6 +150,7 @@ export default {
     entityAndViewUniquenessCheck: '必输项不能重复！',
     showGroup: '分组模式',
     emptyGroup: '暂无分组数据，点击创建新分组',
+    emptyAppCode: '暂无程序代码，点击创建',
     hiddenGroup: '简单模式',
     hiddenGroupInfo: '可通过 设置/系统参数/模型默认显示模式 修改',
     moduleList: '数据模型',
@@ -183,6 +185,7 @@ export default {
         mapping: '数据类型',
         dataTypeSupport: '数据库',
         dataType: '数据库',
+        appCode: '程序代码',
         add: {
             newEntity: '新增数据表',
             newView: '新增视图',
@@ -198,6 +201,7 @@ export default {
             newDomain: '新增数据域',
             newDataType: '新增数据类型',
             newDataTypeSupport: '新增数据库',
+            newAppCode: '新增程序代码',
         },
         edit: {
             editRelation: '编辑关系图',
@@ -300,6 +304,7 @@ export default {
     },
     modelTab: '模型',
     domainTab: '数据域',
+    appCode: '程序代码',
     versionTab: '版本管理',
     getUserConfigData: '正在获取用户配置信息...',
     button: {
@@ -421,6 +426,13 @@ export default {
         defaultDbInfo: '检测到你未配置默认数据库，系统将自动为你指定默认数据库',
         dbDDL: '数据库',
         appCode: '程序代码',
+    },
+    appCodeData: {
+        defKey: '程序代码',
+        content: '默认',
+        type: '代码类型',
+        add: '不可使用content/applyFor/type三个关键字',
+        validate: '代码类型不能重复或者为空',
     },
     dict: {
         view: '查看',

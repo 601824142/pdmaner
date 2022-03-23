@@ -1,0 +1,38 @@
+@import "~style";
+
+.item(){
+  position: relative;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  &:hover {
+    .@{prefix}-menu-container-fold-item-drag {
+      opacity: 1;
+    }
+  }
+  & > span:first-child {
+    padding-left: 5px;
+  }
+}
+
+.@{prefix}-list {
+  height: calc(100vh - 130px);
+  width: 100%;
+  background: #FFFFFF;
+  overflow: auto;
+  &-item {
+    &-insert {
+      border-bottom: 2px dashed @primary-color !important;
+    }
+    &-active {
+      background: @third-primary-color;
+      color: @primary-color;
+      .item();
+    }
+    &-default {
+      .item();
+    }
+  }
+}

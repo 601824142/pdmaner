@@ -7,7 +7,6 @@ import {
 } from 'components';
 import _ from 'lodash/object';
 
-//import DefaultTemplate from './DefaultTemplate';
 import CodeEditorContent from './CodeEditorContent';
 import './style/index.less';
 import { defaultTemplate } from '../../../lib/datasource_util';
