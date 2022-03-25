@@ -3,9 +3,9 @@ import _ from 'lodash/object';
 //import crypto from 'crypto';
 
 import {
-  saveJsonPromise, readJsonPromise, saveJsonPromiseAs, openProjectFilePath,
-  saveVersionProject, removeVersionProject,
-  removeAllVersionProject, openFileOrDirPath, ensureDirectoryExistence,
+  saveJsonPromise, readJsonPromise, saveJsonPromiseAs, openProjectFilePath, deleteVersion,
+  removeAllVersionProject, openFileOrDirPath, ensureDirectoryExistence, saveVersion,
+  getAllVersionProject, renameVersion,
   dirSplicing, fileExists, deleteFile, basename, writeLog, getBackupAllFile,
 } from '../../lib/middle';
 import { openLoading, closeLoading, optReset, STATUS } from '../common';
@@ -104,10 +104,10 @@ const createProjectError = (error) => {
   };
 };
 
-const saveVersionSuccess = (data) => {
+const saveVersionSuccess = (data, oldData) => {
   return {
     type: SAVE_VERSION_SUCCESS,
-    data,
+    data: { data, oldData },
   };
 };
 
@@ -264,8 +264,14 @@ export const readProject = (path, title, getState, type, isDemoProject) => {
           }, (err) => {
             if (!err) {
               setMemoryCache('data', newData);
-              dispatch(readProjectSuccess(newData, [], path));
-              dispatch(closeLoading(STATUS[1], null, '', type));
+              getAllVersionProject(path, newData).then((versionData) => {
+                dispatch(readProjectSuccess(newData, versionData, path));
+              }).catch(() => {
+                setMemoryCache('data', newData);
+                dispatch(readProjectSuccess(newData, versionData, path));
+              }).finally(() => {
+                dispatch(closeLoading(STATUS[1], null, '', type));
+              });
             } else {
               dispatch(readProjectFail(err));
               dispatch(closeLoading(STATUS[2], err));
@@ -373,29 +379,11 @@ export const createProject = (data, path, title, type) => {
   };
 };
 
-export const saveVersionData = (title, versionInfo) => {
-  // 保存版本信息（从当前的dataSource中）
-  return (dispatch, getState) => {
-    dispatch(openLoading(title));
-    const project = getState()?.core?.info;
-    const versionData = getState()?.core?.data?.entities || [];
-    saveVersionProject(project, versionData, versionInfo)
-      .then(() => {
-        dispatch(saveVersionSuccess({...versionData, ...versionInfo}));
-        dispatch(closeLoading(STATUS[1], null));
-      })
-      .catch((err) => {
-        dispatch(saveVersionFail(err));
-        dispatch(closeLoading(STATUS[2], err));
-      });
-  };
-};
-
 export const removeVersionData = (title, versionInfo) => {
   return (dispatch, getState) => {
-    const project = getState()?.core?.info;
+    const { data, info } = getState()?.core || {};
     dispatch(openLoading(title));
-    removeVersionProject(project, versionInfo);
+    deleteVersion(versionInfo, data, info);
     dispatch(removeVersionSuccess(versionInfo));
     dispatch(closeLoading(STATUS[1], null));
   };
@@ -437,6 +425,8 @@ export const renameProject = (newData, oldData, title, dataInfo) => {
         if (oldFilePath !== newFilePath) {
           // 删除
           deleteFile(oldFilePath);
+          // 更新版本文件
+          renameVersion(oldFilePath, newFilePath, oldData, newData);
         }
         // 2.需要更新用户配置文件
         updateHistory({
@@ -462,5 +452,22 @@ export const removeProject = (data, title) => {
     deleteFile(data.path);
     // 更新历史记录
     removeHistory(data)(dispatch, getState);
+  };
+};
+
+export const saveVersionData = (versionData, oldVersion, dataSource, title) => {
+  return (dispatch, getState) => {
+    dispatch(openLoading(title));
+    const info = getState()?.core?.info;
+    return new Promise((res, rej) => {
+      saveVersion(versionData, oldVersion, info, dataSource).then(() => {
+        dispatch(saveVersionSuccess(versionData, oldVersion));
+        dispatch(closeLoading(STATUS[1], null));
+        res(versionData);
+      }).catch((err) => {
+        dispatch(saveVersionFail(err));
+        rej(err);
+      });
+    });
   };
 };

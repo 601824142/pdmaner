@@ -36,12 +36,14 @@ const core = (state = {}, action) => {
     case SAVE_VERSION_SUCCESS:
       return {
         ...state,
-        versionsData: state?.versionsData?.concat(action.data),
+        versionsData: state?.versionsData
+            ?.filter(v => v.name !== action.data.oldData?.name)
+            ?.concat(action.data.data),
       };
     case REMOVE_VERSION_SUCCESS:
       return {
         ...state,
-        versionsData: state?.versionsData?.filter(v => v.version !== action?.data?.version),
+        versionsData: state?.versionsData?.filter(v => v.name !== action?.data?.name),
       };
     case REMOVE_ALL_VERSION_SUCCESS:
       return {

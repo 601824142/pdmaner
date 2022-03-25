@@ -21,6 +21,8 @@ import {
   saveProject,
   autoSaveProject,
   openDemoProject,
+  saveVersionData,
+  removeVersionData,
 } from '../../actions/core';
 import { openLoading, closeLoading } from '../../actions/common';
 import {ConfigContent} from '../../lib/context';
@@ -192,6 +194,12 @@ const mapDispatchToProps = (dispatch) => {
         case 'remove': dispatch(removeHistory(...data));break;
         default: break;
       }
+    },
+    saveVersion: (versionData, version, dataSource, title) => {
+      return dispatch(saveVersionData(versionData, version, dataSource, title));
+    },
+    removeVersion: (title, version) => {
+      dispatch(removeVersionData(title, version));
     },
   };
 };

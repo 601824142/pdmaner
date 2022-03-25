@@ -1,22 +1,26 @@
 import React from 'react';
+import moment from 'moment';
 
 import './style/index.less';
-import {Icon} from 'components/index';
+import Icon from '../icon';
 import {getPrefix} from '../../lib/prefixUtil';
+import FormatMessage from '../formatmessage';
 
 const VersionListCard = React.memo((props) => {
-  const {version, title, info, selected, onDelete, onEdit, type,
-    prefix, onNew, onSelected } = props;
+  const {version, selected, onDelete, onEdit, type, index,
+    prefix, onNew, onSelected, result = [] } = props;
   const currentPrefix = getPrefix(prefix);
-  const _onSelected = () => onSelected && onSelected({ version, title, info });
-  const _onDelete = () => onDelete && onDelete({ version, title, info });
-  const _onEdit = () => onEdit && onEdit({ version, title, info });
+  const _onSelected = () => onSelected && onSelected(version, index);
+  const _onDelete = e => onDelete && onDelete(e, version);
+  const _onEdit = e => onEdit && onEdit(e, version);
   const renderVersionHeader = () => {
     if (type === 'new') {
       return (
         <div className={`${currentPrefix}-version-list-card-h-primary`} onClick={onNew}>
           <span />
-          <span>{title || '记录新版本'}</span>
+          <span style={{cursor: 'pointer'}}>
+            <FormatMessage id='versionData.addNew'/>
+          </span>
           <span />
         </div>
       );
@@ -25,18 +29,18 @@ const VersionListCard = React.memo((props) => {
       return (
         <div className={`${currentPrefix}-version-list-card-h-warn`}>
           <span />
-          <span>{title || '有了新变化'}</span>
+          <span><FormatMessage id='versionData.hasNew'/></span>
           <span />
         </div>
       );
     }
     return (
       <div className={`${currentPrefix}-version-list-card-h${selected ? '-primary' : ''}`}>
-        <span>{version}</span>
-        <span>{title}</span>
+        <span>{version.name}</span>
+        <span>{moment(version.date).format('YYYY-M-D HH:mm')}</span>
         <div className={`${currentPrefix}-version-list-card-h-r`}>
-          { onDelete && <Icon type='fa-trash' onClick={_onDelete}/> }
-          { onEdit && <Icon type='fa-pencil' onClick={_onEdit}/> }
+          { onDelete && index === 0 && <Icon style={{cursor: 'pointer'}} type='fa-trash' onClick={_onDelete}/> }
+          { onEdit && <Icon type='fa-pencil' style={{cursor: 'pointer'}} onClick={_onEdit}/> }
         </div>
       </div>
     );
@@ -45,18 +49,22 @@ const VersionListCard = React.memo((props) => {
     if (type === 'warn') {
       return (
         <div className={`${currentPrefix}-version-list-card-panel-warn`}>
-          {info || '可以记录新版本了'}
+          <div>
+            <div><FormatMessage id='versionData.useNew'/></div>
+            <div>
+              {result.map((d, i) => <div key={i}>{i + 1}.{d}</div>)}
+            </div>
+          </div>
         </div>
       );
+    } else if(type === 'new') {
+        return null;
     }
-    if (info instanceof Array) {
       return (
         <div className={`${currentPrefix}-version-list-card-panel`}>
-          {info.map((o, i) => <p key={i}>{o}</p>)}
+          {version?.desc?.split('\n')?.map(d => <div key={d}>{d}</div>)}
         </div>
       );
-    }
-    return null;
   };
   return (
     <div className={`${currentPrefix}-version-list-card`} onClick={_onSelected}>

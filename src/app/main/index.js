@@ -31,10 +31,6 @@ import { separator } from '../../../profile';
 import { getMenu, getMenus, dealMenuClick } from '../../lib/contextMenuUtil';
 import { moveArrayPosition } from '../../lib/array_util';
 import AppCodeEdit from '../container/appcode/AppCodeEdit';
-//import { getCurrentVersionData } from '../../lib/datasource_version_util';
-//import { connectDB } from '../../lib/middle';
-//import { generateFile } from '../../lib/generatefile';
-//import { getCurrentVersionData } from '../../lib/datasource_version_util';
 import {
   validateKey,
   updateAllData,
@@ -101,7 +97,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   const cavRefArray = useRef([]);
   const headerToolRef = useRef(null);
   const [menuType, setMenuType] = useState('1');
-  const [currentVersion, setCurrentVersion] = useState(null);
+  const currentVersionRef = useRef(null);
   const projectInfoRef = useRef(projectInfo);
   projectInfoRef.current = projectInfo;
   const refreshProject = () => {
@@ -160,9 +156,6 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       });
     }
   };
-  /*const changes = useMemo(() => {
-    return getCurrentVersionData(restProps.dataSource, restProps.versionsData);
-  }, [restProps.dataSource, restProps.versionsData]);*/
   useEffect(() => {
     Save(() => {
       saveProject();
@@ -1465,28 +1458,25 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       clear();
     };
   }, [config.autoSave]);
+  const getLatelyDataSource = () => {
+    return updateAllData(dataSourceRef.current, injectTempTabs.current.concat(tabsRef.current));
+  };
   const renderOperatingFloor = () => {
-    if (menuType === '4') {
-      if (currentVersion) {
-        return (
-          <div>
-            <VersionInfoBar
-              {...currentVersion}
-            />
-          </div>
-        );
-      }
-      return <MessageHelp prefix={currentPrefix}/>;
-    }
     return (
       <>
+        <VersionInfoBar
+          dataSource={restProps.dataSource}
+          style={{display: (menuType === '4') ? 'flex' : 'none'}}
+          ref={currentVersionRef}
+          empty={<MessageHelp prefix={currentPrefix}/>}
+          />
         <AppCodeEdit
           updateDataSource={restProps.update}
           empty={<MessageHelp prefix={currentPrefix}/>}
           dataSource={restProps.dataSource}
           ref={appCodeRef}
           style={{display: menuType === '3' ? 'block' : 'none'}}
-        />
+          />
         <Tab
           style={{display: (menuType === '1' || menuType === '2') ? 'block' : 'none'}}
           key={mainId}
@@ -1533,7 +1523,9 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   };
   const onDoubleClick = (id) => {
     appCodeRef.current?.getData(id);
-    console.log(id);
+  };
+  const setCurrentVersion = (v, i) => {
+    currentVersionRef.current?.setVersion(v, restProps.versionsData[i + 1]);
   };
   return <Loading visible={common.loading} title={common.title}>
     <HeaderTool
@@ -1673,7 +1665,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
               />
             </div>
           </TabItem>
-          <TabItem key='4' title={FormatMessage.string({id: 'versionTab'})} icon='data_type.svg'>
+          <TabItem key='4' title={FormatMessage.string({id: 'versionTab'})} icon='fa-history'>
             <div
               ref={menuContainerCode}
               className={`${currentPrefix}-home-menu-container`}
@@ -1684,11 +1676,14 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
                 </span>
               </div>
               <VersionListBar
-                enableNew
+                projectInfo={projectInfo}
+                autoSave={restProps.autoSave}
+                versionsData={restProps.versionsData}
+                getLatelyDataSource={getLatelyDataSource}
+                saveVersion={restProps.saveVersion}
+                dataSource={restProps.dataSource}
+                removeVersion={restProps.removeVersion}
                 onSelected={setCurrentVersion}
-                onEdit={() => {}}
-                onCreated={() => {}}
-                onDelete={() => {}}
               />
             </div>
           </TabItem>

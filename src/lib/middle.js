@@ -13,8 +13,6 @@ const getPathStep = json.getPathStep;
 const openProjectFilePath = json.openProjectFilePath;
 const openFileOrDirPath = json.openFileOrDirPath;
 const getAllVersionProject = json.getAllVersionProject;
-const saveVersionProject = json.saveVersionProject;
-const removeVersionProject = json.removeVersionProject;
 const removeAllVersionProject = json.removeAllVersionProject;
 const connectDB = json.connectDB;
 const ensureDirectoryExistence = json.ensureDirectoryExistence;
@@ -32,6 +30,9 @@ const getLogPath = json.getLogPath;
 const showErrorLogFolder = json.showErrorLogFolder;
 const basename = json.basename;
 const getBackupAllFile = json.getBackupAllFile;
+const saveVersion = json.saveVersion;
+const deleteVersion = json.deleteVersion;
+const renameVersion = json.renameVersion;
 
 export {
   saveJsonPromise,
@@ -45,8 +46,6 @@ export {
   getPathStep,
   openProjectFilePath,
   getAllVersionProject,
-  saveVersionProject,
-  removeVersionProject,
   removeAllVersionProject,
   connectDB,
   ensureDirectoryExistence,
@@ -64,5 +63,8 @@ export {
   showErrorLogFolder,
   basename,
   getBackupAllFile,
+  saveVersion,
+  deleteVersion,
+  renameVersion,
 };
 

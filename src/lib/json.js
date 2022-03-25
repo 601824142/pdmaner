@@ -290,25 +290,24 @@ const getProject = (project, type) => {
   return tempArray.splice(0, tempArray.length - 1).join(path.sep);
 };
 
-export const getAllVersionProject = (project, data) => {
+export const getAllVersionProject = (p, data) => {
   // 获取当前项目的所有版本数据
-  const proName = data?.name || getProject(project, 'name');
-  const proPath = getProject(project, 'path');
-  const proVersionPath = `${proPath}${path.sep}.${proName}.version${path.sep}`;
+  const versionDir = path.join(path.dirname(p), `.version_${data.name}`);
+  if (!fs.existsSync(versionDir)) {
+    return Promise.resolve([]);
+  }
   return new Promise((res, rej) => {
-    fs.readdir(proVersionPath, (err, files) => {
+    fs.readdir(versionDir, (err, files) => {
       if (!err) {
         // 读取所有的文件信息 此处需要过滤其他无效的文件(目前先过滤非json文件，以.开头的文件)
         Promise.all(files
           .filter(f => f.endsWith('.json') && !f.startsWith('.'))
-          .map(f => readJsonPromise(proVersionPath + f))).
+          .map(f => readJsonPromise(path.join(versionDir, f)))).
         then((results) => {
           // 返回的项目信息需要以时间顺序进行排序 最近的放在最前面
-          const format = 'YYYY/M/D HH:mm:ss';
-          res(results
-            .sort((a, b) => moment(a?.date, format).millisecond() - moment(b?.date, format).millisecond()))
-        }).catch(err => {
-          rej(err);
+          res(results);
+        }).catch(() => {
+          res([]);
         });
       } else {
         res([]);
@@ -323,24 +322,6 @@ export const removeAllVersionProject = (project) => {
   const proPath = getProject(project, 'path');
   const proVersionPath = `${proPath}${path.sep}.${proName}.version${path.sep}`;
   deleteDirectoryFile(proVersionPath);
-};
-
-export const saveVersionProject = (project, versionData, versionInfo) => {
-  const proName = getProject(project, 'name');
-  const proPath = getProject(project, 'path');
-  const proVersionPath = `${proPath}${path.sep}.${proName}.version${path.sep}`;
-  // 判断版本文件目录是否存在
-  ensureDirectoryExistence(proVersionPath);
-  const filePath = `${proVersionPath}${proName}-${versionInfo.version}.pdman.json`;
-  return saveJsonPromise(filePath, {...versionData, ...versionInfo});
-};
-
-export const removeVersionProject = (project, versionInfo) => {
-  const proName = getProject(project, 'name');
-  const proPath = getProject(project, 'path');
-  const proVersionPath = `${proPath}${path.sep}.${proName}.version${path.sep}`;
-  const filePath = `${proVersionPath}${proName}-${versionInfo.version}.pdman.json`;
-  deleteFile(filePath);
 };
 
 export const getPathStep = () => {
@@ -555,4 +536,37 @@ export const getBackupAllFile = ({core, config}, callback) => {
   } else {
     callback && callback();
   }
+};
+
+export const deleteVersion = (versionData, dataSource, info) => {
+  const versionDir = path.join(path.dirname(info), `.version_${dataSource.name}`);
+  const oldVersionPath = path.join(versionDir, `${versionData.name}.json`);
+  if (fs.existsSync(oldVersionPath)) {
+    deleteFile(oldVersionPath);
+  }
+};
+
+export const saveVersion = (versionData, oldVersion, info, dataSource) => {
+  const versionDir = path.join(path.dirname(info), `.version_${dataSource.name}`);
+  ensureDirectoryExistence(versionDir);
+  if (oldVersion) {
+    // 删除原来的数据
+    deleteVersion(oldVersion, dataSource, info);
+  }
+  const filePath = path.join(versionDir, `${versionData.name}.json`);
+  return saveJsonPromise(filePath, versionData);
+};
+
+export const renameVersion = (oldFilePath, newFilePath, oldData, newData) => {
+  const oldVersionDir = path.join(path.dirname(oldFilePath), `.version_${oldData.name}`);
+  const newVersionDir = path.join(path.dirname(newFilePath), `.version_${newData.name}`);
+  if (oldVersionDir) {
+    ensureDirectoryExistence(newVersionDir);
+  }
+  fs.readdirSync(oldVersionDir)
+      .filter(f => f.endsWith('.json') && !f.startsWith('.'))
+      .forEach(f => {
+        fs.renameSync(path.join(oldVersionDir, f), path.join(newVersionDir , f));
+  });
+  deleteDirectoryFile(oldVersionDir);
 };

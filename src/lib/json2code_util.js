@@ -4,23 +4,9 @@ import _ from 'lodash/object';
 import { Message, FormatMessage } from '../components';
 import doT from 'dot';
 
-import { separator, msgSeparator } from '../../profile';
+import { separator } from '../../profile';
 import {firstUp} from './string';
 import {transform} from './datasource_util';
-// 获取所有的数据表信息（包含真实的type）
-const mapDataSourceEntities = (dataSource, datatype, domains, code, currentCode, path = 'entities') => {
-  return _.get(dataSource, path, []).map((entity) => {
-    return {
-      ...entity,
-      fields: (entity.fields || []).map(field => {
-        return {
-          ...field,
-          ...transform(datatype, domains, field, code),
-        }
-      })
-    }
-  });
-};
 // 根据模板数据生成代码
 const getTemplateString = (template, templateData) => {
   const camel = (str, firstUpper) => {
@@ -202,210 +188,6 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
     separator: sqlSeparator
   };
   return getTemplateString(template, templateData);
-};
-// 获取所有变更数据代码
-const generateUpdateSql = (dataSource, changesData = [], code, oldDataSource) => {
-  const currentCode = _.get(dataSource, 'profile.default.db', '');
-  const datatype = _.get(dataSource, 'dataTypeMapping.mappings', []);
-  const domains = _.get(dataSource, 'domains', []);
-  const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
-  // 合并字段其他变化，只留一个
-  const fieldsChanges = [];
-  const changes = changesData.filter(c => {
-    if (c.type === 'field' && c.opt === 'update') {
-      const name = c.name.split(separator);
-      const fieldName = name[0] + name[1];
-      if (fieldsChanges.includes(fieldName)) {
-        return false;
-      } else {
-        fieldsChanges.push(fieldName);
-        return true;
-      }
-    }
-    return true;
-  });
-  let templateResult = '';
-  const getTemplate = (templateShow) => {
-    return allTemplate.filter(t => t.applyFor === code)[0]?.[templateShow] || '';
-  };
-  const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
-  // 构造新的数据表传递给模板
-  const tempEntities = mapDataSourceEntities(dataSource, datatype, domains, code, currentCode);
-  // 上个版本的数据表信息，用于重建数据表
-  const oldEntities = _.get(oldDataSource, 'entities', []).map((entity) => {
-    return {
-      ...entity,
-      fields: (entity.fields || []).map(field => {
-        return {
-          ...field,
-          ...transform(field, dataSource, code),
-        }
-      })
-    }
-  });
-
-  // 将不同类型的模板组装到一起生成一个sql文件
-  // 1.生成属性的sql
-  templateResult += changes
-    .filter(c => c.type === 'field')
-    .map((c) => {
-      if (c.opt === 'update') {
-        const change = c.name.split(separator);
-        const dataTable = tempEntities.filter(t => t.defKey === change[0])[0] || {};
-        const field = (dataTable.fields || []).filter(f => f.defKey === change[1])[0] || {};
-        const changeData = (c.changeData || '').split(msgSeparator);
-        return getTemplateString(getTemplate('updateField'), {
-          entity: dataTable,
-          field: {
-            ...field,
-            updateName: change[2],
-            update: changeData[1],
-          },
-          separator: sqlSeparator
-        });
-      } else if (c.opt === 'add') {
-        const change = c.name.split(separator);
-        const dataTable = tempEntities.filter(t => t.defKey === change[0])[0] || {};
-        const field = (dataTable.fields || []).filter(f => f.defKey === change[1])[0] || {};
-        // 从当前的属性中获取该位置之前的属性位置
-        let addAfter = undefined;
-        const position = (dataTable.fields || []).findIndex(f => field.defKey === f.defKey);
-        if (position > 0) {
-          addAfter = (dataTable.fields || [])[position - 1] && (dataTable.fields || [])[position - 1].defKey || undefined;
-        }
-        return getTemplateString(getTemplate('createField'), {
-          entity: dataTable,
-          field: {
-            ...field,
-            addAfter,
-          },
-          separator: sqlSeparator
-        });
-      } else {
-        const change = c.name.split(separator);
-        const dataTable = tempEntities.filter(t => t.title === change[0])[0] || {};
-        return getTemplateString(getTemplate('dropField'), {
-          entity: dataTable,
-          field: {
-            name: change[1],
-          },
-          separator: sqlSeparator
-        });
-      }
-    }).join('\n');
-
-  templateResult += changes
-    .filter(c => c.type === 'index')
-    .map((c) => {
-      const change = c.name.split(separator);
-      const dataTable = tempEntities.filter(t => t.defKey === change[0])[0] || {};
-      const indexName = change[1];
-      const indexData = _.get(dataTable, 'indexes', []);
-      const index = indexData.filter(i => i.name === indexName)[0] || { name: indexName };
-      if (c.opt === 'add') {
-        // 根据数据表中的内容获取索引
-        return getTemplateString(getTemplate('createIndex'), {
-          entity: dataTable,
-          index,
-          separator: sqlSeparator
-        });
-      } else if (c.opt === 'update') {
-        // 1.先删除再重建
-        let deleteString = getTemplateString(getTemplate('dropIndex'), {
-          entity: dataTable,
-          index,
-          separator: sqlSeparator
-        });
-        let createString = getTemplateString(getTemplate('createIndex'), {
-          entity: dataTable,
-          index,
-          separator: sqlSeparator
-        });
-        return `${deleteString}${sqlSeparator}\n${createString}`;
-      }
-      return getTemplateString(getTemplate('dropIndex'), {
-        entity: dataTable,
-        index,
-        separator: sqlSeparator
-      });
-    })
-    .join('\n');
-
-  // 3.生成实体的sql
-  templateResult += changes
-    .filter(c => c.type === 'entity')
-    .map((c) => {
-      if (c.opt === 'add') {
-        const change = c.name;
-        const dataTable = tempEntities.filter(t => t.defKey === change)[0] || {};
-        return getTemplateString(getTemplate('createTable'), {
-          entity: dataTable,
-          separator: sqlSeparator
-        });
-      } else if (c.opt === 'update') {
-        // 重建数据表
-        const change = c.name;
-        const dataTable = tempEntities.filter(t => t.defKey === change)[0] || {};
-        const oldDataTable = oldEntities.filter(t => t.defKey === change)[0] || {};
-        return getTemplateString(getTemplate('updateTable'), {
-          oldEntity: oldDataTable,
-          newEntity: dataTable,
-          separator: sqlSeparator
-        });
-      } else {
-        const change = c.name;
-        return getTemplateString(getTemplate('dropTable'), {
-          entity: {
-            defKey: change
-          },
-          separator: sqlSeparator
-        });
-      }
-    }).join('\n');
-  return templateResult.endsWith(sqlSeparator) ? templateResult : templateResult + sqlSeparator;
-};
-// 获取重建数据表代码
-const getCodeByRebuildTableTemplate = (dataSource, changes, code, oldDataSource) => {
-  let sqlString = '';
-  try {
-    const domains = _.get(dataSource, 'domains', []);
-    const currentCode = _.get(dataSource, 'profile.default.db', '');
-    const datatype = _.get(dataSource, 'dataTypeMapping.mappings', []);
-    const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
-    const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
-    const getTemplate = (templateShow) => {
-      return allTemplate.filter(t => t.applyFor === code)[0]?.[templateShow] || '';
-    };
-    // 构造新的数据表传递给模板
-    const tempEntities = mapDataSourceEntities(dataSource, datatype, domains, code, currentCode);
-    // 上个版本的数据表信息，用于重建数据表
-    const oldEntities = mapDataSourceEntities(oldDataSource, datatype, domains, code, currentCode);
-    const entities = changes.map(c => c.name.split(separator)[0]);
-    [...new Set(entities)].forEach(e => {
-      const dataTable = tempEntities.filter(t => t.defKey === e)[0] || {};
-      const oldDataTable = oldEntities.filter(t => t.defKey === e)[0] || {};
-      sqlString += getTemplateString(getTemplate('updateTable'), {
-        oldEntity: oldDataTable,
-        newEntity: dataTable,
-        separator: sqlSeparator
-      })
-    });
-  } catch (e) {
-    Message.error({title: FormatMessage});
-    sqlString = JSON.stringify(e.message);
-  }
-  return sqlString;
-};
-// 根据变更信息生成代码
-export const getCodeByChanges = (dataSource, changes, code, oldDataSource = {}) => {
-  let sqlString = '';
-  try {
-    sqlString = generateUpdateSql(dataSource, changes, code, oldDataSource)
-  } catch (e) {
-    Message.error({title: FormatMessage.string({id: 'database.templateError'})});
-    sqlString = JSON.stringify(e.message);
-  }
-  return sqlString;
 };
 // 获取单个数据表的各个模板的代码
 export const getCodeByDataTable = (dataSource, group, dataTable, code, templateShow) => {
@@ -1556,4 +1338,74 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
     sqlString = JSON.stringify(e.message);
   }
   return sqlString;
+};
+// 根据变更信息生成代码
+export const getDataByChanges = (changes, preDataSource, dataSource) => {
+  try {
+    const code = _.get(dataSource, 'profile.default.db', dataSource.profile?.dataTypeSupports[0]?.id);
+    const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
+    const codeTemplate = allTemplate.filter(t => t.applyFor === code)[0] || {};
+    const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
+    return changes.map(c => {
+      if (c.type === 'entity' || c.type === 'view') {
+        if (c.opt === 'delete') {
+          return getTemplateString(codeTemplate.deleteTable || '', {
+            defKey: c.data.defKey,
+            type: c.type,
+            separator: sqlSeparator,
+          });
+        } else if (c.opt === 'update') {
+          return getTemplateString(codeTemplate.renameTable || '', {
+            oldDefKey: c.data.oldData.defKey,
+            newDefKey: c.data.newData.defKey,
+            type: c.type,
+            separator: sqlSeparator,
+          });
+        } else if (c.opt === 'add') {
+          return getTemplateString(codeTemplate[c.type === 'entity' ? 'createTable' : 'createView'] || '', {
+            [c.type === 'entity' ? 'entity' : 'view']: { ...c.data },
+            fields: (c.data.fields || []).map(f => ({...transform(f, preDataSource, code)})),
+            indexes: (c.data.indexes || []).map(i => {
+              return {
+                ...i,
+                fields: (i.fields || []).map(f => {
+                  const field = (c.data.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
+                  return {
+                    ...f,
+                    fieldDefKey: field?.defKey || '',
+                  };
+                })
+              }
+            }),
+            separator: sqlSeparator,
+          });
+
+        }
+        return '';
+      } else if (c.type === 'field') {
+        if (c.opt === 'add') {
+          return getTemplateString(codeTemplate.addField || '', {
+            beforeDefKey: c.data.before.defKey,
+            afterDefKey: c.data.after.defKey,
+            newField: c.data.current,
+            separator: sqlSeparator,
+          });
+        } else if (c.opt === 'delete') {
+          return getTemplateString(codeTemplate.deleteField || '', {
+            field: c.data,
+            separator: sqlSeparator,
+          });
+        } else if (c.opt === 'update') {
+          return getTemplateString(codeTemplate.updateField || '', {
+            oldField: c.data.oldData ,
+            newField: c.data.newData,
+            separator: sqlSeparator,
+          });
+        }
+      }
+    }).join('\n');
+  } catch (e) {
+    console.log(e);
+    return '';
+  }
 };

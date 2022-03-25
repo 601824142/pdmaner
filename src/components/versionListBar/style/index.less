@@ -8,6 +8,15 @@
     overflow-y: auto;
     box-sizing: border-box;
     background-color: #FFF;
+    &-empty {
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
     &-card {
       width: calc(100% - 10px);
       box-sizing: border-box;
@@ -15,6 +24,7 @@
       margin: 5px;
       border-radius: 5px;
       border: 1px solid #D5D5D5;
+      font-size: 12px;
       &-h {
         width: 100%;
         height: 35px;
@@ -79,7 +89,18 @@
     }
   }
   &-info {
-    height: calc(100vh - 130px);
+    &-container {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+    }
+    &-edit {
+      height: calc(100vh - 130px);
+      width: calc(100% - 290px);
+      & > div:first-child {
+        padding: 5px 0;
+      }
+    }
     width: 290px;
     padding: 5px;
     overflow-y: auto;
@@ -93,5 +114,5 @@
       justify-content: space-between;
       border-bottom: 2px solid #D5D5D5;
     }
-  } 
+  }
 }
