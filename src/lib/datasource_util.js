@@ -2,7 +2,7 @@ import React from 'react';
 import * as _ from 'lodash/object';
 import moment from 'moment';
 import { FormatMessage } from 'components';
-import {getAllTabData, setDataByTabId, clearAllTabData, getDataByTabId, getMemoryCache} from './cache';
+import {getAllTabData, getDataByTabId, getMemoryCache} from './cache';
 import emptyProjectTemplate from './emptyProjectTemplate';
 import { separator } from '../../profile';
 import {firstUp} from './string';
@@ -711,7 +711,7 @@ export const emptyDiagram = {
 export const defaultTemplate = {
   dbDDLTemplate: ['createTable', 'createIndex', 'createView'],
   appCodeTemplate: ['content'],
-  versionTemplate: ['deleteTable', 'renameTable', 'addField', 'deleteField', 'updateField'],
+  versionTemplate: ['deleteTable', 'renameTable', 'deleteIndex', 'addField', 'deleteField', 'updateField'],
 };
 
 export const version2sino = (versionData, projectData) => {
@@ -991,7 +991,7 @@ export const reset = (f, dataSource, [key, id]) => {
   };
 };
 
-export const transform = (f, dataSource, code, type = 'id') => {
+export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') => {
   // 获取该数据表需要显示的字段
   const domains = dataSource?.domains || [];
   const entities = dataSource?.entities || [];
@@ -1000,14 +1000,19 @@ export const transform = (f, dataSource, code, type = 'id') => {
   const dicts = dataSource?.dicts || [];
   const uiHints = _.get(dataSource, 'profile.uiHint', []);
   const temp = {};
-  if (f.domain){
+  if (codeType === 'dbDDL'){
     // 转换数据域
-    const domain = domains.filter(dom => dom[type] === f.domain)[0] || { len: '', scale: '' };
-    const dataType = mappings.filter(m => m.id === domain.applyFor)[0]?.[code || db] || '';
-    temp.len = domain.len === undefined ? '' : domain.len;
-    temp.scale = domain.scale === undefined ? '' : domain.scale;
-    temp.type = dataType;
-    temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
+    if (f.domain) {
+      const domain = domains.filter(dom => dom[type] === f.domain)[0] || { len: '', scale: '' };
+      const dataType = mappings.filter(m => m.id === domain.applyFor)[0]?.[code || db] || '';
+      temp.len = domain.len === undefined ? '' : domain.len;
+      temp.scale = domain.scale === undefined ? '' : domain.scale;
+      temp.type = dataType;
+      temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
+    }
+  } else {
+    // 代码类型转换
+    temp.type = mappings.filter(m => m[db] === f.type)[0]?.[code] || f.type;
   }
   // 转换数据字典
   if (f.refDict) {

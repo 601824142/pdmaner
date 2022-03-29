@@ -2,7 +2,7 @@ import React from 'react';
 import {FormatMessage, Input, Text} from 'components';
 import {getPrefix} from '../../lib/prefixUtil';
 
-export default React.memo(({prefix, data = {}, onChange, defaultMessage = []}) => {
+export default React.memo(({prefix, data = {}, onChange}) => {
     const currentPrefix = getPrefix(prefix);
     return <div className={`${currentPrefix}-form`} style={{padding: 10}}>
       <div className={`${currentPrefix}-form-item`}>
@@ -25,7 +25,7 @@ export default React.memo(({prefix, data = {}, onChange, defaultMessage = []}) =
           <FormatMessage id='versionData.data'/>
         </span>
         <span className={`${currentPrefix}-form-item-component`}>
-          <Text preventEnter defaultValue={data.desc || defaultMessage} onChange={e => onChange(e, 'desc')}/>
+          <Text preventEnter defaultValue={data.desc} onChange={e => onChange(e, 'desc')}/>
         </span>
       </div>
     </div>;

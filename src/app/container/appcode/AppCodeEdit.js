@@ -58,9 +58,9 @@ export default React.memo(forwardRef(({style, dataSource, empty,
             },
         });
     };
-    const onAdd = (callback) => {
+    const onAdd = (v, callback) => {
         let modal;
-        let value;
+        let value = v;
         const onChange = (e) => {
             value = e.target.value;
         };
@@ -70,13 +70,13 @@ export default React.memo(forwardRef(({style, dataSource, empty,
         const onOk = () => {
             const errorCode = Object.keys((dataSourceRef.current.profile.codeTemplates || [])
                 .filter(c => c.applyFor === currentAppRef.current)[0] || {});
-            if(!value || errorCode.includes(value)) {
+            if(!value || errorCode.filter(e => (v ? e !== v : e)).includes(value)) {
                 Message.error({title: FormatMessage.string({id: 'appCodeData.validate'})});
             } else {
                 update((c) => {
                     return {
-                        ...c,
-                        [value]: '',
+                        ...(v ? _.omit(c, v) : c),
+                        [value]: v ? c[v] : '',
                     };
                 });
                 callback(value);
@@ -84,7 +84,7 @@ export default React.memo(forwardRef(({style, dataSource, empty,
             }
         };
         modal = openModal(<div className={`${currentPrefix}-appcode-add`}>
-          <Input onChange={onChange} placeholder={FormatMessage.string({id: 'appCodeData.add'})}/>
+          <Input defaultValue={value} onChange={onChange} placeholder={FormatMessage.string({id: 'appCodeData.add'})}/>
         </div>, {
             focusFirst: true,
             onEnter: () => {
@@ -104,12 +104,16 @@ export default React.memo(forwardRef(({style, dataSource, empty,
           };
       });
     };
+    const onTabDoubleClick = (id, callback) => {
+        onAdd(id, callback);
+    };
     return <div style={style} className={`${currentPrefix}-appcode`}>
       {currentApp ? <div className={`${currentPrefix}-appcode-tab`}>
         <SimpleTab
+          onTabDoubleClick={onTabDoubleClick}
           key={currentApp}
-          onAdd={onAdd}
-          disableEdit='content'
+          onAdd={c => onAdd('', c)}
+          //disableEdit='content'
           edit
           onDelete={onDelete}
           className={`${currentPrefix}-database-container-tab`}
@@ -117,7 +121,7 @@ export default React.memo(forwardRef(({style, dataSource, empty,
               .filter(c => !['applyFor', 'type'].includes(c)).map((c) => {
                   return {
                       key: c,
-                      title: c === 'content' ? FormatMessage.string({id: 'appCodeData.content'}) : c,
+                      title: c,
                       content: <CodeEdit
                         prefix={currentPrefix}
                         type={c}

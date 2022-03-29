@@ -27,7 +27,7 @@ const VersionListCard = React.memo((props) => {
     }
     if (type === 'warn') {
       return (
-        <div className={`${currentPrefix}-version-list-card-h-warn`}>
+        <div onClick={() => onSelected({result: result}, -1)} className={`${currentPrefix}-version-list-card-h-warn`} style={{cursor: 'pointer'}}>
           <span />
           <span><FormatMessage id='versionData.hasNew'/></span>
           <span />
@@ -35,7 +35,7 @@ const VersionListCard = React.memo((props) => {
       );
     }
     return (
-      <div className={`${currentPrefix}-version-list-card-h${selected ? '-primary' : ''}`}>
+      <div className={`${currentPrefix}-version-list-card-h${selected ? '-primary' : ''}`} onClick={_onSelected}>
         <span>{version.name}</span>
         <span>{moment(version.date).format('YYYY-M-D HH:mm')}</span>
         <div className={`${currentPrefix}-version-list-card-h-r`}>
@@ -49,10 +49,10 @@ const VersionListCard = React.memo((props) => {
     if (type === 'warn') {
       return (
         <div className={`${currentPrefix}-version-list-card-panel-warn`}>
-          <div>
+          <div style={{width: '100%'}}>
             <div><FormatMessage id='versionData.useNew'/></div>
-            <div>
-              {result.map((d, i) => <div key={i}>{i + 1}.{d}</div>)}
+            <div style={{width: '100%'}}>
+              {result.map((d, i) => <div className={`${currentPrefix}-version-list-change`} key={i}>{i + 1}.{d}</div>)}
             </div>
           </div>
         </div>
@@ -62,12 +62,12 @@ const VersionListCard = React.memo((props) => {
     }
       return (
         <div className={`${currentPrefix}-version-list-card-panel`}>
-          {version?.desc?.split('\n')?.map(d => <div key={d}>{d}</div>)}
+          {version?.desc?.split('\n')?.map(d => <div className={`${currentPrefix}-version-list-change`} key={d}>{d}</div>)}
         </div>
       );
   };
   return (
-    <div className={`${currentPrefix}-version-list-card`} onClick={_onSelected}>
+    <div className={`${currentPrefix}-version-list-card`}>
       {renderVersionHeader()}
       {renderVersionDetailPanel()}
     </div>

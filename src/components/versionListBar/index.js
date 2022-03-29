@@ -4,7 +4,7 @@ import {Modal, openModal} from '../modal';
 import Button from '../button';
 import VersionListCard from './versionListCard';
 import { getPrefix } from '../../lib/prefixUtil';
-import { checkUpdate } from '../../lib/datasource_version_util';
+import {checkUpdate, getMessageByChanges} from '../../lib/datasource_version_util';
 import './style/index.less';
 import VersionEdit from './VersionEdit';
 import FormatMessage from '../formatmessage';
@@ -16,15 +16,6 @@ const VersionListBar = React.memo((props) => {
   const selectedDataRef = useRef({});
   selectedDataRef.current = selectedData;
   const currentPrefix = getPrefix(prefix);
-  const getName = (r) => {
-    return `${r.data?.defName || r.data.oldData?.defName || r.data?.defKey || r.data.oldData?.defKey
-    || r.data.current?.defName || r.data.current?.defKey || ''}`;
-  };
-  const getChangeMessage = (result) => {
-    return result.map((r, i) => {
-      return `${i + 1}.${FormatMessage.string({id: `versionData.${r.opt}Data`})}${FormatMessage.string({id: `versionData.${r.type}`})}[${getName(r)}]`;
-    });
-  };
   const _onDelete = (e, o) => {
     e.stopPropagation();
     Modal.confirm({
@@ -32,13 +23,13 @@ const VersionListBar = React.memo((props) => {
       message: FormatMessage.string({id: 'deleteConfirm'}),
       onOk:() => {
         removeVersion('', o);
-        onSelected(null);
+        onSelected({});
       },
     });
   };
   const _onSelected = (o, i) => {
     onSelected && onSelected(o, i);
-    setSelectedData(o);
+    setSelectedData(Object.keys(o).length === 0 ? {} : o);
   };
   const sortData = versionsData.sort((a, b) => b.date - a.date);
   useEffect(() => {
@@ -51,8 +42,9 @@ const VersionListBar = React.memo((props) => {
       let modal;
       const { result, dataSource } = getLatelyDataSource();
       const defaultMessage = (sortData.length === 0 || !result.status) ? [] :
-          getChangeMessage(checkUpdate(dataSource, sortData[0].data));
-      const tempVersion = {...version, desc: version?.desc || defaultMessage.join('\n')};
+          getMessageByChanges(checkUpdate(dataSource, sortData[0].data))
+              .map((c, i) => `${i + 1}.${c}`);
+      const tempVersion = {...version, desc: version?.desc || defaultMessage.join(';\n')};
       const onOk = () => {
         if (!tempVersion.name ||
             (version && version.name !== tempVersion.name &&
@@ -85,9 +77,8 @@ const VersionListBar = React.memo((props) => {
         tempVersion[name] = e.target.value;
       };
       modal = openModal(<VersionEdit
-        data={version}
+        data={tempVersion}
         onChange={onChange}
-        defaultMessage={defaultMessage}
       />, {
         onEnter: onOk,
         focusFirst: true,
@@ -106,10 +97,11 @@ const VersionListBar = React.memo((props) => {
   const renderCreatedTool = () => {
     const { result, dataSource } = getLatelyDataSource();
     const changes = result.status ? checkUpdate(dataSource, sortData[0]?.data) : [];
+    //console.log(changes);
     return (
       <>
         <VersionListCard type="new" onNew={() => _onCreated()}/>
-        { result.status && changes.length > 0 && <VersionListCard result={getChangeMessage(changes)} type="warn"/> }
+        { result.status && changes.length > 0 && <VersionListCard onSelected={_onSelected} result={getMessageByChanges(changes)} type="warn"/> }
       </>
     );
   };

@@ -7,7 +7,7 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 // 结构简单的TAB组件
 export default React.memo(({ prefix, options = [], onDelete, disableEdit, onAdd,
-                             tabActiveChange, type = 'top', className = '', edit }) => {
+                             tabActiveChange, type = 'top', className = '', edit, onTabDoubleClick }) => {
   const [stateOptions, setStateOptions] = useState(options);
   const tabStack = useRef([]);
   useEffect(() => {
@@ -38,12 +38,20 @@ export default React.memo(({ prefix, options = [], onDelete, disableEdit, onAdd,
     updateActive(key);
     tabActiveChange && tabActiveChange(key);
   };
+  const _onTabDoubleClick = (key) => {
+    onTabDoubleClick && onTabDoubleClick(key, (newKey) => {
+      updateActive(newKey);
+      tabStack.current[tabStack.current.length - 1] = newKey;
+    });
+  };
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-simple-tab ${currentPrefix}-simple-tab-${type} ${className}`}>
     <div className={`${currentPrefix}-simple-tab-titles ${currentPrefix}-simple-tab-titles-${type}`}>
       {
         stateOptions.map(o => (
           <span
+            style={{userSelect: onTabDoubleClick ? 'none' : 'auto'}}
+            onDoubleClick={() => _onTabDoubleClick(o.key || o.title)}
             key={o.key || o.title}
             onClick={() => _updateActive(o.key || o.title)}
             className={`${currentPrefix}-simple-tab-titles-title-${active === (o.key || o.title) ? 'active' : 'default'}`}
@@ -60,7 +68,7 @@ export default React.memo(({ prefix, options = [], onDelete, disableEdit, onAdd,
         </span>
       }
     </div>
-    <div className={`${currentPrefix}-simple-tab-contents ${currentPrefix}-simple-tab-contents-${type}`}>
+    <div style={{borderTop: stateOptions.length === 0 ? '1px solid #5A7EE3' : 'none'}} className={`${currentPrefix}-simple-tab-contents ${currentPrefix}-simple-tab-contents-${type}`}>
       {
         stateOptions.map(o => (
           <div

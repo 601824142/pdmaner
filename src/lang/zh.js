@@ -402,12 +402,12 @@ export default {
     tableTemplate: {
         normal: '常规模板',
         version: '版本模板',
-        content: '基本代码',
         createTable: '新建数据表代码',
         createView: '新建视图',
         createIndex: '新建索引代码',
+        deleteIndex: '删除索引',
         deleteTable: '删除表/视图',
-        renameTable: '表更名/视图',
+        renameTable: '变更表/视图',
         addField: '增加字段',
         deleteField: '删除字段',
         updateField: '修改字段',
@@ -429,9 +429,8 @@ export default {
     },
     appCodeData: {
         defKey: '程序代码',
-        content: '默认',
         type: '代码类型',
-        add: '不可使用content/applyFor/type三个关键字',
+        add: '不可使用applyFor/type两个关键字',
         validate: '代码类型不能重复或者为空',
     },
     versionData: {
@@ -453,6 +452,9 @@ export default {
         field: '字段',
         empty: '点击初始化基线版本',
         isDemo: '参考案例无法使用版本管理功能，请先执行保存操作！',
+        index: '索引',
+        indexField: '索引字段',
+        templateEmpty: '数据库[{name}]的版本模板[{type}]没有维护',
     },
     dict: {
         view: '查看',

@@ -1465,6 +1465,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     return (
       <>
         <VersionInfoBar
+          getLatelyDataSource={getLatelyDataSource}
+          versionsData={restProps.versionsData}
           dataSource={restProps.dataSource}
           style={{display: (menuType === '4') ? 'flex' : 'none'}}
           ref={currentVersionRef}

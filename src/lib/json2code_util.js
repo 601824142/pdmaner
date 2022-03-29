@@ -156,7 +156,10 @@ const getTemplateString = (template, templateData) => {
 const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) => {
   // 获取该数据库下的模板信息
   const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
-  const template = allTemplate.filter(t => t.applyFor === code)[0]?.[templateShow] || '';
+  // appCode
+  const tData = allTemplate.filter(t => t.applyFor === code)[0];
+  const template = tData?.[templateShow] || '';
+  const type = tData?.type;
   const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
   // 构造新的数据表传递给模板
   const fields = (dataTable.fields || []);
@@ -166,7 +169,7 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
     fields: templateShow === 'createIndex' ? fields : fields.map(field => {
       return {
         ...field,
-        ...transform(field, dataSource, code),
+        ...transform(field, dataSource, code, 'id', type),
       }
     }),
     indexes: templateShow === 'createIndex' ? indexes.map(i => {
@@ -1181,6 +1184,12 @@ export const getDemoTemplateData = (templateShow) => {
         separator: ';'
       }, null, 2);
       break;
+    case 'deleteIndex':
+      data = JSON.stringify({
+        ...demoTable,
+        separator: ';'
+      }, null, 2);
+      break;
     case 'dictSQLTemplate':
       data = JSON.stringify({
         ...demoDict,
@@ -1190,14 +1199,20 @@ export const getDemoTemplateData = (templateShow) => {
     case 'deleteTable':
       data = JSON.stringify({
         defKey: demoTable.entity.defKey,
+        type: 'entity',
         separator: ';'
       }, null, 2);
       break;
     case 'renameTable':
       data = JSON.stringify({
-        oldDefKey: demoTable.entity.defKey,
-        newDefKey: `${demoTable.entity.defKey}_NEW`,
-        separator: ';'
+        old: {
+          defKey: demoTable.entity.defKey
+        },
+        new: {
+          defKey: `${demoTable.entity.defKey}_NEW`
+        },
+        separator: ';',
+        type: 'entity',
       }, null, 2);
       break;
     case 'addField':
@@ -1216,12 +1231,18 @@ export const getDemoTemplateData = (templateShow) => {
       break;
     case 'updateField':
       data = JSON.stringify({
-        oldField: demoTable.entity.fields[0],
-        newField: demoTable.entity.fields[1],
+        old: {
+          defKey: demoTable.entity.fields[0].defKey
+        },
+        new: {
+          defKey: `${demoTable.entity.fields[0].defKey}_NEW`
+        },
         separator: ';'
       }, null, 2);
       break;
-    default:break;
+    default:
+      data = JSON.stringify({...demoTable, separator: ';'}, null, 2);
+      break;
   }
   return data;
 };
@@ -1343,33 +1364,114 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
 export const getDataByChanges = (changes, preDataSource, dataSource) => {
   try {
     const code = _.get(dataSource, 'profile.default.db', dataSource.profile?.dataTypeSupports[0]?.id);
+    const getEmptyMessage = (name) => {
+      // 数据库[MySQL]的版本模板[增加字段]没有维护
+      const support = _.get(dataSource, 'profile.dataTypeSupports', []).filter(s => s.id === code)[0];
+      return `# ${FormatMessage.string({
+        id: 'versionData.templateEmpty',
+        data: {
+          name: support?.defKey || code,
+          type: FormatMessage.string({id: `tableTemplate.${name}`})
+        }
+      })}`;
+    };
     const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
     const codeTemplate = allTemplate.filter(t => t.applyFor === code)[0] || {};
     const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
     return changes.map(c => {
       if (c.type === 'entity' || c.type === 'view') {
         if (c.opt === 'delete') {
-          return getTemplateString(codeTemplate.deleteTable || '', {
+          return getTemplateString(codeTemplate.deleteTable || getEmptyMessage('deleteTable'), {
             defKey: c.data.defKey,
             type: c.type,
             separator: sqlSeparator,
           });
         } else if (c.opt === 'update') {
-          return getTemplateString(codeTemplate.renameTable || '', {
-            oldDefKey: c.data.oldData.defKey,
-            newDefKey: c.data.newData.defKey,
+          return getTemplateString(codeTemplate.renameTable || getEmptyMessage('renameTable'), {
+            old: c.data.changes.reduce((a, b) => {
+              return {
+                ...a,
+                [b.type]: b.pre,
+              }
+            }, {}),
+            new: c.data.changes.reduce((a, b) => {
+              return {
+                ...a,
+                [b.type]: b.new,
+              }
+            }, {}),
             type: c.type,
             separator: sqlSeparator,
           });
         } else if (c.opt === 'add') {
-          return getTemplateString(codeTemplate[c.type === 'entity' ? 'createTable' : 'createView'] || '', {
-            [c.type === 'entity' ? 'entity' : 'view']: { ...c.data },
-            fields: (c.data.fields || []).map(f => ({...transform(f, preDataSource, code)})),
-            indexes: (c.data.indexes || []).map(i => {
+          const name = c.type === 'entity' ? 'createTable' : 'createView';
+          return getTemplateString(codeTemplate[name] || getEmptyMessage(name), {
+            [c.type === 'entity' ? 'entity' : 'view']: {
+              ...c.current,
+              fields: (c.data.fields || []).map(f => ({...transform(f, dataSource, code)})),
+              indexes: (c.data.indexes || []).map(i => {
+                return {
+                  ...i,
+                  fields: (i.fields || []).map(f => {
+                    const field = (c.data.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
+                    return {
+                      ...f,
+                      fieldDefKey: field?.defKey || '',
+                    };
+                  })
+                }
+              }),
+            },
+            separator: sqlSeparator,
+          });
+        }
+        return '';
+      } else if (c.type === 'field') {
+        if (c.opt === 'add') {
+          return getTemplateString(codeTemplate.addField || getEmptyMessage('addField'), {
+            beforeDefKey: c.data.before.defKey,
+            afterDefKey: c.data.after.defKey,
+            newField: c.data.current,
+            separator: sqlSeparator,
+          });
+        } else if (c.opt === 'delete') {
+          return getTemplateString(codeTemplate.deleteField || getEmptyMessage('deleteField'), {
+            field: c.data,
+            separator: sqlSeparator,
+          });
+        } else if (c.opt === 'update') {
+          return getTemplateString(codeTemplate.updateField || getEmptyMessage('updateField'), {
+            old: c.data.changes.reduce((a, b) => {
+              return {
+                ...a,
+                [b.type]: b.pre,
+              }
+            }, {}),
+            new: c.data.changes.reduce((a, b) => {
+              return {
+                ...a,
+                [b.type]: b.new,
+              }
+            }, {}),
+            separator: sqlSeparator,
+          });
+        }
+      } else if (c.type === 'index') {
+        // 先删除再创建
+        const [o, p] = c.parent || [];
+        return `${getTemplateString(codeTemplate.deleteIndex || getEmptyMessage('deleteIndex'), {
+          [o.type === 'entity' ? 'entity' : 'view']: {
+            ...o,
+          },
+          separator: sqlSeparator,
+        })}${getTemplateString(codeTemplate.createIndex || getEmptyMessage('createIndex'), {
+          [p.type === 'entity' ? 'entity' : 'view']: {
+            ...p,
+            indexes: (p.indexes || []).map(i => {
               return {
                 ...i,
                 fields: (i.fields || []).map(f => {
-                  const field = (c.data.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
+                  const field = (p.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
                   return {
                     ...f,
                     fieldDefKey: field?.defKey || '',
@@ -1377,31 +1479,9 @@ export const getDataByChanges = (changes, preDataSource, dataSource) => {
                 })
               }
             }),
-            separator: sqlSeparator,
-          });
-
-        }
-        return '';
-      } else if (c.type === 'field') {
-        if (c.opt === 'add') {
-          return getTemplateString(codeTemplate.addField || '', {
-            beforeDefKey: c.data.before.defKey,
-            afterDefKey: c.data.after.defKey,
-            newField: c.data.current,
-            separator: sqlSeparator,
-          });
-        } else if (c.opt === 'delete') {
-          return getTemplateString(codeTemplate.deleteField || '', {
-            field: c.data,
-            separator: sqlSeparator,
-          });
-        } else if (c.opt === 'update') {
-          return getTemplateString(codeTemplate.updateField || '', {
-            oldField: c.data.oldData ,
-            newField: c.data.newData,
-            separator: sqlSeparator,
-          });
-        }
+          },
+          separator: sqlSeparator,
+        })}`;
       }
     }).join('\n');
   } catch (e) {

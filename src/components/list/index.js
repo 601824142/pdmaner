@@ -66,6 +66,7 @@ export default React.memo(forwardRef(({data, prefix, draggable, contextMenuClick
                   <span>{d.defKey}</span>
                   {
                         draggable && <span
+                          style={{width: '25px', padding: '5px 6px'}}
                           className={`${currentPrefix}-menu-container-fold-item-drag`}
                           draggable
                           onDragStart={e => onDragStart(e, d.id)}

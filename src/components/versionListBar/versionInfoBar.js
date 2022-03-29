@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
+import React, { forwardRef, useImperativeHandle, useState, useEffect, useRef } from 'react';
 import moment from 'moment';
 
 import './style/index.less';
@@ -6,12 +6,14 @@ import {getPrefix} from '../../lib/prefixUtil';
 import CodeEditor from '../codeeditor';
 import Button from '../button';
 import FormatMessage from '../formatmessage';
-import { genSelByDiff } from '../../lib/datasource_version_util';
+import {checkUpdate, genSelByDiff, getChanges} from '../../lib/datasource_version_util';
 import { Download } from '../download';
 import {getMemoryCache} from '../../lib/cache';
 
 const VersionInfoBar = React.memo(forwardRef((props, ref) => {
-  const { prefix, empty, style, dataSource } = props;
+  const { prefix, empty, style, dataSource, versionsData, getLatelyDataSource } = props;
+  const versionsDataRef = useRef([]);
+  versionsDataRef.current = versionsData;
   const [version, setVersion] = useState(null);
   const [value, setValue] = useState('');
   const currentPrefix = getPrefix(prefix);
@@ -26,7 +28,16 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
       };
   }, []);
   useEffect(() => {
-      version && setValue(genSelByDiff(version, pre, dataSource));
+      if (version) {
+          if (Object.keys(version).length === 1) {
+              const result = getLatelyDataSource();
+              const changes = result.result.status ?
+                  checkUpdate(result.dataSource, versionsDataRef.current[0]?.data) : [];
+              setValue(getChanges(changes, versionsDataRef.current[0]?.data, result.dataSource));
+          } else {
+              setValue(genSelByDiff(version, pre, dataSource));
+          }
+      }
   }, [version, pre, dataSource?.profile?.codeTemplates]);
   useEffect(() => {
       setKey(Math.uuid());
@@ -51,7 +62,7 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
           <span />
         </div>
         <div className={`${currentPrefix}-version-list-card-panel`}>
-          {version?.desc?.split('\n')?.map(d => <div key={d}>{d}</div>)}
+          {(version?.desc || version.result?.map((v, i) => `${i + 1}.${v}`).join('\n'))?.split('\n')?.map(d => <div key={d}>{d}</div>)}
         </div>
       </div>
       <div className={`${currentPrefix}-version-info-edit`}>

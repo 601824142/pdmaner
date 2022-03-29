@@ -8,7 +8,7 @@ import {getPrefix} from '../../../lib/prefixUtil';
 
 const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplate}) => {
   const template = codeTemplate.type === 'dbDDL' ? Object.keys(_.pick(codeTemplate,
-    ['createTable', 'createIndex', 'createView', 'content'].filter((t) => {
+    ['createTable', 'createIndex', 'createView'].filter((t) => {
       if (codeType === 'view') {
         return t !== 'createTable';
       }
@@ -21,7 +21,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
         // 过滤无效的变更信息
         return {
           key: d,
-          title: <FormatMessage id={`tableTemplate.${d}`} defaultMessage={d}/>,
+          title: codeTemplate.type === 'dbDDL' ? <FormatMessage id={`tableTemplate.${d}`} defaultMessage={d}/> : d,
           content: <CodeHighlight
             mode={d === 'content' ? 'java' : 'mysql'}
             data={() => getCodeByDataTable(dataSource, group, data, codeTemplate.id, d)}

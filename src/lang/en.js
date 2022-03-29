@@ -402,12 +402,12 @@ export default {
     tableTemplate: {
         normal: 'normalTemplate',
         version: 'versionTemplate',
-        content: 'content',
         createTable: 'createTable',
         createView: 'createView',
         createIndex: 'createIndex',
+        deleteIndex: 'deleteIndex',
         deleteTable: 'deleteTable/View',
-        renameTable: 'renameTable/View',
+        renameTable: 'updateTable/View',
         addField: 'addFiled',
         deleteField: 'deleteField',
         updateField: 'updateField',
@@ -429,9 +429,8 @@ export default {
     },
     appCodeData: {
         defKey: 'appCode',
-        content: 'default',
         type: 'codeType',
-        add: 'Three keywords content/applyFor/type cannot be used',
+        add: 'Two keywords applyFor/type cannot be used',
         validate: 'Code type cannot be duplicate or empty',
     },
     versionData: {
@@ -453,6 +452,9 @@ export default {
         field: 'field',
         empty: 'Click initialize the baseline version',
         isDemo: 'If the version management function cannot be used, save it first!',
+        index: 'index',
+        indexField: 'indexField',
+        templateEmpty: 'the version template [{type}] of database [{name}] is not maintained',
     },
     dict: {
         view: 'view',
