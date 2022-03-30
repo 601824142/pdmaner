@@ -431,9 +431,9 @@ export default {
     },
     appCodeData: {
         defKey: '程序代码',
-        type: '代码类型',
+        type: '代码模板',
         add: '不可使用applyFor/type两个关键字',
-        validate: '代码类型不能重复或者为空',
+        validate: '代码模板不能重复或者为空',
     },
     versionData: {
         hasNew: '有了新变化',

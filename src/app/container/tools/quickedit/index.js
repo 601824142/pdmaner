@@ -49,6 +49,13 @@ export default React.memo(({ prefix, dataSource, dataChange, dataType }) => {
     };
     return <div className={`${currentPrefix}-quick-edit`}>
       <table>
+        <thead>
+          <th>{}</th>
+          <th>{FormatMessage.string({id: 'tableBase.defKey'})}</th>
+          <th>{FormatMessage.string({id: 'tableBase.defName'})}</th>
+          <th>{FormatMessage.string({id: 'tableBase.comment'})}</th>
+          <th>{FormatMessage.string({id: 'tableBase.group'})}</th>
+        </thead>
         <tbody>
           {
                 (dataSource[name] || []).map((d, i) => {
@@ -59,6 +66,9 @@ export default React.memo(({ prefix, dataSource, dataChange, dataType }) => {
                       </td>
                       <td>
                         <Input defaultValue={d.defName} onChange={e => _dataChange(e.target.value, 'defName', d.id)}/>
+                      </td>
+                      <td>
+                        <Input defaultValue={d[name === 'dicts' ? 'intro' : 'comment']} onChange={e => _dataChange(e.target.value, name === 'dicts' ? 'intro' : 'comment', d.id)}/>
                       </td>
                       <td>
                         <SelectGroup

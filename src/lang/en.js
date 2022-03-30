@@ -431,9 +431,9 @@ export default {
     },
     appCodeData: {
         defKey: 'appCode',
-        type: 'codeType',
+        type: 'codeTemplate',
         add: 'Two keywords applyFor/type cannot be used',
-        validate: 'Code type cannot be duplicate or empty',
+        validate: 'code template cannot be duplicate or empty',
     },
     versionData: {
         hasNew: 'There are new changes',

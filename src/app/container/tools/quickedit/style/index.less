@@ -4,9 +4,26 @@
   max-height: 70vh;
   overflow: auto;
   margin-bottom: 10px;
-  padding: 10px 10px 0 10px;
+  padding: 0 10px 0 10px;
   & > table {
     width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    th {
+      background: @background-color;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+  }
+  .@{prefix}-multiple-select {
+    height: 25px;
+  }
+  .@{prefix}-form-item {
+    padding: 0;
+  }
+  td {
+    padding: 2px;
   }
   &-item {
     &:hover {
