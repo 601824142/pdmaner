@@ -14,9 +14,24 @@ import DataType from '../app/container/datatype';
 import Domain from '../app/container/domain';
 import Preview from '../app/container/database';
 import AppCode from '../app/container/appcode';
-import { getEmptyEntity, getEmptyView, emptyRelation, emptyGroup, emptyDomain, emptyDataType, emptyCodeTemplate,
-  emptyDict, validateItem, validateKey, emptyDiagram, defaultTemplate, validateItemInclude, emptyDataTypeSupport,
- } from './datasource_util';
+import Quickedit from '../app/container/tools/quickedit';
+import {
+  getEmptyEntity,
+  getEmptyView,
+  emptyRelation,
+  emptyGroup,
+  emptyDomain,
+  emptyDataType,
+  emptyCodeTemplate,
+  emptyDict,
+  validateItem,
+  validateKey,
+  emptyDiagram,
+  defaultTemplate,
+  validateItemInclude,
+  emptyDataTypeSupport,
+  allType, validateEmptyOrRepeat,
+} from './datasource_util';
 // 专门处理左侧菜单 右键菜单数据
 import { separator } from '../../profile';
 
@@ -44,6 +59,9 @@ const opt = [{
 }, {
   key: 'edit',
   icon: 'fa-pencil-square-o'
+}, {
+  key: 'all',
+  icon: ''
 }]; // 所有菜单操作的的KEY;
 
 const normalOpt = ['add', 'copy', 'cut', 'paste', 'delete'];
@@ -51,14 +69,14 @@ const domainNormalOpt = ['add', 'clear'];
 const domainChildNormalOpt = ['add', 'copy', 'paste', 'delete'];
 const menusType = {
   groups: ['add', 'delete', 'clear', 'edit'],
-  entities: normalOpt,
-  entity: normalOpt.concat('move'),
-  views: normalOpt,
-  view: normalOpt.concat('move'),
+  entities: normalOpt.concat('all'),
+  entity: normalOpt.concat('move', 'all'),
+  views: normalOpt.concat('all'),
+  view: normalOpt.concat('move', 'all'),
   diagrams: normalOpt,
   diagram: normalOpt.concat('move', 'edit'),
-  dicts: normalOpt,
-  dict: normalOpt.concat('move'),
+  dicts: normalOpt.concat('all'),
+  dict: normalOpt.concat('move', 'all'),
   domains: domainNormalOpt,
   domain: domainChildNormalOpt,
   dataTypeMapping: domainNormalOpt,
@@ -71,21 +89,30 @@ const menusType = {
 export const getMenu = (m, key, type, selectedMenu, groupType, parentKey, tempType = type) => {
   const getName = () => {
     const base = FormatMessage.string({id: `menus.opt.${m}`});
-    if (m === 'move') {
+    if (m === 'move' || m === 'all') {
       return base;
     } else if (m === 'edit' && type === 'diagram') {
       return FormatMessage.string({id: 'menus.opt.editRelation'});
     }
     return base + FormatMessage.string({id: `menus.${tempType}`});
   }
+  const getIcon = () => {
+    if (type === 'entities' || type === 'entity') {
+      return 'fa-table';
+    } else if (type === 'views' || type === 'view') {
+      return 'icon-shitu';
+    }
+    return 'icon-shujuzidian';
+  }
   return {
+    style: m === 'all' ? {borderTop: '1px dashed #DFE3EB'} : {},
     key: m,
     dataKey: key,
     dataType: type,
     otherMenus: selectedMenu,
     groupType,
     parentKey,
-    icon: opt.filter(o => o.key === m)[0]?.icon || '',
+    icon: opt.filter(o => o.key === m)[0]?.icon || getIcon(),
     name: getName(),
   }
 };
@@ -120,9 +147,52 @@ export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, call
     case 'delete': deleteOpt(dataSource, menu, updateDataSource, tabClose); break;
     case 'clear': clearOpt(dataSource, menu, updateDataSource); break;
     case 'move': moveOpt(dataSource, menu, updateDataSource); break;
+    case 'all': editAllOpt(dataSource, menu, updateDataSource); break;
     default:break;
   }
 };
+
+const editAllOpt = (dataSource, m, updateDataSource) => {
+  let modal;
+  let tempDataSource;
+  const dataChange = (data) => {
+    tempDataSource = data;
+  }
+  const onOK = () => {
+    const name = allType.filter(t => t.type === m.dataType)[0]?.name || m.dataType;
+    if (tempDataSource) {
+      const result = validateEmptyOrRepeat(tempDataSource[name] || [], 'defKey');
+      if (result.length > 0) {
+        Modal.error({
+          title: FormatMessage.string({id: 'optFail'}),
+          message: `${FormatMessage.string({id: 'defKeyValidateUniquenessMessage'})}
+          ${result.filter(r => r.type === 'repeat').map(r => `[${r.value}]`).join('')}`,
+        });
+      } else {
+        updateDataSource(tempDataSource);
+        modal && modal.close();
+      }
+    } else {
+      modal && modal.close();
+    }
+  }
+  const onCancel = () => {
+    modal && modal.close();
+  }
+  modal = openModal(<Quickedit dataSource={dataSource} dataType={m.dataType} dataChange={dataChange}/>, {
+    bodyStyle: {width: '80%'},
+    title: m.name || '',
+    buttons: [<Button key='onOK' onClick={onOK} type='primary'>
+        <FormatMessage id='button.ok'/>
+      </Button>,
+      <Button key='onCancel' onClick={onCancel}>
+        <FormatMessage id='button.cancel'/>
+      </Button>],
+    onEnter: () => {
+      onOK();
+    }
+  });
+}
 
 const validate = (require, data) => {
   return !require.some(r => !data[r]);

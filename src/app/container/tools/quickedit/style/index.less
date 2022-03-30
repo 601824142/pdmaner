@@ -1,0 +1,37 @@
+@import "~style";
+
+.@{prefix}-quick-edit {
+  max-height: 70vh;
+  overflow: auto;
+  margin-bottom: 10px;
+  padding: 10px 10px 0 10px;
+  & > table {
+    width: 100%;
+  }
+  &-item {
+    &:hover {
+      td {
+        background: @third-primary-color;
+        input, select {
+          background: transparent;
+        }
+      }
+    }
+    & + & {
+      border-top: 1px solid @primary-border-color;
+    }
+    input {
+      width: 100%;
+    }
+    & > td:first-child {
+      padding: 2px;
+      text-align: center;
+    }
+    & > td:last-child {
+      .@{prefix}-form-item-component {
+        width: 100%;
+      }
+      min-width: 300px;
+    }
+  }
+}

@@ -1731,3 +1731,21 @@ export const replaceDiagrams = (data, replace) => {
     };
   })
 }
+
+// 校验数据是否重复或者为空
+export const validateEmptyOrRepeat = (data, name) => {
+  const noEmpty = data.filter(d => d[name] !== '' && d[name] !== null && d[name] !== undefined);
+  if (noEmpty.length !== data.length) {
+    return [{type: 'empty'}];
+  }
+  const pre = [];
+  const repeat = [];
+  noEmpty.forEach(d => {
+    if (!pre.includes(d[name])) {
+      pre.push(d[name]);
+    } else if (!repeat.includes(d[name])){
+      repeat.push({type: 'repeat', value: d[name]})
+    }
+  });
+  return repeat;
+}

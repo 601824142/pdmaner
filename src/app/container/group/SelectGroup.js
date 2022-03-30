@@ -3,18 +3,18 @@ import React from 'react';
 import { MultipleSelect, FormatMessage } from 'components';
 import {getPrefix} from '../../../lib/prefixUtil';
 
-export default React.memo(({prefix, dataSource, dataChange, data}) => {
+export default React.memo(({prefix, dataSource, dataChange, data, hiddenLabel = false}) => {
   const currentPrefix = getPrefix(prefix);
   const Option = MultipleSelect.Option;
   return <div>
     <div className={`${currentPrefix}-form`}>
       <div className={`${currentPrefix}-form-item`}>
-        <span
+        {!hiddenLabel && <span
           className={`${currentPrefix}-form-item-label`}
           title={FormatMessage.string({id: 'group.defKey'})}
         >
           <FormatMessage id='group.defKey'/>
-        </span>
+        </span>}
         <span className={`${currentPrefix}-form-item-component`}>
           <MultipleSelect
             onChange={keys => dataChange(keys, 'group')}

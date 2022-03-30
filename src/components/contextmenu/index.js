@@ -36,7 +36,7 @@ const ContextMenu = React.memo(({prefix, menuClick, menus = [], position = {left
     tabIndex='0'
   >
     <ul>
-      {menus.map(m => (<li onClick={e => _menuClick(e, m)} key={m.key}>
+      {menus.map(m => (<li style={m.style} onClick={e => _menuClick(e, m)} key={m.key}>
         <span className={`${currentPrefix}-contextmenu-item`}><Icon type={m.icon}/><span>{m.name}</span></span>
       </li>))}
     </ul>
