@@ -36,7 +36,10 @@ export default React.memo(({placeholder, prefix, dataSource,
     const getGroup = (type, d) => {
       return (dataSource.viewGroups || [])
           .filter(g => (g[type] || []).includes(d.id))
-          .map(g => g.defName || g.defKey || '');
+          .map(g => ({
+            name: g.defName || g.defKey || '',
+            id: g.id,
+          }));
     };
     const entityData = (dataSource.entities || [])
         .map(e => ({...e, type: 'refEntities'}))
@@ -59,7 +62,7 @@ export default React.memo(({placeholder, prefix, dataSource,
       {
         key: 'entities',
         data: entityData.map((e) => {
-          const groups = e.groups.join('|');
+          const groups = e.groups.map(g => g.name).join('|');
           return {
             ...e,
             suggest: `${e.defKey}-${e.defName}${groups ? `@${groups}` : ''}`,
@@ -71,7 +74,7 @@ export default React.memo(({placeholder, prefix, dataSource,
         data: entityData.reduce((a, b) => {
           return a.concat(b.fields.map((f) => {
             // 模块名（没有则省略）/表(视图）代码[表显示名] /字段代码[字段显示名]
-            const groups = b.groups.join('|');
+            const groups = b.groups.map(g => g.name).join('|');
             return {
               ...f,
               type: b.type,
@@ -85,7 +88,7 @@ export default React.memo(({placeholder, prefix, dataSource,
       {
         key: 'dicts',
         data: dictData.map((d) => {
-          const groups = d.groups.join('|');
+          const groups = d.groups.map(g => g.name).join('|');
           return {
             ...d,
             suggest: `${d.defKey}-${d.defName}${groups ? `@${groups}` : ''}`,
@@ -96,7 +99,7 @@ export default React.memo(({placeholder, prefix, dataSource,
         key: 'dictItems',
         data: dictData.reduce((a, b) => {
           return a.concat(b.items.map((i) => {
-            const groups = b.groups.join('|');
+            const groups = b.groups.map(g => g.name).join('|');
             return {
               ...i,
               type: b.type,
@@ -113,7 +116,7 @@ export default React.memo(({placeholder, prefix, dataSource,
           return a.concat(b.fields.map((f) => {
             return {
               ...f,
-              groups: [b.id],
+              groups: [{id: b.id, name: b.id}],
               suggest: `${f.defKey}-${f.defName}@${b.defKey}-${b.defName}`,
             };
           }));

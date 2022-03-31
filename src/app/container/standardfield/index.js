@@ -106,7 +106,7 @@ export default forwardRef(({prefix, dataSource, updateDataSource, activeKey}, re
       const id = d?.id;
       const group = d?.groups?.[0];
       if (group) {
-        twinkle = group + separator + id;
+        twinkle = group.id + separator + id;
       } else {
         twinkle = id;
       }

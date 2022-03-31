@@ -302,33 +302,33 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
       </ul>
     );
   };
-  const jumpPosition = (d, key) => {
+  const jumpPosition = (d, key, type) => {
     // 计算所有需要展开的父节点
-    const group = d.groups[0]; // 多个分组存在的话取第一个分组
+    const group = type === 'modalAll' ? null : d.groups[0]; // 多个分组存在的话取第一个分组
     let parent, parents;
     switch (key){
       case 'entities':
         parent = d.type === 'refViews' ? 'views' : 'entities';
-        parents = group ? [group, `${group}${separator}${parent}`] : [parent];
+        parents = group ? [group.id, `${group.name}${separator}${parent}`] : [parent];
         updateSelectedMenu([{
           key: d.id,
-          parentKey: group,
+          parentKey: group?.id,
           type: d.type === 'refViews' ? 'view' : 'entity',
         }]);
         updateExpandMenu(parents);break;
       case 'dicts':
         parent = 'dicts';
-        parents = group ? [group, `${group}${separator}${parent}`] : [parent];
+        parents = group ? [group.id, `${group.name}${separator}${parent}`] : [parent];
         updateSelectedMenu([{
           key: d.id,
-          parentKey: group,
+          parentKey: group?.id,
           type: 'dict',
         }]);
         updateExpandMenu(parents);break;
       default: break;
     }
   };
-  const jumpDetail = (d, key) => {
+  const jumpDetail = (d, key, type) => {
     const positionData = {
       type: d.type,
       groups: d.groups,
@@ -336,16 +336,16 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     switch (key){
       case 'entities':
         positionData.id = d.id;
-        jumpPosition(positionData, key);break;
+        jumpPosition(positionData, key, type);break;
       case 'dicts':
         positionData.id = d.id;
-        jumpPosition(positionData, key);break;
+        jumpPosition(positionData, key, type);break;
       case 'fields':
         positionData.id = d.entity;
-        jumpPosition(positionData, 'entities');break;
+        jumpPosition(positionData, 'entities', type);break;
       case 'dictItems':
         positionData.id = d.dict;
-        jumpPosition(positionData, 'dicts');break;
+        jumpPosition(positionData, 'dicts', type);break;
       default: break;
     }
     const typeMap = {
@@ -364,7 +364,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     };
     const param = (key === 'fields' || key === 'dictItems') ? {defKey: d.id} : null;
     doubleMenuClick && doubleMenuClick(positionData.id,
-        typeMap[d.type].type, d.groups[0], typeMap[d.type].icon, param);
+        typeMap[d.type].type, type === 'modalAll' ? null : d.groups[0]?.id, typeMap[d.type].icon, param);
   };
   useImperativeHandle(ref, () => {
     return {

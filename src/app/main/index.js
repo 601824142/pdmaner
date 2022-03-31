@@ -82,6 +82,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   const configRef = useRef({});
   configRef.current = config;
   const [groupType, updateGroupType] = useState(restProps.dataSource?.profile?.modelType || 'modalAll');
+  const groupTypeRef = useRef(groupType);
+  groupTypeRef.current = groupType;
   const [activeKey, updateActiveKey] = useState('');
   const tabInstanceRef = useRef({});
   const menuModelRef = useRef(null);
@@ -1366,24 +1368,14 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   };
   const _jumpPosition = (d, key) => {
     setMenuType('1');
-    if ((d.groups || []).length > 0) {
-      updateGroupType('modalGroup');
-    } else {
-      updateGroupType('modalAll');
-    }
-    menuModelRef.current?.jumpPosition(d, key);
+    menuModelRef.current?.jumpPosition(d, key, groupTypeRef.current);
   };
   const _jumpDetail = (d, key) => {
     if (key === 'standardFields') {
       standardFieldRef.current?.openEdit(d);
     } else {
       setMenuType('1');
-      if ((d.groups || []).length > 0) {
-        updateGroupType('modalGroup');
-      } else {
-        updateGroupType('modalAll');
-      }
-      menuModelRef.current?.jumpDetail(d, key);
+      menuModelRef.current?.jumpDetail(d, key, groupTypeRef.current);
     }
   };
   const onMouseDown = (e) => {
