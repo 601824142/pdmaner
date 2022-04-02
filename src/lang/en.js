@@ -530,6 +530,7 @@ export default {
     },
     database: {
         templateError: 'Database template error, please refer to dot.js configuration template information',
+        templateErrorLink: 'Please refer to this ',
         templateEdit: 'template edit',
         defKey: 'defKey',
         type: 'type',

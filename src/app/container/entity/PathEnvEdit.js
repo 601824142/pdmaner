@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useState, useRef } from 'react';
-import {Input, FormatMessage, Icon, Modal} from 'components';
+import {Input, FormatMessage, Icon, Modal, Tooltip} from 'components';
 
 import {getPrefix} from '../../../lib/prefixUtil';
 import {openFileOrDirPath} from '../../../lib/middle';
@@ -8,7 +8,7 @@ import { camel } from '../../../lib/json2code_util';
 export default React.memo(forwardRef(({prefix, data, config, template}, ref) => {
     const envData = data?.env || {};
     const [env, setEnv] = useState(() => {
-        const d = envData.default || {};
+        const d = envData.base || {};
         return {
             ...d,
             codeRoot: d.codeRoot || camel(data.defKey, true) || '',
@@ -41,7 +41,7 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
         return {
             getData(){
                 return {
-                    default: envRef.current,
+                    base: envRef.current,
                     template: templateEnvRef.current
                         .filter(e => e.suffix).reduce((a, b) => {
                         return {
@@ -173,9 +173,30 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
         </div>
       </div>
       <div>
-        <div className={`${currentPrefix}-datatype-title`}>
+        <div className={`${currentPrefix}-datatype-title`} style={{width: '100%'}}>
           <span>{}</span>
-          <span>{FormatMessage.string({id: 'tableBase.templateConfig'})}</span>
+          <span className={`${currentPrefix}-entity-template-title`}>
+            <span>
+              {FormatMessage.string({id: 'tableBase.templateConfig'})}
+            </span>
+            <Tooltip
+              placement='top'
+              title={
+                <div style={{padding: 10}}>
+                  <div style={{marginBottom: 5}}>{'controller/{{=it.codeRoot}}Controller.java'}</div>
+                  <div style={{marginBottom: 5}}>{'service/{{=it.codeRoot}}Service.java'}</div>
+                  <div style={{marginBottom: 5}}>{'service/impl/{{=it. codeRoot}}ServiceImpl.java'}</div>
+                  <div style={{marginBottom: 5}}>{'mapper/{{=it.codeRoot}}Mapper.xml'}</div>
+                  <div style={{marginBottom: 5}}>{'mapper/{{=it.codeRoot}}Mapper.java'}</div>
+                  <div>{'entity/{{=it.codeRoot}}Entity.java'}</div>
+                </div>
+            }
+              force>
+              <span className={`${currentPrefix}-form-item-label-help`}>
+                <Icon type='icon-xinxi'/>
+              </span>
+            </Tooltip>
+          </span>
         </div>
         <div className={`${currentPrefix}-entity-template-container`}>
           <div>

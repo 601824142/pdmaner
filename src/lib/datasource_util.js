@@ -662,7 +662,12 @@ export const getViewColumn = () => {
 export const getEmptyEntity = (fields = [], properties = {}) => {
   return {
     id: Math.uuid(),
-    env: {},
+    env: {
+      base: {
+        nameSpace: '',
+        codeRoot: '',
+      }
+    },
     defKey: '',
     defName: '',
     comment: '',
@@ -990,6 +995,9 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
       temp.scale = domain.scale === undefined ? '' : domain.scale;
       temp.type = dataType;
       temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
+      temp.dbType = mappings.filter(m => m.id === domain.applyFor)[0]?.[db] || f.type;
+    } else {
+      temp.dbType = f.type;
     }
   } else {
     // 代码类型转换

@@ -9,6 +9,7 @@ import { platform } from '../../lib/middle';
 import ProjectEdit from '../container/projectedit';
 import {getPrefix} from '../../lib/prefixUtil';
 import { version } from '../../../package';
+import { openUrl } from '../../lib/json2code_util';
 
 import * as template from '../../lib/template';
 
@@ -163,17 +164,6 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
         </span>
       </span>
     </div>;
-  };
-  const openUrl = (url) => {
-    const href = url;
-    if (platform === 'json') {
-      // eslint-disable-next-line global-require,import/no-extraneous-dependencies
-      require('electron').shell.openExternal(href);
-    } else {
-      const a = document.createElement('a');
-      a.href = href;
-      a.click();
-    }
   };
   const reg = new RegExp((searchValue || '').replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
   return <div className={`${currentPrefix}-home-container`}>

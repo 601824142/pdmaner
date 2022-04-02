@@ -1,5 +1,5 @@
 // 差异化数据转化成SQL或者代码信息
-
+import React from 'react';
 import _ from 'lodash/object';
 import { Message, FormatMessage } from '../components';
 import doT from 'dot';
@@ -7,6 +7,19 @@ import doT from 'dot';
 import { separator } from '../../profile';
 import {firstUp} from './string';
 import {transform} from './datasource_util';
+import {platform} from './middle';
+
+export const openUrl = (url) => {
+  const href = url;
+  if (platform === 'json') {
+    // eslint-disable-next-line global-require,import/no-extraneous-dependencies
+    require('electron').shell.openExternal(href);
+  } else {
+    const a = document.createElement('a');
+    a.href = href;
+    a.click();
+  }
+};
 
 export const camel = (str, firstUpper) => {
   let ret = str.toLowerCase();
@@ -20,6 +33,16 @@ export const camel = (str, firstUpper) => {
   }
   return ret;
 };
+const getDefaultEnv = (e) => {
+  return {
+    ...(e.env || {}),
+    base: {
+      ...(e.env?.base || {}),
+      nameSpace: e.env?.base?.nameSpace || '',
+      codeRoot: e.env?.base?.codeRoot || camel(e.defKey, true),
+    }
+  }
+}
 // 根据模板数据生成代码
 const getTemplateString = (template, templateData) => {
   const underline = (str, upper) => {
@@ -167,6 +190,7 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
   const indexes = (dataTable.indexes || []);
   const tempDataTable = {
     ...dataTable,
+    env: getDefaultEnv(dataTable),
     fields: templateShow === 'createIndex' ? fields : fields.map(field => {
       return {
         ...field,
@@ -197,8 +221,8 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
           return {
             name: t,
             suffix: getTemplateString(tempDataTable.env?.template?.[t]?.suffix || '', {
-              ...tempDataTable.env?.default || {},
-              codeRoot: tempDataTable.env?.default?.codeRoot || camel(tempDataTable.defKey, true) || '',
+              ...tempDataTable.env?.base || {},
+              codeRoot: tempDataTable.env?.base?.codeRoot || camel(tempDataTable.defKey, true) || '',
             }) || t,
             code: getTemplateString(tData[t] || '', templateData),
           }
@@ -212,7 +236,11 @@ export const getCodeByDataTable = (dataSource, group, dataTable, code, templateS
   try {
       sqlString = generateIncreaseSql(dataSource, group, dataTable, code, templateShow);
   } catch (e) {
-    Message.error({title: FormatMessage.string({id: 'database.templateError'})});
+    Message.error({title: <span>
+        {FormatMessage.string({id: 'database.templateError'})}
+        <FormatMessage id='database.templateErrorLink'/>
+        <a onClick={() => openUrl('http://wwww.xxx.como/xxx')}>http://wwww.xxx.como/xxx</a>
+      </span>});
     sqlString = JSON.stringify(e.message);
   }
   return sqlString;
@@ -227,8 +255,8 @@ export const getDemoTemplateData = (templateShow) => {
       "defName": "学生",
       "comment": "",
       "env": {
-        "default": {"nameSpace":"cn.chiner.domain","codeRoot":"HistProc"},
-        "template":{"content":{"suffix":"domain/entity"}},
+        "base": {"nameSpace":"cn.chiner.domain","codeRoot":"SimsStudent"},
+        "template":{"content":{"suffix":"demo/entity/{{=it.codeRoot}}Entity.java"}},
         "custom":{"xpath":"xxx"}},
       "properties": {
         "partitioned by": "(pt_d string)",
@@ -1354,6 +1382,7 @@ export const getAllDataSQLByFilter = (data, code, filterTemplate, filterDefKey) 
         const name = e.datatype === 'entities' ? 'entity' : 'view';
         const childData = {
           ..._.omit(e, ['groupType', 'datatype']),
+          env: getDefaultEnv(e),
           fields: (e.fields || []).map(field => {
             return {
               ...field,
@@ -1456,13 +1485,14 @@ export const getDataByChanges = (changes, preDataSource, dataSource) => {
           const name = c.type === 'entity' ? 'createTable' : 'createView';
           return getTemplateString(codeTemplate[name] || getEmptyMessage(name), {
             [c.type === 'entity' ? 'entity' : 'view']: {
-              ...c.current,
-              fields: (c.data.fields || []).map(f => ({...transform(f, dataSource, code)})),
-              indexes: (c.data.indexes || []).map(i => {
+              ...c.data.current,
+              env: getDefaultEnv(c.data.current),
+              fields: (c.data.current.fields || []).map(f => ({...f, ...transform(f, dataSource, code)})),
+              indexes: (c.data.current.indexes || []).map(i => {
                 return {
                   ...i,
                   fields: (i.fields || []).map(f => {
-                    const field = (c.data.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
+                    const field = (c.data.current.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
                     return {
                       ...f,
                       fieldDefKey: field?.defKey || '',
@@ -1516,6 +1546,7 @@ export const getDataByChanges = (changes, preDataSource, dataSource) => {
         })}${getTemplateString(codeTemplate.createIndex || getEmptyMessage('createIndex'), {
           [p.type === 'entity' ? 'entity' : 'view']: {
             ...p,
+            env: getDefaultEnv(p),
             indexes: (p.indexes || []).map(i => {
               return {
                 ...i,

@@ -530,6 +530,7 @@ export default {
     },
     database: {
         templateError: '数据库模板出错，请参考Dot.js配置模板信息',
+        templateErrorLink: '请查阅这里',
         templateEdit: '模板配置',
         defKey: '数据库',
         type: '类型',
