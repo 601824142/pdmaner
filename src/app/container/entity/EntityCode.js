@@ -19,7 +19,8 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
     }), {})) : Object.keys(_.omit(codeTemplate, ['type', 'applyFor', 'isDefault', 'id', 'defKey']));
   const CustomerTitle = () => {
       const editRef = useRef(null);
-      const genFile = (evn , path, modal) => {
+      const genFile = (btn, evn , path, modal) => {
+          btn.updateStatus('disable');
           const dataEvn = evn || data.evn || {};
           const filePath = path || getConfig()?.path?.[data.id] || '';
           if (!filePath) {
@@ -27,14 +28,16 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
                   title: FormatMessage.string({id: 'optFail'}),
                   message: FormatMessage.string({id: 'tableBase.emptySavePath'}),
               });
+              btn.updateStatus('normal');
           } else {
-              modal && modal.close();
               saveAllTemplate(getCodeByDataTable(dataSource, group, {
                   ...data,
                   evn: {
                       ...dataEvn,
                   },
               }, codeTemplate.id), filePath).then((res) => {
+                  btn.updateStatus('normal');
+                  modal && modal.close();
                   Modal.success({
                       title: FormatMessage.string({id: 'tableBase.genFileSuccess'}),
                       message: <div>
@@ -44,6 +47,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
                       </div>,
                   });
               }).catch((err) => {
+                  btn.updateStatus('normal');
                   Modal.error({
                       title: FormatMessage.string({id: 'optFail'}),
                       message: err,
@@ -53,7 +57,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
       };
       const openConfig = () => {
           let modal;
-          const onOK = (type) => {
+          const onOK = (btn, type) => {
               const evn = editRef.current.getData();
               const path = editRef.current.getPath();
               const config = getConfig();
@@ -66,7 +70,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
               });
               dataChange(evn, 'evn');
               if (type){
-                  genFile(evn, path, modal);
+                  genFile(btn, evn, path, modal);
               }
               modal.close();
           };
@@ -81,8 +85,8 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
           />, {
               title: FormatMessage.string({id: 'tableBase.pathAndEvnEdit'}),
               buttons: [
-                <Button type='primary' key='ok' onClick={() => onOK()}>{FormatMessage.string({id: 'button.ok'})}</Button>,
-                <Button type='primary' key='okAndSave' onClick={() => onOK('all')}>{FormatMessage.string({id: 'tableBase.saveAndGenerate'})}</Button>,
+                <Button type='primary' key='ok' onClick={(e, btn) => onOK(btn)}>{FormatMessage.string({id: 'button.ok'})}</Button>,
+                <Button type='primary' key='okAndSave' onClick={(e, btn) => onOK(btn, 'all')}>{FormatMessage.string({id: 'tableBase.saveAndGenerate'})}</Button>,
                 <Button key='cancel' onClick={onCancel}>{FormatMessage.string({id: 'button.cancel'})}</Button>],
           });
       };
@@ -94,7 +98,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
           <Button
             style={{display: 'inline-block', width: '100%'}}
             key='onOK'
-            onClick={() => genFile()}
+            onClick={(e, btn) => genFile(btn)}
           >
             <FormatMessage id='tableBase.generate'/>
           </Button>

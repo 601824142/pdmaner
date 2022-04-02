@@ -227,7 +227,7 @@ export const getDemoTemplateData = (templateShow) => {
       "evn": {
         "default": {"nameSpace":"cn.chiner.domain","codeRoot":"HistProc"},
         "template":{"content":{"dir":"domain/entity","suffix":".java"}},
-        "custom":{"nameSpace":"xxx"}},
+        "custom":{"xpath":"xxx"}},
       "properties": {
         "partitioned by": "(pt_d string)",
         "row format delimited": "",
