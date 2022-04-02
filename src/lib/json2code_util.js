@@ -190,6 +190,18 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
     group,
     separator: sqlSeparator
   };
+  if (!templateShow) {
+    return Object.keys(_.omit(tData, ['type', 'applyFor']))
+        .map(t => {
+          return {
+            codeRoot: tempDataTable.evn?.default?.codeRoot || '',
+            name: t,
+            suffix: tempDataTable.evn?.template[t]?.suffix || '',
+            dir: tempDataTable.evn?.template[t]?.dir || '',
+            code: getTemplateString(tData[t] || '', templateData),
+          }
+        });
+  }
   return getTemplateString(template, templateData);
 };
 // 获取单个数据表的各个模板的代码
@@ -212,6 +224,10 @@ export const getDemoTemplateData = (templateShow) => {
       "defKey": "SIMS_STUDENT",
       "defName": "学生",
       "comment": "",
+      "evn": {
+        "default": {"nameSpace":"cn.chiner.domain","codeRoot":"HistProc"},
+        "template":{"content":{"dir":"domain/entity","suffix":".java"}},
+        "custom":{"nameSpace":"xxx"}},
       "properties": {
         "partitioned by": "(pt_d string)",
         "row format delimited": "",
@@ -301,7 +317,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "IdOrKey",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "CLASS_ID",
@@ -315,7 +332,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "IdOrKey",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "STUDENT_ID",
@@ -329,7 +347,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "IdOrKey",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "STUDENT_NAME",
@@ -343,7 +362,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Name",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "ENG_NAME",
@@ -357,7 +377,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Name",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "ID_CARD_NO",
@@ -371,7 +392,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "DefaultString",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "MOBILE_PHONE",
@@ -385,7 +407,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "DefaultString",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "GENDER",
@@ -440,7 +463,8 @@ export const getDemoTemplateData = (templateShow) => {
               }
             ]
           },
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "MONTHLY_SALARY",
@@ -454,7 +478,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Money",
-          "type": ""
+          "type": "Double",
+          "dbType": "DECIMAL"
         },
         {
           "defKey": "BIRTH",
@@ -468,7 +493,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "DateTime",
-          "type": ""
+          "type": "Date",
+          "dbType": "DATETIME"
         },
         {
           "defKey": "AVATAR",
@@ -482,7 +508,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Int",
-          "type": ""
+          "type": "Integer",
+          "dbType": "INT"
         },
         {
           "defKey": "HEIGHT",
@@ -496,7 +523,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Int",
-          "type": ""
+          "type": "Integer",
+          "dbType": "INT"
         },
         {
           "defKey": "WEIGHT",
@@ -510,7 +538,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "Int",
-          "type": ""
+          "type": "Integer",
+          "dbType": "INT"
         },
         {
           "defKey": "NATION",
@@ -525,7 +554,8 @@ export const getDemoTemplateData = (templateShow) => {
           "hideInGraph": false,
           "domain": "Dict",
           "refDict": "GBNation",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "POLITICAL",
@@ -540,7 +570,8 @@ export const getDemoTemplateData = (templateShow) => {
           "hideInGraph": false,
           "domain": "Dict",
           "refDict": "Political",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "MARITAL",
@@ -555,7 +586,8 @@ export const getDemoTemplateData = (templateShow) => {
           "hideInGraph": true,
           "domain": "Dict",
           "refDict": "Marital",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "DOMICILE_PLACE_PROVINCE",
@@ -569,7 +601,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "DOMICILE_PLACE_CITY",
@@ -583,7 +616,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "DOMICILE_PLACE_ADDRESS",
@@ -597,7 +631,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "HOBBY",
@@ -611,7 +646,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "INTRO",
@@ -625,7 +661,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DescText",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "PRESENT_ADDRESS",
@@ -639,7 +676,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "EMAIL",
@@ -653,7 +691,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DefaultString",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "ENTRY_DATE",
@@ -667,7 +706,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "DateTime",
-          "type": ""
+          "type": "Date",
+          "dbType": "DATETIME"
         },
         {
           "defKey": "STATUS",
@@ -682,7 +722,8 @@ export const getDemoTemplateData = (templateShow) => {
           "hideInGraph": true,
           "domain": "Dict",
           "refDict": "StudentStatus",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "TENANT_ID",
@@ -696,7 +737,8 @@ export const getDemoTemplateData = (templateShow) => {
           "defaultValue": "",
           "hideInGraph": true,
           "domain": "IdOrKey",
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "REVISION",
@@ -710,7 +752,8 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "CREATED_BY",
@@ -724,7 +767,8 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "CREATED_TIME",
@@ -738,7 +782,8 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": ""
+          "type": "Integer",
+          "dbType": "INT"
         },
         {
           "defKey": "UPDATED_BY",
@@ -752,7 +797,8 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": ""
+          "type": "String",
+          "dbType": "VARCHAR"
         },
         {
           "defKey": "UPDATED_TIME",
@@ -766,7 +812,8 @@ export const getDemoTemplateData = (templateShow) => {
           "autoIncrement": false,
           "defaultValue": "",
           "hideInGraph": true,
-          "type": ""
+          "type": "Date",
+          "dbType": "DATETIME"
         }
       ],
       "correlations": [

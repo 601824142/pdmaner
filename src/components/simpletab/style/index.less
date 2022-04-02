@@ -67,6 +67,12 @@
         & > span:first-child {
           margin-right: 5px;
         }
+        &[draggable=true] {
+          cursor: grab;
+          i {
+            cursor: pointer;
+          }
+        }
         &:hover {
           .@{prefix}-simple-tab-close {
             display: inline;
@@ -82,6 +88,12 @@
         color: @font-color;
         & > span:first-child {
           margin-right: 5px;
+        }
+        &[draggable=true] {
+          cursor: grab;
+          i {
+            cursor: pointer;
+          }
         }
         &:hover{
           .@{prefix}-simple-tab-close {

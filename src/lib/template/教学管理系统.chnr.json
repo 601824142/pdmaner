@@ -1,10 +1,10 @@
 {
-  "name": "教学管理系统",
+  "name": "教学案例",
   "describe": "教学管理系统参考案例",
   "avatar": "",
-  "version": "3.5.3",
-  "createdTime": "2021-11-6 06:57:15",
-  "updatedTime": "2021-11-6 07:33:00",
+  "version": "4.0.0",
+  "createdTime": "2022-3-31 15:44:59",
+  "updatedTime": "2022-3-31 22:57:02",
   "dbConns": [],
   "profile": {
     "default": {
@@ -173,6 +173,14 @@
         "id": "797A1496-D649-4261-89B4-544132EC3F36"
       },
       {
+        "defKey": "JavaMybatis",
+        "id": "895CFD1D-4273-4D32-A2C4-CAC70200AB5B"
+      },
+      {
+        "defKey": "JavaMybatisPlus",
+        "id": "A2EE7B4A-CE62-4290-B00C-B26C1BF18073"
+      },
+      {
         "defKey": "C#",
         "id": "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30"
       }
@@ -209,7 +217,7 @@
       {
         "type": "appCode",
         "applyFor": "797A1496-D649-4261-89B4-544132EC3F36",
-        "content": "package cn.com.chiner.entity;\n$blankline\nimport javax.persistence.*;\nimport java.io.Serializable;\nimport java.util.Date;\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n /**\n * @author : http://www.chiner.pro\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\n@Table(name=\"{{=it.entity.defKey}}\")\npublic class {{=it.func.camel(it.entity.defKey,true) }} implements Serializable,Cloneable{\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    {{? field.primaryKey }}\n    @Id\n    @GeneratedValue\n    {{?}}\n    private {{=field.type}} {{=it.func.camel(field.defKey,false)}} ;\n{{~}}\n$blankline\n\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public {{=field.type}} get{{=it.func.camel(field.defKey,true)}}(){\n        return this.{{=it.func.camel(field.defKey,false)}};\n    }\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public void set{{=it.func.camel(field.defKey,true)}}({{=field.type}} {{= it.func.camel(field.defKey,false) }}){\n        this.{{=it.func.camel(field.defKey,false)}}={{=it.func.camel(field.defKey,false)}};\n    }\n{{~}}\n}"
+        " JpaBean": "package cn.com.chiner.entity;\n$blankline\nimport javax.persistence.*;\nimport java.io.Serializable;\nimport java.util.Date;\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n /**\n * @author : http://www.chiner.pro\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\n@Table(name=\"{{=it.entity.defKey}}\")\npublic class {{=it.func.camel(it.entity.defKey,true) }} implements Serializable,Cloneable{\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    {{? field.primaryKey }}\n    @Id\n    @GeneratedValue\n    {{?}}\n    private {{=field.type}} {{=it.func.camel(field.defKey,false)}} ;\n{{~}}\n$blankline\n\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public {{=field.type}} get{{=it.func.camel(field.defKey,true)}}(){\n        return this.{{=it.func.camel(field.defKey,false)}};\n    }\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public void set{{=it.func.camel(field.defKey,true)}}({{=field.type}} {{= it.func.camel(field.defKey,false) }}){\n        this.{{=it.func.camel(field.defKey,false)}}={{=it.func.camel(field.defKey,false)}};\n    }\n{{~}}\n}"
       },
       {
         "type": "dbDDL",
@@ -262,6 +270,21 @@
         "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}} {{= field.notNull ? 'NOT NULL' : '' }} {{= field.autoIncrement ? 'AUTOINCREMENT' : '' }} {{= field.defaultValue ? it.func.join('DEFAULT',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }} --{{=it.func.join(field.defName,field.comment,';')}}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n)  ; --{{=it.func.join(it.entity.defName,it.entity.comment,';') }}\n$blankline\n",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n"
+      },
+      {
+        "applyFor": "895CFD1D-4273-4D32-A2C4-CAC70200AB5B",
+        "type": "appCode",
+        "service": "package cn.com.chiner.entity;\n{{ pkField = \"\" ; }}{{~it.entity.fields:field:index}}{{? field.primaryKey }}{{ pkField = field.defKey }}{{?}}{{~}}\n$blankline\nimport org.springframework.data.domain.Page;\nimport org.springframework.data.domain.PageRequest;\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n /**\n * {{=it.entity.defName}};({{=it.entity.defKey}})表服务接口\n * @author : http://www.chiner.pro\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n */\npublic interface {{=it.func.camel(it.entity.defKey,true) }}Service{\n    /** \n     * 通过ID查询单条数据 \n     *\n     * @param id 主键\n     * @return 实例对象\n     */\n    {{=it.func.camel(it.entity.defKey,true) }} queryById(String {{=it.func.camel(pkField,false)}});\n    \n    /** \n     * 分页查询\n     *\n     * @param {{=it.func.camel(it.entity.defKey,false) }} 筛选条件\n     * @param pageRequest 分页对象\n     * @return 查询结果\n     */\n    Page<{{=it.func.camel(it.entity.defKey,true) }}> paginQuery({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false) }}, PageRequest pageRequest);\n\n    /** \n     * 新增数据\n     *\n     * @param {{=it.func.camel(it.entity.defKey,true) }} 实例对象\n     * @return 实例对象\n     */\n    {{=it.func.camel(it.entity.defKey,true) }} insert({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false) }});\n\n    \n    /** \n     * 更新数据\n     *\n     * @param {{=it.func.camel(it.entity.defKey,true) }} 实例对象\n     * @return 实例对象\n     */\n    {{=it.func.camel(it.entity.defKey,true) }} update({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false) }});\n\n    /** \n     * 通过主键删除数据\n     *\n     * @param id 主键\n     * @return 是否成功\n     */\n    boolean deleteById(String {{=it.func.camel(pkField,false)}});\n}",
+        "serviceImpl": "package cn.com.chiner.entity;\n{{ pkField = \"\" ; }}{{~it.entity.fields:field:index}}{{? field.primaryKey }}{{ pkField = field.defKey }}{{?}}{{~}}\n$blankline\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.stereotype.Service;\nimport org.springframework.data.domain.Page;\nimport org.springframework.data.domain.PageImpl;\nimport org.springframework.data.domain.PageRequest;\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n /**\n * {{=it.entity.defName}};({{=it.entity.defKey}})表服务实现类\n * @author : http://www.chiner.pro\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n */\n@Service\npublic class {{=it.func.camel(it.entity.defKey,true)}}ServiceImpl implements {{=it.func.camel(it.entity.defKey,true)}}Service{\n    @Autowired\n    private {{=it.func.camel(it.entity.defKey,true)}}Mapper {{=it.func.camel(it.entity.defKey,false)}}Mapper;\n    $blankline\n    /** \n     * 通过ID查询单条数据 \n     *\n     * @param id 主键\n     * @return 实例对象\n     */\n    public {{=it.func.camel(it.entity.defKey,true) }} queryById(String {{=it.func.camel(pkField,false)}}){\n        return {{=it.func.camel(it.entity.defKey,false)}}Mapper.queryById({{=it.func.camel(pkField,false)}});\n    }\n    $blankline\n    /** \n     * 分页查询\n     *\n     * @param {{=it.func.camel(it.entity.defKey,false) }} 筛选条件\n     * @param pageRequest 分页对象\n     * @return 查询结果\n     */\n    public Page<{{=it.func.camel(it.entity.defKey,true) }}> paginQuery({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false)}}, PageRequest pageRequest){\n        long total = {{=it.func.camel(it.entity.defKey,false)}}Mapper.count({{=it.func.camel(it.entity.defKey,false)}});\n        return new PageImpl<>(this.authUserDao.queryAllByLimit({{=it.func.camel(it.entity.defKey,false)}}, pageRequest), pageRequest, total);\n    }\n    $blankline\n    /** \n     * 新增数据\n     *\n     * @param {{=it.func.camel(it.entity.defKey,true) }} 实例对象\n     * @return 实例对象\n     */\n    public {{=it.func.camel(it.entity.defKey,true) }} insert({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false)}}){\n        {{=it.func.camel(it.entity.defKey,false)}}Mapper.insert({{=it.func.camel(it.entity.defKey,false)}});\n        return {{=it.func.camel(it.entity.defKey,false)}};\n    }\n    $blankline\n    /** \n     * 更新数据\n     *\n     * @param {{=it.func.camel(it.entity.defKey,true) }} 实例对象\n     * @return 实例对象\n     */\n    public {{=it.func.camel(it.entity.defKey,true) }} update({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false) }}){\n        {{=it.func.camel(it.entity.defKey,false)}}Mapper.update({{=it.func.camel(it.entity.defKey,false)}});\n        return queryById({{=it.func.camel(it.entity.defKey,false)}}.get{{=it.func.camel(pkField,true)}}());\n    }\n    $blankline\n    /** \n     * 通过主键删除数据\n     *\n     * @param id 主键\n     * @return 是否成功\n     */\n    public boolean deleteById(String {{=it.func.camel(pkField,false)}}){\n        int total = {{=it.func.camel(it.entity.defKey,false)}}Mapper.deleteById({{=it.func.camel(pkField,false)}});\n        return total > 0;\n    }\n}",
+        "controller": "package cn.com.chiner.entity;\n{{ pkField = \"\" ; }}{{~it.entity.fields:field:index}}{{? field.primaryKey }}{{ pkField = field.defKey }}{{?}}{{~}}\n$blankline\nimport io.swagger.annotations.Api;\nimport io.swagger.annotations.ApiOperation;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.data.domain.Page;\nimport org.springframework.data.domain.PageRequest;\nimport org.springframework.http.ResponseEntity;\nimport org.springframework.web.bind.annotation.*;\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n /**\n * {{=it.entity.defName}};({{=it.entity.defKey}})表控制层\n * @author : http://www.chiner.pro\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n */\n@Api(tags = \"{{=it.entity.defName}}对象功能接口\")\n@RestController\n@RequestMapping(\"/{{=it.func.camel(it.entity.defKey,false)}}\")\npublic class {{=it.func.camel(it.entity.defKey,true)}}Controller{\n    @Autowired\n    private {{=it.func.camel(it.entity.defKey,true)}}Service {{=it.func.camel(it.entity.defKey,false)}}Service;\n    $blankline\n    /** \n     * 通过ID查询单条数据 \n     *\n     * @param id 主键\n     * @return 实例对象\n     */\n    @ApiOperation(\"通过ID查询单条数据\")\n    @GetMapping(\"{{{=it.func.camel(pkField,false)}}}\")\n    public ResponseEntity<{{=it.func.camel(it.entity.defKey,true)}}> queryById(String {{=it.func.camel(pkField,false)}}){\n        return ResponseEntity.ok({{=it.func.camel(it.entity.defKey,false)}}Service.queryById({{=it.func.camel(pkField,false)}}));\n    }\n    $blankline\n    /** \n     * 分页查询\n     *\n     * @param {{=it.func.camel(it.entity.defKey,false) }} 筛选条件\n     * @param pageRequest 分页对象\n     * @return 查询结果\n     */\n    @ApiOperation(\"分页查询\")\n    @GetMapping\n    public ResponseEntity<Page<{{=it.func.camel(it.entity.defKey,true)}}>> paginQuery({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false)}}, PageRequest pageRequest){\n        return ResponseEntity.ok({{=it.func.camel(it.entity.defKey,false)}}Service.paginQuery({{=it.func.camel(it.entity.defKey,false)}}, pageRequest));\n    }\n    $blankline\n    /** \n     * 新增数据\n     *\n     * @param {{=it.func.camel(it.entity.defKey,true) }} 实例对象\n     * @return 实例对象\n     */\n    @ApiOperation(\"新增数据\")\n    @PostMapping\n    public ResponseEntity<{{=it.func.camel(it.entity.defKey,true)}}> add({{=it.func.camel(it.entity.defKey,true)}} {{=it.func.camel(it.entity.defKey,false)}}){\n        return ResponseEntity.ok({{=it.func.camel(it.entity.defKey,false)}}Service.insert({{=it.func.camel(it.entity.defKey,false)}}));\n    }\n    $blankline\n    /** \n     * 更新数据\n     *\n     * @param {{=it.func.camel(it.entity.defKey,true) }} 实例对象\n     * @return 实例对象\n     */\n    @ApiOperation(\"更新数据\")\n    @PutMapping\n    public ResponseEntity<{{=it.func.camel(it.entity.defKey,true) }}> edit({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false) }}){\n        return ResponseEntity.ok({{=it.func.camel(it.entity.defKey,false)}}Service.update({{=it.func.camel(it.entity.defKey,false) }}));\n    }\n    $blankline\n    /** \n     * 通过主键删除数据\n     *\n     * @param id 主键\n     * @return 是否成功\n     */\n    @ApiOperation(\"通过主键删除数据\")\n    @DeleteMapping\n    public ResponseEntity<Boolean> deleteById(String {{=it.func.camel(pkField,false)}}){\n        return ResponseEntity.ok({{=it.func.camel(it.entity.defKey,false)}}Service.deleteById({{=it.func.camel(pkField,false)}}));\n    }\n}",
+        "mapper.xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\n{{ pkField = \"\" ; }}{{~it.entity.fields:field:index}}{{? field.primaryKey }}{{ pkField = field.defKey }}{{?}}{{~}}\n<mapper namespace=\"pub.fmx.test.dao.{{=it.func.camel(it.entity.defKey,true)}}Mapper\">\n    <resultMap type=\"pub.fmx.test.entity.AuthUser\" id=\"{{=it.func.camel(it.entity.defKey,true)}}Map\">\n    {{~it.entity.fields:field:index}}\n        <result property=\"{{=it.func.camel(field.defKey,false)}}\" column=\"{{=field.defKey}}\" jdbcType=\"VARCHAR\"/>\n    {{~}}\n    </resultMap>\n    $blankline\n    <!-- 通过ID查询单条数据 -->\n    <select id=\"queryById\" resultMap=\"{{=it.func.camel(it.entity.defKey,true)}}Map\">\n        select\n            {{=it.entity.fields.map(function(e,i){return e.defKey}).join(',')}}\n        from {{=it.entity.defKey}}\n        where {{=pkField}} = #{{{=it.func.camel(pkField,false)}}}\n    </select>\n    $blankline\n    <!--分页查询指定行数据-->\n    <select id=\"queryAllByLimit\" resultMap=\"{{=it.func.camel(it.entity.defKey,true)}}Map\">\n        select\n            {{=it.entity.fields.map(function(e,i){return e.defKey}).join(',')}}\n        from {{=it.entity.defKey}}\n        <where>\n        {{~it.entity.fields:field:index}}\n            <if test=\"{{=it.func.camel(field.defKey,false)}} != null and {{=it.func.camel(field.defKey,false)}} != ''\">\n                and {{=field.defKey}} = #{{{=it.func.camel(field.defKey,false)}}}\n            </if>\n        {{~}}\n        </where>\n        limit #{pageable.offset}, #{pageable.pageSize}\n    </select>\n    $blankline\n    <!--统计总行数-->\n    <select id=\"count\" resultType=\"java.lang.Long\">\n        select count(1)\n        from {{=it.entity.defKey}}\n        <where>\n        {{~it.entity.fields:field:index}}\n            <if test=\"{{=it.func.camel(field.defKey,false)}} != null and {{=it.func.camel(field.defKey,false)}} != ''\">\n                and {{=field.defKey}} = #{{{=it.func.camel(field.defKey,false)}}}\n            </if>\n        {{~}}\n        </where>\n    </select>\n    $blankline\n    <!--新增数据-->\n    <insert id=\"insert\" keyProperty=\"{{=pkField}}\" useGeneratedKeys=\"true\">\n        insert into {{=it.entity.defKey}}({{=it.entity.fields.map(function(e,i){return e.defKey}).join(',')}})\n        values ({{=it.entity.fields.map(function(e,i){return '#{'+it.func.camel(e.defKey,false)+'}'}).join(',')}})\n    </insert>\n    $blankline\n    <!-- 批量新增数据 -->\n    <insert id=\"insertBatch\" keyProperty=\"{{=pkField}}\" useGeneratedKeys=\"true\">\n        insert into {{=it.entity.defKey}}({{=it.entity.fields.map(function(e,i){return e.defKey}).join(',')}})\n        values\n        <foreach collection=\"entities\" item=\"entity\" separator=\",\">\n            ({{=it.entity.fields.map(function(e,i){return '#{entity.'+it.func.camel(e.defKey,false)+'}'}).join(',')}})\n        </foreach>\n    </insert>\n    $blankline\n    <!-- 批量新增或按主键更新数据 -->\n    <insert id=\"insertOrUpdateBatch\" keyProperty=\"{{=pkField}}\" useGeneratedKeys=\"true\">\n        insert into {{=it.entity.defKey}}({{=it.entity.fields.map(function(e,i){return e.defKey}).join(',')}})\n        values\n        <foreach collection=\"entities\" item=\"entity\" separator=\",\">\n            ({{=it.entity.fields.map(function(e,i){return '#{entity.'+it.func.camel(e.defKey,false)+'}'}).join(',')}})\n        </foreach>\n        on duplicate key update\n        {{=it.entity.fields.map(function(e,i){return e.defKey + '=values('+e.defKey+')'}).join(',\\n\\t\\t')}}\n    </insert>\n    $blankline\n    <!-- 更新数据 -->\n    <update id=\"update\">\n        update {{=it.entity.defKey}}\n        <set>\n        {{~it.entity.fields:field:index}}\n            <if test=\"{{=it.func.camel(field.defKey,false)}} != null and {{=it.func.camel(field.defKey,false)}} != ''\">\n                {{=field.defKey}} = #{{{=it.func.camel(field.defKey,false)}}},\n            </if>\n        {{~}}\n        </set>\n        where USER_ID = #{userId}\n    </update>\n    $blankline\n    <!--通过主键删除-->\n    <delete id=\"deleteById\">\n        delete from {{=it.entity.defKey}} where {{=pkField}} = #{{{=it.func.camel(pkField,false)}}}\n    </delete>\n</mapper>\n\n",
+        "mapper": "package cn.com.chiner.entity;\n{{ pkField = \"\" ; }}{{~it.entity.fields:field:index}}{{? field.primaryKey }}{{ pkField = field.defKey }}{{?}}{{~}}\n$blankline\nimport org.apache.ibatis.annotations.Param;\nimport org.springframework.data.domain.Pageable;\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n /**\n * {{=it.entity.defName}};({{=it.entity.defKey}})表数据库访问层\n * @author : http://www.chiner.pro\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n */\npublic interface {{=it.func.camel(it.entity.defKey,true) }}Mapper{\n    /** \n     * 通过ID查询单条数据 \n     *\n     * @param id 主键\n     * @return 实例对象\n     */\n    {{=it.func.camel(it.entity.defKey,true) }} queryById(String {{=it.func.camel(pkField,false)}});\n    \n    /** \n     * 分页查询指定行数据\n     *\n     * @param {{=it.func.camel(it.entity.defKey,false) }} 查询条件\n     * @param pageable 分页对象\n     * @return 对象列表\n     */\n    List<{{=it.func.camel(it.entity.defKey,true) }}> queryAllByLimit({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false) }}, @Param(\"pageable\") Pageable pageable);\n\n    /** \n     * 统计总行数\n     *\n     * @param {{=it.func.camel(it.entity.defKey,true) }} 查询条件\n     * @return 总行数\n     */\n    long count({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false) }});\n\n    /** \n     * 新增数据\n     *\n     * @param {{=it.func.camel(it.entity.defKey,true) }} 实例对象\n     * @return 影响行数\n     */\n    int insert({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false) }});\n\n    /** \n     * 批量新增数据\n     *\n     * @param entities List<{{=it.func.camel(it.entity.defKey,true) }}> 实例对象列表\n     * @return 影响行数\n     */\n    int insertBatch(@Param(\"entities\") List<{{=it.func.camel(it.entity.defKey,true) }}> entities);\n    \n    /** \n     * 批量新增或按主键更新数据\n     *\n     * @param entities List<{{=it.func.camel(it.entity.defKey,true) }}> 实例对象列表\n     * @return 影响行数\n     */\n    int insertOrUpdateBatch(@Param(\"entities\") List<{{=it.func.camel(it.entity.defKey,true) }}> entities);\n    \n    /** \n     * 更新数据\n     *\n     * @param {{=it.func.camel(it.entity.defKey,true) }} 实例对象\n     * @return 影响行数\n     */\n    int update({{=it.func.camel(it.entity.defKey,true) }} {{=it.func.camel(it.entity.defKey,false) }});\n\n    /** \n     * 通过主键删除数据\n     *\n     * @param id 主键\n     * @return 影响行数\n     */\n    int deleteById(String {{=it.func.camel(pkField,false)}});\n}",
+        "entity": "package cn.com.chiner.entity;\n$blankline\nimport io.swagger.annotations.ApiModel;\nimport io.swagger.annotations.ApiModelProperty;\nimport java.io.Serializable;\nimport java.util.Date;\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n /**\n * {{=it.entity.defName}};{{=it.entity.comment}}\n * @author : http://www.chiner.pro\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n */\n@ApiModel(value = \"{{=it.entity.defName}}\",description = \"{{=it.entity.comment}}\")\npublic class {{=it.func.camel(it.entity.defKey,true) }} implements Serializable,Cloneable{\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    @ApiModelProperty(name = \"{{=field.defName}}\",notes = \"{{=field.comment}}\")\n    private {{=field.type}} {{=it.func.camel(field.defKey,false)}} ;\n{{~}}\n$blankline\n\n{{~it.entity.fields:field:index}}\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public {{=field.type}} get{{=it.func.camel(field.defKey,true)}}(){\n        return this.{{=it.func.camel(field.defKey,false)}};\n    }\n    /** {{=it.func.join(field.defName,field.comment,';')}} */\n    public void set{{=it.func.camel(field.defKey,true)}}({{=field.type}} {{= it.func.camel(field.defKey,false) }}){\n        this.{{=it.func.camel(field.defKey,false)}}={{=it.func.camel(field.defKey,false)}};\n    }\n{{~}}\n}"
+      },
+      {
+        "applyFor": "A2EE7B4A-CE62-4290-B00C-B26C1BF18073",
+        "type": "appCode",
+        "content": ""
       }
     ],
     "generatorDoc": {
@@ -1295,24 +1318,7 @@
           "id": "1DAB3A13-B7D2-46AD-8DE1-89DA5ADDB3DE"
         }
       ],
-      "correlations": [
-        {
-          "myField": "D793F097-1364-49FD-B02C-D4EBBA5A055A",
-          "refEntity": "26B8D13E-BE37-4E20-8496-13A586E84581",
-          "refField": "9651B83A-2208-4F1E-A870-C3C4E1FAF103",
-          "myRows": "n",
-          "refRows": "1",
-          "innerType": ""
-        },
-        {
-          "myField": "63130D1B-63C8-491C-B36D-5603A30BFB37",
-          "refEntity": "C2F51B91-7C24-4CB4-8406-706F4851EB0B",
-          "refField": "8707AEB9-3EC5-4EEA-9E14-99BAF28B46B4",
-          "myRows": "n",
-          "refRows": "1",
-          "innerType": ""
-        }
-      ],
+      "correlations": [],
       "id": "C698249E-307D-4087-9EC4-3BABCFC00660",
       "indexes": []
     },
@@ -1401,7 +1407,7 @@
           "defKey": "COLLEGE_ID",
           "defName": "所在学院ID",
           "comment": "",
-          "len": 32,
+          "len": "",
           "scale": "",
           "primaryKey": false,
           "notNull": true,
@@ -1409,7 +1415,7 @@
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
-          "type": "VARCHAR",
+          "type": "",
           "refDict": "",
           "uiHint": "",
           "id": "84ADFE5C-3750-4E38-AC46-7AD11E869B41"
@@ -1925,16 +1931,7 @@
           "id": "41AFEC1A-F0E0-4BD9-8F72-BF3DF29B7B7C"
         }
       ],
-      "correlations": [
-        {
-          "myField": "1BCE9672-14BA-4B2B-B8C6-222CC6CF0F61",
-          "refEntity": "C698249E-307D-4087-9EC4-3BABCFC00660",
-          "refField": "6D6BC6AA-8114-4B91-8A2C-4B5FEACEB347",
-          "myRows": "n",
-          "refRows": "1",
-          "innerType": ""
-        }
-      ],
+      "correlations": [],
       "indexes": [
         {
           "defKey": "idx_smis_student_01",
@@ -2339,16 +2336,7 @@
           "id": "7376A655-992A-4C94-BAFC-494DA519737D"
         }
       ],
-      "correlations": [
-        {
-          "myField": "EFD22F94-E1D0-4CAD-947D-E856A997D7B5",
-          "refEntity": "26B8D13E-BE37-4E20-8496-13A586E84581",
-          "refField": "9651B83A-2208-4F1E-A870-C3C4E1FAF103",
-          "myRows": "n",
-          "refRows": "1",
-          "innerType": ""
-        }
-      ],
+      "correlations": [],
       "id": "536B8B19-C2B3-45D1-ADA8-402C0083FC31",
       "indexes": []
     },
@@ -2859,32 +2847,7 @@
           "id": "AAB91339-8543-4432-B27C-2AB5FFD5D38F"
         }
       ],
-      "correlations": [
-        {
-          "myField": "AE73CBE3-577D-4457-8987-5BEFDECAEED9",
-          "refEntity": "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
-          "refField": "3D337B5E-182D-45C7-9752-E2DD4D7CF2BD",
-          "myRows": "n",
-          "refRows": "1",
-          "innerType": ""
-        },
-        {
-          "myField": "AE73CBE3-577D-4457-8987-5BEFDECAEED9",
-          "refEntity": "536B8B19-C2B3-45D1-ADA8-402C0083FC31",
-          "refField": "C5916046-F140-4B0C-BF84-EBD7DDB38EAA",
-          "myRows": "n",
-          "refRows": "1",
-          "innerType": ""
-        },
-        {
-          "myField": "A23704D2-7128-41A2-988C-D20CB984FA83",
-          "refEntity": "C698249E-307D-4087-9EC4-3BABCFC00660",
-          "refField": "6D6BC6AA-8114-4B91-8A2C-4B5FEACEB347",
-          "myRows": "n",
-          "refRows": "1",
-          "innerType": ""
-        }
-      ],
+      "correlations": [],
       "id": "1A50AEEB-F956-4275-AE11-5D6F1F471FBE",
       "indexes": []
     },
@@ -3165,24 +3128,7 @@
           "id": "D2975854-EE5C-471D-8E14-94D7CC3DB514"
         }
       ],
-      "correlations": [
-        {
-          "myField": "F7FD7836-4E62-47EF-90FE-6B80674A2DDD",
-          "refEntity": "9095C2A1-EF4C-4357-AAB2-26F99C1845CA",
-          "refField": "3D337B5E-182D-45C7-9752-E2DD4D7CF2BD",
-          "myRows": "n",
-          "refRows": "1",
-          "innerType": ""
-        },
-        {
-          "myField": "0C5A31BB-2855-4BB9-84D1-7E63B37A71E1",
-          "refEntity": "0FC9DB49-4FDB-437E-83E9-7EE803F1CC84",
-          "refField": "5FAE5CA5-B7A6-40C3-878D-1BB3D4A45B5C",
-          "myRows": "n",
-          "refRows": "1",
-          "innerType": ""
-        }
-      ],
+      "correlations": [],
       "id": "6B1610FB-364F-4514-95D6-9DDA681BFC61",
       "indexes": []
     },
@@ -4458,7 +4404,9 @@
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "STRING",
         "797A1496-D649-4261-89B4-544132EC3F36": "String",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "string",
-        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "TEXT"
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "TEXT",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "String",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "String"
       },
       {
         "defKey": "double",
@@ -4475,7 +4423,9 @@
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "DOUBLE",
         "797A1496-D649-4261-89B4-544132EC3F36": "Double",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "float",
-        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "REAL"
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "REAL",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Double",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Double"
       },
       {
         "defKey": "int",
@@ -4492,7 +4442,9 @@
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "INT",
         "797A1496-D649-4261-89B4-544132EC3F36": "Integer",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "float",
-        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "INTEGER"
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "INTEGER",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Integer",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Integer"
       },
       {
         "defKey": "date",
@@ -4509,7 +4461,9 @@
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "DATETIME",
         "797A1496-D649-4261-89B4-544132EC3F36": "Date",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "date",
-        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "NUMERIC"
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "NUMERIC",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Date",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Date"
       },
       {
         "defKey": "bytes",
@@ -4526,7 +4480,9 @@
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "BINARY",
         "797A1496-D649-4261-89B4-544132EC3F36": "byte[]",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "binary",
-        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "NONE"
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "NONE",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "byte[]",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "byte[]"
       },
       {
         "defKey": "largeText",
@@ -4543,7 +4499,9 @@
         "11D1FB71-A587-4217-89BA-611B8A1F83E0": "STRING",
         "797A1496-D649-4261-89B4-544132EC3F36": "String",
         "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "string",
-        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "TEXT"
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "TEXT",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "String",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "String"
       }
     ]
   },

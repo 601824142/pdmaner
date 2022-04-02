@@ -1,5 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useState, useRef } from 'react';
 import _ from 'lodash/object';
+import { moveArrayPositionByFuc } from '../../../lib/array_util';
 
 import {
     SimpleTab,
@@ -74,9 +75,17 @@ export default React.memo(forwardRef(({style, dataSource, empty,
                 Message.error({title: FormatMessage.string({id: 'appCodeData.validate'})});
             } else {
                 update((c) => {
+                    if (v) {
+                        return Object.keys(c).reduce((p, n) => {
+                            return {
+                                ...p,
+                                [n === v ? value : n]: c[n],
+                            };
+                        }, {});
+                    }
                     return {
-                        ...(v ? _.omit(c, v) : c),
-                        [value]: v ? c[v] : '',
+                        ...c,
+                        [value]: '',
                     };
                 });
                 callback(value);
@@ -107,9 +116,27 @@ export default React.memo(forwardRef(({style, dataSource, empty,
     const onTabDoubleClick = (id, callback) => {
         onAdd(id, callback);
     };
+    const onPositionChange = (pre, next) => {
+        update((d) => {
+            const keys = Object.keys(d).filter(c => !['applyFor', 'type'].includes(c));
+            return moveArrayPositionByFuc(keys, (k) => {
+                return k === pre.key;
+            }, keys.findIndex(k => next === k)).reduce((p, n) => {
+                return {
+                    ...p,
+                    [n]: d[n],
+                };
+            }, {
+                applyFor: d.applyFor,
+                type: d.type,
+            });
+        });
+    };
     return <div style={style} className={`${currentPrefix}-appcode`}>
       {currentApp ? <div className={`${currentPrefix}-appcode-tab`}>
         <SimpleTab
+          draggable
+          onPositionChange={onPositionChange}
           onTabDoubleClick={onTabDoubleClick}
           key={currentApp}
           onAdd={c => onAdd('', c)}

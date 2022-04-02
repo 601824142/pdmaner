@@ -714,26 +714,6 @@ export const defaultTemplate = {
   versionTemplate: ['deleteTable', 'renameTable', 'deleteIndex', 'addField', 'deleteField', 'updateField'],
 };
 
-export const version2sino = (versionData, projectData) => {
-  // 版本数据目前只保留实体数据的内容
-  if (!versionData.modules) {
-    return versionData;
-  }
-  const domains = projectData.domains || [];
-  const mapping = projectData?.dataTypeMapping?.mappings || [];
-  const db = projectData?.profile?.default?.db || '';
-  return {
-    ..._.omit(versionData, ['modules']),
-    entities: _.get(versionData, 'modules', []).reduce((a, b) => a.concat(b.entities), []).map(e => ({
-      defKey: e.title || '',
-      defName: e.chnname || '',
-      comment: e.remark || '',
-      fields: _.get(e, 'fields', []).map(f => fieldsTransform(f, domains, mapping, db)),
-      indexes: _.get(e, 'indexs', []).map(i => indexesTransform(i)),
-    }))
-  }
-};
-
 export const pdman2sino = (data, projectName) => {
   if (!data.modules) {
     //return data;
@@ -1012,6 +992,12 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
     }
   } else {
     // 代码类型转换
+    if (f.domain) {
+      const domain = domains.filter(dom => dom[type] === f.domain)[0];
+      temp.dbType = mappings.filter(m => m.id === domain?.applyFor)[0]?.[db] || f.type;
+    } else {
+      temp.dbType = f.type;
+    }
     temp.type = mappings.filter(m => m[db] === f.type)[0]?.[code] || f.type;
   }
   // 转换数据字典

@@ -16,6 +16,7 @@ const config = (state = { lang: langType[0] }, action) => {
         autoSave: action.data[0]?.autoSave || 0,
         autoBackup: _.get(action.data[0], 'autoBackup', 3),
         jvm: action.data[0]?.jvm || defaultJVM,
+        path: action.data[0]?.path || {},
         result: success,
       };
     case GET_USER_CONFIG_FAIL:

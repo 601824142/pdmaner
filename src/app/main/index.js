@@ -1041,6 +1041,9 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     activeTabStack.current = activeTabStack.current.filter(k => k !== tabKey);
     activeTabStack.current.push(tabKey);
   };
+  const getConfig = () => {
+    return configRef.current;
+  };
   const getTabComponent = (t) => {
     const type = t.type;
     const key = t.menuKey;
@@ -1054,6 +1057,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     if (type === 'entity') {
       return (
         <Entity
+          saveUserData={restProps.saveUserData}
+          getConfig={getConfig}
           type={type}
           getDataSource={getDataSource}
           hasRender={instance => hasRender(t.tabKey, instance)}
@@ -1071,6 +1076,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
           />);
     } else if (type === 'view') {
       return <View
+        saveUserData={restProps.saveUserData}
+        getConfig={getConfig}
         type={type}
         getDataSource={getDataSource}
         updateDataSource={restProps?.update}

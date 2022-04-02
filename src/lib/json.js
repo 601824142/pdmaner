@@ -570,3 +570,25 @@ export const renameVersion = (oldFilePath, newFilePath, oldData, newData) => {
   });
   deleteDirectoryFile(oldVersionDir);
 };
+
+export const saveAllTemplate = (data, filePath) => {
+  const getSuffix = (s) => {
+    if (s) {
+      if (s.startsWith('.')) {
+        return s;
+      }
+      return `.${s}`;
+    }
+    return '';
+  }
+  return Promise.all(data.map(d => {
+    const tDir = path.join(filePath, d.dir);
+    ensureDirectoryExistence(tDir);
+    const file = path.join(tDir, `${d.codeRoot}${d.name}${getSuffix(d.suffix)}`);
+    return new Promise((res, rej) => {
+      saveNormalFile(file, d.code).then(() => {
+        res(file);
+      }).catch(err => rej(err))
+    });
+  }));
+};

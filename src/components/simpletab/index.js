@@ -6,10 +6,13 @@ import Icon from '../icon';
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 // 结构简单的TAB组件
-export default React.memo(({ prefix, options = [], onDelete, disableEdit, onAdd,
+export default React.memo(({ prefix, options = [], customerTitle,
+                             onDelete, disableEdit, onAdd, draggable, onPositionChange,
                              tabActiveChange, type = 'top', className = '', edit, onTabDoubleClick }) => {
   const [stateOptions, setStateOptions] = useState(options);
   const tabStack = useRef([]);
+  const [over, setOver] = useState(null);
+  const dragData = useRef(null);
   useEffect(() => {
     setStateOptions(options);
   }, [options]);
@@ -24,7 +27,6 @@ export default React.memo(({ prefix, options = [], onDelete, disableEdit, onAdd,
     onDelete && onDelete(key, () => {
       tabStack.current.splice(tabStack.current.length - 1, 1);
       updateActive(pre => (pre === key ? tabStack.current[tabStack.current.length - 1] : pre));
-      setStateOptions(pre => pre.filter(p => (p.key || p.title) !== key));
     });
   };
   const add = () => {
@@ -45,12 +47,37 @@ export default React.memo(({ prefix, options = [], onDelete, disableEdit, onAdd,
     });
   };
   const currentPrefix = getPrefix(prefix);
+  const onDragOver = (e, o) => {
+    if (dragData.current) {
+      setOver(o.key || o.title);
+    }
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  const onDragStart = (o) => {
+    dragData.current = o;
+  };
+  const onDragEnd = () => {
+    if (dragData.current) {
+      onPositionChange && onPositionChange(dragData.current, over);
+    }
+    dragData.current = null;
+    setOver(null);
+  };
   return <div className={`${currentPrefix}-simple-tab ${currentPrefix}-simple-tab-${type} ${className}`}>
     <div className={`${currentPrefix}-simple-tab-titles ${currentPrefix}-simple-tab-titles-${type}`}>
+      {customerTitle}
       {
         stateOptions.map(o => (
           <span
-            style={{userSelect: onTabDoubleClick ? 'none' : 'auto'}}
+            onDragEnd={onDragEnd}
+            onDragStart={() => onDragStart(o)}
+            onDragOver={e => onDragOver(e, o)}
+            draggable={draggable}
+            style={{
+              userSelect: onTabDoubleClick ? 'none' : 'auto',
+              borderRight: over === (o.key || o.title) ? '1px dashed #4e75fd' : 'none',
+            }}
             onDoubleClick={() => _onTabDoubleClick(o.key || o.title)}
             key={o.key || o.title}
             onClick={() => _updateActive(o.key || o.title)}

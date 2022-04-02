@@ -203,4 +203,62 @@
       overflow: auto;
     }
   }
+  &-template {
+    &-container {
+      max-height: calc(35vh - 50px);
+      overflow: auto;
+      & > div {
+        &:first-child {
+          background: @background-color;
+          position: sticky;
+          top: 0;
+          text-align: center;
+          border-bottom: 1px dashed @primary-border-color;
+          margin-bottom: 5px;
+        }
+        padding: 2px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        & > div + div {
+          margin-left: 3px;
+        }
+        & > div {
+          &:first-child {
+            width: 20%;
+            text-align: left;
+          }
+          input {
+            width: 100%;
+          }
+          width: 38%;
+        }
+      }
+    }
+  }
+  &-evn {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    &-container {
+      max-height: calc(35vh - 50px);
+      overflow: auto;
+      & > div {
+        margin-bottom: 10px;
+        i {
+          cursor: pointer;
+        }
+      }
+      & > div:last-child {
+        cursor: pointer;
+        margin: 0 72px 20px 72px;
+        padding: 5px;
+        border: 1px solid @primary-border-color;
+        border-radius: 5px;
+        text-align: center;
+      }
+    }
+  }
 }
