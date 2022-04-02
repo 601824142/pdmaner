@@ -7,20 +7,21 @@ import doT from 'dot';
 import { separator } from '../../profile';
 import {firstUp} from './string';
 import {transform} from './datasource_util';
+
+export const camel = (str, firstUpper) => {
+  let ret = str.toLowerCase();
+  ret = ret.replace( /_([\w+])/g, function( all, letter ) {
+    return letter.toUpperCase();
+  });
+  if(firstUpper){
+    ret = ret.replace(/\b(\w)(\w*)/g, function($0, $1, $2) {
+      return $1.toUpperCase() + $2;
+    });
+  }
+  return ret;
+};
 // 根据模板数据生成代码
 const getTemplateString = (template, templateData) => {
-  const camel = (str, firstUpper) => {
-    let ret = str.toLowerCase();
-    ret = ret.replace( /_([\w+])/g, function( all, letter ) {
-      return letter.toUpperCase();
-    });
-    if(firstUpper){
-      ret = ret.replace(/\b(\w)(\w*)/g, function($0, $1, $2) {
-        return $1.toUpperCase() + $2;
-      });
-    }
-    return ret;
-  };
   const underline = (str, upper) => {
     const ret = str.replace(/([A-Z])/g,"_$1");
     if(upper){
@@ -194,10 +195,11 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
     return Object.keys(_.omit(tData, ['type', 'applyFor']))
         .map(t => {
           return {
-            codeRoot: tempDataTable.env?.default?.codeRoot || '',
             name: t,
-            suffix: tempDataTable.env?.template[t]?.suffix || '',
-            dir: tempDataTable.env?.template[t]?.dir || '',
+            suffix: getTemplateString(tempDataTable.env?.template?.[t]?.suffix || '', {
+              ...tempDataTable.env?.default || {},
+              codeRoot: tempDataTable.env?.default?.codeRoot || camel(tempDataTable.defKey, true) || '',
+            }) || t,
             code: getTemplateString(tData[t] || '', templateData),
           }
         });
@@ -226,7 +228,7 @@ export const getDemoTemplateData = (templateShow) => {
       "comment": "",
       "env": {
         "default": {"nameSpace":"cn.chiner.domain","codeRoot":"HistProc"},
-        "template":{"content":{"dir":"domain/entity","suffix":".java"}},
+        "template":{"content":{"suffix":"domain/entity"}},
         "custom":{"xpath":"xxx"}},
       "properties": {
         "partitioned by": "(pt_d string)",

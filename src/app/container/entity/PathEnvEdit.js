@@ -3,15 +3,21 @@ import {Input, FormatMessage, Icon, Modal} from 'components';
 
 import {getPrefix} from '../../../lib/prefixUtil';
 import {openFileOrDirPath} from '../../../lib/middle';
+import { camel } from '../../../lib/json2code_util';
 
 export default React.memo(forwardRef(({prefix, data, config, template}, ref) => {
     const envData = data?.env || {};
-    const [env, setEnv] = useState(envData.default || {});
+    const [env, setEnv] = useState(() => {
+        const d = envData.default || {};
+        return {
+            ...d,
+            codeRoot: d.codeRoot || camel(data.defKey, true) || '',
+        };
+    });
     const [templateEnv, setTemplateEnv] = useState(template.map((t) => {
         const tData = envData.template || {};
         return {
             name: t,
-            dir: tData[t]?.dir || '',
             suffix: tData[t]?.suffix || '',
         };
     }));
@@ -37,10 +43,10 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
                 return {
                     default: envRef.current,
                     template: templateEnvRef.current
-                        .filter(e => e.dir || e.suffix).reduce((a, b) => {
+                        .filter(e => e.suffix).reduce((a, b) => {
                         return {
                             ...a,
-                            [b.name]: {dir: b.dir, suffix: b.suffix},
+                            [b.name]: {suffix: b.suffix},
                         };
                     }, {}),
                     custom: customerEnvRef.current.filter(e => e.name || e.value).reduce((a, b) => {
@@ -125,7 +131,7 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
             </span>
             <span className={`${currentPrefix}-form-item-component`}>
               <Input
-                placeholder={FormatMessage.string({id: 'tableBase.savePath'})}
+                placeholder={FormatMessage.string({id: 'tableBase.savePathPlaceHolder'})}
                 onChange={onPtahChange}
                 value={path}
                 suffix={<span className={`${currentPrefix}-setting-java-home-opt`}>
@@ -143,6 +149,7 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
             </span>
             <span className={`${currentPrefix}-form-item-component`}>
               <Input
+                placeholder={FormatMessage.string({id: 'tableBase.nameSpacePlaceHolder'})}
                 value={env.nameSpace || ''}
                 onChange={e => onEnvChange(e.target.value, 'nameSpace')}
               />
@@ -157,6 +164,7 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
             </span>
             <span className={`${currentPrefix}-form-item-component`}>
               <Input
+                placeholder={FormatMessage.string({id: 'tableBase.codeRootPlaceHolder'})}
                 value={env.codeRoot || ''}
                 onChange={e => onEnvChange(e.target.value, 'codeRoot')}
               />
@@ -172,14 +180,18 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
         <div className={`${currentPrefix}-entity-template-container`}>
           <div>
             <div>{FormatMessage.string({id: 'tableBase.template'})}</div>
-            <div>{FormatMessage.string({id: 'tableBase.dir'})}</div>
             <div>{FormatMessage.string({id: 'tableBase.suffix'})}</div>
           </div>
           {templateEnv.map((t) => {
                 return <div key={t.name}>
                   <div>{t.name}</div>
-                  <div><Input onChange={e => templateEnvChange(e.target.value, 'dir', t.name)} value={t.dir} placeholder={FormatMessage.string({id: 'tableBase.dirPlaceHolder'})}/></div>
-                  <div><Input onChange={e => templateEnvChange(e.target.value, 'suffix', t.name)} value={t.suffix}/></div>
+                  <div>
+                    <Input
+                      placeholder='demo/entity/{{=it.codeRoot}}Entity.java'
+                      onChange={e => templateEnvChange(e.target.value, 'suffix', t.name)}
+                      value={t.suffix}
+                    />
+                  </div>
                 </div>;
             })}
         </div>

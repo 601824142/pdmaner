@@ -45,6 +45,8 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
                               return <div key={r}>{r}</div>;
                           })}
                       </div>,
+                      bodyStyle: {width: '80%'},
+                      contentStyle: {width: '100%'},
                   });
               }).catch((err) => {
                   btn.updateStatus('normal');

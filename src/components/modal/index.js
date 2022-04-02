@@ -131,13 +131,15 @@ Modal.error = ({title, message, bodyStyle = {}, contentStyle = {}}) => {
   });
 };
 
-Modal.success = ({title, message}) => {
+Modal.success = ({title, message, bodyStyle, contentStyle}) => {
   return openModal(<React.Fragment>
     <span style={{overflow: 'auto', padding: '5px 0px 15px 0px'}}>{message}</span>
   </React.Fragment>, {
     title: <span><Icon type='fa-check'/>{title}</span>,
     small: true,
     status: 'success',
+    bodyStyle,
+    contentStyle,
   });
 };
 
