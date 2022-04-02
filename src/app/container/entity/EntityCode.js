@@ -5,7 +5,7 @@ import {SimpleTab, CodeHighlight, FormatMessage, Button, openModal, Modal} from 
 //import { separator } from '../../../../profile';
 import { getCodeByDataTable } from '../../../lib/json2code_util';
 import {getPrefix} from '../../../lib/prefixUtil';
-import PathEvnEdit from './PathEvnEdit';
+import PathEnvEdit from './PathEnvEdit';
 import { saveAllTemplate } from '../../../lib/middle';
 
 const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplate,
@@ -19,9 +19,9 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
     }), {})) : Object.keys(_.omit(codeTemplate, ['type', 'applyFor', 'isDefault', 'id', 'defKey']));
   const CustomerTitle = () => {
       const editRef = useRef(null);
-      const genFile = (btn, evn , path, modal) => {
+      const genFile = (btn, env , path, modal) => {
           btn.updateStatus('disable');
-          const dataEvn = evn || data.evn || {};
+          const dataEnv = env || data.env || {};
           const filePath = path || getConfig()?.path?.[data.id] || '';
           if (!filePath) {
               Modal.error({
@@ -32,8 +32,8 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
           } else {
               saveAllTemplate(getCodeByDataTable(dataSource, group, {
                   ...data,
-                  evn: {
-                      ...dataEvn,
+                  env: {
+                      ...dataEnv,
                   },
               }, codeTemplate.id), filePath).then((res) => {
                   btn.updateStatus('normal');
@@ -58,7 +58,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
       const openConfig = () => {
           let modal;
           const onOK = (btn, type) => {
-              const evn = editRef.current.getData();
+              const env = editRef.current.getData();
               const path = editRef.current.getPath();
               const config = getConfig();
               saveUserData({
@@ -68,22 +68,22 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
                       [data.id]: path,
                   },
               });
-              dataChange(evn, 'evn');
+              dataChange(env, 'env');
               if (type){
-                  genFile(btn, evn, path, modal);
+                  genFile(btn, env, path, modal);
               }
               modal.close();
           };
           const onCancel = () => {
               modal.close();
           };
-          modal = openModal(<PathEvnEdit
+          modal = openModal(<PathEnvEdit
             template={template}
             ref={editRef}
             data={data}
             config={getConfig()}
           />, {
-              title: FormatMessage.string({id: 'tableBase.pathAndEvnEdit'}),
+              title: FormatMessage.string({id: 'tableBase.pathAndEnvEdit'}),
               buttons: [
                 <Button type='primary' key='ok' onClick={(e, btn) => onOK(btn)}>{FormatMessage.string({id: 'button.ok'})}</Button>,
                 <Button type='primary' key='okAndSave' onClick={(e, btn) => onOK(btn, 'all')}>{FormatMessage.string({id: 'tableBase.saveAndGenerate'})}</Button>,
@@ -92,7 +92,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
       };
       return <div>
         <div>
-          <Button key='onOK' onClick={openConfig}><FormatMessage id='tableBase.pathAndEvn'/></Button>
+          <Button key='onOK' onClick={openConfig}><FormatMessage id='tableBase.pathAndEnv'/></Button>
         </div>
         <div style={{marginTop: 5}}>
           <Button

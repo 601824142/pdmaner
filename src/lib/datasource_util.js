@@ -662,7 +662,7 @@ export const getViewColumn = () => {
 export const getEmptyEntity = (fields = [], properties = {}) => {
   return {
     id: Math.uuid(),
-    evn: {},
+    env: {},
     defKey: '',
     defName: '',
     comment: '',

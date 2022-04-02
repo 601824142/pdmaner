@@ -5,45 +5,45 @@ import {getPrefix} from '../../../lib/prefixUtil';
 import {openFileOrDirPath} from '../../../lib/middle';
 
 export default React.memo(forwardRef(({prefix, data, config, template}, ref) => {
-    const evnData = data?.evn || {};
-    const [evn, setEvn] = useState(evnData.default || {});
-    const [templateEvn, setTemplateEvn] = useState(template.map((t) => {
-        const tData = evnData.template || {};
+    const envData = data?.env || {};
+    const [env, setEnv] = useState(envData.default || {});
+    const [templateEnv, setTemplateEnv] = useState(template.map((t) => {
+        const tData = envData.template || {};
         return {
             name: t,
             dir: tData[t]?.dir || '',
             suffix: tData[t]?.suffix || '',
         };
     }));
-    const [customerEvn, setCustomerEvn] = useState(() => {
-        return Object.keys(evnData.custom || {}).map(e => ({
+    const [customerEnv, setCustomerEnv] = useState(() => {
+        return Object.keys(envData.custom || {}).map(e => ({
                 id: Math.uuid(),
                 name: e,
-                value: (evnData.custom || {})[e],
+                value: (envData.custom || {})[e],
             }));
     });
     const [path, setPath] = useState((config.path || {})[data.id]);
-    const evnRef = useRef(null);
-    evnRef.current = evn;
-    const templateEvnRef = useRef(null);
-    templateEvnRef.current = templateEvn;
-    const customerEvnRef = useRef(null);
-    customerEvnRef.current = customerEvn;
+    const envRef = useRef(null);
+    envRef.current = env;
+    const templateEnvRef = useRef(null);
+    templateEnvRef.current = templateEnv;
+    const customerEnvRef = useRef(null);
+    customerEnvRef.current = customerEnv;
     const pathRef = useRef(null);
     pathRef.current = path;
     useImperativeHandle(ref, () => {
         return {
             getData(){
                 return {
-                    default: evnRef.current,
-                    template: templateEvnRef.current
+                    default: envRef.current,
+                    template: templateEnvRef.current
                         .filter(e => e.dir || e.suffix).reduce((a, b) => {
                         return {
                             ...a,
                             [b.name]: {dir: b.dir, suffix: b.suffix},
                         };
                     }, {}),
-                    custom: customerEvnRef.current.filter(e => e.name || e.value).reduce((a, b) => {
+                    custom: customerEnvRef.current.filter(e => e.name || e.value).reduce((a, b) => {
                         return {
                             ...a,
                             [b.name]: b.value,
@@ -69,8 +69,8 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
     const onPtahChange = (e) => {
         setPath(e.target.value);
     };
-    const onCustomerEvnChange = (value, id, name) => {
-        setCustomerEvn(pre => pre.map((p) => {
+    const onCustomerEnvChange = (value, id, name) => {
+        setCustomerEnv(pre => pre.map((p) => {
             if (id === p.id) {
                return {
                    ...p,
@@ -80,26 +80,26 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
             return p;
         }));
     };
-    const onEvnChange = (value, name) => {
-        setEvn((pre) => {
+    const onEnvChange = (value, name) => {
+        setEnv((pre) => {
             return {
                 ...pre,
                 [name]: value,
             };
         });
     };
-    const addEvn = () => {
-        setCustomerEvn(pre => pre.concat({
+    const addEnv = () => {
+        setCustomerEnv(pre => pre.concat({
             id: Math.uuid(),
             name: '',
             key: '',
         }));
     };
-    const deleteEvn = (id) => {
-        setCustomerEvn(pre => pre.filter(p => p.id !== id));
+    const deleteEnv = (id) => {
+        setCustomerEnv(pre => pre.filter(p => p.id !== id));
     };
-    const templateEvnChange = (value, name, id) => {
-        setTemplateEvn(pre => pre.map((p) => {
+    const templateEnvChange = (value, name, id) => {
+        setTemplateEnv(pre => pre.map((p) => {
             if (p.name === id) {
                 return {
                     ...p,
@@ -143,8 +143,8 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
             </span>
             <span className={`${currentPrefix}-form-item-component`}>
               <Input
-                value={evn.nameSpace || ''}
-                onChange={e => onEvnChange(e.target.value, 'nameSpace')}
+                value={env.nameSpace || ''}
+                onChange={e => onEnvChange(e.target.value, 'nameSpace')}
               />
             </span>
           </div>
@@ -157,8 +157,8 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
             </span>
             <span className={`${currentPrefix}-form-item-component`}>
               <Input
-                value={evn.codeRoot || ''}
-                onChange={e => onEvnChange(e.target.value, 'codeRoot')}
+                value={env.codeRoot || ''}
+                onChange={e => onEnvChange(e.target.value, 'codeRoot')}
               />
             </span>
           </div>
@@ -175,11 +175,11 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
             <div>{FormatMessage.string({id: 'tableBase.dir'})}</div>
             <div>{FormatMessage.string({id: 'tableBase.suffix'})}</div>
           </div>
-          {templateEvn.map((t) => {
+          {templateEnv.map((t) => {
                 return <div key={t.name}>
                   <div>{t.name}</div>
-                  <div><Input onChange={e => templateEvnChange(e.target.value, 'dir', t.name)} value={t.dir} placeholder={FormatMessage.string({id: 'tableBase.dirPlaceHolder'})}/></div>
-                  <div><Input onChange={e => templateEvnChange(e.target.value, 'suffix', t.name)} value={t.suffix}/></div>
+                  <div><Input onChange={e => templateEnvChange(e.target.value, 'dir', t.name)} value={t.dir} placeholder={FormatMessage.string({id: 'tableBase.dirPlaceHolder'})}/></div>
+                  <div><Input onChange={e => templateEnvChange(e.target.value, 'suffix', t.name)} value={t.suffix}/></div>
                 </div>;
             })}
         </div>
@@ -187,26 +187,26 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
       <div>
         <div className={`${currentPrefix}-datatype-title`}>
           <span>{}</span>
-          <span>{FormatMessage.string({id: 'tableBase.customEvn'})}</span>
+          <span>{FormatMessage.string({id: 'tableBase.customEnv'})}</span>
         </div>
-        <div className={`${currentPrefix}-entity-evn-container`}>
+        <div className={`${currentPrefix}-entity-env-container`}>
           {
-              customerEvn.map((e) => {
-                    return <div className={`${currentPrefix}-entity-evn`} key={e.id}>
+              customerEnv.map((e) => {
+                    return <div className={`${currentPrefix}-entity-env`} key={e.id}>
                       <Input
-                        onChange={ev => onCustomerEvnChange(ev.target.value, e.id, 'name')}
+                        onChange={ev => onCustomerEnvChange(ev.target.value, e.id, 'name')}
                         value={e.name}
                         />
                       <span style={{margin: '0 10px'}}>=</span>
                       <Input
-                        onChange={ev => onCustomerEvnChange(ev.target.value, e.id, 'value')}
+                        onChange={ev => onCustomerEnvChange(ev.target.value, e.id, 'value')}
                         value={e.value}
                         />
-                      <Icon onClick={() => deleteEvn(e.id)} style={{marginLeft: 10}} type='fa-minus'/>
+                      <Icon onClick={() => deleteEnv(e.id)} style={{marginLeft: 10}} type='fa-minus'/>
                     </div>;
                 })
             }
-          <div onClick={addEvn}>
+          <div onClick={addEnv}>
             <Icon type='fa-plus' style={{marginRight: 10}}/>
             <FormatMessage id='tableBase.add'/>
           </div>

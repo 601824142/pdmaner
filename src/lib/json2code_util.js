@@ -194,10 +194,10 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
     return Object.keys(_.omit(tData, ['type', 'applyFor']))
         .map(t => {
           return {
-            codeRoot: tempDataTable.evn?.default?.codeRoot || '',
+            codeRoot: tempDataTable.env?.default?.codeRoot || '',
             name: t,
-            suffix: tempDataTable.evn?.template[t]?.suffix || '',
-            dir: tempDataTable.evn?.template[t]?.dir || '',
+            suffix: tempDataTable.env?.template[t]?.suffix || '',
+            dir: tempDataTable.env?.template[t]?.dir || '',
             code: getTemplateString(tData[t] || '', templateData),
           }
         });
@@ -224,7 +224,7 @@ export const getDemoTemplateData = (templateShow) => {
       "defKey": "SIMS_STUDENT",
       "defName": "学生",
       "comment": "",
-      "evn": {
+      "env": {
         "default": {"nameSpace":"cn.chiner.domain","codeRoot":"HistProc"},
         "template":{"content":{"dir":"domain/entity","suffix":".java"}},
         "custom":{"xpath":"xxx"}},
