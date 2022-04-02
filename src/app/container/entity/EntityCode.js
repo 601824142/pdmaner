@@ -42,7 +42,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
                       title: FormatMessage.string({id: 'tableBase.genFileSuccess'}),
                       message: <div>
                         {res.map((r) => {
-                              return <div>{r}</div>;
+                              return <div key={r}>{r}</div>;
                           })}
                       </div>,
                   });
