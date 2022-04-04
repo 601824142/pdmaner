@@ -6,9 +6,10 @@ import Icon from '../icon';
 import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 // 结构简单的TAB组件
-export default React.memo(({ prefix, options = [], customerTitle,
+export default React.memo(({ prefix, options = [], customerTitle, customerFooter,
                              onDelete, disableEdit, onAdd, draggable, onPositionChange,
-                             tabActiveChange, type = 'top', className = '', edit, onTabDoubleClick }) => {
+                             offsetHeight, tabActiveChange, type = 'top', className = '', edit,
+                             onTabDoubleClick }) => {
   const [stateOptions, setStateOptions] = useState(options);
   const tabStack = useRef([]);
   const [over, setOver] = useState(null);
@@ -65,7 +66,7 @@ export default React.memo(({ prefix, options = [], customerTitle,
     setOver(null);
   };
   return <div className={`${currentPrefix}-simple-tab ${currentPrefix}-simple-tab-${type} ${className}`}>
-    <div className={`${currentPrefix}-simple-tab-titles ${currentPrefix}-simple-tab-titles-${type}`}>
+    <div style={{height: offsetHeight ? `calc(100% - ${offsetHeight}px` : 'auto'}} className={`${currentPrefix}-simple-tab-titles ${currentPrefix}-simple-tab-titles-${type}`}>
       {customerTitle}
       {
         stateOptions.map(o => (
@@ -89,6 +90,7 @@ export default React.memo(({ prefix, options = [], customerTitle,
           ),
         )
       }
+      {customerFooter}
       {
         edit && <span onClick={add} style={{minWidth: '60px', textAlign: 'center'}} className={`${currentPrefix}-simple-tab-titles-title-default`}>
           <Icon type='fa-plus'/>

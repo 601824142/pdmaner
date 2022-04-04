@@ -211,6 +211,10 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
               key: 'domains',
               name: FormatMessage.string({id: 'toolbar.importDomains'}),
             },
+            {
+                key: 'appCodes',
+                name: FormatMessage.string({id: 'toolbar.importAppCodes'}),
+            },
             { key: 'importConfig', name: FormatMessage.string({id: 'toolbar.importConfig'}) },
         ]}
       />
@@ -231,6 +235,10 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
               style: { borderTop: '1px solid #DFE3EB' },
               key: 'exportDomains',
               name: FormatMessage.string({id: 'toolbar.exportDomains'}),
+            },
+            {
+                key: 'exportAppCodes',
+                name: FormatMessage.string({id: 'toolbar.exportAppCodes'}),
             },
             { key: 'exportConfig', name: FormatMessage.string({id: 'toolbar.exportConfig'}) },
           ]}

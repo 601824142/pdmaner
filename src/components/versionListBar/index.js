@@ -97,7 +97,7 @@ const VersionListBar = React.memo((props) => {
   const renderCreatedTool = () => {
     const { result, dataSource } = getLatelyDataSource();
     const changes = result.status ? checkUpdate(dataSource, sortData[0]?.data) : [];
-    console.log(changes, getMessageByChanges(changes));
+    //console.log(changes, getMessageByChanges(changes));
     return (
       <>
         <VersionListCard type="new" onNew={() => _onCreated()}/>

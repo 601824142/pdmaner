@@ -145,7 +145,7 @@ export default React.memo(forwardRef(({style, dataSource, empty,
           onDelete={onDelete}
           className={`${currentPrefix}-database-container-tab`}
           options={Object.keys(current)
-              .filter(c => !['applyFor', 'type'].includes(c)).map((c) => {
+              .filter(c => !['applyFor', 'type', 'isDefault'].includes(c)).map((c) => {
                   return {
                       key: c,
                       title: c,

@@ -23,7 +23,7 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 
 export default React.memo(({mode = 'sql', theme = 'monokai', value, onChange,
-                             height, width, focus, firstLine, readOnly, onLoad, blur}) => {
+                             height, width, focus, firstLine, readOnly, onLoad, blur, style}) => {
   const name = useMemo(() => Math.uuid(), []);
   const aceRef = useRef(null);
   const _onLoad = (ace) => {
@@ -46,7 +46,7 @@ export default React.memo(({mode = 'sql', theme = 'monokai', value, onChange,
   const onBlur = (e) => {
     blur && blur(e, aceRef.current.editor);
   };
-  return <div onKeyDown={_onKeyDown}>
+  return <div style={style} onKeyDown={_onKeyDown}>
     <AceEditor
       ref={aceRef}
       fontSize={14}

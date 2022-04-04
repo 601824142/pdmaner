@@ -1,16 +1,17 @@
 import React, {useRef} from 'react';
 import * as _ from 'lodash/object';
 
-import {SimpleTab, CodeHighlight, FormatMessage, Button, openModal, Modal} from 'components';
+import {SimpleTab, CodeHighlight, FormatMessage, Button, openModal, Modal, CodeEditor} from 'components';
 //import { separator } from '../../../../profile';
 import { getCodeByDataTable } from '../../../lib/json2code_util';
 import {getPrefix} from '../../../lib/prefixUtil';
 import PathEnvEdit from './PathEnvEdit';
 import { saveAllTemplate } from '../../../lib/middle';
-import {defaultTemplate} from '../../../lib/datasource_util';
+import {defaultTemplate, transformTable} from '../../../lib/datasource_util';
 
 const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplate,
-                                    getConfig, saveUserData, dataChange}) => {
+                                    getConfig, saveUserData, dataChange, prefix}) => {
+  const currentPrefix = getPrefix(prefix);
   const template = codeTemplate.type === 'dbDDL' ? defaultTemplate.dbDDLTemplate.filter((t) => {
       if (codeType === 'view') {
         return t !== 'createTable';
@@ -109,8 +110,32 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
         </div>
       </div>;
   };
+  const CustomerFooter = () => {
+    const showModelData = () => {
+        let modal;
+        const onCancel = () => {
+            modal.close();
+        };
+        modal = openModal(<CodeEditor
+          style={{marginBottom: 10}}
+          readOnly
+          mode='json'
+          width='100%'
+          height='70vh'
+          value={JSON.stringify(transformTable(data, dataSource, codeTemplate.id, 'id', codeTemplate.type), null, 2)}
+        />, {
+            bodyStyle: {width: '60%'},
+            title: FormatMessage.string({id: 'tableBase.model'}),
+            buttons: [
+              <Button key='cancel' onClick={onCancel}>{FormatMessage.string({id: 'button.close'})}</Button>],
+        });
+    };
+    return  <div className={`${currentPrefix}-entity-template-footer`}><Button key='onOK' onClick={showModelData}><FormatMessage id='tableBase.model'/></Button></div>;
+  };
   return <SimpleTab
+    offsetHeight={30}
     customerTitle={codeTemplate.type === 'appCode' ? <CustomerTitle/> : ''}
+    customerFooter={<CustomerFooter/>}
     type='left'
     options={template
       .map((d) => {

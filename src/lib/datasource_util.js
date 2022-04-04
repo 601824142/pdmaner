@@ -1004,6 +1004,7 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
     if (f.domain) {
       const domain = domains.filter(dom => dom[type] === f.domain)[0];
       const mapping = mappings.filter(m => m.id === domain.applyFor)[0];
+      temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
       temp.type = mapping?.[code] || '';
       temp.dbType = mapping?.[db] || f.type;
     } else {
@@ -1033,6 +1034,30 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
   }
   return temp;
 };
+
+export const transformTable = (data, dataSource, code, type = 'id', codeType = 'dbDDL') => {
+  const fields = data.fields || [];
+  return {
+    ...data,
+    fields: fields.map(field => {
+      return {
+        ...field,
+        ...transform(field, dataSource, code, 'id', type),
+      }
+    }),
+    indexes: (data.indexes || []).map(i => {
+      return {
+        ...i,
+        fields: (i.fields || []).map(f => {
+          return {
+            ...f,
+            fieldDefKey: fields.filter(field => field.id === f.fieldDefKey)[0]?.defKey,
+          };
+        }),
+      }
+    }),
+  }
+}
 
 export  const calcNodeData = (preData, nodeData, dataSource, groups) => {
   // 节点源数据

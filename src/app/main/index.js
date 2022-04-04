@@ -756,25 +756,30 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       `${dataSourceRef.current.name}-${FormatMessage.string({id: 'toolbar.setting'})}-${moment().format('YYYYMDHHmmss')}.json`);
 
   };
-  const exportDomains = () => {
+  const exportDomains = (type = 'domains') => {
     Download(
       [JSON.stringify({
         codeTemplates: _.get(dataSourceRef.current, 'profile.codeTemplates', [])
-          .filter(t => !(t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL')),
+          .filter((t) => {
+            if (type === 'appCode') {
+              return t.type === 'appCode';
+            }
+            return !(t.applyFor === 'dictSQLTemplate' && t.type === 'dbDDL');
+          }),
         dataTypeSupports: _.get(dataSourceRef.current, 'profile.dataTypeSupports', []),
         dataTypeMapping:  _.get(dataSourceRef.current, 'dataTypeMapping', []),
         domains: _.get(dataSourceRef.current, 'domains', []),
       }, null, 2)],
       'application/json',
-      `${dataSourceRef.current.name}-${FormatMessage.string({id: 'project.domains'})}-${moment().format('YYYYMDHHmmss')}.json`);
+      `${dataSourceRef.current.name}-${FormatMessage.string({id: `project.${type}`})}-${moment().format('YYYYMDHHmmss')}.json`);
   };
-  const importDomains = () => {
+  const importDomains = (type) => {
     Upload('application/json', (d) => {
       const data = JSON.parse(d);
       if (!data.domains) {
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),
-          message: FormatMessage.string({id: 'invalidDomainsFile'}),
+          message: type ? FormatMessage.string({id: 'invalidAppCodesFile'}) : FormatMessage.string({id: 'invalidDomainsFile'}),
         });
       } else {
         const dataTypeSupports = calcData(
@@ -1304,6 +1309,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       case 'db': importFromDb();break;
       case 'domains': importDomains();break;
       case 'exportDomains': exportDomains();break;
+      case 'appCodes': importDomains('appCode');break;
+      case 'exportAppCodes': exportDomains('appCode');break;
       case 'importConfig': importConfig();break;
       case 'exportConfig': exportConfig();break;
       case 'undo': undo(); break;
