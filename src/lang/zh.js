@@ -400,7 +400,7 @@ export default {
         suffix: '映射',
         saveAndGenerate: '确定并生成',
         table: '数据表',
-        example: '参考举例',
+        example: '例如：Java代码的Controller&Service&Mapper生成配置如下：',
     },
     tableHeaders: {
         defName: '显示名称',

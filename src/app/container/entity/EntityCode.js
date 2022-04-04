@@ -7,16 +7,16 @@ import { getCodeByDataTable } from '../../../lib/json2code_util';
 import {getPrefix} from '../../../lib/prefixUtil';
 import PathEnvEdit from './PathEnvEdit';
 import { saveAllTemplate } from '../../../lib/middle';
+import {defaultTemplate} from '../../../lib/datasource_util';
 
 const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplate,
                                     getConfig, saveUserData, dataChange}) => {
-  const template = codeTemplate.type === 'dbDDL' ? Object.keys(_.pick(codeTemplate,
-    ['createTable', 'createIndex', 'createView'].filter((t) => {
+  const template = codeTemplate.type === 'dbDDL' ? defaultTemplate.dbDDLTemplate.filter((t) => {
       if (codeType === 'view') {
         return t !== 'createTable';
       }
       return t !== 'createView';
-    }), {})) : Object.keys(_.omit(codeTemplate, ['type', 'applyFor', 'isDefault', 'id', 'defKey']));
+    }) : Object.keys(_.omit(codeTemplate, ['type', 'applyFor', 'isDefault', 'id', 'defKey']));
   const CustomerTitle = () => {
       const editRef = useRef(null);
       const genFile = (btn, env , path, modal) => {

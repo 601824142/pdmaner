@@ -214,33 +214,33 @@ export default React.memo(forwardRef(({prefix, data, config, template, dataSourc
                   <table>
                     <thead>
                       <tr>
-                        <td>{FormatMessage.string({id: 'tableBase.template'})}</td>
-                        <td>{FormatMessage.string({id: 'tableBase.suffix'})}</td>
+                        <td>{}</td>
+                        <td>{}</td>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>Controller</td>
+                        <td>Controller:</td>
                         <td>{'controller/{{=it.codeRoot}}Controller.java'}</td>
                       </tr>
                       <tr>
-                        <td>Service</td>
+                        <td>Service:</td>
                         <td>{'service/{{=it.codeRoot}}Service.java'}</td>
                       </tr>
                       <tr>
-                        <td>ServiceImpl</td>
+                        <td>ServiceImpl:</td>
                         <td>{'service/impl/{{=it. codeRoot}}ServiceImpl.java'}</td>
                       </tr>
                       <tr>
-                        <td>Mapper.xml</td>
+                        <td>Mapper.xml:</td>
                         <td>{'mapper/{{=it.codeRoot}}Mapper.xml'}</td>
                       </tr>
                       <tr>
-                        <td>Mapper</td>
+                        <td>Mapper:</td>
                         <td>{'mapper/{{=it.codeRoot}}Mapper.java'}</td>
                       </tr>
                       <tr>
-                        <td>Entity</td>
+                        <td>Entity:</td>
                         <td>{'entity/{{=it.codeRoot}}Entity.java'}</td>
                       </tr>
                     </tbody>

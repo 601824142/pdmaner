@@ -399,7 +399,7 @@ export default {
         dirPlaceHolder: 'directory relative to the save location',
         suffix: 'mapping',
         saveAndGenerate: 'ok and generate',
-        example: 'Reference examples',
+        example: 'For example, the controller & Service & mapper generation configuration of Java code is as follows:',
     },
     tableHeaders: {
         defName: 'fieldName',
