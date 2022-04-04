@@ -382,6 +382,7 @@ export default {
         pathAndEnvEdit: '设置路径及变量',
         baseConfig: '基础设置',
         savePath: '保存位置',
+        savePathFromOther: '从其他表引入',
         savePathPlaceHolder: '文件所在位置',
         emptySavePath: '未配置文件保存位置，请先配置！',
         genFileSuccess: '文件生成成功！',
@@ -398,6 +399,8 @@ export default {
         dirPlaceHolder: '相对于保存位置目录',
         suffix: '映射',
         saveAndGenerate: '确定并生成',
+        table: '数据表',
+        example: '参考举例',
     },
     tableHeaders: {
         defName: '显示名称',

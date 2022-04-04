@@ -382,6 +382,7 @@ export default {
         pathAndEnvEdit: 'Set path and variable',
         baseConfig: 'basic settings',
         savePath: 'save location',
+        savePathFromOther: 'Import from other tables',
         savePathPlaceHolder: 'File location',
         emptySavePath: 'There is no configuration file save location, please configure it first!',
         genFileSuccess: 'gen file success!',
@@ -398,6 +399,7 @@ export default {
         dirPlaceHolder: 'directory relative to the save location',
         suffix: 'mapping',
         saveAndGenerate: 'ok and generate',
+        example: 'Reference examples',
     },
     tableHeaders: {
         defName: 'fieldName',

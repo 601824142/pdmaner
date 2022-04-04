@@ -1,12 +1,14 @@
 import React, { forwardRef, useImperativeHandle, useState, useRef } from 'react';
-import {Input, FormatMessage, Icon, Modal, Tooltip} from 'components';
+import {Input, FormatMessage, Icon, Modal, Tooltip, openModal, Button} from 'components';
 
 import {getPrefix} from '../../../lib/prefixUtil';
 import {openFileOrDirPath} from '../../../lib/middle';
 import { camel } from '../../../lib/json2code_util';
+import PickDir from './PickDir';
 
-export default React.memo(forwardRef(({prefix, data, config, template}, ref) => {
+export default React.memo(forwardRef(({prefix, data, config, template, dataSource}, ref) => {
     const envData = data?.env || {};
+    const currentPrefix = getPrefix(prefix);
     const [env, setEnv] = useState(() => {
         const d = envData.base || {};
         return {
@@ -63,7 +65,7 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
         };
     }, []);
     const selectDir = () => {
-        openFileOrDirPath([], ['openDirectory']).then((res) => {
+        openFileOrDirPath([], ['openDirectory'], {defaultPath: pathRef.current}).then((res) => {
             setPath(res);
         }).catch((err) => {
             Modal.error({
@@ -115,7 +117,31 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
             return p;
         }));
     };
-    const currentPrefix = getPrefix(prefix);
+    const selectOther = () => {
+        let modal;
+        let select;
+        const onCancel = () => {
+            modal.close();
+        };
+        const onOK = () => {
+            setPath(select || '');
+            modal.close();
+        };
+        const onSelected = (p) => {
+            select = p;
+        };
+        modal = openModal(<PickDir
+          onSelected={onSelected}
+          config={config}
+          dataSource={dataSource}
+        />, {
+            bodyStyle: {width: '60%'},
+            title: FormatMessage.string({id: 'tableBase.savePathFromOther'}),
+            buttons: [
+              <Button type='primary' key='ok' onClick={onOK}>{FormatMessage.string({id: 'button.ok'})}</Button>,
+              <Button key='cancel' onClick={onCancel}>{FormatMessage.string({id: 'button.cancel'})}</Button>],
+        });
+    };
     return <div className={`${currentPrefix}-form`}>
       <div>
         <div className={`${currentPrefix}-datatype-title`}>
@@ -129,13 +155,14 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
               title={FormatMessage.string({id: 'tableBase.savePath'})}>
               {FormatMessage.string({id: 'tableBase.savePath'})}
             </span>
-            <span className={`${currentPrefix}-form-item-component`}>
+            <span className={`${currentPrefix}-form-item-component ${currentPrefix}-entity-template-component`}>
               <Input
                 placeholder={FormatMessage.string({id: 'tableBase.savePathPlaceHolder'})}
                 onChange={onPtahChange}
                 value={path}
                 suffix={<span className={`${currentPrefix}-setting-java-home-opt`}>
                   <Icon type='fa-ellipsis-h' onClick={selectDir} title={FormatMessage.string({id: 'tableBase.select'})}/>
+                  <span onClick={selectOther}><FormatMessage id='tableBase.savePathFromOther'/></span>
                 </span>}
               />
             </span>
@@ -182,13 +209,42 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
             <Tooltip
               placement='top'
               title={
-                <div style={{padding: 10}}>
-                  <div style={{marginBottom: 5}}>{'controller/{{=it.codeRoot}}Controller.java'}</div>
-                  <div style={{marginBottom: 5}}>{'service/{{=it.codeRoot}}Service.java'}</div>
-                  <div style={{marginBottom: 5}}>{'service/impl/{{=it. codeRoot}}ServiceImpl.java'}</div>
-                  <div style={{marginBottom: 5}}>{'mapper/{{=it.codeRoot}}Mapper.xml'}</div>
-                  <div style={{marginBottom: 5}}>{'mapper/{{=it.codeRoot}}Mapper.java'}</div>
-                  <div>{'entity/{{=it.codeRoot}}Entity.java'}</div>
+                <div style={{padding: 10}} className={`${currentPrefix}-entity-template-pickdir`}>
+                  <div> {FormatMessage.string({id: 'tableBase.example'})}</div>
+                  <table>
+                    <thead>
+                      <tr>
+                        <td>{FormatMessage.string({id: 'tableBase.template'})}</td>
+                        <td>{FormatMessage.string({id: 'tableBase.suffix'})}</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Controller</td>
+                        <td>{'controller/{{=it.codeRoot}}Controller.java'}</td>
+                      </tr>
+                      <tr>
+                        <td>Service</td>
+                        <td>{'service/{{=it.codeRoot}}Service.java'}</td>
+                      </tr>
+                      <tr>
+                        <td>ServiceImpl</td>
+                        <td>{'service/impl/{{=it. codeRoot}}ServiceImpl.java'}</td>
+                      </tr>
+                      <tr>
+                        <td>Mapper.xml</td>
+                        <td>{'mapper/{{=it.codeRoot}}Mapper.xml'}</td>
+                      </tr>
+                      <tr>
+                        <td>Mapper</td>
+                        <td>{'mapper/{{=it.codeRoot}}Mapper.java'}</td>
+                      </tr>
+                      <tr>
+                        <td>Entity</td>
+                        <td>{'entity/{{=it.codeRoot}}Entity.java'}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
             }
               force>
@@ -201,7 +257,7 @@ export default React.memo(forwardRef(({prefix, data, config, template}, ref) => 
         <div className={`${currentPrefix}-entity-template-container`}>
           <div>
             <div>{FormatMessage.string({id: 'tableBase.template'})}</div>
-            <div>{FormatMessage.string({id: 'tableBase.suffix'})}</div>
+            <div style={{textAlign: 'left'}}>{FormatMessage.string({id: 'tableBase.suffix'})}</div>
           </div>
           {templateEnv.map((t) => {
                 return <div key={t.name}>

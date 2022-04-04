@@ -162,18 +162,28 @@ export const getMessageByChanges = (changes, initParent, id) => {
   return changes.reduce((c, n) => {
     const parent = n.parent?.[0] || initParent;
     if (n.opt === 'update') {
+      // return c.concat((n.data?.changes || []).reduce((a, b) => {
+      //   if (b.changes) {
+      //     return a.concat(getMessageByChanges(b.changes, {
+      //       defName: `${parent?.defName || parent?.defKey}.${n.data?.oldData?.defName || n.data?.oldData?.defKey}`
+      //     }, 'fieldDefKey'));
+      //   }
+      //   // 1. 修改表[表代码/表名称]，代码：[OLD -> NEW]
+      //   return c.concat(`${FormatMessage.string({id: `versionData.${n.opt}Data`})}${FormatMessage.string({id: `versionData.${n.type === 'index.field' ? 'indexField' : n.type}`})}[${parent ? `${parent?.defName || parent?.defKey}.` : ''}${n.data?.oldData?.[id || 'defName'] || n.data?.oldData?.defKey}], ${FormatMessage.string({id: `${getLangString(n.type, b.type)}`})}: [${b.pre} -> ${b.new}]`);
+      //   //return a.concat(`${FormatMessage.string({id: `versionData.${n.opt}Data`})}${parent ? `${FormatMessage.string({id: `versionData.${parent.type}`})}[${parent?.defName || parent?.defKey}]` : ''}${FormatMessage.string({id: `versionData.${n.type === 'index.field' ? 'indexField' : n.type}`})}[${n.data?.oldData?.[id || 'defName'] || n.data?.oldData?.defKey}][${FormatMessage.string({id: `${getLangString(n.type, b.type)}`})}][${b.pre}===>${b.new}]`);
+      // }, []));
       return c.concat((n.data?.changes || []).reduce((a, b) => {
-        if (b.changes) {
-          return a.concat(getMessageByChanges(b.changes, {
-            defName: `${parent?.defName || parent?.defKey}${FormatMessage.string({id: 'versionData.index'})}${n.data?.oldData?.defName || n.data?.oldData?.defKey}`
-          }, 'fieldDefKey'));
-        }
-        return a.concat(`${FormatMessage.string({id: `versionData.${n.opt}Data`})}${parent ? `${FormatMessage.string({id: `versionData.${parent.type}`})}[${parent?.defName || parent?.defKey}]` : ''}${FormatMessage.string({id: `versionData.${n.type === 'index.field' ? 'indexField' : n.type}`})}[${n.data?.oldData?.[id || 'defName'] || n.data?.oldData?.defKey}][${FormatMessage.string({id: `${getLangString(n.type, b.type)}`})}][${b.pre}===>${b.new}]`);
+        return a.concat(b.changes ? [] : `${FormatMessage.string({id: `versionData.${n.opt}Data`})}${FormatMessage.string({id: `versionData.${n.type === 'index.field' ? 'indexField' : n.type}`})}[${parent ? `${parent?.defName || parent?.defKey}.` : ''}${n.data?.oldData?.[id || 'defName'] || n.data?.oldData?.defKey}], ${FormatMessage.string({id: `${getLangString(n.type, b.type)}`})}: [${b.pre} -> ${b.new}]`)
+            .concat(getMessageByChanges(b.changes || [], {
+              defName: parent ? `${parent?.defName || parent?.defKey}.${n.data?.oldData?.defName || n.data?.oldData?.defKey}` : `${n.data?.oldData?.defName || n.data?.oldData?.defKey}`
+            }, 'fieldDefKey'));
       }, []));
+     // return c.concat(`${FormatMessage.string({id: `versionData.${n.opt}Data`})}${FormatMessage.string({id: `versionData.${n.type === 'index.field' ? 'indexField' : n.type}`})}[${parent ? `${parent?.defName || parent?.defKey}.` : ''}${n.data?.oldData?.[id || 'defName'] || n.data?.oldData?.defKey}], ${FormatMessage.string({id: `${getLangString(n.type, b.type)}`})}: [${b.pre} -> ${b.new}]`);
     } else if (n.opt === 'delete') {
-      return c.concat(`${FormatMessage.string({id: `versionData.${n.opt}Data`})}${parent ? `${FormatMessage.string({id: `versionData.${parent.type}`})}[${parent?.defName || parent?.defKey}]` : ''}${FormatMessage.string({id: `versionData.${n.type === 'index.field' ? 'indexField' : n.type}`})}[${n.data?.[id || 'defName'] || n.data?.defKey}]`);
+      return c.concat(`${FormatMessage.string({id: `versionData.${n.opt}Data`})}${FormatMessage.string({id: `versionData.${n.type === 'index.field' ? 'indexField' : n.type}`})}:${parent ? `${parent?.defName || parent?.defKey}.` : ''}${n.data?.[id || 'defName'] || n.data?.defKey}`);
     } else {
-      return c.concat(`${FormatMessage.string({id: `versionData.${n.opt}Data`})}${parent ? `${FormatMessage.string({id: `versionData.${parent.type}`})}[${parent?.defName || parent?.defKey}]` : ''}${FormatMessage.string({id: `versionData.${n.type === 'index.field' ? 'indexField' : n.type}`})}[${n.data?.current?.[id || 'defName'] || n.data?.current?.defKey}]`);
+      // 新增字段:表名称.字段名 数据类型
+      return c.concat(`${FormatMessage.string({id: `versionData.${n.opt}Data`})}${FormatMessage.string({id: `versionData.${n.type === 'index.field' ? 'indexField' : n.type}`})}:${parent ? `${parent?.defName || parent?.defKey}.` : ''}${n.data?.current?.[id || 'defName'] || n.data?.current?.defKey}${(n.data?.current?.type && parent) ? ` ${n.data?.current?.type}` : ''}`);
     }
   },  []);
 };

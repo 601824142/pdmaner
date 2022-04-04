@@ -44,7 +44,7 @@ const VersionListBar = React.memo((props) => {
       const defaultMessage = (sortData.length === 0 || !result.status) ? [] :
           getMessageByChanges(checkUpdate(dataSource, sortData[0].data))
               .map((c, i) => `${i + 1}.${c}`);
-      const tempVersion = {...version, desc: version?.desc || defaultMessage.join(';\n')};
+      const tempVersion = {...version, desc: version?.desc || defaultMessage.join('\n')};
       const onOk = () => {
         if (!tempVersion.name ||
             (version && version.name !== tempVersion.name &&
@@ -97,7 +97,7 @@ const VersionListBar = React.memo((props) => {
   const renderCreatedTool = () => {
     const { result, dataSource } = getLatelyDataSource();
     const changes = result.status ? checkUpdate(dataSource, sortData[0]?.data) : [];
-    //console.log(changes);
+    console.log(changes, getMessageByChanges(changes));
     return (
       <>
         <VersionListCard type="new" onNew={() => _onCreated()}/>

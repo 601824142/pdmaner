@@ -81,10 +81,12 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
           };
           modal = openModal(<PathEnvEdit
             template={template}
+            dataSource={dataSource}
             ref={editRef}
             data={data}
             config={getConfig()}
           />, {
+              bodyStyle: {width: '60%'},
               title: FormatMessage.string({id: 'tableBase.pathAndEnvEdit'}),
               buttons: [
                 <Button type='primary' key='ok' onClick={(e, btn) => onOK(btn)}>{FormatMessage.string({id: 'button.ok'})}</Button>,
@@ -108,7 +110,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
       </div>;
   };
   return <SimpleTab
-    customerTitle={<CustomerTitle/>}
+    customerTitle={codeTemplate.type === 'appCode' ? <CustomerTitle/> : ''}
     type='left'
     options={template
       .map((d) => {

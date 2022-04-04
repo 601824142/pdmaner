@@ -244,9 +244,10 @@ export const getJavaHome = () => {
   return process.env.JAVA_HOME || process.env.JER_HOME || '';
 };
 
-export const openFileOrDirPath = (filters, properties) => {
+export const openFileOrDirPath = (filters, properties, rest) => {
   return new Promise((res, rej) => {
     dialog.showOpenDialog({
+      ...rest,
       filters: filters || [],
       properties: properties || ['openFile'], // 默认是打开文件
     }).then(({filePaths}) => {

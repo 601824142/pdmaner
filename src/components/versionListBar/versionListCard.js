@@ -10,7 +10,8 @@ const VersionListCard = React.memo((props) => {
   const {version, selected, onDelete, onEdit, type, index,
     prefix, onNew, onSelected, result = [] } = props;
   const currentPrefix = getPrefix(prefix);
-  const _onSelected = () => onSelected && onSelected(version, index);
+  const _onSelected = () => onSelected &&
+      onSelected(version || {result: result}, index === undefined ? -1 : index);
   const _onDelete = e => onDelete && onDelete(e, version);
   const _onEdit = e => onEdit && onEdit(e, version);
   const renderVersionHeader = () => {
@@ -27,7 +28,7 @@ const VersionListCard = React.memo((props) => {
     }
     if (type === 'warn') {
       return (
-        <div onClick={() => onSelected({result: result}, -1)} className={`${currentPrefix}-version-list-card-h-warn`} style={{cursor: 'pointer'}}>
+        <div className={`${currentPrefix}-version-list-card-h-warn`} style={{cursor: 'pointer'}}>
           <span />
           <span><FormatMessage id='versionData.hasNew'/></span>
           <span />
@@ -35,7 +36,7 @@ const VersionListCard = React.memo((props) => {
       );
     }
     return (
-      <div className={`${currentPrefix}-version-list-card-h${selected ? '-primary' : ''}`} onClick={_onSelected}>
+      <div className={`${currentPrefix}-version-list-card-h${selected ? '-primary' : ''}`}>
         <span>{version.name}</span>
         <span>{moment(version.date).format('YYYY-M-D HH:mm')}</span>
         <div className={`${currentPrefix}-version-list-card-h-r`}>
@@ -67,7 +68,7 @@ const VersionListCard = React.memo((props) => {
       );
   };
   return (
-    <div className={`${currentPrefix}-version-list-card`}>
+    <div className={`${currentPrefix}-version-list-card`} onClick={_onSelected}>
       {renderVersionHeader()}
       {renderVersionDetailPanel()}
     </div>

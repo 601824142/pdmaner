@@ -265,75 +265,6 @@ export const getDemoTemplateData = (templateShow) => {
         "collection items terminated by": "'-'"
       },
       "nameTemplate": "{defKey}[{defName}]",
-      "headers": [
-        {
-          "refKey": "hideInGraph",
-          "hideInGraph": true,
-          "freeze": true
-        },
-        {
-          "refKey": "defKey",
-          "hideInGraph": false,
-          "freeze": true
-        },
-        {
-          "refKey": "defName",
-          "hideInGraph": false,
-          "freeze": true
-        },
-        {
-          "refKey": "primaryKey",
-          "hideInGraph": false
-        },
-        {
-          "refKey": "notNull",
-          "hideInGraph": true
-        },
-        {
-          "refKey": "autoIncrement",
-          "hideInGraph": true
-        },
-        {
-          "refKey": "domain",
-          "hideInGraph": true
-        },
-        {
-          "refKey": "type",
-          "hideInGraph": false
-        },
-        {
-          "refKey": "len",
-          "hideInGraph": false
-        },
-        {
-          "refKey": "scale",
-          "hideInGraph": true
-        },
-        {
-          "refKey": "comment",
-          "hideInGraph": true
-        },
-        {
-          "refKey": "refDict",
-          "hideInGraph": true,
-          "freeze": false
-        },
-        {
-          "refKey": "defaultValue",
-          "hideInGraph": true,
-          "freeze": false
-        },
-        {
-          "refKey": "isStandard",
-          "hideInGraph": false,
-          "freeze": false
-        },
-        {
-          "refKey": "uiHint",
-          "hideInGraph": true,
-          "freeze": false,
-        }
-      ],
       "fields": [
         {
           "defKey": "COLLEGE_ID",
@@ -1294,9 +1225,13 @@ export const getDemoTemplateData = (templateShow) => {
       break;
     case 'addField':
       data = JSON.stringify({
-        newField: demoTable.entity.fields[1],
-        beforeDefKey: demoTable.entity.fields[0].defKey,
-        afterDefKey: demoTable.entity.fields[2].defKey,
+        entity: demoTable.entity,
+        newField: {
+          ...demoTable.entity.fields[1],
+          beforeDefKey: demoTable.entity.fields[0].defKey,
+          afterDefKey: demoTable.entity.fields[2].defKey,
+          fieldIndex: 1,
+        },
         separator: ';'
       }, null, 2);
       break;
@@ -1466,18 +1401,8 @@ export const getDataByChanges = (changes, preDataSource, dataSource) => {
           });
         } else if (c.opt === 'update') {
           return getTemplateString(codeTemplate.renameTable || getEmptyMessage('renameTable'), {
-            old: c.data.changes.reduce((a, b) => {
-              return {
-                ...a,
-                [b.type]: b.pre,
-              }
-            }, {}),
-            new: c.data.changes.reduce((a, b) => {
-              return {
-                ...a,
-                [b.type]: b.new,
-              }
-            }, {}),
+            old: c.data.oldData,
+            new: c.data.newData,
             type: c.type,
             separator: sqlSeparator,
           });
@@ -1507,10 +1432,15 @@ export const getDataByChanges = (changes, preDataSource, dataSource) => {
         return '';
       } else if (c.type === 'field') {
         if (c.opt === 'add') {
+          const parent = c.parent?.[1] || {};
           return getTemplateString(codeTemplate.addField || getEmptyMessage('addField'), {
-            beforeDefKey: c.data.before.defKey,
-            afterDefKey: c.data.after.defKey,
-            newField: c.data.current,
+            [parent.type]: parent,
+            newField: {
+              ...c.data.current,
+              beforeDefKey: c.data.before.defKey,
+              afterDefKey: c.data.after.defKey,
+              fieldIndex: (parent.fields || []).findIndex(f => f.id === c.data.current.id)
+            },
             separator: sqlSeparator,
           });
         } else if (c.opt === 'delete') {
@@ -1520,18 +1450,8 @@ export const getDataByChanges = (changes, preDataSource, dataSource) => {
           });
         } else if (c.opt === 'update') {
           return getTemplateString(codeTemplate.updateField || getEmptyMessage('updateField'), {
-            old: c.data.changes.reduce((a, b) => {
-              return {
-                ...a,
-                [b.type]: b.pre,
-              }
-            }, {}),
-            new: c.data.changes.reduce((a, b) => {
-              return {
-                ...a,
-                [b.type]: b.new,
-              }
-            }, {}),
+            old: c.data.oldData,
+            new: c.data.newData,
             separator: sqlSeparator,
           });
         }

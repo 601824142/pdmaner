@@ -1003,11 +1003,13 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
     // 代码类型转换
     if (f.domain) {
       const domain = domains.filter(dom => dom[type] === f.domain)[0];
-      temp.dbType = mappings.filter(m => m.id === domain?.applyFor)[0]?.[db] || f.type;
+      const mapping = mappings.filter(m => m.id === domain.applyFor)[0];
+      temp.type = mapping?.[code] || '';
+      temp.dbType = mapping?.[db] || f.type;
     } else {
+      temp.type = mappings.filter(m => m[db] === f.type)[0]?.[code] || f.type;
       temp.dbType = f.type;
     }
-    temp.type = mappings.filter(m => m[db] === f.type)[0]?.[code] || f.type;
   }
   // 转换数据字典
   if (f.refDict) {

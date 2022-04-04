@@ -210,6 +210,42 @@
       justify-content: center;
       align-items: center;
     }
+    &-component {
+      input {
+        width: auto !important;
+      }
+    }
+    &-pickdir {
+      max-height: 70vh;
+      overflow: auto;
+      margin-bottom: 10px;
+      &-selected {
+        background: @second-primary-color;
+        color: @background-color;
+        & > td {
+          padding: 2px;
+        }
+      }
+      table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        & > tbody > tr {
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+      table > thead {
+        background: @background-color;
+        & > tr > td {
+          border-bottom: 1px dashed @primary-border-color;
+          text-align: left;
+          position: sticky;
+          top: 0;
+        }
+      }
+    }
     &-container {
       max-height: calc(35vh - 50px);
       overflow: auto;
@@ -249,7 +285,7 @@
     justify-content: center;
     align-items: center;
     &-container {
-      max-height: calc(35vh - 50px);
+      height: 100px;
       overflow: auto;
       & > div {
         margin-bottom: 10px;
