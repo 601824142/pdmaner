@@ -216,11 +216,12 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
     separator: sqlSeparator
   };
   if (!templateShow) {
+    const dataTypeSupports = (dataSource.profile?.dataTypeSupports || []).filter(t => t.id === code)[0]
     return Object.keys(_.omit(tData, ['type', 'applyFor']))
         .map(t => {
           return {
             name: t,
-            suffix: getTemplateString(tempDataTable.env?.template?.[t]?.suffix || '', {
+            suffix: getTemplateString(tempDataTable.env?.template?.[dataTypeSupports.defKey]?.[t]?.suffix || '', {
               ...tempDataTable.env?.base || {},
               codeRoot: tempDataTable.env?.base?.codeRoot || camel(tempDataTable.defKey, true) || '',
             }) || t,
@@ -256,7 +257,13 @@ export const getDemoTemplateData = (templateShow) => {
       "comment": "",
       "env": {
         "base": {"nameSpace":"cn.chiner.domain","codeRoot":"SimsStudent"},
-        "template":{"content":{"suffix":"demo/entity/{{=it.codeRoot}}Entity.java"}},
+        "template":{
+          "JAVA": {
+            "content":{
+              "suffix":"demo/entity/{{=it.codeRoot}}Entity.java"
+            }
+          }
+        },
         "custom":{"xpath":"xxx"}},
       "properties": {
         "partitioned by": "(pt_d string)",

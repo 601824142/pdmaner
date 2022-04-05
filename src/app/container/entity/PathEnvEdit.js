@@ -6,7 +6,8 @@ import {openFileOrDirPath} from '../../../lib/middle';
 import { camel } from '../../../lib/json2code_util';
 import PickDir from './PickDir';
 
-export default React.memo(forwardRef(({prefix, data, config, template, dataSource}, ref) => {
+export default React.memo(forwardRef(({prefix, data, config, template,
+                                          dataSource, codeTemplate}, ref) => {
     const envData = data?.env || {};
     const currentPrefix = getPrefix(prefix);
     const [env, setEnv] = useState(() => {
@@ -17,7 +18,7 @@ export default React.memo(forwardRef(({prefix, data, config, template, dataSourc
         };
     });
     const [templateEnv, setTemplateEnv] = useState(template.map((t) => {
-        const tData = envData.template || {};
+        const tData = (envData.template || {})?.[codeTemplate.defKey] || {};
         return {
             name: t,
             suffix: tData[t]?.suffix || '',
@@ -27,7 +28,7 @@ export default React.memo(forwardRef(({prefix, data, config, template, dataSourc
         return Object.keys(envData.custom || {}).map(e => ({
                 id: Math.uuid(),
                 name: e,
-                value: (envData.custom || {})[e],
+                value: (envData.custom || {})[e] || '',
             }));
     });
     const [path, setPath] = useState((config.path || {})[data.id]);
@@ -44,13 +45,15 @@ export default React.memo(forwardRef(({prefix, data, config, template, dataSourc
             getData(){
                 return {
                     base: envRef.current,
-                    template: templateEnvRef.current
-                        .filter(e => e.suffix).reduce((a, b) => {
-                        return {
-                            ...a,
-                            [b.name]: {suffix: b.suffix},
-                        };
-                    }, {}),
+                    template: {
+                        [codeTemplate.defKey]: templateEnvRef.current
+                            .filter(e => e.suffix).reduce((a, b) => {
+                                return {
+                                    ...a,
+                                    [b.name]: {suffix: b.suffix},
+                                };
+                            }, {}),
+                    },
                     custom: customerEnvRef.current.filter(e => e.name || e.value).reduce((a, b) => {
                         return {
                             ...a,
@@ -120,14 +123,37 @@ export default React.memo(forwardRef(({prefix, data, config, template, dataSourc
     const selectOther = () => {
         let modal;
         let select;
+        let table;
         const onCancel = () => {
             modal.close();
         };
         const onOK = () => {
+            const currentEnv = table.env || {};
             setPath(select || '');
+            setEnv((pre) => {
+                return {
+                    codeRoot: pre.codeRoot || '',
+                    ...(currentEnv.base || {}),
+                };
+            });
+            setTemplateEnv(template.map((t) => {
+                const tData = (currentEnv.template || {})?.[codeTemplate.defKey] || {};
+                return {
+                    name: t,
+                    suffix: tData[t]?.suffix || '',
+                };
+            }));
+            setCustomerEnv(() => {
+                return Object.keys(currentEnv.custom || {}).map(e => ({
+                    id: Math.uuid(),
+                    name: e,
+                    value: (currentEnv.custom || {})[e],
+                }));
+            });
             modal.close();
         };
-        const onSelected = (p) => {
+        const onSelected = (r, p) => {
+            table = r;
             select = p;
         };
         modal = openModal(<PickDir

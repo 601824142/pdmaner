@@ -8,7 +8,7 @@ export default React.memo(({dataSource, config, prefix, onSelected}) => {
     const [id, setId] = useState('');
     const _onSelected = (r, p) => {
         setId(r.id);
-        onSelected && onSelected(p);
+        onSelected && onSelected(r, p);
     };
     return <div className={`${currentPrefix}-entity-template-pickdir`}><table>
       <thead>

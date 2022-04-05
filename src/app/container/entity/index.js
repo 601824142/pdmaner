@@ -107,6 +107,8 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
               getConfig={getConfig}
               saveUserData={saveUserData}
               dataChange={dataChange}
+              getDataSource={getDataSource}
+              updateDataSource={updateDataSource}
             />,
           },
           ]}

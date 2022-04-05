@@ -10,7 +10,8 @@ import { saveAllTemplate } from '../../../lib/middle';
 import {defaultTemplate, transformTable} from '../../../lib/datasource_util';
 
 const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplate,
-                                    getConfig, saveUserData, dataChange, prefix}) => {
+                                    getConfig, saveUserData, dataChange, prefix,
+                                    updateDataSource, getDataSource}) => {
   const currentPrefix = getPrefix(prefix);
   const template = codeTemplate.type === 'dbDDL' ? defaultTemplate.dbDDLTemplate.filter((t) => {
       if (codeType === 'view') {
@@ -71,6 +72,20 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
                       [data.id]: path,
                   },
               });
+              const tempDataSource = getDataSource();
+              const name = codeType === 'view' ? 'views' : 'entities';
+              updateDataSource({
+                  ...tempDataSource,
+                  [name]: (tempDataSource[name] || []).map((e) => {
+                      if (e.id === data.id) {
+                          return {
+                              ...e,
+                              env,
+                          };
+                      }
+                      return e;
+                  }),
+              });
               dataChange(env, 'env');
               if (type){
                   genFile(btn, env, path, modal);
@@ -81,6 +96,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
               modal.close();
           };
           modal = openModal(<PathEnvEdit
+            codeTemplate={codeTemplate}
             template={template}
             dataSource={dataSource}
             ref={editRef}
