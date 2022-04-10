@@ -248,7 +248,7 @@ export const getMessageByChanges = (changes, dataSource) => {
     return getTemplateString(codeTemplate.message || getEmptyMessage('message', dataSource, code), {
       changes,
       separator: sqlSeparator,
-    });
+    }, false, dataSource, code);
   } catch (e) {
     return '';
   }
@@ -400,7 +400,7 @@ export const packageChanges = (currentDataSource, preDataSource) => {
             opt: 'update',
             data: {
               id: cData.id,
-              baseInfo: _.pick(cData, baseNames.concat('indexes')),
+              baseInfo: _.pick(cData, baseNames),
               baseChanged: baseChanged || null,
               fieldAdded: null,
               fieldRemoved: null,

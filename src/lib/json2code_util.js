@@ -1195,43 +1195,97 @@ export const getTemplateString = (template, templateData, isDemo, dataSource , c
     return [].concat(r);
   };
   const tplText = template.replace(/(^\s*)|(\s*$)/g, "");
-  const getIndexRebuildDDL = () => {
-    const id = templateData?.[templateData.type]?.id;
-    if (id) {
-      const data = isDemo ? demoTable.entity : (dataSource.views || []).concat(dataSource.entities || []).filter(d => d.id === id)[0];
-      if (data) {
-        const currentCode =  code || _.get(dataSource, 'profile.default.db', dataSource.profile?.dataTypeSupports[0]?.id);
-        const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
-        const codeTemplate = allTemplate.filter(t => t.applyFor === currentCode)[0] || {};
-        const fields = data.fields || [];
-        const indexes = isDemo ? data.indexes : (data.indexes || []).map(i => {
+  const getCode = () => {
+    return code || _.get(dataSource, 'profile.default.db', dataSource.profile?.dataTypeSupports[0]?.id);
+  }
+  const getTemplate = () => {
+    const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
+    return allTemplate.filter(t => t.applyFor === getCode())[0] || {};
+  };
+  const getType = (defKey) => {
+    if (isDemo) {
+      return 'entity';
+    } else if ((dataSource.entities || []).some(e => e.defKey === defKey)) {
+      return 'entity';
+    }
+    return 'view';
+  }
+  const getData = (type, defKey) => {
+    if (!defKey) {
+      return null;
+    }
+    return isDemo ? demoTable.entity : (dataSource[type === 'entity' ? 'entities' : 'views']).filter(d => d.defKey === defKey)[0];
+
+  };
+  const currentEntityIndexRebuildDDL = (defKey) => {
+    const type = getType(defKey);
+    const data = getData(type, defKey);
+    if (data) {
+      const codeTemplate = getTemplate();
+      const fields = data.fields || [];
+      const indexes = isDemo ? data.indexes : (data.indexes || []).map(i => {
+        return {
+          ...i,
+          fields: (i.fields || []).map(f => {
+            return {
+              ...f,
+              fieldDefKey: fields.filter(field => field.id === f.fieldDefKey)[0]?.defKey,
+            };
+          }),
+        }
+      })
+      return `${getTemplateString(codeTemplate.deleteIndex || getEmptyMessage('deleteIndex', dataSource, getCode()), {
+        entity: {
+          ...data,
+          indexes
+        },
+        separator: templateData.sqlSeparator,
+      })}${getTemplateString(codeTemplate.createIndex || getEmptyMessage('createIndex', dataSource, getCode()), {
+        entity: {
+          ...data,
+          indexes
+        },
+        separator: templateData.sqlSeparator,
+      })}`
+    }
+    return '';
+  }
+  const currentEntityDropDDL = (defKey) => {
+    const codeTemplate = getTemplate();
+    return getTemplateString(codeTemplate.deleteTable || getEmptyMessage('deleteTable', dataSource, getCode()), {
+      defKey,
+      type: getType(defKey),
+      separator: templateData.sqlSeparator,
+    });
+  };
+  const currentEntityCreateDDL = (defKey) => {
+    const type = getType(defKey);
+    const name = type === 'entity' ? 'createTable' : 'createView';
+    const codeTemplate = getTemplate();
+    const data = getData(type, defKey);
+    if (!data) {
+      return '';
+    }
+    return getTemplateString(codeTemplate[name] || getEmptyMessage(name, dataSource, getCode()), {
+      [type]: isDemo ? data : {
+        ...data,
+        env: getDefaultEnv(data),
+        fields: (data.fields || []).map(f => ({...f, ...transform(f, dataSource, getCode())})),
+        indexes: (data.indexes || []).map(i => {
           return {
             ...i,
             fields: (i.fields || []).map(f => {
+              const field = (data.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
               return {
                 ...f,
-                fieldDefKey: fields.filter(field => field.id === f.fieldDefKey)[0]?.defKey,
+                fieldDefKey: field?.defKey || '',
               };
-            }),
+            })
           }
-        })
-        return `${getTemplateString(codeTemplate.deleteIndex || getEmptyMessage('deleteIndex', dataSource, currentCode), {
-          entity: {
-            ...data,
-            indexes
-          },
-          separator: templateData.sqlSeparator,
-        })}${getTemplateString(codeTemplate.createIndex || getEmptyMessage('createIndex', dataSource, currentCode), {
-          entity: {
-            ...data,
-            indexes
-          },
-          separator: templateData.sqlSeparator,
-        })}`
-      }
-      return '';
-    }
-    return '';
+        }),
+      },
+      separator: templateData.sqlSeparator,
+    });
   }
   const conf = {
     evaluate:    /\{\{([\s\S]+?)\}\}/g,
@@ -1258,7 +1312,9 @@ export const getTemplateString = (template, templateData, isDemo, dataSource , c
       intersect: intersect,
       union: union,
       minus: minus,
-      getIndexRebuildDDL,
+      currentEntityIndexRebuildDDL,
+      currentEntityDropDDL,
+      currentEntityCreateDDL,
     }
   });
   resultText = resultText.replace(/\n(\n)*( )*(\n)*\n/g,"\n");  //删除空行
@@ -1423,8 +1479,7 @@ export const getDemoTemplateData = (templateShow) => {
       break;
     case 'update':
       data = JSON.stringify({
-        entity: demoVersionData,
-        type: 'entity',
+        changes: demoChanges,
         separator: ';'
       }, null, 2);
       break;
@@ -1567,99 +1622,103 @@ export const getDataByChanges = (changes, preDataSource, dataSource) => {
     const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
     const codeTemplate = allTemplate.filter(t => t.applyFor === code)[0] || {};
     const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
-    return changes.map(c => {
-      if (c.type === 'entity' || c.type === 'view') {
-        if (c.opt === 'delete') {
-          return getTemplateString(codeTemplate.deleteTable || getEmptyMessage('deleteTable', dataSource, code), {
-            defKey: c.data.defKey,
-            type: c.type,
-            separator: sqlSeparator,
-          });
-        } else if (c.opt === 'update') {
-          return getTemplateString(codeTemplate.update || getEmptyMessage('update', dataSource, code), {
-            [c.type]: c.data,
-            type: c.type,
-            separator: sqlSeparator,
-          }, false, dataSource, code);
-        } else if (c.opt === 'add') {
-          const name = c.type === 'entity' ? 'createTable' : 'createView';
-          return getTemplateString(codeTemplate[name] || getEmptyMessage(name, dataSource, code), {
-            [c.type]: {
-              ...c.data,
-              env: getDefaultEnv(c.data),
-              fields: (c.data.fields || []).map(f => ({...f, ...transform(f, dataSource, code)})),
-              indexes: (c.data.indexes || []).map(i => {
-                return {
-                  ...i,
-                  fields: (i.fields || []).map(f => {
-                    const field = (c.data.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
-                    return {
-                      ...f,
-                      fieldDefKey: field?.defKey || '',
-                    };
-                  })
-                }
-              }),
-            },
-            separator: sqlSeparator,
-          });
-        }
-        return '';
-      }
-      // else if (c.type === 'field') {
-      //   if (c.opt === 'add') {
-      //     const parent = c.parent?.[1] || {};
-      //     return getTemplateString(codeTemplate.addField || getEmptyMessage('addField', dataSource, code), {
-      //       [parent.type]: parent,
-      //       newField: {
-      //         ...c.data.current,
-      //         beforeDefKey: c.data.before.defKey,
-      //         afterDefKey: c.data.after.defKey,
-      //         fieldIndex: (parent.fields || []).findIndex(f => f.id === c.data.current.id)
-      //       },
-      //       separator: sqlSeparator,
-      //     });
-      //   } else if (c.opt === 'delete') {
-      //     return getTemplateString(codeTemplate.deleteField || getEmptyMessage('deleteField', dataSource, code), {
-      //       field: c.data,
-      //       separator: sqlSeparator,
-      //     });
-      //   } else if (c.opt === 'update') {
-      //     return getTemplateString(codeTemplate.updateField || getEmptyMessage('updateField', dataSource, code), {
-      //       old: c.data.oldData,
-      //       new: c.data.newData,
-      //       separator: sqlSeparator,
-      //     });
-      //   }
-      // } else if (c.type === 'index') {
-      //   // 先删除再创建
-      //   const [o, p] = c.parent || [];
-      //   return `${getTemplateString(codeTemplate.deleteIndex || getEmptyMessage('deleteIndex', dataSource, code), {
-      //     [o.type === 'entity' ? 'entity' : 'view']: {
-      //       ...o,
-      //     },
-      //     separator: sqlSeparator,
-      //   })}${getTemplateString(codeTemplate.createIndex || getEmptyMessage('createIndex', dataSource, code), {
-      //     [p.type === 'entity' ? 'entity' : 'view']: {
-      //       ...p,
-      //       env: getDefaultEnv(p),
-      //       indexes: (p.indexes || []).map(i => {
-      //         return {
-      //           ...i,
-      //           fields: (i.fields || []).map(f => {
-      //             const field = (p.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
-      //             return {
-      //               ...f,
-      //               fieldDefKey: field?.defKey || '',
-      //             };
-      //           })
-      //         }
-      //       }),
-      //     },
-      //     separator: sqlSeparator,
-      //   })}`;
-      // }
-    }).join('\n');
+    return getTemplateString(codeTemplate.update || getEmptyMessage('update', dataSource, code), {
+      changes,
+      separator: sqlSeparator,
+    }, false, dataSource, code);
+    // return changes.map(c => {
+    //   if (c.type === 'entity' || c.type === 'view') {
+    //     if (c.opt === 'delete') {
+    //       return getTemplateString(codeTemplate.deleteTable || getEmptyMessage('deleteTable', dataSource, code), {
+    //         defKey: c.data.defKey,
+    //         type: c.type,
+    //         separator: sqlSeparator,
+    //       });
+    //     } else if (c.opt === 'update') {
+    //       return getTemplateString(codeTemplate.update || getEmptyMessage('update', dataSource, code), {
+    //         ...c.data,
+    //         type: c.type,
+    //         separator: sqlSeparator,
+    //       }, false, dataSource, code);
+    //     } else if (c.opt === 'add') {
+    //       const name = c.type === 'entity' ? 'createTable' : 'createView';
+    //       return getTemplateString(codeTemplate[name] || getEmptyMessage(name, dataSource, code), {
+    //         [c.type]: {
+    //           ...c.data,
+    //           env: getDefaultEnv(c.data),
+    //           fields: (c.data.fields || []).map(f => ({...f, ...transform(f, dataSource, code)})),
+    //           indexes: (c.data.indexes || []).map(i => {
+    //             return {
+    //               ...i,
+    //               fields: (i.fields || []).map(f => {
+    //                 const field = (c.data.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
+    //                 return {
+    //                   ...f,
+    //                   fieldDefKey: field?.defKey || '',
+    //                 };
+    //               })
+    //             }
+    //           }),
+    //         },
+    //         separator: sqlSeparator,
+    //       });
+    //     }
+    //     return '';
+    //   }
+    //   // else if (c.type === 'field') {
+    //   //   if (c.opt === 'add') {
+    //   //     const parent = c.parent?.[1] || {};
+    //   //     return getTemplateString(codeTemplate.addField || getEmptyMessage('addField', dataSource, code), {
+    //   //       [parent.type]: parent,
+    //   //       newField: {
+    //   //         ...c.data.current,
+    //   //         beforeDefKey: c.data.before.defKey,
+    //   //         afterDefKey: c.data.after.defKey,
+    //   //         fieldIndex: (parent.fields || []).findIndex(f => f.id === c.data.current.id)
+    //   //       },
+    //   //       separator: sqlSeparator,
+    //   //     });
+    //   //   } else if (c.opt === 'delete') {
+    //   //     return getTemplateString(codeTemplate.deleteField || getEmptyMessage('deleteField', dataSource, code), {
+    //   //       field: c.data,
+    //   //       separator: sqlSeparator,
+    //   //     });
+    //   //   } else if (c.opt === 'update') {
+    //   //     return getTemplateString(codeTemplate.updateField || getEmptyMessage('updateField', dataSource, code), {
+    //   //       old: c.data.oldData,
+    //   //       new: c.data.newData,
+    //   //       separator: sqlSeparator,
+    //   //     });
+    //   //   }
+    //   // } else if (c.type === 'index') {
+    //   //   // 先删除再创建
+    //   //   const [o, p] = c.parent || [];
+    //   //   return `${getTemplateString(codeTemplate.deleteIndex || getEmptyMessage('deleteIndex', dataSource, code), {
+    //   //     [o.type === 'entity' ? 'entity' : 'view']: {
+    //   //       ...o,
+    //   //     },
+    //   //     separator: sqlSeparator,
+    //   //   })}${getTemplateString(codeTemplate.createIndex || getEmptyMessage('createIndex', dataSource, code), {
+    //   //     [p.type === 'entity' ? 'entity' : 'view']: {
+    //   //       ...p,
+    //   //       env: getDefaultEnv(p),
+    //   //       indexes: (p.indexes || []).map(i => {
+    //   //         return {
+    //   //           ...i,
+    //   //           fields: (i.fields || []).map(f => {
+    //   //             const field = (p.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
+    //   //             return {
+    //   //               ...f,
+    //   //               fieldDefKey: field?.defKey || '',
+    //   //             };
+    //   //           })
+    //   //         }
+    //   //       }),
+    //   //     },
+    //   //     separator: sqlSeparator,
+    //   //   })}`;
+    //   // }
+    // }).join('\n');
   } catch (e) {
     console.log(e);
     return '';
