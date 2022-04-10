@@ -203,7 +203,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     activeTabStack.current = activeTabStack.current.filter(k => k !== menuKey);
     activeTabStack.current.push(menuKey);
   };
-  const _tabClose = (tabKey) => {
+  const _tabClose = (tabKey, force) => {
     const closeTab = () => {
       const tabKeys = [].concat(tabKey);
       // 重新设置激活的tab页
@@ -220,7 +220,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
         return newActiveKey || pre;
       });
     };
-    if (getDataByTabId(tabKey)) {
+    if (!force && getDataByTabId(tabKey)) {
       Modal.confirm({
         title: FormatMessage.string({id: 'saveConfirmTitle'}),
         message: FormatMessage.string({id: 'saveConfirm'}),

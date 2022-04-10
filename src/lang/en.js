@@ -440,6 +440,8 @@ export default {
         addField: 'addFiled',
         deleteField: 'deleteField',
         updateField: 'updateField',
+        message: 'message',
+        update: 'update',
     },
     domain: {
         defKey: 'DomainCode',

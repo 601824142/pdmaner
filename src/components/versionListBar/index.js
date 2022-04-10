@@ -4,7 +4,7 @@ import {Modal, openModal} from '../modal';
 import Button from '../button';
 import VersionListCard from './versionListCard';
 import { getPrefix } from '../../lib/prefixUtil';
-import {checkUpdate, getMessageByChanges} from '../../lib/datasource_version_util';
+import {getMessageByChanges, packageChanges, getMaxVersion} from '../../lib/datasource_version_util';
 import './style/index.less';
 import VersionEdit from './VersionEdit';
 import FormatMessage from '../formatmessage';
@@ -41,10 +41,11 @@ const VersionListBar = React.memo((props) => {
     if (projectInfo) {
       let modal;
       const { result, dataSource } = getLatelyDataSource();
-      const defaultMessage = (sortData.length === 0 || !result.status) ? [] :
-          getMessageByChanges(checkUpdate(dataSource, sortData[0].data))
-              .map((c, i) => `${i + 1}.${c}`);
-      const tempVersion = {...version, desc: version?.desc || defaultMessage.join('\n')};
+      const tempVersion = {
+        ...version,
+        name: version?.name || getMaxVersion(sortData),
+        desc: version?.desc || ((sortData.length === 0 || !result.status) ? [] :
+            getMessageByChanges(packageChanges(dataSource, sortData[0].data), dataSource))};
       const onOk = () => {
         if (!tempVersion.name ||
             (version && version.name !== tempVersion.name &&
@@ -96,12 +97,11 @@ const VersionListBar = React.memo((props) => {
   };
   const renderCreatedTool = () => {
     const { result, dataSource } = getLatelyDataSource();
-    const changes = result.status ? checkUpdate(dataSource, sortData[0]?.data) : [];
-    //console.log(changes, getMessageByChanges(changes));
+    const changes = result.status ? packageChanges(dataSource, sortData[0]?.data) : [];
     return (
       <>
         <VersionListCard type="new" onNew={() => _onCreated()}/>
-        { result.status && changes.length > 0 && <VersionListCard onSelected={_onSelected} result={getMessageByChanges(changes)} type="warn"/> }
+        { result.status && changes.length > 0 && <VersionListCard onSelected={_onSelected} result={getMessageByChanges(changes, dataSource)} type="warn"/> }
       </>
     );
   };

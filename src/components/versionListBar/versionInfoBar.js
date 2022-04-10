@@ -6,7 +6,12 @@ import {getPrefix} from '../../lib/prefixUtil';
 import CodeEditor from '../codeeditor';
 import Button from '../button';
 import FormatMessage from '../formatmessage';
-import {checkUpdate, genSelByDiff, getChanges} from '../../lib/datasource_version_util';
+import {
+    packageChanges,
+    genSelByDiff,
+    getChanges,
+    getMessageByChanges,
+} from '../../lib/datasource_version_util';
 import { Download } from '../download';
 import {getMemoryCache} from '../../lib/cache';
 
@@ -19,11 +24,15 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
   const currentPrefix = getPrefix(prefix);
   const [pre, setPre] = useState(null);
   const [key, setKey] = useState(Math.uuid());
+  const getResult = (v, p) => {
+      return getMessageByChanges(packageChanges(v.data,
+          p?.data || {entities: [], views: []}), v.data);
+  };
   useImperativeHandle(ref, () => {
       return {
           setVersion: (v, p) => {
               setPre(p);
-              setVersion(v);
+              setVersion(v ? {...v, result: v.result || getResult(v, p)} : v);
           },
       };
   }, []);
@@ -32,7 +41,7 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
           if (Object.keys(version).length === 1) {
               const result = getLatelyDataSource();
               const changes = result.result.status ?
-                  checkUpdate(result.dataSource, versionsDataRef.current[0]?.data) : [];
+                  packageChanges(result.dataSource, versionsDataRef.current[0]?.data) : [];
               setValue(getChanges(changes, versionsDataRef.current[0]?.data, result.dataSource));
           } else {
               setValue(genSelByDiff(version, pre, dataSource));
@@ -62,7 +71,7 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
           <span />
         </div>
         <div className={`${currentPrefix}-version-list-card-panel`}>
-          {(version?.desc || version.result?.map((v, i) => `${i + 1}.${v}`).join('\n'))?.split('\n')?.map(d => <div key={d}>{d}</div>)}
+          {version.result}
         </div>
       </div>
       <div className={`${currentPrefix}-version-info-edit`}>

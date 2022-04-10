@@ -45,7 +45,7 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
       },
     };
   }
-  const demoCode = getDataByTemplate(jsonData, templateData || '');
+  const demoCode = getDataByTemplate(jsonData, templateData || '', true, dataSource, db);
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-preview`}>
     <div className={`${currentPrefix}-preview-left`}>

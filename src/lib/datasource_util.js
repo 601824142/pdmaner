@@ -717,7 +717,8 @@ export const emptyDiagram = {
 export const defaultTemplate = {
   dbDDLTemplate: ['createTable', 'createView', 'deleteTable', 'createIndex', 'deleteIndex'],
   appCodeTemplate: ['content'],
-  versionTemplate: ['renameTable', 'addField', 'updateField', 'deleteField'],
+  //versionTemplate: ['renameTable', 'addField', 'updateField', 'deleteField'],
+  versionTemplate: ['message', 'update'],
 };
 
 export const pdman2sino = (data, projectName) => {

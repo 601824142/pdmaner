@@ -441,6 +441,8 @@ export default {
         addField: '增加字段',
         deleteField: '删除字段',
         updateField: '修改字段',
+        message: '提示文字',
+        update: '版本变更模板',
     },
     domain: {
         defKey: '数据域代码',

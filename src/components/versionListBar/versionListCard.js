@@ -53,7 +53,7 @@ const VersionListCard = React.memo((props) => {
           <div style={{width: '100%'}}>
             <div><FormatMessage id='versionData.useNew'/></div>
             <div style={{width: '100%'}}>
-              {result.map((d, i) => <div className={`${currentPrefix}-version-list-change`} key={i}>{i + 1}.{d}</div>)}
+              {result}
             </div>
           </div>
         </div>
