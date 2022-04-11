@@ -1313,9 +1313,9 @@ export const getTemplateString = (template, templateData, isDemo, dataSource , c
       intersect: intersect,
       union: union,
       minus: minus,
-      currentEntityIndexRebuildDDL,
-      currentEntityDropDDL,
-      currentEntityCreateDDL,
+      indexRebuildDDL: currentEntityIndexRebuildDDL,
+      dropDDL: currentEntityDropDDL,
+      createDDL: currentEntityCreateDDL,
     }
   });
   resultText = resultText.replace(/\n(\n)*( )*(\n)*\n/g,"\n");  //删除空行
