@@ -1721,6 +1721,6 @@ export const getDataByChanges = (changes, preDataSource, dataSource) => {
     // }).join('\n');
   } catch (e) {
     console.log(e);
-    return '';
+    return JSON.stringify(e.message, null, 2);
   }
 };

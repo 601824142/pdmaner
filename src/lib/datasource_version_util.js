@@ -250,7 +250,7 @@ export const getMessageByChanges = (changes, dataSource) => {
       separator: sqlSeparator,
     }, false, dataSource, code);
   } catch (e) {
-    return '';
+    return JSON.stringify(e.message, null, 2);
   }
 };
 

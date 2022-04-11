@@ -21,6 +21,9 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
   const { prefix, empty, style, dataSource, versionsData, getLatelyDataSource } = props;
   const versionsDataRef = useRef([]);
   versionsDataRef.current = versionsData;
+  const resizeRef = useRef(null);
+  const leftRef = useRef(null);
+  const rightRef = useRef(null);
   const [version, setVersion] = useState(null);
   const [value, setValue] = useState('');
   const currentPrefix = getPrefix(prefix);
@@ -91,9 +94,36 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
             <Button key='cancel' onClick={onCancel}>{FormatMessage.string({id: 'button.close'})}</Button>],
       });
   };
+  const onMouseMove = (e) => {
+      if (resizeRef.current?.move) {
+          const offset = e.clientX - resizeRef.current.x;
+          leftRef.current.style.width = `${resizeRef.current.left + offset}px`;
+          rightRef.current.style.width = `${resizeRef.current.right - offset}px`;
+      }
+  };
+  const onMouseDown = (e) => {
+    console.log(e);
+    resizeRef.current = {
+        move: true,
+        x: e.clientX,
+        left: leftRef.current.clientWidth,
+        right: rightRef.current.clientWidth,
+    };
+  };
+  const onMouseLeave = () => {
+      resizeRef.current = {
+          move: false,
+      };
+  };
   return (
-    <div className={`${currentPrefix}-version-info-container`} style={style}>
-      <div className={`${currentPrefix}-version-info`}>
+    <div
+      className={`${currentPrefix}-version-info-container`}
+      style={style}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      onMouseUp={onMouseLeave}
+    >
+      <div ref={leftRef} className={`${currentPrefix}-version-info`}>
         <div className={`${currentPrefix}-version-info-h`}>
           <span>{version.name}</span>
           <span>{moment(version.date).format('YYYY-M-D HH:mm')}</span>
@@ -105,7 +135,8 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
           </pre>
         </div>
       </div>
-      <div className={`${currentPrefix}-version-info-edit`}>
+      <div className={`${currentPrefix}-version-info-scroll`} onMouseDown={onMouseDown}>{}</div>
+      <div ref={rightRef} className={`${currentPrefix}-version-info-edit`}>
         <div><Button type='primary' onClick={exportDDL}><FormatMessage id='exportSql.export'/></Button></div>
         <CodeEditor
           key={key}
