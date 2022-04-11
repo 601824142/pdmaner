@@ -338,7 +338,7 @@ export const packageChanges = (currentDataSource, preDataSource) => {
           refEntityChanged = {
             refEntityAdd: setNull(refEntityChange.filter(c => c.opt === 'add').map(c => {
               const data = allData.filter(d => d.id === c.data.refEntity)[0];
-              return _.omit(data, baseNames);
+              return _.pick(data, baseNames);
             })),
             refEntityRemoved: setNull(refEntityChange.filter(c => c.opt === 'delete').map(c => {
               const data = allData.filter(d => d.id === c.data.refEntity)[0];
