@@ -33,12 +33,12 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
         ...jsonData,
         [name]: {
           ...jsonData[name],
-          fields: (jsonData[name].fields || []).map((f) => {
+          fields: jsonData[name].fields ? (jsonData[name].fields || []).map((f) => {
             return {
               ...f,
               ...transform(f, dataSource, db, 'defKey'),
             };
-          }),
+          }) : undefined,
         },
       };
     }
