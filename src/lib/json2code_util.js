@@ -1252,9 +1252,10 @@ export const getTemplateString = (template, templateData, isDemo, dataSource , c
   }
   const currentEntityDropDDL = (defKey) => {
     const codeTemplate = getTemplate();
+    const type = getType(defKey);
     return getTemplateString(codeTemplate.deleteTable || getEmptyMessage('deleteTable', dataSource, getCode()), {
-      defKey,
-      type: getType(defKey),
+      [type]: { defKey },
+      type,
       separator: templateData.sqlSeparator,
     });
   };
@@ -1425,7 +1426,9 @@ export const getDemoTemplateData = (templateShow) => {
       break;
     case 'deleteTable':
       data = JSON.stringify({
-        defKey: demoTable.entity.defKey,
+        entity: {
+          defKey: demoTable.entity.defKey,
+        },
         type: 'entity',
         separator: ';'
       }, null, 2);

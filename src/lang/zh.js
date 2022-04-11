@@ -614,6 +614,18 @@ export default {
                 name: '两个数组差集',
                 param: '参数1：数组1，参数2：数组2；（数组1比数组2多出的数据）',
             },
+            indexRebuildDDL: {
+                name: '获取重建索引DDL',
+                param: '表代码',
+            },
+            dropDDL: {
+                name: '获取删除表/视图DDL',
+                param: '表代码',
+            },
+            createDDL: {
+                name: '获取创建表/视图DDL',
+                param: '表代码',
+            },
         },
     },
     config: {

@@ -613,6 +613,18 @@ export default {
                 name: 'difference set of two arrays',
                 param: 'parameter 1: array 1, parameter 2: array 2（ Array 1 has more data than array 2)',
             },
+            indexRebuildDDL: {
+                name: 'Get rebuild index DDL',
+                param: 'Code',
+            },
+            dropDDL: {
+                name: 'Get delete table / view DDL',
+                param: 'Code',
+            },
+            createDDL: {
+                name: 'Get create table / view DDL',
+                param: 'Code',
+            },
         },
     },
     config: {
