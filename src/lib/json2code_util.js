@@ -1198,16 +1198,16 @@ export const getTemplateString = (template, templateData, isDemo, dataSource , c
   const getCode = () => {
     return code || _.get(dataSource, 'profile.default.db', dataSource.profile?.dataTypeSupports[0]?.id);
   }
-  const getTemplate = () => {
-    const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
+  const getTemplate = (d) => {
+    const allTemplate = _.get(d || dataSource, 'profile.codeTemplates', []);
     return allTemplate.filter(t => t.applyFor === getCode())[0] || {};
   };
-  const getType = (defKey) => {
+  const getType = (defKey, d) => {
     if (isDemo) {
       return 'entity';
-    } else if ((dataSource.entities || []).some(e => e.defKey === defKey)) {
+    } else if (((d || dataSource).entities || []).some(e => e.defKey === defKey)) {
       return 'entity';
-    }  else if ((dataSource.views || []).some(e => e.defKey === defKey)) {
+    }  else if (((d || dataSource).views || []).some(e => e.defKey === defKey)) {
       return 'view'
     }
     return 'entity';
@@ -1253,9 +1253,9 @@ export const getTemplateString = (template, templateData, isDemo, dataSource , c
     return '';
   }
   const currentEntityDropDDL = (defKey) => {
-    const codeTemplate = getTemplate();
-    const type = getType(defKey);
-    return getTemplateString(codeTemplate.deleteTable || getEmptyMessage('deleteTable', preDataSource, getCode()), {
+    const codeTemplate = getTemplate(preDataSource);
+    const type = getType(defKey, preDataSource);
+    return getTemplateString(codeTemplate.deleteTable || getEmptyMessage('deleteTable', dataSource, getCode()), {
       [type]: { defKey },
       type,
       separator: templateData.sqlSeparator,
