@@ -25,34 +25,48 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
   };
   let demoData = getDemoTemplateData(templateShow);
   const [templateData, updateTemplate] = useState(template);
+  const [data, updateJsonData] = useState(() => {
+    let jsonData = JSON.parse(demoData);
+    if ('view' in jsonData || 'entity' in jsonData) {
+      const name = 'view' in jsonData ? 'view' : 'entity';
+      jsonData = {
+        ...jsonData,
+        [name]: {
+          ...jsonData[name],
+          fields: (jsonData[name].fields || []).map((f) => {
+            return {
+              ...f,
+              ...transform(f, dataSource, db, 'defKey'),
+            };
+          }),
+        },
+      };
+    }
+    return jsonData;
+  });
+  const _updateJsonData = (c) => {
+    let jsonData = JSON.parse(demoData);
+    try {
+      jsonData = JSON.parse(c);
+    } catch (e) {
+      console.log(e);
+    }
+    updateJsonData(jsonData);
+  };
   const _updateTemplate = (value) => {
     updateTemplate(value);
     templateChange && templateChange(value);
   };
-  let jsonData = JSON.parse(demoData);
-  if ('view' in jsonData || 'entity' in jsonData) {
-    const name = 'view' in jsonData ? 'view' : 'entity';
-    jsonData = {
-      ...jsonData,
-      [name]: {
-        ...jsonData[name],
-        fields: (jsonData[name].fields || []).map((f) => {
-          return {
-            ...f,
-            ...transform(f, dataSource, db, 'defKey'),
-          };
-        }),
-      },
-    };
-  }
-  const demoCode = getDataByTemplate(jsonData, templateData || '', true, dataSource, db);
+  const demoCode = getDataByTemplate(data, templateData || '', true, dataSource, db);
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-preview`}>
     <div className={`${currentPrefix}-preview-left`}>
       <span className={`${currentPrefix}-preview-left-title`}>
         <FormatMessage id='database.preview.demoData'/>
       </span>
-      <CodeHighlight data={demoData} style={style} mode='json'/></div>
+      <CodeHighlight style={style} readOnly={false} data={JSON.stringify(data, null, 2)} mode='json' onChange={e => _updateJsonData(e.target.value)}/>
+      {/*<CodeHighlight data={demoData} style={style} mode='json'/>*/}
+    </div>
     <div className={`${currentPrefix}-preview-data`}>
       <div className={`${currentPrefix}-preview-center`}>
         <span className={`${currentPrefix}-preview-center-title`}>
