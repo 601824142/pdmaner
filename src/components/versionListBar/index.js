@@ -11,7 +11,7 @@ import FormatMessage from '../formatmessage';
 
 const VersionListBar = React.memo((props) => {
   const { prefix, onSelected, getLatelyDataSource, autoSave, projectInfo,
-    saveVersion, versionsData, removeVersion } = props;
+    saveVersion, versionsData, removeVersion, menuType } = props;
   const [selectedData, setSelectedData] = useState({});
   const selectedDataRef = useRef({});
   selectedDataRef.current = selectedData;
@@ -29,7 +29,7 @@ const VersionListBar = React.memo((props) => {
   };
   const _onSelected = (o, i) => {
     onSelected && onSelected(o, i);
-    setSelectedData(Object.keys(o).length === 0 ? {} : o);
+    setSelectedData(o);
   };
   const sortData = versionsData.sort((a, b) => b.date - a.date);
   useEffect(() => {
@@ -37,6 +37,15 @@ const VersionListBar = React.memo((props) => {
     onSelected && onSelected(versionsData[i], i);
     setSelectedData(versionsData[i] || {});
   }, [versionsData]);
+  useEffect(() => {
+    if (menuType === '4') {
+      if(selectedDataRef.current) {
+        onSelected && onSelected(selectedDataRef.current,
+            versionsData.findIndex(v => v.date === selectedDataRef.current.date));
+       // onSelected && onSelected(o, i);
+      }
+    }
+  }, [menuType]);
   const _onCreated = (version) => {
     if (projectInfo) {
       let modal;

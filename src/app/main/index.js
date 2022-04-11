@@ -1684,6 +1684,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
                 </span>
               </div>
               <VersionListBar
+                menuType={menuType}
                 projectInfo={projectInfo}
                 autoSave={restProps.autoSave}
                 versionsData={restProps.versionsData}

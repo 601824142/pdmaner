@@ -9,7 +9,7 @@ import Button from '../button';
 import FormatMessage from '../formatmessage';
 import {
     packageChanges,
-    genSelByDiff,
+    //genSelByDiff,
     getChanges,
     getMessageByChanges,
 } from '../../lib/datasource_version_util';
@@ -100,7 +100,9 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
           <span><Button onClick={showChangeData}><FormatMessage id='tableBase.model'/></Button></span>
         </div>
         <div className={`${currentPrefix}-version-list-card-panel`}>
-          {version.result}
+          <pre>
+            {version.result}
+          </pre>
         </div>
       </div>
       <div className={`${currentPrefix}-version-info-edit`}>
