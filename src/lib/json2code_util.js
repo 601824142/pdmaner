@@ -1095,7 +1095,7 @@ const getDefaultEnv = (e) => {
   }
 }
 // 根据模板数据生成代码
-export const getTemplateString = (template, templateData, isDemo, dataSource , code) => {
+export const getTemplateString = (template, templateData, isDemo, dataSource , code, preDataSource = dataSource) => {
   const underline = (str, upper) => {
     const ret = str.replace(/([A-Z])/g,"_$1");
     if(upper){
@@ -1207,8 +1207,10 @@ export const getTemplateString = (template, templateData, isDemo, dataSource , c
       return 'entity';
     } else if ((dataSource.entities || []).some(e => e.defKey === defKey)) {
       return 'entity';
+    }  else if ((dataSource.views || []).some(e => e.defKey === defKey)) {
+      return 'view'
     }
-    return 'view';
+    return 'entity';
   }
   const getData = (type, defKey) => {
     if (!defKey) {
@@ -1253,7 +1255,7 @@ export const getTemplateString = (template, templateData, isDemo, dataSource , c
   const currentEntityDropDDL = (defKey) => {
     const codeTemplate = getTemplate();
     const type = getType(defKey);
-    return getTemplateString(codeTemplate.deleteTable || getEmptyMessage('deleteTable', dataSource, getCode()), {
+    return getTemplateString(codeTemplate.deleteTable || getEmptyMessage('deleteTable', preDataSource, getCode()), {
       [type]: { defKey },
       type,
       separator: templateData.sqlSeparator,
@@ -1625,7 +1627,7 @@ export const getDataByChanges = (changes, preDataSource, dataSource) => {
     const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
     const codeTemplate = allTemplate.filter(t => t.applyFor === code)[0] || {};
     const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
-    return getTemplateString(codeTemplate.update || getEmptyMessage('update', dataSource, code), {
+    return getTemplateString(codeTemplate.update || getEmptyMessage('update', dataSource, code, preDataSource), {
       changes,
       separator: sqlSeparator,
     }, false, dataSource, code);
