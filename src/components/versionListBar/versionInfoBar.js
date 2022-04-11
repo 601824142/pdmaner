@@ -38,7 +38,7 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
       return {
           setVersion: (v, p) => {
               setPre(p);
-              setVersion(v ? {...v, result: v.result || getResult(v, p)} : v);
+              setVersion(v ? {...v, result: getResult(v, p)} : v);
           },
       };
   }, [dataSource]);

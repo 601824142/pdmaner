@@ -110,7 +110,7 @@ const VersionListBar = React.memo((props) => {
     return (
       <>
         <VersionListCard type="new" onNew={() => _onCreated()}/>
-        { result.status && changes.length > 0 && <VersionListCard onSelected={_onSelected} result={getMessageByChanges(changes, dataSource)} type="warn"/> }
+        { result.status && changes.length > 0 && <VersionListCard onSelected={_onSelected} type="warn"/> }
       </>
     );
   };

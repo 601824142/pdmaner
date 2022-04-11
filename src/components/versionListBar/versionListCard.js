@@ -8,10 +8,10 @@ import FormatMessage from '../formatmessage';
 
 const VersionListCard = React.memo((props) => {
   const {version, selected, onDelete, onEdit, type, index,
-    prefix, onNew, onSelected, result = '' } = props;
+    prefix, onNew, onSelected } = props;
   const currentPrefix = getPrefix(prefix);
   const _onSelected = () => onSelected &&
-      onSelected(version || {result: result}, index === undefined ? -1 : index);
+      onSelected(version || {}, index === undefined ? -1 : index);
   const _onDelete = e => onDelete && onDelete(e, version);
   const _onEdit = e => onEdit && onEdit(e, version);
   const renderVersionHeader = () => {
@@ -53,7 +53,7 @@ const VersionListCard = React.memo((props) => {
           <div style={{width: '100%'}}>
             <div><FormatMessage id='versionData.useNew'/></div>
             <pre style={{width: '100%'}}>
-              {result}
+              {version?.result || ''}
             </pre>
           </div>
         </div>
