@@ -25,7 +25,7 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
   };
   let demoData = getDemoTemplateData(templateShow);
   const [templateData, updateTemplate] = useState(template);
-  const [data, updateJsonData] = useState(() => {
+  const getDemoJson = () => {
     let jsonData = JSON.parse(demoData);
     if ('view' in jsonData || 'entity' in jsonData) {
       const name = 'view' in jsonData ? 'view' : 'entity';
@@ -43,28 +43,31 @@ export default React.memo(({prefix, template, mode, templateShow = 'createTable'
       };
     }
     return jsonData;
+  };
+  const [data, updateJsonData] = useState(() => {
+    return JSON.stringify(getDemoJson(), null, 2);
   });
-  const _updateJsonData = (c) => {
-    let jsonData = JSON.parse(demoData);
+  const getJsonData = () => {
+    let jsonData;
     try {
-      jsonData = JSON.parse(c);
+      jsonData = JSON.parse(data);
     } catch (e) {
-      console.log(e);
+      jsonData = getDemoJson();
     }
-    updateJsonData(jsonData);
+    return jsonData;
   };
   const _updateTemplate = (value) => {
     updateTemplate(value);
     templateChange && templateChange(value);
   };
-  const demoCode = getDataByTemplate(data, templateData || '', true, dataSource, db);
+  const demoCode = getDataByTemplate(getJsonData(), templateData || '', true, dataSource, db);
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-preview`}>
     <div className={`${currentPrefix}-preview-left`}>
       <span className={`${currentPrefix}-preview-left-title`}>
         <FormatMessage id='database.preview.demoData'/>
       </span>
-      <CodeHighlight style={style} readOnly={false} data={JSON.stringify(data, null, 2)} mode='json' onChange={e => _updateJsonData(e.target.value)}/>
+      <CodeHighlight style={style} readOnly={false} data={data} mode='json' onChange={e => updateJsonData(e.target.value)}/>
       {/*<CodeHighlight data={demoData} style={style} mode='json'/>*/}
     </div>
     <div className={`${currentPrefix}-preview-data`}>
