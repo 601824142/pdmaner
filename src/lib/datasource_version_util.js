@@ -1,5 +1,6 @@
 // 删除表 表更名 增加字段 删除字段 修改字段
 import { FormatMessage } from 'components';
+import demoProject from '../lib/template/教学管理系统.chnr.json';
 
 import {getAllDataSQLByFilter, getDataByChanges, getTemplateString, getEmptyMessage } from './json2code_util';
 import _ from 'lodash/object';
@@ -182,18 +183,9 @@ export const checkUpdate = (dataSource, preDataSource = dataSource) => {
   return compareEntityAndView(dataSource, preDataSource);
 }
 
-// 根据差异生成SQL
-export const genSelByDiff = (current, pre, dataSource) => {
-  if(!pre?.data) {
-    const code = _.get(dataSource, 'profile.default.db', dataSource.profile?.dataTypeSupports[0]?.id);
-    return getAllDataSQLByFilter(current.data, code, ['createTable', 'createIndex', 'content']);
-  }
-  return getDataByChanges(compareEntityAndView(current.data, pre.data), current.data, dataSource);
-};
-
 // 根据变更信息生成SQL
-export const getChanges = (changes, preDataSource, currentDataSource) => {
-  return getDataByChanges(changes, preDataSource, currentDataSource);
+export const getChanges = (changes, currentDataSource) => {
+  return getDataByChanges(changes, currentDataSource);
 }
 
 // 根据变更信息生成提示信息
@@ -245,7 +237,7 @@ export const getMessageByChanges = (changes, dataSource) => {
     const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
     const codeTemplate = allTemplate.filter(t => t.applyFor === code)[0] || {};
     const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
-    return getTemplateString(codeTemplate.message || getEmptyMessage('message', dataSource, code), {
+    return getTemplateString(codeTemplate.message || demoProject.profile.codeTemplates[0].message, {
       changes,
       separator: sqlSeparator,
     }, false, dataSource, code);
@@ -263,8 +255,32 @@ export const packageChanges = (currentDataSource, preDataSource) => {
       }
       return null;
     };
-    const currentData = current.map(d => ({...d, fields: refactorEntityFields(d.fields || [], currentDataSource, currentDataSource)}));
-    const preData = pre.map(d => ({...d, fields: refactorEntityFields(d.fields || [], preDataSource, currentDataSource)}))
+    const refactorData = (d, p, c) => {
+      const fields = refactorEntityFields(d.fields || [], p, c);
+      const viewData = {};
+      if (d.refEntities && d.refEntities.length > 0) {
+        viewData.refEntities = (c.entities || [])
+            .filter(e => d.refEntities.includes(e.id)).map(e => e.defKey);
+      }
+      return {
+        ...d,
+        fields,
+        indexes: (d.indexes || []).map(i => {
+          return {
+            ...i,
+            fields: (i.fields || []).map(f => {
+              return {
+                ...f,
+                fieldDefKey: fields.filter(field => field.id === f.fieldDefKey)[0]?.defKey,
+              };
+            }),
+          }
+        }),
+        ...viewData,
+      }
+    }
+    const currentData = current.map(d => refactorData(d, currentDataSource, currentDataSource));
+    const preData = pre.map(d => refactorData(d, preDataSource, currentDataSource))
     const allData = currentData.concat(preData);
     return allData.reduce((p, n) => {
       if (currentData.findIndex(c => c.id === n.id) < 0) {
@@ -418,6 +434,8 @@ export const packageChanges = (currentDataSource, preDataSource) => {
               ...refEntityChanged,
               indexChanged: !!indexChanged,
               ...indexChanged,
+              fullFields: cData.fields || [],
+              newIndexes: cData.indexes || [],
             },
           });
         }

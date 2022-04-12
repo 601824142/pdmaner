@@ -8,6 +8,7 @@ import {
 import _ from 'lodash/object';
 
 import CodeEditorContent from './CodeEditorContent';
+import demoProject from '../../../lib/template/教学管理系统.chnr';
 import './style/index.less';
 import { defaultTemplate } from '../../../lib/datasource_util';
 import {getPrefix} from '../../../lib/prefixUtil';
@@ -127,7 +128,7 @@ export default React.memo(({prefix, data = {}, dataChange, dataSource}) => {
                             content: <CodeEditorContent
                               dataSource={dataSource}
                               prefix={currentPrefix}
-                              value={data[d]}
+                              value={data[d] || (d === 'message' ? demoProject.profile.codeTemplates[0].message : '')}
                               width='auto'
                               height='40vh'
                               onChange={e => onChange(e, d)}

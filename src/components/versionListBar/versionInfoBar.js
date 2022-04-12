@@ -34,7 +34,8 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
   const versionRef = useRef(null);
   versionRef.current = version;
   const getResult = (v, p) => {
-      return getMessageByChanges(packageChanges(v.data || dataSource,
+      const result = getLatelyDataSource();
+      return getMessageByChanges(packageChanges(v.data || result.dataSource || dataSource,
           p?.data || {entities: [], views: []}), dataSource);
   };
   useImperativeHandle(ref, () => {
@@ -50,12 +51,12 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
           const preDataSource = pre?.data || {entities: [], views: []};
           if (version.data) {
               const changes = packageChanges(version.data, preDataSource);
-              setValue(getChanges(changes, preDataSource, dataSource));
+              setValue(getChanges(changes, dataSource));
           } else {
               const result = getLatelyDataSource();
               const changes = result.result.status ?
                   packageChanges(result.dataSource, preDataSource) : [];
-              setValue(getChanges(changes, preDataSource, dataSource));
+              setValue(getChanges(changes, dataSource));
           }
       }
   }, [version, pre, dataSource?.profile?.codeTemplates]);

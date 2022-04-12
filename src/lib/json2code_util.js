@@ -1053,6 +1053,8 @@ const demoVersionData =  {
     before: demoTable.entity.indexes[0],
     after: demoTable.entity.indexes[1],
   }],
+  fullFields: demoTable.entity.fields,
+  newIndexes: demoTable.entity.indexes,
 };
 const demoChanges =  [
     {type: 'entity', opt: 'delete', data: demoTable.entity},
@@ -1095,7 +1097,7 @@ const getDefaultEnv = (e) => {
   }
 }
 // 根据模板数据生成代码
-export const getTemplateString = (template, templateData, isDemo, dataSource , code, preDataSource = dataSource) => {
+export const getTemplateString = (template, templateData, isDemo, dataSource , code) => {
   const underline = (str, upper) => {
     const ret = str.replace(/([A-Z])/g,"_$1");
     if(upper){
@@ -1198,94 +1200,42 @@ export const getTemplateString = (template, templateData, isDemo, dataSource , c
   const getCode = () => {
     return code || _.get(dataSource, 'profile.default.db', dataSource.profile?.dataTypeSupports[0]?.id);
   }
-  const getTemplate = (d) => {
-    const allTemplate = _.get(d || dataSource, 'profile.codeTemplates', []);
+  const getTemplate = () => {
+    const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
     return allTemplate.filter(t => t.applyFor === getCode())[0] || {};
   };
-  const getType = (defKey, d) => {
-    if (isDemo) {
-      return 'entity';
-    } else if (((d || dataSource).entities || []).some(e => e.defKey === defKey)) {
-      return 'entity';
-    }  else if (((d || dataSource).views || []).some(e => e.defKey === defKey)) {
-      return 'view'
-    }
-    return 'entity';
+  const currentEntityIndexRebuildDDL = (baseInfo, newIndexes = [], fields = [], type = 'entity') => {
+    const codeTemplate = getTemplate();
+    const data = isDemo ? demoTable.entity : {...baseInfo, fields, indexes: newIndexes};
+    return `${getTemplateString(codeTemplate.deleteIndex || getEmptyMessage('deleteIndex', dataSource, getCode()), {
+      [type]: {
+        ...data,
+        env: getDefaultEnv(data),
+      },
+      separator: templateData.sqlSeparator,
+    })}${getTemplateString(codeTemplate.createIndex || getEmptyMessage('createIndex', dataSource, getCode()), {
+      [type]: {
+        ...data,
+        env: getDefaultEnv(data),
+      },
+      separator: templateData.sqlSeparator,
+    })}`
   }
-  const getData = (type, defKey) => {
-    if (!defKey) {
-      return null;
-    }
-    return isDemo ? demoTable.entity : (dataSource[type === 'entity' ? 'entities' : 'views']).filter(d => d.defKey === defKey)[0];
-
-  };
-  const currentEntityIndexRebuildDDL = (defKey) => {
-    const type = getType(defKey);
-    const data = getData(type, defKey);
-    if (data) {
-      const codeTemplate = getTemplate();
-      const fields = data.fields || [];
-      const indexes = isDemo ? data.indexes : (data.indexes || []).map(i => {
-        return {
-          ...i,
-          fields: (i.fields || []).map(f => {
-            return {
-              ...f,
-              fieldDefKey: fields.filter(field => field.id === f.fieldDefKey)[0]?.defKey,
-            };
-          }),
-        }
-      })
-      return `${getTemplateString(codeTemplate.deleteIndex || getEmptyMessage('deleteIndex', dataSource, getCode()), {
-        entity: {
-          ...data,
-          indexes
-        },
-        separator: templateData.sqlSeparator,
-      })}${getTemplateString(codeTemplate.createIndex || getEmptyMessage('createIndex', dataSource, getCode()), {
-        entity: {
-          ...data,
-          indexes
-        },
-        separator: templateData.sqlSeparator,
-      })}`
-    }
-    return '';
-  }
-  const currentEntityDropDDL = (defKey) => {
-    const codeTemplate = getTemplate(preDataSource);
-    const type = getType(defKey, preDataSource);
+  const currentEntityDropDDL = (data, type = 'entity') => {
+    const codeTemplate = getTemplate();
     return getTemplateString(codeTemplate.deleteTable || getEmptyMessage('deleteTable', dataSource, getCode()), {
-      [type]: { defKey },
+      [type]: { defKey: isDemo ? demoTable.entity.defKey : data.defKey },
       type,
       separator: templateData.sqlSeparator,
     });
   };
-  const currentEntityCreateDDL = (defKey) => {
-    const type = getType(defKey);
-    const name = type === 'entity' ? 'createTable' : 'createView';
+  const currentEntityCreateDDL = (data, type = 'entity') => {
     const codeTemplate = getTemplate();
-    const data = getData(type, defKey);
-    if (!data) {
-      return '';
-    }
+    const name = type === 'entity' ? 'createTable' : 'createView';
     return getTemplateString(codeTemplate[name] || getEmptyMessage(name, dataSource, getCode()), {
-      [type]: isDemo ? data : {
+      [type]: isDemo ? demoTable.entity : {
         ...data,
         env: getDefaultEnv(data),
-        fields: (data.fields || []).map(f => ({...f, ...transform(f, dataSource, getCode())})),
-        indexes: (data.indexes || []).map(i => {
-          return {
-            ...i,
-            fields: (i.fields || []).map(f => {
-              const field = (data.fields || []).filter(ie => f.fieldDefKey === ie.id)[0];
-              return {
-                ...f,
-                fieldDefKey: field?.defKey || '',
-              };
-            })
-          }
-        }),
       },
       separator: templateData.sqlSeparator,
     });
@@ -1621,13 +1571,13 @@ export const getEmptyMessage = (name, dataSource, code) => {
   })}`;
 };
 // 根据变更信息生成代码
-export const getDataByChanges = (changes, preDataSource, dataSource) => {
+export const getDataByChanges = (changes, dataSource) => {
   try {
     const code = _.get(dataSource, 'profile.default.db', dataSource.profile?.dataTypeSupports[0]?.id);
     const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
     const codeTemplate = allTemplate.filter(t => t.applyFor === code)[0] || {};
     const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
-    return getTemplateString(codeTemplate.update || getEmptyMessage('update', dataSource, code, preDataSource), {
+    return getTemplateString(codeTemplate.update || getEmptyMessage('update', dataSource, code), {
       changes,
       separator: sqlSeparator,
     }, false, dataSource, code);

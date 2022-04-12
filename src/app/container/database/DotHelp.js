@@ -115,19 +115,19 @@ export default React.memo(({prefix}) => {
               <th>indexRebuildDDL</th>
               <th><FormatMessage id='database.dot.indexRebuildDDL.name'/></th>
               <th><FormatMessage id='database.dot.indexRebuildDDL.param'/></th>
-              <th>{"('SIMS_STUDENT') => ''"}</th>
+              <th>{"(baseInfo, newIndexes, fullFields, type) => ''"}</th>
             </tr>
             <tr>
               <th>dropDDL</th>
               <th><FormatMessage id='database.dot.dropDDL.name'/></th>
               <th><FormatMessage id='database.dot.dropDDL.param'/></th>
-              <th>{"('SIMS_STUDENT') => ''"}</th>
+              <th>{"(data, type) => ''"}</th>
             </tr>
             <tr>
               <th>createDDL</th>
               <th><FormatMessage id='database.dot.createDDL.name'/></th>
               <th><FormatMessage id='database.dot.createDDL.param'/></th>
-              <th>{"('SIMS_STUDENT') => ''"}</th>
+              <th>{"(data, type) => ''"}</th>
             </tr>
           </tbody>
         </table>
