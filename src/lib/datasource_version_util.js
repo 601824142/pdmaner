@@ -294,8 +294,8 @@ export const packageChanges = (currentDataSource, preDataSource) => {
               return {
                 ...c.data,
                 index,
-                beforeFieldKey: cData.fields[index - 1]?.defKey || null,
-                afterFieldKey: cData.fields[index + 1]?.defKey || null,
+                beforeFieldKey: cData.fields[index + 1]?.defKey || null,
+                afterFieldKey: cData.fields[index - 1]?.defKey || null,
               }
             })),
             fieldRemoved: setNull(fieldsChange.filter(c => c.opt === 'delete').map(c => c.data)),

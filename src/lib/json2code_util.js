@@ -1452,8 +1452,8 @@ export const getDemoTemplateData = (templateShow) => {
         entity: demoTable.entity,
         newField: {
           ...demoTable.entity.fields[1],
-          beforeDefKey: demoTable.entity.fields[0].defKey,
-          afterDefKey: demoTable.entity.fields[2].defKey,
+          beforeDefKey: demoTable.entity.fields[2].defKey,
+          afterDefKey: demoTable.entity.fields[0].defKey,
           fieldIndex: 1,
         },
         separator: ';'
