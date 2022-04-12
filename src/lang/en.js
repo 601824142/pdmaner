@@ -615,15 +615,15 @@ export default {
             },
             indexRebuildDDL: {
                 name: 'Get rebuild index DDL',
-                param: 'Code',
+                param: '-',
             },
             dropDDL: {
                 name: 'Get delete table / view DDL',
-                param: 'Code',
+                param: '-',
             },
             createDDL: {
                 name: 'Get create table / view DDL',
-                param: 'Code',
+                param: '-',
             },
         },
     },

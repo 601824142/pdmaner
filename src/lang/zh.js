@@ -616,15 +616,15 @@ export default {
             },
             indexRebuildDDL: {
                 name: '获取重建索引DDL',
-                param: '表代码',
+                param: '-',
             },
             dropDDL: {
                 name: '获取删除表/视图DDL',
-                param: '表代码',
+                param: '-',
             },
             createDDL: {
                 name: '获取创建表/视图DDL',
-                param: '表代码',
+                param: '-',
             },
         },
     },
