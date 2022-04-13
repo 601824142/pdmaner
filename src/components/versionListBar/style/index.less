@@ -107,10 +107,17 @@
       height: 100%;
     }
     &-edit {
+      position: relative;
       height: calc(100vh - 130px);
       width: calc(100% - 295px);
+      flex-grow: 1;
       & > div:first-child {
         padding: 5px 0;
+      }
+      &-type {
+        position: absolute;
+        right: 5px;
+        top: 8px;
       }
     }
     width: 290px;

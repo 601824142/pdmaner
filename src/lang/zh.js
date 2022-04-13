@@ -823,5 +823,6 @@ export default {
         defaultGroup: '默认分组',
         entityList: '数据表',
         viewList: '视图',
+        current: '数据库类型：',
     },
 };

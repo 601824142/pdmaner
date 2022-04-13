@@ -7,6 +7,7 @@ import emptyProjectTemplate from './emptyProjectTemplate';
 import { separator } from '../../profile';
 import {firstUp} from './string';
 import {compareVersion} from './update';
+import demoProject from '../lib/template/教学管理系统.chnr.json';
 
 export const allType = [
   { type: 'entity', name: 'entities', defKey: 'defKey' },
@@ -1360,6 +1361,25 @@ export const transformationData = (oldDataSource) => {
       }),
     };
   }
+  // 4.处理新增的版本模板
+  if (compareVersion('4.0.0', oldDataSource.version.split('.'))) {
+   // const codeTemplate = (tempDataSource?.profile?.dataTypeSupports || []).;
+    tempDataSource = {
+      ...tempDataSource,
+      profile: {
+        ...tempDataSource.profile,
+        codeTemplates: (tempDataSource?.profile?.codeTemplates || []).map(c => {
+          if (c.type === 'dbDDL' && c.applyFor !== 'dictSQLTemplate') {
+            return {
+              ...c,
+              message: demoProject.profile.codeTemplates[0].message,
+            }
+          }
+          return c
+        })
+      }
+    }
+  }
   return tempDataSource;
 };
 
@@ -1772,3 +1792,10 @@ export const validateEmptyOrRepeat = (data, name) => {
   });
   return repeat;
 }
+
+export const getDefaultDb = (dataSource) => {
+  const db = _.get(dataSource, 'profile.default.db', _.get(dataSource, 'profile.dataTypeSupports[0].id'));
+  return _.get(dataSource, 'profile.dataTypeSupports').filter(d => {
+    return d.id === db
+  })[0]?.defKey;
+};
