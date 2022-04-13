@@ -824,6 +824,7 @@ projectTemplate: {
         defaultGroup: 'default group',
         entityList: 'entities',
         viewList: 'views',
+        current: 'Database type:',
     },
 };
 

@@ -15,6 +15,7 @@ import {
 } from '../../lib/datasource_version_util';
 import { Download } from '../download';
 import {getMemoryCache} from '../../lib/cache';
+import {getDefaultDb} from '../../lib/datasource_util';
 //import {transformTable} from '../../lib/datasource_util';
 
 const VersionInfoBar = React.memo(forwardRef((props, ref) => {
@@ -138,7 +139,13 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
       </div>
       <div className={`${currentPrefix}-version-info-scroll`} onMouseDown={onMouseDown}>{}</div>
       <div ref={rightRef} className={`${currentPrefix}-version-info-edit`}>
-        <div><Button type='primary' onClick={exportDDL}><FormatMessage id='exportSql.export'/></Button></div>
+        <div>
+          <Button type='primary' onClick={exportDDL}><FormatMessage id='exportSql.export'/></Button>
+          <div className={`${currentPrefix}-version-info-edit-type`}>
+            <FormatMessage id='exportSql.current'/>
+            <span>{getDefaultDb(dataSource)}</span>
+          </div>
+        </div>
         <CodeEditor
           key={key}
           mode='sql'
