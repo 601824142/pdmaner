@@ -86,7 +86,8 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
         mode='json'
         width='100%'
         height='70vh'
-        value={JSON.stringify(packageChanges(versionRef.current?.data || dataSource,
+        value={JSON.stringify(packageChanges(versionRef.current?.data ||
+                getLatelyDataSource()?.dataSource || dataSource,
                 preRef.current?.data || {entities: [], views: []}),
             null, 2)}
       />, {

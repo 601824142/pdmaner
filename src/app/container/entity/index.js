@@ -7,17 +7,34 @@ import EntityCode from './EntityCode';
 import EntityIndexes from './EntityIndexes';
 
 import './style/index.less';
-import { removeDataByTabId } from '../../../lib/cache';
+import {removeDataByTabId} from '../../../lib/cache';
 import {getPrefix} from '../../../lib/prefixUtil';
+import {subscribeEvent, unSubscribeEvent} from '../../../lib/subscribe';
 
 const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
                              group, BaseExtraCom, customerHeaders, type, getConfig, saveUserData,
                              FieldsExtraOpt, updateDataSource, param, hasRender, hasDestory,
                              getDataSource, openDict}) => {
-  const iniData = getEntityOrViewByName(dataSource, entity) || {};
+  const eventId = Math.uuid();
+  const [key, setKey] = useState(Math.uuid());
+  const [iniData, setInitData] = useState(getEntityOrViewByName(dataSource, entity) || {});
   const [data, updateData] = useState(iniData);
   const dataRef = useRef(data);
   dataRef.current = data;
+  useEffect(() => {
+    // tab的数据发生变化是需要更新
+    const name = 'tabDataChange';
+    subscribeEvent(name, ({id, d}) => {
+      if (id === entity) {
+        setInitData(d);
+        updateData(d);
+        setKey(Math.uuid());
+      }
+    }, eventId);
+    return () => {
+      unSubscribeEvent(name, eventId);
+    };
+  }, []);
   useEffect(() => () => {
     removeDataByTabId(tabKey);
   }, []);
@@ -52,7 +69,7 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-entity`}>
     {/*<div className={`${currentPrefix}-entity-title`}>{entity}</div>*/}
-    <div className={`${currentPrefix}-entity-content`}>
+    <div className={`${currentPrefix}-entity-content`} key={key}>
       <SimpleTab
         options={[
           {

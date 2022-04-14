@@ -30,7 +30,7 @@ import {
   defaultTemplate,
   validateItemInclude,
   emptyDataTypeSupport,
-  allType, validateEmptyOrRepeat,
+  allType, validateEmptyOrRepeat, transformFieldType,
 } from './datasource_util';
 // 专门处理左侧菜单 右键菜单数据
 import { separator } from '../../profile';
@@ -420,7 +420,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
             };
           } else if (realType === 'dataTypeSupports' || realType === 'appCode') {
             const newData = getData();
-            tempDataSource = {
+            tempDataSource = transformFieldType({
               ...tempDataSource,
               profile: {
                 ...(tempDataSource?.profile || {}),
@@ -441,7 +441,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
                   }, {})
                 })
               },
-            };
+            }, _.get(tempDataSource, 'profile.default.db'));
           } else {
             // viewGroup domains
             tempDataSource = {
@@ -616,7 +616,7 @@ const editOpt = (dataSource, menu, updateDataSource) => {
             }),
           }
         };
-        updateDataSource && updateDataSource(tempDataSource);
+        updateDataSource && updateDataSource(transformFieldType(tempDataSource, defaultData.db));
       } else if (dataType === 'appCode') {
         let tempDataSource = {
           ...dataSource,
@@ -927,7 +927,7 @@ const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
         const dataTypeSupports = (dataSource.profile?.dataTypeSupports || [])
           .filter(d => !deleteData.includes(d.id));
         const db = _.get(dataSource, 'profile.default.db');
-        updateDataSource && updateDataSource({
+        updateDataSource && updateDataSource(transformFieldType({
           ...dataSource,
           profile: {
             ...dataSource.profile,
@@ -939,7 +939,7 @@ const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
             codeTemplates: (dataSource.profile?.codeTemplates || [])
                 .filter(d => !deleteData.includes(d.applyFor))
           }
-        });
+        }, db));
         Message.success({title: FormatMessage.string({id: 'deleteSuccess'})});
       } else {
         const optConfig = getOptConfig(dataType);

@@ -39,7 +39,7 @@ const VersionListBar = React.memo((props) => {
   }, [versionsData]);
   useEffect(() => {
     if (menuType === '4') {
-      if(selectedDataRef.current) {
+      if(selectedDataRef.current && versionsData.length > 0) {
         onSelected && onSelected(selectedDataRef.current,
             versionsData.findIndex(v => v.date === selectedDataRef.current.date));
        // onSelected && onSelected(o, i);

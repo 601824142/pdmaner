@@ -2,12 +2,13 @@ import React from 'react';
 import * as _ from 'lodash/object';
 import moment from 'moment';
 import { FormatMessage } from 'components';
-import {getAllTabData, getDataByTabId, getMemoryCache} from './cache';
+import {getAllTabData, getDataByTabId, getMemoryCache, replaceDataByTabId} from './cache';
 import emptyProjectTemplate from './emptyProjectTemplate';
 import { separator } from '../../profile';
 import {firstUp} from './string';
 import {compareVersion} from './update';
 import demoProject from '../lib/template/教学管理系统.chnr.json';
+import {notify} from './subscribe';
 
 export const allType = [
   { type: 'entity', name: 'entities', defKey: 'defKey' },
@@ -999,7 +1000,9 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
       temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
       temp.dbType = mappings.filter(m => m.id === domain.applyFor)[0]?.[db] || f.type;
     } else {
-      temp.dbType = f.type;
+      const realType = mappings.filter(m => m[db] === f.type)[0]?.[code] || f.type;
+      temp.type = realType;
+      temp.dbType = realType;
     }
   } else {
     // 代码类型转换
@@ -1036,6 +1039,46 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
   }
   return temp;
 };
+
+export const transformFieldType = (dataSource, old) => {
+  const db = _.get(dataSource, 'profile.default.db');
+  if (db !== old) {
+    const mappings = dataSource?.dataTypeMapping?.mappings || [];
+    // 默认数据库发生了变更需要重新调整所有字段的数据类型
+    const updateFieldType = (d) => {
+      return {
+        ...d,
+        fields: (d?.fields || []).map(f => {
+          if (!f.domain) {
+            return {
+              ...f,
+              type: mappings.filter(m => m[old] === f.type)[0]?.[db] || f.type,
+            };
+          }
+          return f;
+        }),
+      }
+    }
+    // 调整标签页的内容
+    const allTab = getAllTabData();
+    Object.keys(allTab).map(t => ({tabKey: t, tabData: allTab[t]})).forEach(t => {
+      if (t.tabData.type === 'entity' || t.tabData.type === 'view') {
+        const d = updateFieldType(t.tabData.data);
+        replaceDataByTabId(t.tabKey, {
+          ...t.tabData,
+          data: d,
+        });
+        notify('tabDataChange', {id: t.tabData.key, d});
+      }
+    });
+    return {
+      ...dataSource,
+      views: (dataSource.views || []).map(v => updateFieldType(v)),
+      entities: (dataSource.entities || []).map(e => updateFieldType(e)),
+    };
+  }
+  return dataSource;
+}
 
 export const transformTable = (data, dataSource, code, type = 'id', codeType = 'dbDDL') => {
   const fields = data.fields || [];

@@ -102,7 +102,21 @@ const refactorIndexField = (fieldChanges, preParent, curParent) => {
 
 const refactorEntityFields = (fields, preDataSource, currentDataSource) => {
   const code = _.get(currentDataSource, 'profile.default.db', currentDataSource.profile?.dataTypeSupports[0]?.id);
-  return fields.map(f => ({...f, ...transform(f, preDataSource, code)}));
+  return fields.map(f => ({...f, ...transform(f, {
+      ...preDataSource,
+      domains: currentDataSource.domains,
+      profile: {
+        ...currentDataSource.profile,
+        default: {
+          ...currentDataSource.profile?.default,
+          db: _.get(currentDataSource, 'profile.default.db')
+        }
+      },
+      dataTypeMapping: {
+        ...currentDataSource.dataTypeMapping,
+        mappings: currentDataSource.dataTypeMapping.mappings || []
+      }
+    }, code)}));
 }
 
 const compareObj = (current, pre, names, omitNames = [], refactor) => {

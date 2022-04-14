@@ -12,10 +12,9 @@ export const setDataByTabId = (id, data) => {
   tabs[id] = data;
 };
 
-export const replaceDataByTabId = (oldId, newId) => {
+export const replaceDataByTabId = (id, data) => {
   // 替换tab的数据
-  setDataByTabId(newId, getDataByTabId(oldId));
-  removeDataByTabId(oldId);
+  setDataByTabId(id, data);
 };
 
 export const removeDataByTabId = (id) => {
