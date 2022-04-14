@@ -23,6 +23,7 @@ import {
   openDemoProject,
   saveVersionData,
   removeVersionData,
+  updateAllVersionData,
 } from '../../actions/core';
 import { openLoading, closeLoading } from '../../actions/common';
 import {ConfigContent} from '../../lib/context';
@@ -200,6 +201,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     removeVersion: (title, version) => {
       dispatch(removeVersionData(title, version));
+    },
+    updateAllVersion: (versionData, title, dataSource) => {
+      return dispatch(updateAllVersionData(versionData, title, dataSource));
     },
   };
 };

@@ -1040,44 +1040,69 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
   return temp;
 };
 
-export const transformFieldType = (dataSource, old) => {
+export const transformFieldType = (dataSource, old, updateAllVersion) => {
   const db = _.get(dataSource, 'profile.default.db');
-  if (db !== old) {
-    const mappings = dataSource?.dataTypeMapping?.mappings || [];
-    // 默认数据库发生了变更需要重新调整所有字段的数据类型
-    const updateFieldType = (d) => {
+  // 默认数据库发生了变更需要重新调整所有字段的数据类型
+  const updateFieldType = (d, mappings) => {
+    return {
+      ...d,
+      fields: (d?.fields || []).map(f => {
+        if (!f.domain) {
+          return {
+            ...f,
+            type: mappings.filter(m => m[old] === f.type)[0]?.[db] || f.type,
+          };
+        }
+        return f;
+      }),
+    }
+  }
+  const transformDataSource = (d, old) => {
+    if (db !== old) {
+      const mappings = d?.dataTypeMapping?.mappings || [];
       return {
         ...d,
-        fields: (d?.fields || []).map(f => {
-          if (!f.domain) {
-            return {
-              ...f,
-              type: mappings.filter(m => m[old] === f.type)[0]?.[db] || f.type,
-            };
-          }
-          return f;
-        }),
-      }
+        views: (d.views || []).map(v => updateFieldType(v, mappings)),
+        entities: (d.entities || []).map(e => updateFieldType(e, mappings)),
+      };
     }
-    // 调整标签页的内容
-    const allTab = getAllTabData();
-    Object.keys(allTab).map(t => ({tabKey: t, tabData: allTab[t]})).forEach(t => {
-      if (t.tabData.type === 'entity' || t.tabData.type === 'view') {
-        const d = updateFieldType(t.tabData.data);
-        replaceDataByTabId(t.tabKey, {
-          ...t.tabData,
-          data: d,
-        });
-        notify('tabDataChange', {id: t.tabData.key, d});
+    return d;
+  };
+  // 更新所有的版本数据
+  updateAllVersion((oldVersion) => {
+    return oldVersion.map(o => {
+      if (_.get(o, 'data.profile.dataTypeSupports').findIndex(t => t.id !== db) > -1) {
+        return {
+          ...o,
+          data: transformDataSource({
+            ...o.data,
+            profile: {
+              ...o.data.profile,
+              default: {
+                ...o.data.profile.default,
+                db
+              }
+            }
+          }, _.get(o, 'profile.default.db'))
+        };
       }
+      return o;
     });
-    return {
-      ...dataSource,
-      views: (dataSource.views || []).map(v => updateFieldType(v)),
-      entities: (dataSource.entities || []).map(e => updateFieldType(e)),
-    };
-  }
-  return dataSource;
+  }, '', dataSource);
+  // 调整标签页的内容
+  const allTab = getAllTabData();
+  const mappings = dataSource?.dataTypeMapping?.mappings || [];
+  Object.keys(allTab).map(t => ({tabKey: t, tabData: allTab[t]})).forEach(t => {
+    if (t.tabData.type === 'entity' || t.tabData.type === 'view') {
+      const d = updateFieldType(t.tabData.data, mappings);
+      replaceDataByTabId(t.tabKey, {
+        ...t.tabData,
+        data: d,
+      });
+      notify('tabDataChange', {id: t.tabData.key, d});
+    }
+  });
+  return transformDataSource(dataSource, old);
 }
 
 export const transformTable = (data, dataSource, code, type = 'id', codeType = 'dbDDL') => {

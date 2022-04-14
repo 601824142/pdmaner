@@ -270,7 +270,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     updateContextMenus(getMenus(key, type, selectedMenu, parentKey, groupType));
   };
   const _contextMenuClick = (e, m, callback) => {
-    dealMenuClick(restProps?.dataSource, m, restProps?.update, _tabClose, callback);
+    dealMenuClick(restProps?.dataSource, m, restProps?.update, _tabClose,
+        callback, restProps?.updateAllVersion);
   };
   const sliderChange = (percent) => {
     const cavRef = cavRefArray.current.filter(cav => activeKeyRef.current === cav.key)[0]?.cav;

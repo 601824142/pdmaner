@@ -11,7 +11,7 @@ import {
     packageChanges,
     //genSelByDiff,
     getChanges,
-    getMessageByChanges,
+    getMessageByChanges, mergeDataSource,
 } from '../../lib/datasource_version_util';
 import { Download } from '../download';
 import {getMemoryCache} from '../../lib/cache';
@@ -36,7 +36,8 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
   versionRef.current = version;
   const getResult = (v, p) => {
       const result = getLatelyDataSource();
-      return getMessageByChanges(packageChanges(v.data || result.dataSource || dataSource,
+      return getMessageByChanges(packageChanges(
+          mergeDataSource(v.data || result.dataSource || dataSource, dataSource),
           p?.data || {entities: [], views: []}), dataSource);
   };
   useImperativeHandle(ref, () => {
@@ -51,16 +52,18 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
       if (version) {
           const preDataSource = pre?.data || {entities: [], views: []};
           if (version.data) {
-              const changes = packageChanges(version.data, preDataSource);
+              const changes = packageChanges(mergeDataSource(version.data, dataSource),
+                  preDataSource);
               setValue(getChanges(changes, dataSource));
           } else {
               const result = getLatelyDataSource();
               const changes = result.result.status ?
-                  packageChanges(result.dataSource, preDataSource) : [];
+                  packageChanges(mergeDataSource(result.dataSource, dataSource),
+                      preDataSource) : [];
               setValue(getChanges(changes, dataSource));
           }
       }
-  }, [version, pre, dataSource?.profile?.codeTemplates]);
+  }, [version, pre, dataSource]);
   useEffect(() => {
       setKey(Math.uuid());
   }, [version, dataSource?.profile?.codeTemplates]);
@@ -86,8 +89,8 @@ const VersionInfoBar = React.memo(forwardRef((props, ref) => {
         mode='json'
         width='100%'
         height='70vh'
-        value={JSON.stringify(packageChanges(versionRef.current?.data ||
-                getLatelyDataSource()?.dataSource || dataSource,
+        value={JSON.stringify(packageChanges(mergeDataSource(versionRef.current?.data ||
+                getLatelyDataSource()?.dataSource || dataSource, dataSource),
                 preRef.current?.data || {entities: [], views: []}),
             null, 2)}
       />, {

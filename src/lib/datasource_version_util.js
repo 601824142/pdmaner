@@ -102,21 +102,7 @@ const refactorIndexField = (fieldChanges, preParent, curParent) => {
 
 const refactorEntityFields = (fields, preDataSource, currentDataSource) => {
   const code = _.get(currentDataSource, 'profile.default.db', currentDataSource.profile?.dataTypeSupports[0]?.id);
-  return fields.map(f => ({...f, ...transform(f, {
-      ...preDataSource,
-      domains: currentDataSource.domains,
-      profile: {
-        ...currentDataSource.profile,
-        default: {
-          ...currentDataSource.profile?.default,
-          db: _.get(currentDataSource, 'profile.default.db')
-        }
-      },
-      dataTypeMapping: {
-        ...currentDataSource.dataTypeMapping,
-        mappings: currentDataSource.dataTypeMapping.mappings || []
-      }
-    }, code)}));
+  return fields.map(f => ({...f, ...transform(f, mergeDataSource(preDataSource, currentDataSource), code)}));
 }
 
 const compareObj = (current, pre, names, omitNames = [], refactor) => {
@@ -473,4 +459,31 @@ export const getMaxVersion = (sortData) => {
     }
     return v;
   }).join('.');
+}
+
+export const mergeDataSource = (oldDataSource, newDataSource) => {
+  // applyFor
+  const mergeArray = (aOld = [], bNew = [], key = 'id') => {
+    return aOld.reduce((p, n) => {
+      if (p.findIndex((d) => d[key] === n[key]) < 0) {
+        return p.concat(n);
+      }
+      return p;
+    }, [...bNew]);
+  }
+  return {
+    ...oldDataSource,
+    domains: mergeArray(oldDataSource.domains, newDataSource.domains, 'applyFor'),
+    profile: {
+      ...oldDataSource.profile,
+      default: {
+        ...oldDataSource.profile?.default,
+        db: _.get(newDataSource, 'profile.default.db'),
+      },
+    },
+    dataTypeMapping: {
+      ...oldDataSource.dataTypeMapping,
+      mappings: mergeArray(oldDataSource.dataTypeMapping.mappings, newDataSource.dataTypeMapping.mappings),
+    },
+  }
 }

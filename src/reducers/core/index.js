@@ -11,6 +11,8 @@ import {
   CREATE_PROJECT_ERROR,
   CREATE_PROJECT_SUCCESS,
   UPDATE_PROJECT_INFO,
+    SAVE_ALL_VERSION_SUCCESS,
+    SAVE_ALL_VERSION_FAIL,
 } from '../../actions/core';
 
 // 核心的项目编辑或保存
@@ -49,6 +51,15 @@ const core = (state = {}, action) => {
       return {
         ...state,
         versionsData: [],
+      };
+    case SAVE_ALL_VERSION_SUCCESS:
+      return {
+        ...state,
+        versionsData: action.data,
+      };
+    case SAVE_ALL_VERSION_FAIL:
+      return {
+        ...state,
       };
     case CLOSE_PROJECT:
       return {};

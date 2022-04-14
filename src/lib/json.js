@@ -558,6 +558,14 @@ export const saveVersion = (versionData, oldVersion, info, dataSource) => {
   return saveJsonPromise(filePath, versionData);
 };
 
+export const updateAllVersion = (versionData, info, dataSource) => {
+  const versionDir = path.join(path.dirname(info), `.version_${dataSource.name}`);
+  return Promise.all(versionData.map(v => {
+    const filePath = path.join(versionDir, `${v.name}.json`);
+    return saveJsonPromise(filePath, v);
+  }));
+}
+
 export const renameVersion = (oldFilePath, newFilePath, oldData, newData) => {
   const oldVersionDir = path.join(path.dirname(oldFilePath), `.version_${oldData.name}`);
   const newVersionDir = path.join(path.dirname(newFilePath), `.version_${newData.name}`);

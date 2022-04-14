@@ -5,7 +5,7 @@ import _ from 'lodash/object';
 import {
   saveJsonPromise, readJsonPromise, saveJsonPromiseAs, openProjectFilePath, deleteVersion,
   removeAllVersionProject, openFileOrDirPath, ensureDirectoryExistence, saveVersion,
-  getAllVersionProject, renameVersion,
+  getAllVersionProject, renameVersion, updateAllVersion,
   dirSplicing, fileExists, deleteFile, basename, writeLog, getBackupAllFile,
 } from '../../lib/middle';
 import { openLoading, closeLoading, optReset, STATUS } from '../common';
@@ -39,6 +39,9 @@ export const CREATE_PROJECT_ERROR = 'CREATE_PROJECT_ERROR'; // 创建失败
 
 export const SAVE_VERSION_SUCCESS = 'SAVE_VERSION_SUCCESS'; // 保存版本信息成功
 export const SAVE_VERSION_FAIL = 'SAVE_VERSION_FAIL'; // 保存版本信息失败
+
+export const SAVE_ALL_VERSION_SUCCESS = 'SAVE_ALL_VERSION_SUCCESS';
+export const SAVE_ALL_VERSION_FAIL = 'SAVE_ALL_VERSION_FAIL';
 
 export const REMOVE_VERSION_SUCCESS = 'REMOVE_VERSION_SUCCESS'; // 版本信息删除成功
 
@@ -386,6 +389,36 @@ export const removeVersionData = (title, versionInfo) => {
     deleteVersion(versionInfo, data, info);
     dispatch(removeVersionSuccess(versionInfo));
     dispatch(closeLoading(STATUS[1], null));
+  };
+};
+
+const saveAllVersionSuccess = (data) => {
+  return {
+    type: SAVE_ALL_VERSION_SUCCESS,
+    data,
+  };
+};
+
+const saveAllVersionFail = (err) => {
+  return {
+    type: SAVE_ALL_VERSION_FAIL,
+    data: err,
+  };
+};
+
+export const updateAllVersionData = (versionDataCallBack, title, dataSource) => {
+  return (dispatch, getState) => {
+    const { data, info, versionsData } = getState()?.core || {};
+    dispatch(openLoading(title));
+    const finalData = versionDataCallBack(versionsData);
+    dispatch(autoSaveProject(dataSource));
+    updateAllVersion(finalData, info, data).then(() => {
+      dispatch(saveAllVersionSuccess(finalData));
+      dispatch(closeLoading(STATUS[1], null));
+    }).catch((err) => {
+      dispatch(saveAllVersionFail(err));
+      dispatch(closeLoading(STATUS[2], err));
+    });
   };
 };
 

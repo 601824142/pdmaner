@@ -136,15 +136,15 @@ export const getMenus = (key, type, selectedMenu, parentKey, groupType) => {
   });
 };
 
-export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, callback) => {
+export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, callback, updateAllVersion) => {
   const { key } = menu;
   switch (key) {
-    case 'add': addOpt(dataSource, menu, updateDataSource, {}, null, null, callback); break;
-    case 'edit': editOpt(dataSource, menu, updateDataSource); break;
+    case 'add': addOpt(dataSource, menu, updateDataSource, {}, null, null, callback, updateAllVersion); break;
+    case 'edit': editOpt(dataSource, menu, updateDataSource, updateAllVersion); break;
     case 'copy': copyOpt(dataSource, menu); break;
     case 'cut': cutOpt(dataSource, menu); break;
     case 'paste': pasteOpt(dataSource, menu, updateDataSource); break;
-    case 'delete': deleteOpt(dataSource, menu, updateDataSource, tabClose); break;
+    case 'delete': deleteOpt(dataSource, menu, updateDataSource, tabClose, updateAllVersion); break;
     case 'clear': clearOpt(dataSource, menu, updateDataSource); break;
     case 'move': moveOpt(dataSource, menu, updateDataSource); break;
     case 'all': editAllOpt(dataSource, menu, updateDataSource); break;
@@ -212,7 +212,7 @@ const calcDefaultDb = (newData, oldData, db) => {
   return db;
 }
 
-const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, customerDealData, callback) => {
+const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, customerDealData, callback, updateAllVersion) => {
   // 新增操作合集
   const { dataType, parentKey } = menu;
   let modal = null;
@@ -441,7 +441,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
                   }, {})
                 })
               },
-            }, _.get(tempDataSource, 'profile.default.db'));
+            }, _.get(tempDataSource, 'profile.default.db'), updateAllVersion);
           } else {
             // viewGroup domains
             tempDataSource = {
@@ -483,7 +483,7 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
   )
 };
 
-const editOpt = (dataSource, menu, updateDataSource) => {
+const editOpt = (dataSource, menu, updateDataSource, updateAllVersion) => {
   // 暂时只有关系图和分组可以进行右键编辑 后续可以基于此进行拓展
   // 数据域 双击将触发此处的编辑方法
   const { dataType, dataKey } = menu;
@@ -616,7 +616,7 @@ const editOpt = (dataSource, menu, updateDataSource) => {
             }),
           }
         };
-        updateDataSource && updateDataSource(transformFieldType(tempDataSource, defaultData.db));
+        updateDataSource && updateDataSource(transformFieldType(tempDataSource, defaultData.db, updateAllVersion));
       } else if (dataType === 'appCode') {
         let tempDataSource = {
           ...dataSource,
@@ -898,7 +898,7 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
   });
 };
 
-const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
+const deleteOpt = (dataSource, menu, updateDataSource, tabClose, updateAllVersion) => {
   Modal.confirm({
     title: FormatMessage.string({id: 'deleteConfirmTitle'}),
     message: FormatMessage.string({id: 'deleteConfirm'}),
@@ -939,7 +939,7 @@ const deleteOpt = (dataSource, menu, updateDataSource, tabClose) => {
             codeTemplates: (dataSource.profile?.codeTemplates || [])
                 .filter(d => !deleteData.includes(d.applyFor))
           }
-        }, db));
+        }, db, updateAllVersion));
         Message.success({title: FormatMessage.string({id: 'deleteSuccess'})});
       } else {
         const optConfig = getOptConfig(dataType);

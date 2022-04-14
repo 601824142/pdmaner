@@ -34,6 +34,7 @@ const saveVersion = json.saveVersion;
 const deleteVersion = json.deleteVersion;
 const renameVersion = json.renameVersion;
 const saveAllTemplate = json.saveAllTemplate;
+const updateAllVersion = json.updateAllVersion;
 
 export {
   saveJsonPromise,
@@ -68,5 +69,6 @@ export {
   deleteVersion,
   renameVersion,
   saveAllTemplate,
+  updateAllVersion,
 };
 
