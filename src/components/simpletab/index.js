@@ -14,15 +14,18 @@ export default React.memo(({ prefix, options = [], customerTitle, customerFooter
   const tabStack = useRef([]);
   const [over, setOver] = useState(null);
   const dragData = useRef(null);
-  useEffect(() => {
-    setStateOptions(options);
-  }, [options]);
   const [active, updateActive] = useState(() => {
     const defaultKey = options[0]?.key || options[0]?.title;
     tabActiveChange && tabActiveChange(defaultKey);
     tabStack.current = [defaultKey];
     return defaultKey;
   });
+  useEffect(() => {
+    setStateOptions(options);
+    tabStack.current = tabStack.current.filter(k => options.findIndex(o => o.key === k) > -1);
+    updateActive(tabStack.current.length > 0 ? tabStack.current[tabStack.current.length - 1]
+        : options[0]?.key);
+  }, [options]);
   const deleteFuc = (e, key) => {
     e.stopPropagation();
     onDelete && onDelete(key, () => {

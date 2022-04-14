@@ -4,6 +4,7 @@ import moment from 'moment';
 import { FormatMessage } from 'components';
 import {getAllTabData, getDataByTabId, getMemoryCache, replaceDataByTabId} from './cache';
 import emptyProjectTemplate from './emptyProjectTemplate';
+import empty from './template/empty';
 import { separator } from '../../profile';
 import {firstUp} from './string';
 import {compareVersion} from './update';
@@ -1431,20 +1432,40 @@ export const transformationData = (oldDataSource) => {
   }
   // 4.处理新增的版本模板
   if (compareVersion('4.0.0', oldDataSource.version.split('.'))) {
-   // const codeTemplate = (tempDataSource?.profile?.dataTypeSupports || []).;
+    const dataTypeSupports = (tempDataSource?.profile?.dataTypeSupports || [])
+        .map(d => d.defKey?.toLocaleLowerCase());
+    const codeTemplates = demoProject?.profile?.codeTemplates || [];
+    // 判断是否有新增
+    const add = demoProject.profile.dataTypeSupports
+        .filter(d => !dataTypeSupports.includes(d.defKey?.toLocaleLowerCase()))
+        .reduce((a, b) => {
+          return a.concat({type: b, code: codeTemplates.filter(c => c.applyFor === b.id)[0]})
+        }, []);
     tempDataSource = {
       ...tempDataSource,
       profile: {
         ...tempDataSource.profile,
+        dataTypeSupports: (tempDataSource?.profile?.dataTypeSupports || []).concat(add.map(a => a.type)),
         codeTemplates: (tempDataSource?.profile?.codeTemplates || []).map(c => {
-          if (c.type === 'dbDDL' && c.applyFor !== 'dictSQLTemplate') {
-            return {
-              ...c,
-              message: demoProject.profile.codeTemplates[0].message,
+          if ((c.type === 'dbDDL' && c.applyFor !== 'dictSQLTemplate') || (c.type === 'appCode')) {
+            // 匹配查找
+            const dataType = tempDataSource.profile?.dataTypeSupports?.filter(d => d.id === c.applyFor)[0];
+            if (dataType) {
+              const emptyDataType = demoProject.profile.dataTypeSupports.filter(d => d.defKey?.toLocaleLowerCase()
+                  === dataType.defKey?.toLocaleLowerCase())[0];
+              const emptyTemplate = demoProject.profile.codeTemplates.filter(c => c.applyFor === emptyDataType?.id)[0];
+              return {
+                ...c,
+                ...(c.type === 'dbDDL' ? {
+                  message: emptyTemplate.message,
+                  update: emptyTemplate.update
+                } : _.omit(emptyTemplate, 'applyFor'))
+              }
             }
+            return c;
           }
           return c
-        })
+        }).concat(add.map(a => a.code))
       }
     }
   }
@@ -1867,3 +1888,15 @@ export const getDefaultDb = (dataSource) => {
     return d.id === db
   })[0]?.defKey;
 };
+
+export const getDefaultTemplate = (db, template, dataSource) => {
+  // 匹配查找
+  const dataType = dataSource.profile?.dataTypeSupports?.filter(d => d.id === db)[0];
+  if (dataType) {
+    const emptyDataType = demoProject.profile.dataTypeSupports.filter(d => d.defKey?.toLocaleLowerCase()
+        === dataType.defKey?.toLocaleLowerCase())[0];
+    const emptyTemplate = demoProject.profile.codeTemplates.filter(c => c.applyFor === emptyDataType?.id)[0];
+    return emptyTemplate[template];
+  }
+  return '';
+}

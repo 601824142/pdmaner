@@ -6,7 +6,7 @@ import doT from 'dot';
 
 import { separator } from '../../profile';
 import {firstUp} from './string';
-import {transform} from './datasource_util';
+import {getDefaultTemplate, transform} from './datasource_util';
 import {platform} from './middle';
 
 const demoGroup = [{defKey: "DEFAULT_GROUP", defName: "默认分组"}];
@@ -1281,7 +1281,7 @@ const generateIncreaseSql = (dataSource, group, dataTable, code, templateShow) =
   const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
   // appCode
   const tData = allTemplate.filter(t => t.applyFor === code)[0];
-  const template = tData?.[templateShow] || '';
+  const template = tData?.[templateShow] || getDefaultTemplate(code, templateShow, dataSource);
   const type = tData?.type;
   const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
   // 构造新的数据表传递给模板
@@ -1577,7 +1577,7 @@ export const getDataByChanges = (changes, dataSource) => {
     const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
     const codeTemplate = allTemplate.filter(t => t.applyFor === code)[0] || {};
     const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
-    return getTemplateString(codeTemplate.update || getEmptyMessage('update', dataSource, code), {
+    return getTemplateString(codeTemplate.update || getDefaultTemplate(code, 'update', dataSource), {
       changes,
       separator: sqlSeparator,
     }, false, dataSource, code);

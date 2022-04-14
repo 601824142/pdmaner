@@ -1,6 +1,6 @@
 export default {
     system: {
-        title: '元数建模',
+        title: 'PDManer',
         template: '当前项目为模板项目',
         err: '出错了',
         errorMessage: '程序出现异常，请前往日志文件查看出错日志：',
@@ -174,6 +174,7 @@ export default {
             editRelation: '信息编辑',
             copyAll: '复制全部',
             all: '列出全部',
+            reset: '恢复默认设置',
         },
         groups: '分组',
         entities: '数据表组',

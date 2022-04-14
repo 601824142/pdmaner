@@ -1,6 +1,6 @@
 export default {
     system: {
-        title: 'chiner',
+        title: 'PDManer',
         template: 'The current project is a template project',
         err: 'Error',
         errorMessage: 'The program is abnormal. Please go to the log file to check the error log',
@@ -174,6 +174,7 @@ export default {
             editRelation: 'edit data',
             copyAll: 'copy all',
             all: 'list All',
+            reset: 'Restore default settings',
         },
         groups: 'group',
         entities: 'entities',

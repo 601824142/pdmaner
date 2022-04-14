@@ -1,10 +1,8 @@
 // 删除表 表更名 增加字段 删除字段 修改字段
-import { FormatMessage } from 'components';
-import demoProject from '../lib/template/教学管理系统.chnr.json';
 
 import {getAllDataSQLByFilter, getDataByChanges, getTemplateString, getEmptyMessage } from './json2code_util';
 import _ from 'lodash/object';
-import {transform} from './datasource_util';
+import {getDefaultTemplate, transform} from './datasource_util';
 
 const compareField = (currentFields, preFields, names = [], type = 'field', refactor, inject = false) => {
   const deleteId = [];
@@ -237,7 +235,7 @@ export const getMessageByChanges = (changes, dataSource) => {
     const allTemplate = _.get(dataSource, 'profile.codeTemplates', []);
     const codeTemplate = allTemplate.filter(t => t.applyFor === code)[0] || {};
     const sqlSeparator = _.get(dataSource, 'profile.sql.delimiter', ';');
-    return getTemplateString(codeTemplate.message || demoProject.profile.codeTemplates[0].message, {
+    return getTemplateString(codeTemplate.message || getDefaultTemplate(code, 'message', dataSource), {
       changes,
       separator: sqlSeparator,
     }, false, dataSource, code);

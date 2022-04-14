@@ -13,7 +13,7 @@ import { openLoading, closeLoading, optReset, STATUS } from '../common';
 import { removeHistory, addHistory, updateHistory } from '../config';
 import allLangData from '../../lang';
 import { projectSuffix } from '../../../profile';
-import emptyProject from '../../lib/emptyProjectTemplate';
+import emptyProject from '../../lib/template/empty';
 import { version } from '../../../package';
 import {reduceProject, transformationData} from '../../lib/datasource_util';
 import {setMemoryCache} from '../../lib/cache';
@@ -349,7 +349,7 @@ export const createProject = (data, path, title, type) => {
       } else {
         const time = moment().format('YYYY-M-D HH:mm:ss');
         const newData = {
-          ...reduceProject(emptyProject, 'defKey'),
+          ...emptyProject,
           ...data,
           version,
           createdTime: time,

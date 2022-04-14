@@ -34,6 +34,7 @@ import {
 } from './datasource_util';
 // 专门处理左侧菜单 右键菜单数据
 import { separator } from '../../profile';
+import demoProject from './template/教学管理系统.chnr.json';
 
 const opt = [{
   key: 'add',
@@ -62,7 +63,11 @@ const opt = [{
 }, {
   key: 'all',
   icon: ''
-}]; // 所有菜单操作的的KEY;
+},
+  {
+    key: 'reset',
+    icon: 'fa-mail-reply '
+  }]; // 所有菜单操作的的KEY;
 
 const normalOpt = ['add', 'copy', 'cut', 'paste', 'delete'];
 const domainNormalOpt = ['add', 'clear'];
@@ -82,14 +87,14 @@ const menusType = {
   dataTypeMapping: domainNormalOpt,
   mapping: domainChildNormalOpt,
   dataTypeSupport: domainNormalOpt,
-  dataType: domainChildNormalOpt,
-  appCode: normalOpt.concat('edit'),
+  dataType: domainChildNormalOpt.concat('reset'),
+  appCode: normalOpt.concat('edit', 'reset'),
 };
 
 export const getMenu = (m, key, type, selectedMenu, groupType, parentKey, tempType = type) => {
   const getName = () => {
     const base = FormatMessage.string({id: `menus.opt.${m}`});
-    if (m === 'move' || m === 'all') {
+    if (m === 'move' || m === 'all' || m === 'reset') {
       return base;
     } else if (m === 'edit' && type === 'diagram') {
       return FormatMessage.string({id: 'menus.opt.editRelation'});
@@ -148,9 +153,37 @@ export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, call
     case 'clear': clearOpt(dataSource, menu, updateDataSource); break;
     case 'move': moveOpt(dataSource, menu, updateDataSource); break;
     case 'all': editAllOpt(dataSource, menu, updateDataSource); break;
+    case 'reset': resetOpt(dataSource, menu, updateDataSource); break;
     default:break;
   }
 };
+
+const resetOpt = (dataSource, menu, updateDataSource) => {
+  updateDataSource({
+    ...dataSource,
+    profile: {
+      ...dataSource.profile,
+      codeTemplates: (dataSource?.profile?.codeTemplates || []).map(c => {
+        if (c.applyFor === menu.dataKey) {
+          // 匹配查找
+          const dataType = dataSource.profile?.dataTypeSupports?.filter(d => d.id === c.applyFor)[0];
+          if (dataType) {
+            const emptyDataType = demoProject.profile.dataTypeSupports.filter(d => d.defKey?.toLocaleLowerCase()
+                === dataType.defKey?.toLocaleLowerCase())[0];
+            const emptyTemplate = demoProject.profile.codeTemplates.filter(c => c.applyFor === emptyDataType?.id)[0];
+            return {
+              applyFor: c.applyFor,
+              ..._.omit(emptyTemplate, 'applyFor')
+            };
+          }
+          return c;
+        }
+        return c
+      })
+    }
+  })
+  Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+}
 
 const editAllOpt = (dataSource, m, updateDataSource) => {
   let modal;

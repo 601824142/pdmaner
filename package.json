@@ -1,7 +1,7 @@
 {
-  "name": "chiner",
+  "name": "PDManer",
   "version": "4.0.0",
-  "description": "CHINER-元数建模",
+  "description": "PDManer",
   "scripts": {
     "test": "jest",
     "electron": "electron ./src/main",
@@ -99,8 +99,8 @@
       "provider": "generic",
       "url": "http://chiner-release.httpchk.com"
     },
-    "appId": "chiner",
-    "productName": "CHINER元数建模",
+    "appId": "PDManer",
+    "productName": "PDManer",
     "artifactName": "${productName}-${os}_v${version}.${ext}",
     "directories": {
       "buildResources": "app/build",
