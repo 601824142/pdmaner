@@ -77,7 +77,7 @@ export default {
     openFileError: '文件选择失败',
     saveSuccess: '保存成功',
     saveFail: '保存失败',
-    emptyDefaultTemplate: '# 没有默认模板设置',
+    emptyDefaultTemplate: '没有默认模板设置',
     project: {
         entities: '数据表',
         views: '视图',

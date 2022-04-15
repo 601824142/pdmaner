@@ -181,10 +181,15 @@ const resetOpt = (dataSource, menu, updateDataSource) => {
                 const emptyDataType = demoProject.profile.dataTypeSupports.filter(d => d.defKey?.toLocaleLowerCase()
                     === dataType.defKey?.toLocaleLowerCase())[0];
                 const emptyTemplate = demoProject.profile.codeTemplates.filter(c => c.applyFor === emptyDataType?.id)[0];
-                return {
-                  applyFor: c.applyFor,
-                  ..._.omit(emptyTemplate, 'applyFor')
-                };
+                if (emptyTemplate) {
+                  Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+                  return {
+                    applyFor: c.applyFor,
+                    ..._.omit(emptyTemplate, 'applyFor')
+                  };
+                }
+                Message.warring({title: FormatMessage.string({id: 'emptyDefaultTemplate'})});
+                return c;
               }
               return c;
             }
@@ -192,7 +197,6 @@ const resetOpt = (dataSource, menu, updateDataSource) => {
           })
         }
       })
-      Message.success({title: FormatMessage.string({id: 'optSuccess'})});
     },
   });
 }

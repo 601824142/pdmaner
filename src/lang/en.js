@@ -77,7 +77,7 @@ export default {
     openFileError: 'open file error',
     saveSuccess: 'save success',
     saveFail: 'save fail',
-    emptyDefaultTemplate: '# No default template settings',
+    emptyDefaultTemplate: 'No default template settings',
     project: {
         entities: 'ENTITIES',
         views: 'VIEWS',

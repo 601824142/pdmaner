@@ -1896,7 +1896,7 @@ export const getDefaultTemplate = (db, template, dataSource) => {
     const emptyDataType = demoProject.profile.dataTypeSupports.filter(d => d.defKey?.toLocaleLowerCase()
         === dataType.defKey?.toLocaleLowerCase())[0];
     const emptyTemplate = demoProject.profile.codeTemplates.filter(c => c.applyFor === emptyDataType?.id)[0];
-    return emptyTemplate[template] || FormatMessage.string({id: 'emptyDefaultTemplate'});
+    return emptyTemplate[template] || `# ${FormatMessage.string({id: 'emptyDefaultTemplate'})}`;
   }
-  return FormatMessage.string({id: 'emptyDefaultTemplate'});
+  return `# ${FormatMessage.string({id: 'emptyDefaultTemplate'})}`;
 }
