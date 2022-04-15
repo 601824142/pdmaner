@@ -174,7 +174,7 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
             {}
           </div>
           <div className={`${currentPrefix}-home-container-body-left-logo-title`}>
-            <span>CHINER</span>
+            {/*<span>CHINER</span>*/}
             <span>
               <FormatMessage id='system.title'/>
             </span>

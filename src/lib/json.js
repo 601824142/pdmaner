@@ -117,13 +117,7 @@ export const readJsonPromise = (filePath) => {
 
 export const saveJsonPromiseAs = (data, refactor) => {
   const tempData = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-  const extensions = [];
-  if (process.platform !== 'win32') {
-    // mac 下无法识别.XXX.json为后缀的文件
-    extensions.push('json');
-  } else {
-    extensions.push(`${projectSuffix}.json`);
-  }
+  const extensions = [`${projectSuffix}.json`];
   return new Promise((res, rej) => {
     saveFile(tempData, [{ name: projectSuffix, extensions: extensions}], (path) => {
       if (!path.endsWith('.json')) {
@@ -262,13 +256,7 @@ export const openFileOrDirPath = (filters, properties, rest) => {
 
 export const openProjectFilePath = (errorFileMessage, suffix) => {
   const tempSuffix = suffix || projectSuffix;
-  const extensions = [];
-  if (process.platform !== 'win32') {
-    // mac 下无法识别XXX.json为后缀的文件
-    extensions.push('json');
-  } else {
-    extensions.push(`${tempSuffix}.json`);
-  }
+  const extensions = suffix ? [suffix] : [`${projectSuffix}.json`, 'chnr.json'];
   return new Promise((res, rej) => {
     openFileOrDirPath([{ name: tempSuffix, extensions: extensions}]).then((file) => {
       if (extensions.every(e => !file.endsWith(`.${e}`))) {
@@ -475,7 +463,7 @@ const getDefaultWordTemplate = () => {
 }
 
 export const saveAsWordTemplate = () => {
-  return copyFile(getDefaultWordTemplate(), [{name: 'chiner-docx-tpl', extensions: ['docx']}]);
+  return copyFile(getDefaultWordTemplate(), [{name: 'PDManer-docx-tpl', extensions: ['docx']}]);
 };
 
 export const selectWordFile = (dataSource) => {
@@ -515,10 +503,11 @@ export const basename = (fileName, extension) => {
 
 export const getBackupAllFile = ({core, config}, callback) => {
   if (core.info && config.autoBackup) {
-    const dir = path.dirname(core.info);
+    const dir = path.join(path.dirname(core.info), `.back_${core.data.name}`);
     // 文件名-backup-${年月日时分秒}.chnr.json
     //const name = basename(core.info, '.json');
-    const reg = new RegExp(`${core.data.name}-backup-\(\\d)+.chnr.json`);
+    ensureDirectoryExistence(dir);
+    const reg = new RegExp(`${core.data.name}-backup-\(\\d)+.pdma.json`);
     fs.readdir(dir, (error, files) => {
       if (!error) {
         const allFiles = files.filter(f => reg.test(f)).sort((a, b) => {
@@ -528,10 +517,11 @@ export const getBackupAllFile = ({core, config}, callback) => {
           // 删除最旧的
           fs.unlinkSync(path.join(dir, allFiles[0]));
         }
-        const fileName = `${core.data.name}-backup-${moment().format('YYYYMDHHmmss')}.chnr.json`;
-        fs.writeFile(path.join(dir, fileName), JSON.stringify(core.data, null, 2), () => {
-          callback && callback();
-        })
+        const fileName = `${core.data.name}-backup-${moment().format('YYYYMDHHmmss')}.pdma.json`;
+        fs.writeFileSync(path.join(dir, fileName), JSON.stringify(core.data, null, 2));
+        callback && callback();
+      } else {
+        callback && callback();
       }
     });
   } else {

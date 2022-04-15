@@ -451,7 +451,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   const importFromPDMan = (type) => {
     Upload('application/json', (data, file) => {
       try {
-        let newData = type === 'chiner' ? JSON.parse(data) : pdman2sino(JSON.parse(data), file.name);
+        let newData = (type === 'chiner' || type === 'PDManer') ? JSON.parse(data) : pdman2sino(JSON.parse(data), file.name);
         let modal;
         const onCancel = () => {
           modal.close();
@@ -595,7 +595,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
           buttons: [
             <Button type='primary' key='ok' onClick={onOk}><FormatMessage id='button.ok'/></Button>,
             <Button key='cancel' onClick={onCancel}><FormatMessage id='button.cancel'/></Button>],
-          title: FormatMessage.string({id: `toolbar.${type === 'chiner' ? 'importCHNR' : 'importPDMan'}`}),
+          // eslint-disable-next-line no-nested-ternary
+          title: FormatMessage.string({id: `toolbar.${type === 'chiner' ? 'importCHNR' : (type === 'PDManer' ? 'importPDManer' : 'importPDMan')}`}),
         });
       } catch (err) {
         Modal.error({
@@ -604,11 +605,20 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
         });
       }
     }, (file) => {
-      const result = type === 'chiner' ? file.name.endsWith('.chnr.json') : file.name.endsWith('.pdman.json');
+      const calcResult = () => {
+        if (type === 'chiner') {
+          return file.name.endsWith('.chnr.json');
+        } else if (type === 'PDManer') {
+          return file.name.endsWith('.pdma.json');
+        }
+        return file.name.endsWith('.pdman.json');
+      };
+      const result = calcResult();
       if (!result) {
         Modal.error({
           title: FormatMessage.string({id: 'optFail'}),
-          message: FormatMessage.string({id: type === 'chiner' ? 'invalidCHNRFile' : 'invalidPDManFile'}),
+          // eslint-disable-next-line no-nested-ternary
+          message: FormatMessage.string({id: type === 'chiner' ? 'invalidCHNRFile' : (type === 'PDManer' ? 'invalidPDManerFile' : 'invalidPDManFile')}),
         });
       }
       return result;
@@ -1279,7 +1289,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
   const getName = (m) => {
     if (m.defKey !== m.defName) {
       if (m.type === 'groups'){
-        return `${m.defKey}-${m.defName || m.defKey}`;
+        return `${m.defKey}${(m.defName !== m.defKey && m.defName) ? `-${m.defName}` : ''}`;
       } else if (m.type === 'entity' || m.type === 'view' || m.type === 'diagram' || m.type === 'dict'){
         if (m.defName) {
           const tempDisplayMode = m.nameTemplate || '{defKey}[{defName}]';
@@ -1306,6 +1316,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       case 'pdman': importFromPDMan('pdman');break;
       case 'importDDL': importFromPb('DDL');break;
       case 'chiner': importFromPDMan('chiner');break;
+      case 'PDManer': importFromPDMan('PDManer');break;
       case 'powerdesigner': importFromPb('PD');break;
       case 'db': importFromDb();break;
       case 'domains': importDomains();break;

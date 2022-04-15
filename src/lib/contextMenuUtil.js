@@ -73,7 +73,7 @@ const normalOpt = ['add', 'copy', 'cut', 'paste', 'delete'];
 const domainNormalOpt = ['add', 'clear'];
 const domainChildNormalOpt = ['add', 'copy', 'paste', 'delete'];
 const menusType = {
-  groups: ['add', 'delete', 'clear', 'edit'],
+  groups: ['add', 'edit', 'clear', 'delete'],
   entities: normalOpt.concat('all'),
   entity: normalOpt.concat('move', 'all'),
   views: normalOpt.concat('all'),
@@ -94,7 +94,13 @@ const menusType = {
 export const getMenu = (m, key, type, selectedMenu, groupType, parentKey, tempType = type) => {
   const getName = () => {
     const base = FormatMessage.string({id: `menus.opt.${m}`});
-    if (m === 'move' || m === 'all' || m === 'reset') {
+    if (type === 'appCode' || type === 'dataType' || type === 'mapping'
+        || type === 'domain' || type === 'groups') {
+      if (m === 'edit' && (type === 'appCode' || type === 'dataType')) {
+        return FormatMessage.string({id: 'menus.opt.rename'})
+      }
+      return base;
+    } else if (m === 'move' || m === 'all' || m === 'reset') {
       return base;
     } else if (m === 'edit' && type === 'diagram') {
       return FormatMessage.string({id: 'menus.opt.editRelation'});
@@ -159,30 +165,36 @@ export const dealMenuClick = (dataSource, menu, updateDataSource, tabClose, call
 };
 
 const resetOpt = (dataSource, menu, updateDataSource) => {
-  updateDataSource({
-    ...dataSource,
-    profile: {
-      ...dataSource.profile,
-      codeTemplates: (dataSource?.profile?.codeTemplates || []).map(c => {
-        if (c.applyFor === menu.dataKey) {
-          // 匹配查找
-          const dataType = dataSource.profile?.dataTypeSupports?.filter(d => d.id === c.applyFor)[0];
-          if (dataType) {
-            const emptyDataType = demoProject.profile.dataTypeSupports.filter(d => d.defKey?.toLocaleLowerCase()
-                === dataType.defKey?.toLocaleLowerCase())[0];
-            const emptyTemplate = demoProject.profile.codeTemplates.filter(c => c.applyFor === emptyDataType?.id)[0];
-            return {
-              applyFor: c.applyFor,
-              ..._.omit(emptyTemplate, 'applyFor')
-            };
-          }
-          return c;
+  Modal.confirm({
+    title: FormatMessage.string({id: 'resetConfirmTitle'}),
+    message: FormatMessage.string({id: 'resetConfirm'}),
+    onOk:() => {
+      updateDataSource({
+        ...dataSource,
+        profile: {
+          ...dataSource.profile,
+          codeTemplates: (dataSource?.profile?.codeTemplates || []).map(c => {
+            if (c.applyFor === menu.dataKey) {
+              // 匹配查找
+              const dataType = dataSource.profile?.dataTypeSupports?.filter(d => d.id === c.applyFor)[0];
+              if (dataType) {
+                const emptyDataType = demoProject.profile.dataTypeSupports.filter(d => d.defKey?.toLocaleLowerCase()
+                    === dataType.defKey?.toLocaleLowerCase())[0];
+                const emptyTemplate = demoProject.profile.codeTemplates.filter(c => c.applyFor === emptyDataType?.id)[0];
+                return {
+                  applyFor: c.applyFor,
+                  ..._.omit(emptyTemplate, 'applyFor')
+                };
+              }
+              return c;
+            }
+            return c
+          })
         }
-        return c
       })
-    }
-  })
-  Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+      Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+    },
+  });
 }
 
 const editAllOpt = (dataSource, m, updateDataSource) => {
@@ -559,6 +571,7 @@ const editOpt = (dataSource, menu, updateDataSource, updateAllVersion) => {
         defKey: dataSource?.profile?.dataTypeSupports?.filter(d => d.id === temp.applyFor)[0]?.defKey
       };
     } else if (dataType === 'appCode') {
+      title = FormatMessage.string({id: 'menus.edit.editAppCode'});
       name = 'profile.dataTypeSupports';
       return dataSource?.profile?.dataTypeSupports?.filter(d => d.id === dataKey)[0]
     }

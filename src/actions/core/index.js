@@ -160,10 +160,11 @@ export const autoSaveProject = (data) => {
   };
 };
 
+// eslint-disable-next-line no-unused-vars
 let isSaving = false;
 
 export const saveProject = (data, saveAs, callback) => {
-  if (!isSaving) {
+ // if (!isSaving) {
     isSaving = true;
     // 此处为异步操作
     const time = moment().format('YYYY-M-D HH:mm:ss');
@@ -228,8 +229,8 @@ export const saveProject = (data, saveAs, callback) => {
           });
       }
     };
-  }
-  return () => {};
+  // }
+  // return () => {};
 };
 
 export const close = () => {

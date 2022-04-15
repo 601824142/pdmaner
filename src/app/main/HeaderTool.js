@@ -204,6 +204,7 @@ export default React.memo(forwardRef(({currentPrefix, close, iconClick, colorCha
         dropMenu={[
             { key: 'pdman', name: FormatMessage.string({id: 'toolbar.importPDMan'}) },
             { key: 'chiner', name: FormatMessage.string({id: 'toolbar.importCHNR'}) },
+            { key: 'PDManer', name: FormatMessage.string({id: 'toolbar.importPDManer'}) },
             { key: 'powerdesigner', name: FormatMessage.string({id: 'toolbar.importPowerDesigner'}) },
             { key: 'db', name: FormatMessage.string({id: 'toolbar.importDb'}) },
             { key: 'importDDL', name: FormatMessage.string({id: 'toolbar.importDDL'}) },
