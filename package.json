@@ -24,7 +24,7 @@
   "homepage": "empty",
   "license": "ISC",
   "dependencies": {
-    "@antv/x6": "1.28.1",
+    "@antv/x6": "1.18.3",
     "@antv/x6-react-shape": "1.3.5",
     "@electron/remote": "1.2.1",
     "crypto": "1.0.1",

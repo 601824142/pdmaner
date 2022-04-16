@@ -95,15 +95,18 @@ export const getMenu = (m, key, type, selectedMenu, groupType, parentKey, tempTy
   const getName = () => {
     const base = FormatMessage.string({id: `menus.opt.${m}`});
     if (type === 'appCode' || type === 'dataType' || type === 'mapping'
-        || type === 'domain' || type === 'groups') {
+        || type === 'domain' || type === 'groups' || type === 'entity' || type === 'view') {
       if (m === 'edit' && (type === 'appCode' || type === 'dataType')) {
         return FormatMessage.string({id: 'menus.opt.rename'})
       }
       return base;
     } else if (m === 'move' || m === 'all' || m === 'reset') {
       return base;
-    } else if (m === 'edit' && type === 'diagram') {
-      return FormatMessage.string({id: 'menus.opt.editRelation'});
+    } else if (type === 'diagram') {
+      if (m === 'edit') {
+        return FormatMessage.string({id: 'menus.opt.editRelation'});
+      }
+      return base;
     }
     return base + FormatMessage.string({id: `menus.${tempType}`});
   }

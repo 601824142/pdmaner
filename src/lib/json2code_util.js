@@ -1336,6 +1336,7 @@ export const getCodeByDataTable = (dataSource, group, dataTable, code, templateS
   try {
       sqlString = generateIncreaseSql(dataSource, group, dataTable, code, templateShow);
   } catch (e) {
+    console.error(e);
     Message.error({title: <span>
         {FormatMessage.string({id: 'database.templateError'})}
         <FormatMessage id='database.templateErrorLink'/>

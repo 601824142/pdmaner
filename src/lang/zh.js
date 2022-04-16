@@ -413,6 +413,8 @@ export default {
         table: '数据表',
         example: '例如：Java代码的Controller&Service&Mapper生成配置如下：',
         model: '模型数据',
+        emptyDefault: '未匹配到默认设置',
+        useDefault: '设置为默认',
     },
     tableHeaders: {
         defName: '显示名称',

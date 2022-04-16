@@ -1,0 +1,8 @@
+{
+  "Controller": "controller/{{=it.codeRoot}}Controller.java",
+  "Service": "service/{{=it.codeRoot}}Service.java",
+  "ServiceImpl":"service/impl/{{=it. codeRoot}}ServiceImpl.java",
+  "Mapper.xml":	"mapper/{{=it.codeRoot}}Mapper.xml",
+  "Mapper":	"mapper/{{=it.codeRoot}}Mapper.java",
+  "Entity":	"entity/{{=it.codeRoot}}Entity.java"
+}

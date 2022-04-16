@@ -1,5 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useState, useRef } from 'react';
-import {Input, FormatMessage, Icon, Modal, Tooltip, openModal, Button} from 'components';
+import {Input, FormatMessage, Icon, Modal, Tooltip, openModal, Button, Message} from 'components';
+import fileMapping from '../../../lib/template/fileMapping';
 
 import {getPrefix} from '../../../lib/prefixUtil';
 import {openFileOrDirPath} from '../../../lib/middle';
@@ -168,6 +169,24 @@ export default React.memo(forwardRef(({prefix, data, config, template,
               <Button key='cancel' onClick={onCancel}>{FormatMessage.string({id: 'button.cancel'})}</Button>],
         });
     };
+    const useDefault = () => {
+        let result = false;
+        setTemplateEnv(pre => pre.map((p) => {
+            if (fileMapping[p.name]) {
+                result = true;
+                return {
+                    ...p,
+                    suffix: fileMapping[p.name],
+                };
+            }
+            return p;
+        }));
+        if (!result) {
+            Message.warring({title: FormatMessage.string({id: 'tableBase.emptyDefault'})});
+        } else {
+            Message.success({title: FormatMessage.string({id: 'optSuccess'})});
+        }
+    };
     return <div className={`${currentPrefix}-form`}>
       <div>
         <div className={`${currentPrefix}-datatype-title`}>
@@ -245,30 +264,12 @@ export default React.memo(forwardRef(({prefix, data, config, template,
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>Controller:</td>
-                        <td>{'controller/{{=it.codeRoot}}Controller.java'}</td>
-                      </tr>
-                      <tr>
-                        <td>Service:</td>
-                        <td>{'service/{{=it.codeRoot}}Service.java'}</td>
-                      </tr>
-                      <tr>
-                        <td>ServiceImpl:</td>
-                        <td>{'service/impl/{{=it. codeRoot}}ServiceImpl.java'}</td>
-                      </tr>
-                      <tr>
-                        <td>Mapper.xml:</td>
-                        <td>{'mapper/{{=it.codeRoot}}Mapper.xml'}</td>
-                      </tr>
-                      <tr>
-                        <td>Mapper:</td>
-                        <td>{'mapper/{{=it.codeRoot}}Mapper.java'}</td>
-                      </tr>
-                      <tr>
-                        <td>Entity:</td>
-                        <td>{'entity/{{=it.codeRoot}}Entity.java'}</td>
-                      </tr>
+                      {Object.keys(fileMapping).map((f) => {
+                        return <tr key={f}>
+                          <td>{f}:</td>
+                          <td>{fileMapping[f]}</td>
+                        </tr>;
+                    })}
                     </tbody>
                   </table>
                 </div>
@@ -279,6 +280,7 @@ export default React.memo(forwardRef(({prefix, data, config, template,
               </span>
             </Tooltip>
           </span>
+          <span className={`${currentPrefix}-entity-template-opt`} onClick={useDefault}>{FormatMessage.string({id: 'tableBase.useDefault'})}</span>
         </div>
         <div className={`${currentPrefix}-entity-template-container`}>
           <div>
@@ -290,7 +292,7 @@ export default React.memo(forwardRef(({prefix, data, config, template,
                   <div>{t.name}</div>
                   <div>
                     <Input
-                      placeholder='demo/entity/{{=it.codeRoot}}Entity.java'
+                      placeholder={fileMapping[t.name] || ''}
                       onChange={e => templateEnvChange(e.target.value, 'suffix', t.name)}
                       value={t.suffix}
                     />

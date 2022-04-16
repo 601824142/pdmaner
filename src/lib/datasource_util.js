@@ -1009,10 +1009,12 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
     // 代码类型转换
     if (f.domain) {
       const domain = domains.filter(dom => dom[type] === f.domain)[0];
-      const mapping = mappings.filter(m => m.id === domain.applyFor)[0];
-      temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
-      temp.type = mapping?.[code] || '';
-      temp.dbType = mapping?.[db] || f.type;
+      if (domain) {
+        const mapping = mappings.filter(m => m.id === domain?.applyFor)[0];
+        temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
+        temp.type = mapping?.[code] || '';
+        temp.dbType = mapping?.[db] || f.type;
+      }
     } else {
       temp.type = mappings.filter(m => m[db] === f.type)[0]?.[code] || f.type;
       temp.dbType = f.type;
@@ -1457,8 +1459,8 @@ export const transformationData = (oldDataSource) => {
               return {
                 ...c,
                 ...(c.type === 'dbDDL' ? {
-                  message: emptyTemplate.message,
-                  update: emptyTemplate.update
+                  message: emptyTemplate?.message || '',
+                  update: emptyTemplate?.update || '',
                 } : _.omit(emptyTemplate, 'applyFor'))
               }
             }
@@ -1896,7 +1898,7 @@ export const getDefaultTemplate = (db, template, dataSource) => {
     const emptyDataType = demoProject.profile.dataTypeSupports.filter(d => d.defKey?.toLocaleLowerCase()
         === dataType.defKey?.toLocaleLowerCase())[0];
     const emptyTemplate = demoProject.profile.codeTemplates.filter(c => c.applyFor === emptyDataType?.id)[0];
-    return emptyTemplate[template] || `# ${FormatMessage.string({id: 'emptyDefaultTemplate'})}`;
+    return emptyTemplate?.[template] || `# ${FormatMessage.string({id: 'emptyDefaultTemplate'})}`;
   }
   return `# ${FormatMessage.string({id: 'emptyDefaultTemplate'})}`;
 }
