@@ -4,7 +4,7 @@
   "avatar": "",
   "version": "4.0.0",
   "createdTime": "2022-4-16 17:38:15",
-  "updatedTime": "2022-4-16 17:41:49",
+  "updatedTime": "2022-4-17 07:55:00",
   "dbConns": [],
   "profile": {
     "default": {
@@ -183,6 +183,10 @@
       {
         "defKey": "C#",
         "id": "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30"
+      },
+      {
+        "defKey": "Hive",
+        "id": "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2"
       }
     ],
     "codeTemplates": [
@@ -306,6 +310,17 @@
         "type": "dbDDL",
         "applyFor": "dictSQLTemplate",
         "content": "/* 插入字典总表[{{=it.dict.defKey}}-{{=it.dict.defName}}] */\nINSERT INTO SYS_DICT(KEY_,LABEL,INTRO,REVISION) VALUES('{{=it.dict.defKey}}','{{=it.dict.defName}}','{{=it.dict.intro}}',1);\n/* 插入字典明细表 */\n{{~it.dict.items:item:index}}\nINSERT INTO SYS_DICT_ITEM(DICT_KEY,KEY_,LABEL,SORT_,INTRO,REVISION) VALUES('{{=it.dict.defKey}}','{{=item.defKey}}','{{=item.defName}}','{{=item.sort}}','{{=item.intro}}',1);\n{{~}}"
+      },
+      {
+        "applyFor": "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2",
+        "type": "dbDDL",
+        "createTable": "/**字段名,关键字等全部用的小写*/\ndrop table if exists {{=it.entity.defKey}};\n/**补充上库名,external关键字根据建表规范看是否添加*/\ncreate [external] table if not exists {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n/**这里把varchar,char,text,date,datetime字段全部映射为string类型.tinyint unsigned,bit,Integer,tinyint,smallint,mediumint映射为int类型,int unsigned映射为bigint.其它自定义映射规则根据自己情况修改*/\n/**当长度>0只有为decimal类型或double类型时才保留长度和小数的位数*/\n{{~it.entity.fields:field:index}}\n    {{=it.func.lowerCase(field.defKey)}} {{=it.func.lowerCase(field.dbType)=='varchar'||it.func.lowerCase(field.dbType)=='char'||it.func.lowerCase(field.dbType)=='text'||it.func.lowerCase(field.dbType)=='date'||it.func.lowerCase(field.dbType)=='datetime' ? 'string':it.func.lowerCase(field.dbType)=='tinyint unsigned'||it.func.lowerCase(field.dbType)=='bit'||it.func.lowerCase(field.dbType)=='integer'||it.func.lowerCase(field.dbType)=='tinyint'||it.func.lowerCase(field.dbType)=='smallint'||it.func.lowerCase(field.dbType)=='mediumint' ? 'int':it.func.lowerCase(field.dbType)=='int unsigned' ? 'bigint':it.func.lowerCase(field.dbType)}}{{?field.len>0&&(it.func.lowerCase(field.dbType)=='decimal'||it.func.lowerCase(field.dbType)=='double')}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{=')'}}{{?}}{{?}} comment '{{=it.func.join(field.defName,field.comment,'')}}' {{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n{{?}}\n)\n{{\n    let partitionedBy = it.entity.properties['partitioned by'];\n    partitionedBy = partitionedBy?partitionedBy:'请在扩展属性中配置[partitioned by]属性';\n}}\ncomment '{{=it.func.join(it.entity.defName,';') }}'\n/**是否分区表,分区字段名和字段注释自定义*/\n[partitioned by {{=partitionedBy}}]\n/**文件存储格式自定义*/\n[stored as orc]\n/**hdfs上的地址自定义*/\n[location xxx]\n;",
+        "createView": "",
+        "deleteTable": "",
+        "createIndex": "",
+        "deleteIndex": "",
+        "message": "",
+        "update": ""
       }
     ],
     "generatorDoc": {
@@ -4504,7 +4519,8 @@
         "797A1496-D649-4261-89B4-544132EC3F36": "String",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "String",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "String",
-        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "string"
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "string",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "string"
       },
       {
         "defKey": "double",
@@ -4523,7 +4539,8 @@
         "797A1496-D649-4261-89B4-544132EC3F36": "Double",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Double",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Double",
-        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "float"
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "float",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "double"
       },
       {
         "defKey": "int",
@@ -4542,7 +4559,8 @@
         "797A1496-D649-4261-89B4-544132EC3F36": "Integer",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Integer",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Integer",
-        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "float"
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "float",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "int"
       },
       {
         "defKey": "date",
@@ -4561,7 +4579,8 @@
         "797A1496-D649-4261-89B4-544132EC3F36": "Date",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Date",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Date",
-        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "date"
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "date",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "timestamp"
       },
       {
         "defKey": "bytes",
@@ -4580,7 +4599,8 @@
         "797A1496-D649-4261-89B4-544132EC3F36": "byte[]",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "byte[]",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "byte[]",
-        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "binary"
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "binary",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "binary"
       },
       {
         "defKey": "largeText",
@@ -4599,7 +4619,8 @@
         "797A1496-D649-4261-89B4-544132EC3F36": "String",
         "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "String",
         "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "String",
-        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "string"
+        "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30": "string",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "string"
       }
     ]
   },

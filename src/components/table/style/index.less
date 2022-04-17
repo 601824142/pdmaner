@@ -127,6 +127,13 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+    overflow: auto;
+    flex-wrap: nowrap;
+    & > span {
+      display: flex !important;
+      flex-direction: row;
+      flex-wrap: nowrap;
+    }
     i {
       font-size: 12px;
       cursor: pointer;

@@ -410,16 +410,18 @@ const saveAllVersionFail = (err) => {
 export const updateAllVersionData = (versionDataCallBack, title, dataSource) => {
   return (dispatch, getState) => {
     const { data, info, versionsData } = getState()?.core || {};
-    dispatch(openLoading(title));
-    const finalData = versionDataCallBack(versionsData);
-    dispatch(autoSaveProject(dataSource));
-    updateAllVersion(finalData, info, data).then(() => {
-      dispatch(saveAllVersionSuccess(finalData));
-      dispatch(closeLoading(STATUS[1], null));
-    }).catch((err) => {
-      dispatch(saveAllVersionFail(err));
-      dispatch(closeLoading(STATUS[2], err));
-    });
+    if (info) {
+      dispatch(openLoading(title));
+      const finalData = versionDataCallBack(versionsData);
+      dispatch(autoSaveProject(dataSource));
+      updateAllVersion(finalData, info, data).then(() => {
+        dispatch(saveAllVersionSuccess(finalData));
+        dispatch(closeLoading(STATUS[1], null));
+      }).catch((err) => {
+        dispatch(saveAllVersionFail(err));
+        dispatch(closeLoading(STATUS[2], err));
+      });
+    }
   };
 };
 

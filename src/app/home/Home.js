@@ -18,14 +18,14 @@ const CodeImg = ({currentPrefix}) => {
     <div><FormatMessage id='home.optBookTitle'/></div>
     <div>
       <div>
-        <img src='./asset/codeimage/web.png' alt=''/>
+        <img src='./asset/codeimage/img.png' alt=''/>
         <span><FormatMessage id='home.optBookTitle1'/></span>
       </div>
-      <p/>
-      <div>
-        <img src='./asset/codeimage/app.jpeg' alt=''/>
-        <span><FormatMessage id='home.optBookTitle2'/></span>
-      </div>
+      {/*<p/>*/}
+      {/*<div>*/}
+      {/*  <img src='./asset/codeimage/app.jpeg' alt=''/>*/}
+      {/*  <span><FormatMessage id='home.optBookTitle2'/></span>*/}
+      {/*</div>*/}
     </div>
   </div>;
 };
@@ -235,7 +235,7 @@ export default React.memo(({prefix, importProject, createProject, openTemplate,
             <Tooltip placement='bottom' title={<CodeImg currentPrefix={currentPrefix}/>} force>
               <div
                 title={FormatMessage.string({id: 'home.jumpOptBook'})}
-                onClick={() => openUrl('https://www.yuque.com/chiner/docs/manual')}
+                onClick={() => openUrl('https://www.yuque.com/pdmaner/docs')}
                 className={`${currentPrefix}-home-container-body-right-nav-type-unselected`}
               >
                 <Icon type='fa-book' style={{marginRight: 4, fontSize: '16px'}}/>

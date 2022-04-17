@@ -128,7 +128,7 @@ export default {
         jumpOptBook: '点击跳转至在线文档',
         optBook: '操作手册',
         optBookTitle: '扫描下方二维码阅读文档',
-        optBookTitle1: '钉钉、微信扫码',
+        optBookTitle1: '微信扫码',
         optBookTitle2: '微信小程序',
         recently: '最近打开',
         exampleProject: '参考模板',
