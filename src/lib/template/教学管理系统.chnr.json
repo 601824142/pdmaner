@@ -4,7 +4,7 @@
   "avatar": "",
   "version": "4.0.0",
   "createdTime": "2022-4-16 17:38:15",
-  "updatedTime": "2022-4-17 07:55:00",
+  "updatedTime": "2022-4-17 09:10:33",
   "dbConns": [],
   "profile": {
     "default": {
@@ -198,7 +198,8 @@
       {
         "type": "appCode",
         "applyFor": "F3AC2415-E86B-40C6-9FEB-F4B7937D2C30",
-        "content": "using System;\nusing System.Collections.Generic;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n/*\n * @author : http://www.chiner.com.cn\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace Chiner.Application\n{\n    public partial class {{=it.func.camel(it.entity.defKey,true) }}\n    {\n    \n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}} { get; set; }\n        $blankline\n        {{~}}\n        \n    }\n}"
+        "Default": "using System;\nusing System.Collections.Generic;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n}}\n/*\n * @author : http://www.chiner.com.cn\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace PDManer.Application\n{\n    public partial class {{=it.func.camel(it.entity.defKey,true) }}\n    {\n    \n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}} { get; set; }\n        $blankline\n        {{~}}\n        \n    }\n}",
+        "SqlSugar": "using System;\nusing System.Collections.Generic;\nusing SqlSugar;\n\n$blankline\n{{\n    var today=new Date();\n    var fullYear=today.getFullYear();\n    var month=today.getMonth() + 1;\n    var days=today.getDate();\n    var sqlSugartable='[SugarTable(\"{{=it.entity.defKey}}\", TableDescription = \"{{=it.func.join(it.entity.defName,it.entity.comment,';')}}\")]';\n}}\n/*\n * @author : xkdong@163.com\n * @date : {{=fullYear}}-{{=month}}-{{=days}}\n * @desc : {{=it.func.join(it.entity.defName,it.entity.comment,'-')}}\n */\nnamespace Model.DBModel\n{\n    /// <summary>\n    /// {{=it.func.join(it.entity.defName,it.entity.comment,';')}}\n    /// </summary>\n    {{=sqlSugartable}}\n    public class {{=it.entity.defKey}}\n    {\n        {{~it.entity.fields:field:index}}\n        /// <summary>\n        /// {{=it.func.join(field.defName,field.comment,';')}}\n        /// </summary>\n        {{? field.primaryKey }}\n        [SugarColumn(IsIdentity = true, IsPrimaryKey = true)]\n        {{?}}\n        public {{=field.type}} {{=it.func.camel(field.defKey,true)}}{ get; set; }\n        $blankline\n        {{~}}\n    }\n}"
       },
       {
         "applyFor": "895CFD1D-4273-4D32-A2C4-CAC70200AB5B",
