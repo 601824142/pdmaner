@@ -547,6 +547,7 @@ export const validateFields = (fields) => {
     defaultValue: f?.defaultValue || '',
     hideInGraph: f?.hideInGraph || f?.relationNoShow || false,
     domain: f?.domain || f?.dbType,
+    refDict: f?.refDict || '',
   }))
 };
 
