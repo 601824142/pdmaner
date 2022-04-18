@@ -12,7 +12,7 @@ PDManer元数建模，是一款多操作系统开源免费的桌面版关系数�
 
 [PDManer元数建模-4.0]，历时四年，持续升级，工匠精神，做一款简单好用的数据库建模平台。
 
-[PDMan-v2] --> [CHINER-v3] --> [PDManer-v4]，连续四年，产品一直保持很好的传承和延续。
+[[PDMan-v2](https://gitee.com/robergroup/pdman)] --> [[CHINER-v3](https://gitee.com/robergroup/chiner)] --> [PDManer-v4]，连续四年，产品一直保持很好的传承和延续。
 
 PDManer=PDMan+er(chiner的er部分，ER也表示关系图的意思)，“元数建模”的中文名称依然延续，名称需要精简，拿掉chi表示中国的前缀部分，使用中文能更加明确这是一个中国小团队的作品，4.0版本之后，产品名称：[PDManer元数建模]就此确定，承接了PDMan以及CHINER的所有功能，并且进行延续精进
 
