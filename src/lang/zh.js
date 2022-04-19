@@ -657,6 +657,7 @@ export default {
             error: '配置失败',
             placeholder: '不填将自动从系统的环境变量中读取',
             notFoundJDK: '未检测到JDK，请先安装JDK(如果已经安装，请检查环境变量是否配置正确或者前往系统【设置】-> 【系统参数】->【JAVA_HOME】指定JDK路径)',
+            outOfMemoryError: 'JVM所需内存不足，请前往[设置=>系统参数=>JVM参数]调整',
         },
         DictSQLTemplate: '数据字典SQL模板',
         JVMLabel: 'JVM参数',

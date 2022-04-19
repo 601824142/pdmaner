@@ -656,6 +656,7 @@ export default {
             error: 'config error',
             placeholder: 'If it is not filled in, it will be automatically read from the environment variable of the system',
             notFoundJDK: 'no JDK is detected, please install the JDK first (if it has been installed, please check whether the environment variables are configured correctly, or go to system [setting] -> [SystemParameter] -> [JAVA_HOME] to specify the JDK path)',
+            outOfMemoryError: 'The memory required by the JVM is insufficient. Please go to [setting = > SystemParameter = > JVM Parameters] for adjustment',
         },
         DictSQLTemplate: 'dict SQL template',
         JVMLabel: 'JVM Parameters',
