@@ -239,7 +239,7 @@ export default {
     saveConfirmTitle: '关闭确认',
     saveConfirm: '当前内容尚未保存，是否关闭？',
     refreshConfirmTitle: '刷新项目',
-    refreshConfirm: '刷新当前项目将会丢失当前打开的项目数据，是否继续？',
+    refreshConfirm: '刷新操作，会从文件中重新加载项目，如有修改请先保。是否执行刷新？',
     deleteConfirmTitle: '删除确认',
     importConfirm: '导入操作会覆盖当前项目是否继续？',
     deleteConfirm: '删除操作不可撤销是否继续？',

@@ -239,7 +239,7 @@ export default {
     saveConfirmTitle: 'Closing confirmation',
     saveConfirm: 'The current content has not been saved. Do you want to close it?',
     refreshConfirmTitle: 'Refresh project',
-    refreshConfirm: 'Refreshing the current project will lose the currently open project data. Do you want to continue?',
+    refreshConfirm: 'Refresh operation reloads the project from the file.Do you want to perform a refresh?',
     deleteConfirmTitle: 'Delete confirm',
     importConfirm: 'Import operation will overwrite current project whether to continue?',
     deleteConfirm: 'Delete cannot be undone, is continue ?',
