@@ -129,29 +129,36 @@ export default React.memo(forwardRef(({prefix, data, config, template,
             modal.close();
         };
         const onOK = () => {
-            const currentEnv = table.env || {};
-            setPath(select || '');
-            setEnv((pre) => {
-                return {
-                    codeRoot: pre.codeRoot || '',
-                    ...(currentEnv.base || {}),
-                };
-            });
-            setTemplateEnv(template.map((t) => {
-                const tData = (currentEnv.template || {})?.[codeTemplate.defKey] || {};
-                return {
-                    name: t,
-                    suffix: tData[t]?.suffix || '',
-                };
-            }));
-            setCustomerEnv(() => {
-                return Object.keys(currentEnv.custom || {}).map(e => ({
-                    id: Math.uuid(),
-                    name: e,
-                    value: (currentEnv.custom || {})[e],
+            if (table) {
+                const currentEnv = table.env || {};
+                setPath(select || '');
+                setEnv((pre) => {
+                    return {
+                        ...(currentEnv.base || {}),
+                        codeRoot: pre.codeRoot || '',
+                    };
+                });
+                setTemplateEnv(template.map((t) => {
+                    const tData = (currentEnv.template || {})?.[codeTemplate.defKey] || {};
+                    return {
+                        name: t,
+                        suffix: tData[t]?.suffix || '',
+                    };
                 }));
-            });
-            modal.close();
+                setCustomerEnv(() => {
+                    return Object.keys(currentEnv.custom || {}).map(e => ({
+                        id: Math.uuid(),
+                        name: e,
+                        value: (currentEnv.custom || {})[e],
+                    }));
+                });
+                modal.close();
+            } else {
+                Modal.error({
+                    title: FormatMessage.string({id: 'optFail'}),
+                    message: FormatMessage.string({id: 'tableBase.selectEntityEmpty'}),
+                });
+            }
         };
         const onSelected = (r, p) => {
             table = r;

@@ -156,7 +156,7 @@ export default React.memo(({prefix, newData, onRemove, allowClear,
   }, [newData]);
   const _iconClick = (t) => {
     if (t === 'all') {
-      setChecked([...defaultSelected || []]);
+      setChecked([]);
     } else {
       setChecked(() => {
         return [...newData.map(d => d.id)];

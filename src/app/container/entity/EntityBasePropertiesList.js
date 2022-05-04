@@ -4,7 +4,7 @@ import { moveArrayPosition } from '../../../lib/array_util';
 import {getPrefix} from '../../../lib/prefixUtil';
 
 
-export default React.memo(({prefix, properties, propertiesChange}) => {
+export default React.memo(({prefix, properties, propertiesChange, className}) => {
   const [data, updateData] = useState(() => {
     return Object.keys(properties)
       .reduce((a, b) => a.concat({data: [b || '' , properties[b] || ''], __key: Math.uuid()}) , []);
@@ -99,7 +99,7 @@ export default React.memo(({prefix, properties, propertiesChange}) => {
     updateData(tempData);
     propsChange(tempData);
   };
-  return <div className={`${currentPrefix}-entity-base-properties`}>
+  return <div className={`${currentPrefix}-entity-base-properties ${className}`}>
     <div className={`${currentPrefix}-entity-base-properties-list-opt`}>
       <DropButton menuClick={menuClick} dropDownMenus={dropDownMenus} position='top'>
         <IconTitle title={FormatMessage.string({id: 'tableEdit.addField'})} onClick={() => optProperty('add')} type='fa-plus'/>

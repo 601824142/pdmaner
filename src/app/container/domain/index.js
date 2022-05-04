@@ -6,10 +6,12 @@ import {getPrefix} from '../../../lib/prefixUtil';
 const Option = Select.Option;
 // 数据域详情组件
 export default React.memo(({prefix, dataSource, data, dataChange}) => {
+  const db = dataSource.profile?.default?.db;
   const [status, setStatus] = useState({len: data.len || data.len === 0,
     scale: data.scale || data.scale === 0});
   const [dataValue, setDataValue] = useState({len: data.len, scale: data.scale});
   const mapping = dataSource?.dataTypeMapping?.mappings || [];
+  const [typeValue, setTypeValue] = useState(mapping.filter(m => m.id === data.applyFor)[0]?.[db] || '');
   const onChange = (e, name) => {
     const value = e.target.value || '';
     if (name === 'len' || name === 'scale') {
@@ -20,7 +22,11 @@ export default React.memo(({prefix, dataSource, data, dataChange}) => {
         };
       });
     }
-    dataChange && dataChange(value, name);
+    if (name === 'applyFor') {
+      setTypeValue(mapping.filter(m => m.id === value)[0]?.[db] || '');
+    } else {
+      dataChange && dataChange(value, name);
+    }
   };
   const _checkBoxChange = (e, type) => {
     const checked = e.target.checked;
@@ -80,6 +86,17 @@ export default React.memo(({prefix, dataSource, data, dataChange}) => {
             mapping.map(m => (<Option key={m.id} value={m.id}>{m.defName || m.defKey}</Option>))
           }
         </Select>
+      </span>
+    </div>
+    <div className={`${currentPrefix}-form-item`}>
+      <span
+        className={`${currentPrefix}-form-item-label`}
+        title={FormatMessage.string({id: 'domain.type'})}
+      >
+        <FormatMessage id='domain.type'/>
+      </span>
+      <span className={`${currentPrefix}-form-item-component`}>
+        <Input value={typeValue || FormatMessage.string({id: 'domain.emptyType'})} disable/>
       </span>
     </div>
     <div className={`${currentPrefix}-form-item`}>

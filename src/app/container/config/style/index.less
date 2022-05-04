@@ -32,11 +32,20 @@
   padding: 5px;
   overflow: auto;
   height: 60vh;
+  & > div > div:first-child {
+    margin-bottom: 3px;
+  }
+}
+.@{prefix}-setting-entity-init-columns {
+  & > div:last-child {
+    height: calc(100% - 30px);
+    overflow: auto;
+  }
 }
 .@{prefix}-setting-entity-init-properties {
   padding: 5px;
   overflow: auto;
-  height: 60vh;
+  height: 100%;
   .@{prefix}-entity-base-properties-list-container {
     height: calc(100% - 30px);
     overflow: auto;
@@ -98,7 +107,7 @@
 }
 .@{prefix}-setting-uiHint {
   padding: 5px;
-  height: 60vh;
+  height: 100%;
   & > div {
     height: 100%;
     border: 1px dashed @primary-border-color;

@@ -396,7 +396,7 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
         deleteDirectoryFile(params.imgDir);
       }
       if (error) {
-        let tempError = error.message;
+        let tempError = error.message || stderr || stdout;
         if (/spawn .* ENOENT/.test(tempError)) {
           tempError = FormatMessage.string({id: 'config.JavaHomeConfigResult.notFoundJDK'});
         } else if (/java\.lang\.OutOfMemoryError/.test(tempError)) {

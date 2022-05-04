@@ -2,25 +2,23 @@ import React from 'react';
 import { SimpleTab, FormatMessage } from 'components';
 
 import './style/index.less';
-import EntityInitFields from './EntityInitFields';
+import EntityInit from './EntityInitFields';
 import SystemParameter from './SystemParameter';
-import EntityBasePropertiesList from './EntityInitProperties';
-import UiHint from './UiHint';
+import FieldConfig from './FieldConfig';
 import DictSQLTemplate from './DictSQLTemplate';
 //import DbConnect from './DbConnect';
 import {getPrefix} from '../../../lib/prefixUtil';
 
 const Components = {
-  EntityInitFields,
+    EntityInit,
   SystemParameter,
-  EntityBasePropertiesList,
-  UiHint,
+    FieldConfig,
   DictSQLTemplate,
   //DbConnect,
 };
 export default React.memo(({prefix, dataSource, dataChange, updateDataSource,
                              config, getDataSource}) => {
-  const configTab = ['EntityInitFields', 'EntityBasePropertiesList', 'SystemParameter', 'UiHint', 'DictSQLTemplate']
+  const configTab = ['EntityInit', 'FieldConfig', 'SystemParameter', 'DictSQLTemplate']
   const currentPrefix = getPrefix(prefix);
   return <SimpleTab
     options={configTab

@@ -8,6 +8,7 @@ import {getPrefix} from '../../lib/prefixUtil';
 // 结构简单的TAB组件
 export default React.memo(({ prefix, options = [], customerTitle, customerFooter,
                              onDelete, disableEdit, onAdd, draggable, onPositionChange,
+                             defaultActive,
                              offsetHeight, tabActiveChange, type = 'top', className = '', edit,
                              onTabDoubleClick }) => {
   const [stateOptions, setStateOptions] = useState(options);
@@ -15,7 +16,7 @@ export default React.memo(({ prefix, options = [], customerTitle, customerFooter
   const [over, setOver] = useState(null);
   const dragData = useRef(null);
   const [active, updateActive] = useState(() => {
-    const defaultKey = options[0]?.key || options[0]?.title;
+    const defaultKey = defaultActive || options[0]?.key || options[0]?.title;
     tabActiveChange && tabActiveChange(defaultKey);
     tabStack.current = [defaultKey];
     return defaultKey;
@@ -88,7 +89,7 @@ export default React.memo(({ prefix, options = [], customerTitle, customerFooter
             className={`${currentPrefix}-simple-tab-titles-title-${active === (o.key || o.title) ? 'active' : 'default'}`}
           >
             {o.title}
-            { edit && disableEdit !== o.key && <span onClick={e => deleteFuc(e, o.key || o.title)} className={`${currentPrefix}-simple-tab-close`}><Icon type='fa-times-circle'/></span>}
+            { edit && disableEdit !== o.key && <span onClick={e => deleteFuc(e, o.key || o.title)} className={`${currentPrefix}-simple-tab-close`}><Icon type='fa-trash'/></span>}
           </span>
           ),
         )

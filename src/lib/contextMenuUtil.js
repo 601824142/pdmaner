@@ -30,7 +30,7 @@ import {
   defaultTemplate,
   validateItemInclude,
   emptyDataTypeSupport,
-  allType, validateEmptyOrRepeat, transformFieldType,
+  allType, validateEmptyOrRepeat, transformFieldType, resetHeader,
 } from './datasource_util';
 // 专门处理左侧菜单 右键菜单数据
 import { separator } from '../../profile';
@@ -281,8 +281,11 @@ const addOpt = (dataSource, menu, updateDataSource, oldData = {}, title, custome
       uniqueKey: 'defKey',
       uniqueKeyNamePath: 'tableBase.defKey',
       refName: 'refEntities',
-      empty: getEmptyEntity([],
-        _.get(dataSource, 'profile.default.entityInitProperties', {})),
+      empty: {
+        ...getEmptyEntity([],
+            _.get(dataSource, 'profile.default.entityInitProperties', {})),
+        headers: resetHeader(dataSource, {}),
+      },
       dataPick: commonPick.concat('fields'),
       component: NewEntity,
       title: FormatMessage.string({id: 'menus.add.newEntity'}),
@@ -799,12 +802,15 @@ const cutOpt = (dataSource, menu) => {
   copyOpt(dataSource, menu, 'cut')
 };
 
-const getOptConfig = (dataType) => {
+const getOptConfig = (dataType, dataSource) => {
   const entityConfig = {
     type: ['entities', 'entity'],
     mainKey: 'entities',
     key: 'id',
-    emptyData: getEmptyEntity(),
+    emptyData: {
+      ...getEmptyEntity(),
+      headers: resetHeader(dataSource, {})
+    },
     viewRefs: 'refEntities',
   };
   const viewConfig = {
@@ -866,7 +872,7 @@ const pasteOpt = (dataSource, menu, updateDataSource) => {
     let data = {};
     try {
       data = JSON.parse(value);
-      const config = getOptConfig(dataType);
+      const config = getOptConfig(dataType, dataSource);
       const validate = (dataType === 'mapping' || dataType === 'dataType' || dataType === 'appCode')
         ? validateItemInclude : validateItem;
       const newData = (data?.data || []).filter(e => validate(e, config.emptyData));

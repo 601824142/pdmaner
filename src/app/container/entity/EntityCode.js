@@ -176,6 +176,7 @@ export default React.memo(({ dataSource, data, prefix, type, tabName, codeType, 
   const currentPrefix = getPrefix(prefix);
   return <div className={`${currentPrefix}-entity-code`}>
     <SimpleTab
+      defaultActive={dataSource?.profile?.default?.db}
       type='block'
       options={dataTypeSupport
         .map((d) => {

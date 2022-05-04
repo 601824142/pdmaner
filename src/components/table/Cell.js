@@ -3,6 +3,7 @@ import * as _ from 'lodash/object';
 import * as Component from 'components/index';
 import {emptyDict, getColumnWidth, validateDictBase} from '../../lib/datasource_util';
 import DictBase from '../../app/container/dict/DictBase';
+import EntityBasePropertiesList from '../../app/container/entity/EntityBasePropertiesList';
 
 
 export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
@@ -131,6 +132,41 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
     }
     return '';
   };
+  const openExtProps = (properties) => {
+    let drawer;
+    let changeProperties = {...properties};
+    const { Button, openDrawer, FormatMessage } = Component;
+    const onOK = () => {
+      onChange && onChange({
+        target: {
+          value: changeProperties,
+        },
+      });
+      drawer.close();
+    };
+    const onCancel = () => {
+      drawer.close();
+    };
+    const propertiesChange = (changeData) => {
+      changeProperties = changeData;
+    };
+    drawer = openDrawer(<EntityBasePropertiesList
+      className={`${currentPrefix}-entity-base-properties-field`}
+      properties={properties}
+      propertiesChange={propertiesChange}
+    />, {
+      title: FormatMessage.string({id: 'tableHeaders.ext'}),
+      width: '55%',
+      buttons: [
+        <Button key='onSave' onClick={onOK} type='primary'>
+          <FormatMessage id='button.save'/>
+        </Button>,
+        <Button key='onCancel' onClick={onCancel}>
+          <FormatMessage id='button.cancel'/>
+        </Button>,
+      ],
+    });
+  };
   if (reading) {
     const width = columnWidth[name];
     let label = f[name] || '';
@@ -249,6 +285,10 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
             {d.name}
           </Component.Select.Option>))}
     </Component.Select>;
+  } else if (name === 'extProps') {
+    return <a style={{textAlign: 'center', display: 'inline-block', width: '100%'}} onClick={() => openExtProps(f[name] || {})}>
+      <span><Component.FormatMessage id='tableHeaders.ext'/></span><span style={{marginLeft: 5}}>{Object.keys(f[name] || {}).length}</span>
+    </a>;
   }
   return <Component.Input
     onKeyDown={onKeyDown}

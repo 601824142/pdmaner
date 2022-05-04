@@ -387,6 +387,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
       } else {
         newField = {
           ...emptyField,
+          extProps: getDataSource().profile?.extProps || {},
           domain: domain.id,
         };
       }
@@ -798,14 +799,12 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
     {key: 15, name: FormatMessage.string({id: 'tableBase.addFieldCount', data: {count: 15}})},
   ]),[]);
   const onHeaderClick = (key) => {
-    if (!disableHeaderSort) {
-      updateSelectedColumns((pre) => {
-        if (pre.includes(key)) {
-          return pre.filter(k => k !== key);
-        }
-        return pre.concat(key);
-      });
-    }
+    updateSelectedColumns((pre) => {
+      if (pre.includes(key)) {
+        return pre.filter(k => k !== key);
+      }
+      return pre.concat(key);
+    });
   };
   const moveHeader = (type) => {
     const freezeIndex = tempHeaders.map((h, i) => {
@@ -919,13 +918,15 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
               </Component.DropButton>
               <Component.IconTitle style={{opacity: selectedFields.length === 0 ? 0.48 : 1}} disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.deleteField'})} type='fa-minus' onClick={deleteField}/>
             </span>
-            {
-              !disableHeaderSort && <span className={`${currentPrefix}-table-opt-header`}>
-                <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveFieldLeft'})} type='fa-arrow-left' onClick={() => moveHeader('left')}/>
-                <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveFieldRight'})} type='fa-arrow-right' onClick={() => moveHeader('right')}/>
-                <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.exchangeCode'})} type='fa-exchange' onClick={exchangeHeader}/>
-              </span>
-            }
+            <span className={`${currentPrefix}-table-opt-header`}>
+              {
+                  !disableHeaderSort && finalTempHeaders.some(h => h.refKey === 'refEntity') && <>
+                    <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveFieldLeft'})} type='fa-arrow-left' onClick={() => moveHeader('left')}/>
+                    <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveFieldRight'})} type='fa-arrow-right' onClick={() => moveHeader('right')}/>
+                  </>
+              }
+              <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.exchangeCode'})} type='fa-exchange' onClick={exchangeHeader}/>
+            </span>
             {
               otherOpt && <span className={`${currentPrefix}-table-opt-other`}>
                 <Component.IconTitle disable={selectedFields.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.showSelectedFields'})} type='fa-eye' onClick={() => updateFieldsHideInGraph(false)}/>
@@ -980,7 +981,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
                   onClick={() => onHeaderClick(h?.refKey)}
                   key={h?.refKey}
                   style={{
-                      cursor: disableHeaderSort ? 'default' : 'pointer',
+                      cursor: 'pointer',
                       width: columnWidth[h?.refKey],
                       zIndex: h?.freeze ? 100 : 99,
                       top: fixHeader ? 0 : 'unset',
@@ -989,7 +990,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
                 >
                   <span style={{width: columnWidth[h?.refKey] ? columnWidth[h?.refKey] - 3 : 'auto'}}>
                     {h?.value}
-                    {!disableHeaderIcon && <Component.Icon
+                    {!disableHeaderIcon && h?.refKey !== 'extProps' && <Component.Icon
                       onClick={e => headerIconClick(e, h?.refKey, 'hideInGraph', !h.hideInGraph)}
                       type={type}
                       style={{ marginLeft: 5,cursor: 'pointer' }}

@@ -414,6 +414,8 @@ export default {
         model: 'model data',
         emptyDefault: 'The default settings are not matched',
         useDefault: 'Use Default',
+        search: 'Search Entity',
+        selectEntityEmpty: 'Please select a data table',
     },
     tableHeaders: {
         defName: 'fieldName',
@@ -437,6 +439,8 @@ export default {
         indexesFieldKey: 'fieldKey',
         refEntity: 'refEntity',
         refDict: 'refDict',
+        extProps: 'extProps',
+        ext: 'ext',
     },
     tableTemplate: {
         normal: 'normalTemplate',
@@ -459,6 +463,8 @@ export default {
         applyFor: 'ApplyForDataType',
         len: 'Length',
         scale: 'Scale',
+        type: 'current data type',
+        emptyType: 'Data type not matched (default database not configured / default database data type not configured)',
     },
     dataType: {
         defKey: 'dataTypeCode',
@@ -649,8 +655,12 @@ export default {
             defName: 'UI name',
         },
         title: 'setting',
-        EntityInitFields: 'New Entity Init Fields',
-        EntityBasePropertiesList: 'New Entity Base Properties',
+        EntityInit: 'Init Entity',
+        EntityInitFields: 'Init Fields',
+        EntityInitColumn: 'Init Column Sort',
+        EntityBasePropertiesList: 'Base Properties',
+        FieldConfig: 'Field Config',
+        FieldInitProp: 'Field Init Prop',
         JavaHomeConfigResult: {
             success: 'config success',
             error: 'config error',

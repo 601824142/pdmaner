@@ -133,7 +133,7 @@ export default React.memo(forwardRef(({style, dataSource, empty,
         });
     };
     return <div style={style} className={`${currentPrefix}-appcode`}>
-      {currentApp ? <div className={`${currentPrefix}-appcode-tab`}>
+      {currentApp && Object.keys(current).length > 0 ? <div className={`${currentPrefix}-appcode-tab`}>
         <SimpleTab
           draggable
           onPositionChange={onPositionChange}

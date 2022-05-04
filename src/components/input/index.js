@@ -4,7 +4,7 @@ import './style/index.less';
 import {getPrefix} from '../../lib/prefixUtil';
 
 const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder, readOnly,
-                                       onClick, type = 'text', accept, onKeyDown, maxLength,
+                                       onClick, type = 'text', accept, onKeyDown, maxLength, disable,
                                        ...restProps }, ref) => {
   const [stateValue, setDefaultValue]  = useState(defaultValue);
   const composition = useRef(false);
@@ -68,6 +68,7 @@ const Input = React.memo(forwardRef(({ prefix ,defaultValue, suffix, placeholder
       readOnly={readOnly}
       placeholder={placeholder}
       draggable
+      disabled={disable}
       accept={accept}
       onDragStart={onDragStart}
       type={type}

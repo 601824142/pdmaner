@@ -204,10 +204,13 @@ export const updateAllData = (dataSource, tabs, openConfig) => {
               if (currentData.group) {
                 // 如果包含分组的修改
                 viewGroups = viewGroups.map((g) => {
-                  const tempRefs = (g?.[`ref${firstUp(type.name)}`] || [])
-                      .filter((key) => key !== currentData.id);
+                  let tempRefs = (g?.[`ref${firstUp(type.name)}`] || []);
                   if (currentData.group.includes(g.id)) {
-                    tempRefs.push(d.id);
+                    if (!tempRefs.includes(currentData.id)) {
+                      tempRefs.push(d.id);
+                    }
+                  } else {
+                    tempRefs = tempRefs.filter((key) => key !== currentData.id);
                   }
                   return {
                     ...g,
@@ -215,7 +218,7 @@ export const updateAllData = (dataSource, tabs, openConfig) => {
                   };
                 });
               }
-              return currentData;
+              return _.omit(currentData, 'group');
             }
             return d;
           }),
@@ -548,6 +551,7 @@ export const validateFields = (fields) => {
     hideInGraph: f?.hideInGraph || f?.relationNoShow || false,
     domain: f?.domain || f?.dbType,
     refDict: f?.refDict || '',
+    extProps: f?.extProps || {},
   }))
 };
 
@@ -619,6 +623,7 @@ export const getColumnWidth = () => {
     isStandard: 100,
     intro: 200,
     uiHint: 100,
+    extProps: 100
   };
 };
 
@@ -653,7 +658,8 @@ export const getFullColumns = () => {
     {code: 'refDict', value: FormatMessage.string({id: 'tableHeaders.refDict'}), newCode: 'refDict', com: 'SearchSelect', relationNoShow: true},
     {code: 'defaultValue', value: FormatMessage.string({id: 'tableHeaders.defaultValue'}), newCode: 'defaultValue', com: 'Input', relationNoShow: true},
     {code: 'isStandard', value: FormatMessage.string({id: 'standardFields.isStandard'}), newCode: 'isStandard',com: 'label', relationNoShow: false},
-    {code: 'uiHint', value: FormatMessage.string({id: 'tableHeaders.uiHint'}), newCode: 'uiHint',com: 'Select', relationNoShow: true}
+    {code: 'uiHint', value: FormatMessage.string({id: 'tableHeaders.uiHint'}), newCode: 'uiHint',com: 'Select', relationNoShow: true},
+    {code: 'extProps', value: FormatMessage.string({id: 'tableHeaders.extProps'}), newCode: 'extProps',com: 'linkButton', relationNoShow: true}
   ]; // 完整的头部信息
 };
 
@@ -1044,34 +1050,34 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
   return temp;
 };
 
-export const transformFieldType = (dataSource, old, updateAllVersion) => {
-  const db = _.get(dataSource, 'profile.default.db');
-  // 默认数据库发生了变更需要重新调整所有字段的数据类型
-  const updateFieldType = (d, mappings) => {
+// 默认数据库发生了变更需要重新调整所有字段的数据类型
+const updateFieldType = (d, mappings, db, old) => {
+  return {
+    ...d,
+    fields: (d?.fields || []).map(f => {
+      if (!f.domain) {
+        return {
+          ...f,
+          type: mappings.filter(m => m[old] === f.type)[0]?.[db] || f.type,
+        };
+      }
+      return f;
+    }),
+  }
+}
+const transformDataSource = (d, old, db) => {
+  if (db !== old) {
+    const mappings = d?.dataTypeMapping?.mappings || [];
     return {
       ...d,
-      fields: (d?.fields || []).map(f => {
-        if (!f.domain) {
-          return {
-            ...f,
-            type: mappings.filter(m => m[old] === f.type)[0]?.[db] || f.type,
-          };
-        }
-        return f;
-      }),
-    }
+      views: (d.views || []).map(v => updateFieldType(v, mappings, db, old)),
+      entities: (d.entities || []).map(e => updateFieldType(e, mappings, db, old)),
+    };
   }
-  const transformDataSource = (d, old) => {
-    if (db !== old) {
-      const mappings = d?.dataTypeMapping?.mappings || [];
-      return {
-        ...d,
-        views: (d.views || []).map(v => updateFieldType(v, mappings)),
-        entities: (d.entities || []).map(e => updateFieldType(e, mappings)),
-      };
-    }
-    return d;
-  };
+  return d;
+};
+const saveVersionData = (dataSource, updateAllVersion) => {
+  const db = _.get(dataSource, 'profile.default.db');
   // 更新所有的版本数据
   updateAllVersion((oldVersion) => {
     return oldVersion.map(o => {
@@ -1093,6 +1099,10 @@ export const transformFieldType = (dataSource, old, updateAllVersion) => {
       return o;
     });
   }, '', dataSource);
+}
+
+export const transformFieldType = (dataSource, old, updateAllVersion) => {
+  saveVersionData(dataSource, updateAllVersion);
   // 调整标签页的内容
   const allTab = getAllTabData();
   const mappings = dataSource?.dataTypeMapping?.mappings || [];
@@ -1472,7 +1482,26 @@ export const transformationData = (oldDataSource) => {
       }
     }
   }
-  return tempDataSource;
+  if (compareVersion('4.0.1', oldDataSource.version.split('.'))){
+    const columns = getFullColumns().map(c => ({refKey: c.newCode}));
+    const getDefaultHeader = (e) => {
+      return {
+        ...e,
+        headers: columns.map(c => {
+          return (e.headers || []).filter(h => h.refKey === c.refKey)[0] || {...c, hideInGraph: true};
+        })
+      };
+    }
+    tempDataSource = {
+      ...tempDataSource,
+      entities: (tempDataSource.entities || []).map(e => getDefaultHeader(e)),
+      profile: {
+        ...tempDataSource.profile,
+        headers: columns.filter(h => h.refKey !== 'hideInGraph'),
+      }
+    }
+  }
+    return tempDataSource;
 };
 
 export const validateNeedSave = (dataSource) => {
@@ -1518,7 +1547,7 @@ export const calcDomains = (domains = [], mapping = [], type) => {
   return domains.map(d => {
     return {
       ...d,
-      applyFor: mapping.filter(m => m[type] === d.applyFor)[0]?.id || d.applyFor,
+      applyFor: mapping.filter(m => m[type] === d.applyFor)[0]?.id || '',
     };
   })
 };
@@ -1756,7 +1785,7 @@ export const findExits = (pre = [], next = []) => {
       // 已经存在的需要替换掉id
       return {
         old: d.id,
-        new: pre[index].id,
+        new: d.id,
       };
     }
     return null;
@@ -1902,4 +1931,354 @@ export const getDefaultTemplate = (db, template, dataSource) => {
     return emptyTemplate?.[template] || `# ${FormatMessage.string({id: 'emptyDefaultTemplate'})}`;
   }
   return `# ${FormatMessage.string({id: 'emptyDefaultTemplate'})}`;
+};
+
+export const mergeData = (pre, next, needOld, merge = true) => {
+  // 如果defKey相同，那么数据唯一标识将沿用，其余将使用后者覆盖
+  if(Array.isArray(pre)) {
+    return next.reduce((a, b, i) => {
+      const temp = [...a];
+      const index = pre.findIndex(p => (p.defKey === b.defKey) || (p.id === b.id));
+      if (!b.defKey) {
+        temp[i] = mergeData(temp[i], b, needOld, merge);
+      } else if (index < 0) {
+        return temp.concat(b);
+      } else {
+        temp[index] = mergeData(temp[index], b, needOld, merge);
+      }
+      return temp;
+    }, pre);
+  } else if (typeof pre === 'object') {
+    const otherData = {};
+    if (pre.id) {
+      otherData.id = pre.id;
+      if (needOld) {
+        otherData.old = next.id;
+      }
+    }
+    return {
+      ...pre,
+      ...Object.keys(merge ? next : pre).reduce((a, b) => {
+        return {
+          ...a,
+          [b]: mergeData(pre[b] || '', next[b] || '', false, merge),
+        };
+      }, {}),
+      ...otherData,
+    };
+  }
+  return merge ? next : pre;
+};
+
+export const resetHeader = (dataSource, e) => {
+  const headers = [...dataSource?.profile?.headers || []];
+  const fullColumns =  getFullColumns();
+  const firstHeader = fullColumns[0];
+  headers.unshift({refKey: firstHeader.newCode})
+  return headers.map(c => {
+    return (e.headers || []).filter(h => h.refKey === c.refKey)[0] || {refKey: c.refKey, hideInGraph: true};
+  })
+};
+
+export const mergeDataSource = (oldDataSource, newDataSource, selectEntity) => {
+  // 合并项目
+  // 合并数据类型/代码模板/数据类型匹配
+  const dataTypeSupports = oldDataSource.profile?.dataTypeSupports || [];
+  const newDataTypeSupports = (newDataSource.profile?.dataTypeSupports || [])
+      .filter(d => dataTypeSupports.findIndex(s => s.defKey === d.defKey));
+  const tempDataTypeSupports = mergeData(dataTypeSupports, newDataTypeSupports, true, false);
+  // 合并UI建议
+  const uiHint = oldDataSource.profile?.uiHint || [];
+  const newUiHint = newDataSource.profile?.uiHint || [];
+  const tempUiHint = mergeData(uiHint, newUiHint, true, false);
+  // 合并数据字典
+  const dicts = oldDataSource?.dicts || [];
+  const newDicts = newDataSource?.dicts || [];
+  const tempDicts = mergeData(dicts, newDicts, true, false);
+  // 合并类型匹配
+  const mappings = oldDataSource.dataTypeMapping?.mappings || [];
+  const newMappings = newDataSource.dataTypeMapping?.mappings || [];
+  const tempMappings = mergeData(mappings, newMappings, true, false);
+  // 合并数据域
+  const domains = oldDataSource.domains || [];
+  const newDomains = newDataSource.domains || [];
+  const tempDomains = mergeData(domains, newDomains, true, false);
+  // 合并数据表
+  const entities = oldDataSource.entities || [];
+  const newEntities = (selectEntity || []).map(e => ({
+    ...e,
+    properties: e.properties || oldDataSource?.profile?.default?.entityInitProperties || {},
+    fields: (e.fields || []).map(f => ({
+      ...f,
+      extProps: f.extProps || oldDataSource?.profile?.extProps || {}
+    }))
+  }));
+  const tempEntities = mergeData(entities, newEntities, true, true);
+  // 合并视图
+  // const views = oldDataSource.views || [];
+  // const newViews = newDataSource.views || [];
+  // const tempViews = mergeData(views, newViews, true);
+
+  const getCurrentEntity = (eId, fId, type) => {
+    const newData = type === 'entity' ? newEntities : [];
+    const refEntityData = newData.filter(e => e.id === eId)[0];
+    if (refEntityData) {
+      const currentData = type === 'entity' ? tempEntities : [];
+      const refEntity = currentData.filter(e => e.defKey === refEntityData.defKey)[0];
+      if (refEntity) {
+        const refFieldKey = (refEntityData.fields || []).filter(f => f.id === fId)[0]?.defKey;
+        const refField = (refEntity.fields || []).filter(f => f.defKey === refFieldKey)[0]?.id;
+        if (refField) {
+          return {
+            id: refEntity.id,
+            refField,
+          }
+        }
+        return null
+      }
+    }
+    return null;
+  };
+  // 合并关系图(直接追加，不合并)
+  const diagrams = oldDataSource.diagrams || [];
+  const newDiagrams = newDataSource.diagrams || [];
+  const diagramsKeys = diagrams.map(d => d.defKey);
+  const tempDiagrams = diagrams.concat(newDiagrams.map(d => {
+    let defKey = d.defKey;
+    if (diagramsKeys.includes(defKey)) {
+      defKey = `${defKey}_1`;
+      diagramsKeys.push(defKey);
+    }
+    return {
+      ...d,
+      defKey,
+      canvasData: {
+        ...d.canvasData,
+        cells: (d.canvasData?.cells || []).map(c => {
+          if (c.shape === 'table') {
+            return {
+              ...c,
+              originKey: tempEntities.filter(r => r.old === c.originKey)[0]?.id || c.originKey,
+            };
+          } else if(c.shape === 'erdRelation') {
+            const getPort = ({cell, port}) => {
+              const sourceOriginKey = (d.canvasData?.cells || []).filter(c => c.id === cell)[0];
+              return getCurrentEntity(sourceOriginKey.originKey, port.split(separator)[0], 'entity');
+            }
+            return {
+              ...c,
+              source: {
+                ...c.source,
+                port: `${getPort(c.source)?.refField}${separator}out`
+              },
+              target: {
+                ...c.target,
+                port: `${getPort(c.target)?.refField}${separator}in`
+              },
+            }
+          }
+          return c;
+        })
+      }
+    }
+  }));
+  // 合并分组
+  const viewGroups = oldDataSource.viewGroups || [];
+  const newViewGroups = newDataSource.viewGroups || [];
+  const tempViewGroups = mergeData(viewGroups, newViewGroups, false, false);
+  const mergeGroupData = (v, name, data) => {
+    const newV = newViewGroups.filter(g => g.defKey === v.defKey)[0]?.[name] || [];
+    return [...new Set((v[name] || []).concat(newV.map(n => {
+      const oldIndex = data.findIndex(d => d.old === n);
+      if (oldIndex > -1) {
+        return data[oldIndex].id;
+      }
+      return n;
+    })))];
+  }
+  const refactor = (d, type) => {
+    const calcField = (f, names, namesData) => {
+      return Object.keys(f).reduce((p, n) => {
+        const nameIndex = names.findIndex(name => name === n);
+        if (nameIndex > -1) {
+          const nameData = (namesData[nameIndex] || []).filter(name => name.old === p[n])[0];
+          return {
+            ...p,
+            [n]: nameData?.id || p[n] || '',
+          }
+        }
+        return p;
+      }, f);
+    }
+    const getCurrentFieldId = (fId) => {
+      const newData = type === 'entity' ? newEntities : [];
+      const fieldDef = (newData.filter(e => e.id === d.old)[0]?.fields || [])
+          .filter(field => field.id === fId)[0]?.defKey;
+      if (fieldDef) {
+       return ((type === 'entity' ? tempEntities : [])
+            .filter(e => e.id === d.id)[0]?.fields || [])
+            .filter(field => field.defKey === fieldDef)[0]?.id;
+      }
+      return null;
+    }
+    const correlations = d.correlations || [];
+    const indexes = d.indexes || [];
+    return {
+      ...d,
+      correlations: d.old ? correlations.map(c => {
+        const myField = getCurrentFieldId(c.myField);
+        const refEntity = getCurrentEntity(c.refEntity, c.refField, type);
+        if (myField && refEntity) {
+          return {
+            ...c,
+            myField,
+            refEntity: refEntity.id,
+            refField: refEntity.refField,
+          }
+        }
+        return null;
+      }).filter(f => !!f) : correlations,
+      indexes: d.old ? indexes.map(i => {
+        return {
+          ...i,
+          fields: (i.fields || []).map(f => {
+            const fieldDefKey = getCurrentFieldId(f.fieldDefKey);
+            if (fieldDefKey) {
+              return {
+                ...f,
+                fieldDefKey
+              }
+            }
+            return null;
+          }).filter(f => !!f),
+        }
+      }) : indexes,
+      fields: (d.fields || []).map((f, i) => {
+        return {
+          ...calcField(f, ['uiHint', 'refDict', 'domain'], [tempUiHint, tempUiHint, tempDomains]),
+          hideInGraph: i >
+              (parseInt(oldDataSource.profile?.relationFieldSize || 15, 10) - 1)
+        }
+      })
+    }
+  }
+
+  return {
+    ...oldDataSource,
+    domains: tempDomains.map(t => _.omit(t, 'old')).map(d => {
+      const mIndex = tempMappings.findIndex(t => t.old === d.applyFor);
+      if (mIndex > -1) {
+        return {
+          ...d,
+          applyFor: tempMappings[mIndex].id,
+        };
+      }
+      return d;
+    }),
+    dataTypeMapping: {
+      ...oldDataSource.dataTypeMapping,
+      mappings: tempMappings.map(t => _.omit(t, 'old')).map(m => {
+        return Object.keys(m).reduce((p, n) => {
+          const mIndex = tempDataTypeSupports.findIndex(t => (t.old === n || t.id === n));
+          if (mIndex > -1) {
+            return {
+              ...p,
+              [tempDataTypeSupports[mIndex].id]: m[n],
+            }
+          }
+          return p;
+        }, _.pick(m, ['defKey', 'id', 'defName']));
+      })
+    },
+    dicts: tempDicts.map(t => _.omit(t, 'old')),
+    profile: {
+      ...oldDataSource.profile,
+      uiHint: tempUiHint.map(t => _.omit(t, 'old')),
+    },
+    entities: tempEntities.map(e => refactor(e, 'entity'))
+        .map(t => ({...t, headers: resetHeader(oldDataSource, t)}))
+        .map(t => _.omit(t, ['old', 'group'])),
+    // views: tempViews.map(v => refactor(v, 'view')).map(t => _.omit(t, 'old')),
+    diagrams: tempDiagrams,
+    viewGroups: tempViewGroups.map(v => {
+      return {
+        ...v,
+        refDiagrams: mergeGroupData(v, 'refDiagrams', []),
+        refDicts: mergeGroupData(v, 'refDicts', tempDicts),
+        refEntities: mergeGroupData(v, 'refEntities', tempEntities),
+      }
+    }),
+  }
+
+};
+
+
+export const mergeDomains = (oldDataSource, newDataSource, updateAllVersion, type) => {
+  // 合并项目
+  // 合并类型匹配
+  const mappings = oldDataSource.dataTypeMapping?.mappings || [];
+  const newMappings = newDataSource.dataTypeMapping?.mappings || [];
+  const tempMappings = mergeData(mappings, newMappings, true, true);
+  // 合并数据域
+  const domains = oldDataSource.domains || [];
+  const newDomains = newDataSource.domains || [];
+  const tempDomains = mergeData(domains, newDomains, true, true);
+  // 代码模板
+  const codeTemplates = (oldDataSource.profile?.codeTemplates || [])
+      .map(c => ({...c, defKey: c.applyFor, id: c.applyFor}));
+  const newCodeTemplates = (newDataSource?.codeTemplates || [])
+      .filter(c => c.type === type && c.applyFor !== 'dictSQLTemplate')
+      .map(c => ({...c, defKey: c.applyFor, id: c.applyFor}));
+  // 合并数据类型/代码模板/数据类型匹配
+  const dataTypeSupports = oldDataSource.profile?.dataTypeSupports || [];
+  const newDataTypeSupports = (newDataSource?.dataTypeSupports || []);
+  const tempDataTypeSupports = mergeData(dataTypeSupports, newDataTypeSupports, true, true);
+
+  const tempCodeTemplates = mergeData(codeTemplates, newCodeTemplates, false, true).map(c => {
+    const dIndex = tempDataTypeSupports.findIndex(t => t.old === c.id);
+    return {
+      ...c,
+      applyFor: tempDataTypeSupports[dIndex]?.id || c.id,
+    };
+  }).map(t => _.omit(t, ['defKey', 'id']));
+
+  const tempDataSource = {
+    ...oldDataSource,
+    domains: tempDomains.map(t => _.omit(t, 'old')).map(d => {
+      const mIndex = tempMappings.findIndex(t => t.old === d.applyFor);
+      if (mIndex > -1) {
+        return {
+          ...d,
+          applyFor: tempMappings[mIndex].id,
+        };
+      }
+      return d;
+    }),
+    dataTypeMapping: {
+      ...oldDataSource.dataTypeMapping,
+      mappings: tempMappings.map(t => _.omit(t, 'old')).map(m => {
+        return Object.keys(m).reduce((p, n) => {
+          const mIndex = tempDataTypeSupports.findIndex(t => (t.old === n || t.id === n));
+          if (mIndex > -1 && tempCodeTemplates.findIndex(c => c.applyFor === tempDataTypeSupports[mIndex].id) > -1) {
+            return {
+              ...p,
+              [tempDataTypeSupports[mIndex].id]: m[n],
+            }
+          }
+          return p;
+        }, _.pick(m, ['defKey', 'id', 'defName']));
+      })
+    },
+    profile: {
+      ...oldDataSource?.profile,
+      dataTypeSupports: tempDataTypeSupports
+          .filter(d => tempCodeTemplates.findIndex(c => c.applyFor === d.id) > -1)
+          .map(t => _.omit(t, 'old')),
+      codeTemplates: tempCodeTemplates,
+    }
+  }
+  // 更新所有的版本数据
+  saveVersionData(tempDataSource, updateAllVersion);
+
+  return tempDataSource;
 }

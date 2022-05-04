@@ -10,7 +10,10 @@ import RelationEditor from './RelationEditor';
 import {
   getEmptyEntity,
   generatorTableKey,
-  calcCellData, calcNodeData, mapData2Table,
+  calcCellData,
+  calcNodeData,
+  mapData2Table,
+  resetHeader,
 } from '../../lib/datasource_util';
 import { separator } from '../../../profile';
 import Entity from '../../app/container/entity';
@@ -625,7 +628,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       let initData = {};
       if (type === 'create') {
         initData = {
-          headers: getEmptyEntity().headers,
+          headers: resetHeader(dataSourceRef.current, {}),
           fields: getEntityInitFields(),
           properties: getEntityInitProperties(),
         };
@@ -1303,6 +1306,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       if (!key) {
         empty = {
           ...getEmptyEntity(),
+          headers: resetHeader(dataSourceRef.current, {}),
           count: 0,
           defKey: generatorTableKey('TABLE_1', dataSourceRef.current),
           defName: '数据表',

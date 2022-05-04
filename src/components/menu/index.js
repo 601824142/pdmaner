@@ -15,10 +15,12 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
                            emptyData, defaultExpands, dragTable, groupType,
                            update, dataSource, sortEnable = true, draggable}, ref) => {
   const currentPrefix = getPrefix(prefix);
+  const menuRef = useRef(null);
   const itemBase = `${currentPrefix}-menu-container-fold-item-child-`;
   const { icon, defName, defKey, children } = fieldNames;
   const [expandMenu, updateExpandMenu] = useState(defaultExpands || []);
   const [menusData, updateMenusData] = useState(menus);
+  const [jumpKey, setJumpKey] = useState(null);
   const [insert, updateInsert] = useState(menus);
   const menusDataRef = useRef([]);
   menusDataRef.current = menusData;
@@ -275,6 +277,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
               onDrop={e => rowOnDrop(e, i, parentKey, menu[defKey], menu)}
             >
               <span
+                id={`chiner-${child[defKey]}`}
                 style={{paddingLeft: 8 * (offsetNumber + 1)}}
                 className={`${currentPrefix}-menu-container-fold-item-name-child`}
               >
@@ -315,6 +318,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
           parentKey: group?.id,
           type: d.type === 'refViews' ? 'view' : 'entity',
         }]);
+        setJumpKey({id: d.id});
         updateExpandMenu(parents);break;
       case 'dicts':
         parent = 'dicts';
@@ -324,6 +328,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
           parentKey: group?.id,
           type: 'dict',
         }]);
+        setJumpKey({id: d.id});
         updateExpandMenu(parents);break;
       default: break;
     }
@@ -385,8 +390,18 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
   const onMouseLeave = () => {
     updateInsert('');
   };
+  useEffect(() => {
+    if (jumpKey) {
+      const domId = `chiner-${jumpKey.id}`;
+      const menuRect = menuRef.current?.getBoundingClientRect();
+      const itemRect = document.getElementById(domId)?.getBoundingClientRect();
+      menuRef.current.scrollTop = menuRef.current.scrollTop +
+          itemRect?.top - menuRect?.top - (menuRect?.height / 2);
+    }
+  }, [jumpKey]);
   return (
     <div
+      ref={menuRef}
       onMouseLeave={onMouseLeave}
       className={`${currentPrefix}-menu-container-fold`}
       onContextMenu={_createGroup}
