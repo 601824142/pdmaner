@@ -38,6 +38,7 @@ export default React.memo(({placeholder, prefix, dataSource,
           .filter(g => (g[type] || []).includes(d.id))
           .map(g => ({
             name: g.defName || g.defKey || '',
+            defKey: g.defKey,
             id: g.id,
           }));
     };

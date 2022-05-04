@@ -312,7 +312,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
     switch (key){
       case 'entities':
         parent = d.type === 'refViews' ? 'views' : 'entities';
-        parents = group ? [group.id, `${group.name}${separator}${parent}`] : [parent];
+        parents = group ? [group.id, `${group.defKey}${separator}${parent}`] : [parent];
         updateSelectedMenu([{
           key: d.id,
           parentKey: group?.id,
@@ -322,7 +322,7 @@ const Menu = React.memo(forwardRef(({contextMenus = [], onContextMenu, fieldName
         updateExpandMenu(parents);break;
       case 'dicts':
         parent = 'dicts';
-        parents = group ? [group.id, `${group.name}${separator}${parent}`] : [parent];
+        parents = group ? [group.id, `${group.defKey}${separator}${parent}`] : [parent];
         updateSelectedMenu([{
           key: d.id,
           parentKey: group?.id,
