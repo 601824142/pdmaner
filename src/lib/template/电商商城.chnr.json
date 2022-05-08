@@ -2,9 +2,9 @@
   "name": "电商商城",
   "describe": "电子商城参考案例",
   "avatar": "data:image/png;base64,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",
-  "version": "4.0.1",
-  "createdTime": "2021-6-24 20:43:43",
-  "updatedTime": "2022-5-8 15:05:03",
+  "version": "4.1.0",
+  "createdTime": "2022-5-9 07:35:33",
+  "updatedTime": "2022-5-9 07:51:24",
   "dbConns": [],
   "profile": {
     "default": {
@@ -475,59 +475,73 @@
       "headers": [
         {
           "refKey": "hideInGraph",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": true
         },
         {
           "refKey": "defKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "defName",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "notNull",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "autoIncrement",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "type",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "len",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "scale",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "comment",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "refDict",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "isStandard",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "freeze": false,
@@ -536,7 +550,8 @@
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -873,7 +888,7 @@
           "newCode": "defKey",
           "com": "Input",
           "relationNoShow": false,
-          "freeze": true
+          "freeze": false
         },
         {
           "refKey": "defName",
@@ -883,7 +898,7 @@
           "newCode": "defName",
           "com": "Input",
           "relationNoShow": false,
-          "freeze": true
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
@@ -973,7 +988,7 @@
           "newCode": "refDict",
           "com": "SearchSelect",
           "relationNoShow": true,
-          "freeze": true
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
@@ -988,16 +1003,17 @@
         {
           "refKey": "isStandard",
           "hideInGraph": false,
-          "freeze": true
+          "freeze": false
         },
         {
-          "freeze": true,
+          "freeze": false,
           "refKey": "uiHint",
           "hideInGraph": true
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -1323,59 +1339,73 @@
       "headers": [
         {
           "refKey": "hideInGraph",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": true
         },
         {
           "refKey": "defKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "defName",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "notNull",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "autoIncrement",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "type",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "len",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "scale",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "comment",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "refDict",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "isStandard",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "freeze": false,
@@ -1384,7 +1414,8 @@
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -1600,67 +1631,83 @@
       "headers": [
         {
           "refKey": "hideInGraph",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": true
         },
         {
           "refKey": "defKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "defName",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "notNull",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "autoIncrement",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "type",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "len",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "scale",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "comment",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "refDict",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "isStandard",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "uiHint",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -1915,67 +1962,83 @@
       "headers": [
         {
           "refKey": "hideInGraph",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": true
         },
         {
           "refKey": "defKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "defName",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "notNull",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "autoIncrement",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "type",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "len",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "scale",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "comment",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "refDict",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "isStandard",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "uiHint",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -2216,67 +2279,83 @@
       "headers": [
         {
           "refKey": "hideInGraph",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": true
         },
         {
           "refKey": "defKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "defName",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "notNull",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "autoIncrement",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "type",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "len",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "scale",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "comment",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "refDict",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "isStandard",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "uiHint",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -2381,67 +2460,83 @@
       "headers": [
         {
           "refKey": "hideInGraph",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": true
         },
         {
           "refKey": "defKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "defName",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "notNull",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "autoIncrement",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "type",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "len",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "scale",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "comment",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "refDict",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "isStandard",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "uiHint",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -2698,67 +2793,83 @@
       "headers": [
         {
           "refKey": "hideInGraph",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": true
         },
         {
           "refKey": "defKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "defName",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "notNull",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "autoIncrement",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "type",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "len",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "scale",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "comment",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "refDict",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "isStandard",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "uiHint",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -2931,67 +3042,83 @@
       "headers": [
         {
           "refKey": "hideInGraph",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": true
         },
         {
           "refKey": "defKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "defName",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "notNull",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "autoIncrement",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "type",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "len",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "scale",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "comment",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "refDict",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "isStandard",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "uiHint",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -3230,67 +3357,83 @@
       "headers": [
         {
           "refKey": "hideInGraph",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": true
         },
         {
           "refKey": "defKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "defName",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "notNull",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "autoIncrement",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "type",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "len",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "scale",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "comment",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "refDict",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "isStandard",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "uiHint",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -3463,67 +3606,83 @@
       "headers": [
         {
           "refKey": "hideInGraph",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": true
         },
         {
           "refKey": "defKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "defName",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "notNull",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "autoIncrement",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "domain",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "type",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "len",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "scale",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "comment",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "refDict",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "defaultValue",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "isStandard",
-          "hideInGraph": false
+          "hideInGraph": false,
+          "freeze": false
         },
         {
           "refKey": "uiHint",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         },
         {
           "refKey": "extProps",
-          "hideInGraph": true
+          "hideInGraph": true,
+          "freeze": false
         }
       ],
       "fields": [
@@ -4006,8 +4165,8 @@
     "mappings": [
       {
         "defKey": "string",
-        "defName": "字串",
         "id": "E893F029-4982-4630-869C-95FC4D8DF134",
+        "defName": "字串",
         "771E672D-2E76-4EC9-9C30-F014B559F116": "VARCHAR",
         "73640892-6950-46E2-A145-0AD0A8B0FEE6": "VARCHAR2",
         "09705D64-7759-4A54-8ADA-BC99A41C14DC": "VARCHAR",
@@ -4015,12 +4174,19 @@
         "8B48E02E-2987-4552-ACD8-8D5A46B09156": "VARCHAR",
         "9BD6B181-3BEF-4C0B-A6F2-C295808681C5": "VARCHAR2",
         "61357CE2-BDB4-4CC3-B2F0-8BA1C4F50CD7": "String",
-        "D7D5EF60-0804-4B6A-9648-54510854086B": "string"
+        "D7D5EF60-0804-4B6A-9648-54510854086B": "string",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "VARCHAR",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "VARCHAR",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "STRING",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "TEXT",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "String",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "String",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "string"
       },
       {
         "defKey": "double",
-        "defName": "小数",
         "id": "ED3BDEB2-6354-42CE-A2BD-CE3711CACA8A",
+        "defName": "小数",
         "771E672D-2E76-4EC9-9C30-F014B559F116": "DECIMAL",
         "73640892-6950-46E2-A145-0AD0A8B0FEE6": "DECIMAL",
         "09705D64-7759-4A54-8ADA-BC99A41C14DC": "DECIMAL",
@@ -4028,12 +4194,19 @@
         "8B48E02E-2987-4552-ACD8-8D5A46B09156": "DECIMAL",
         "9BD6B181-3BEF-4C0B-A6F2-C295808681C5": "DECIMAL",
         "61357CE2-BDB4-4CC3-B2F0-8BA1C4F50CD7": "Double",
-        "D7D5EF60-0804-4B6A-9648-54510854086B": "decimal"
+        "D7D5EF60-0804-4B6A-9648-54510854086B": "decimal",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "NUMERIC",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "NUMERIC",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "DOUBLE",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "REAL",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Double",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Double",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "double"
       },
       {
         "defKey": "int",
-        "defName": "整数",
         "id": "55EBC173-A221-44B6-9F0A-D4CED073D569",
+        "defName": "整数",
         "771E672D-2E76-4EC9-9C30-F014B559F116": "INT",
         "73640892-6950-46E2-A145-0AD0A8B0FEE6": "INT",
         "09705D64-7759-4A54-8ADA-BC99A41C14DC": "INT",
@@ -4041,12 +4214,19 @@
         "8B48E02E-2987-4552-ACD8-8D5A46B09156": "INT",
         "9BD6B181-3BEF-4C0B-A6F2-C295808681C5": "INTEGER",
         "61357CE2-BDB4-4CC3-B2F0-8BA1C4F50CD7": "Integer",
-        "D7D5EF60-0804-4B6A-9648-54510854086B": "int"
+        "D7D5EF60-0804-4B6A-9648-54510854086B": "int",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "INTEGER",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "INT4",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "INT",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "INTEGER",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Integer",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Integer",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "int"
       },
       {
         "defKey": "date",
-        "defName": "日期",
         "id": "EACF2262-408D-4BD8-9C99-9D101C4C2942",
+        "defName": "日期",
         "771E672D-2E76-4EC9-9C30-F014B559F116": "DATETIME",
         "73640892-6950-46E2-A145-0AD0A8B0FEE6": "DATE",
         "09705D64-7759-4A54-8ADA-BC99A41C14DC": "DATETIME",
@@ -4054,12 +4234,19 @@
         "8B48E02E-2987-4552-ACD8-8D5A46B09156": "DATE",
         "9BD6B181-3BEF-4C0B-A6F2-C295808681C5": "DATE",
         "61357CE2-BDB4-4CC3-B2F0-8BA1C4F50CD7": "Date",
-        "D7D5EF60-0804-4B6A-9648-54510854086B": "DateTime"
+        "D7D5EF60-0804-4B6A-9648-54510854086B": "DateTime",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "DATE",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "DATE",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "DATETIME",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "NUMERIC",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "Date",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "Date",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "timestamp"
       },
       {
         "defKey": "bytes",
-        "defName": "二进制",
         "id": "2E41D387-7932-4323-9EA2-D5A0058D5346",
+        "defName": "二进制",
         "771E672D-2E76-4EC9-9C30-F014B559F116": "BLOB",
         "73640892-6950-46E2-A145-0AD0A8B0FEE6": "BLOB",
         "09705D64-7759-4A54-8ADA-BC99A41C14DC": "VARBINARY",
@@ -4067,12 +4254,19 @@
         "8B48E02E-2987-4552-ACD8-8D5A46B09156": "BLOB",
         "9BD6B181-3BEF-4C0B-A6F2-C295808681C5": "BLOB",
         "61357CE2-BDB4-4CC3-B2F0-8BA1C4F50CD7": "byte[]",
-        "D7D5EF60-0804-4B6A-9648-54510854086B": "byte[]"
+        "D7D5EF60-0804-4B6A-9648-54510854086B": "byte[]",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "BYTEA",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "BYTEA",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "BINARY",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "NONE",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "byte[]",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "byte[]",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "binary"
       },
       {
         "defKey": "largeText",
-        "defName": "大文本",
         "id": "C35D883F-C04D-4FAC-AB19-25266FDB455C",
+        "defName": "大文本",
         "771E672D-2E76-4EC9-9C30-F014B559F116": "TEXT",
         "73640892-6950-46E2-A145-0AD0A8B0FEE6": "CLOB",
         "09705D64-7759-4A54-8ADA-BC99A41C14DC": "TEXT",
@@ -4080,7 +4274,14 @@
         "8B48E02E-2987-4552-ACD8-8D5A46B09156": "CLOB",
         "9BD6B181-3BEF-4C0B-A6F2-C295808681C5": "CLOB",
         "61357CE2-BDB4-4CC3-B2F0-8BA1C4F50CD7": "String",
-        "D7D5EF60-0804-4B6A-9648-54510854086B": "string"
+        "D7D5EF60-0804-4B6A-9648-54510854086B": "string",
+        "592C7013-143D-4E7B-AF64-0D7BF1E28230": "TEXT",
+        "77BD85E5-9D0D-4096-8427-CBA306FC9C6A": "TEXT",
+        "11D1FB71-A587-4217-89BA-611B8A1F83E0": "STRING",
+        "B363BE0B-F852-49B8-9B2E-F6D2174DEAC1": "TEXT",
+        "895CFD1D-4273-4D32-A2C4-CAC70200AB5B": "String",
+        "A2EE7B4A-CE62-4290-B00C-B26C1BF18073": "String",
+        "81CCA482-3F4D-4EAC-8CF9-F5E7BC098AD2": "string"
       }
     ]
   },
@@ -4089,7 +4290,7 @@
       "defKey": "DefaultString",
       "defName": "默认字串",
       "applyFor": "E893F029-4982-4630-869C-95FC4D8DF134",
-      "len": "60",
+      "len": 255,
       "scale": "",
       "uiHint": "",
       "id": "6BD19B0F-7F14-4509-8DE1-303CABDEC1B0"

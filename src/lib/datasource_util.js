@@ -3,7 +3,7 @@ import * as _ from 'lodash/object';
 import moment from 'moment';
 import { FormatMessage } from 'components';
 import {getAllTabData, getDataByTabId, getMemoryCache, replaceDataByTabId} from './cache';
-import emptyProjectTemplate from './emptyProjectTemplate';
+import emptyProjectTemplate from '../lib/template/empty.json';
 import empty from './template/empty';
 import { separator } from '../../profile';
 import {firstUp} from './string';
@@ -1482,13 +1482,16 @@ export const transformationData = (oldDataSource) => {
       }
     }
   }
-  if (compareVersion('4.0.1', oldDataSource.version.split('.'))){
+  if (compareVersion('4.1.0', oldDataSource.version.split('.'))){
     const columns = getFullColumns().map(c => ({refKey: c.newCode, hideInGraph: c.relationNoShow}));
     const getDefaultHeader = (e) => {
       return {
         ...e,
-        headers: columns.map(c => {
-          return (e.headers || []).filter(h => h.refKey === c.refKey)[0] || {...c, hideInGraph: true};
+        headers: columns.map((c, i) => {
+          return {
+            ...(e.headers || []).filter(h => h.refKey === c.refKey)[0] || {...c, hideInGraph: true},
+            freeze: i === 0
+          };
         })
       };
     }
