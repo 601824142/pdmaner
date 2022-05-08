@@ -1147,7 +1147,7 @@ export  const calcNodeData = (preData, nodeData, dataSource, groups) => {
   // 节点源数据
   const headers = (nodeData?.headers || []).filter(h => !h.hideInGraph);
   const fields = (nodeData?.fields || []).filter(f => !f.hideInGraph)
-      .map(f => ({...f, ...transform(f, dataSource)}));
+      .map(f => ({...f, ...transform(f, dataSource), extProps: Object.keys(f.extProps || {}).length}));
   // 计算表头的宽度
   const headerText = `${nodeData.defKey}${nodeData.count > 0 ? `:${nodeData.count}` : ''}(${nodeData.defName})`;
   const headerWidth = getTextWidth(headerText, 12, 'bold') + 20;
@@ -1483,7 +1483,7 @@ export const transformationData = (oldDataSource) => {
     }
   }
   if (compareVersion('4.0.1', oldDataSource.version.split('.'))){
-    const columns = getFullColumns().map(c => ({refKey: c.newCode}));
+    const columns = getFullColumns().map(c => ({refKey: c.newCode, hideInGraph: c.relationNoShow}));
     const getDefaultHeader = (e) => {
       return {
         ...e,
@@ -1718,7 +1718,7 @@ export const reduceProject = (emptyProject, type) => {
       }): []).map(e => e.id),
     };
   });
-  return {
+  return transformationData({
     ...emptyProject,
     profile: {
       ...emptyProject.profile,
@@ -1773,7 +1773,7 @@ export const reduceProject = (emptyProject, type) => {
         }).map(f => _.omit(f, ['old', '__key']))
       };
     })
-  }
+  });
 };
 
 
@@ -1948,7 +1948,7 @@ export const mergeData = (pre, next, needOld, merge = true) => {
       }
       return temp;
     }, pre);
-  } else if (typeof pre === 'object') {
+  } else if (typeof pre === 'object' && pre !== null) {
     const otherData = {};
     if (pre.id) {
       otherData.id = pre.id;
@@ -1961,12 +1961,14 @@ export const mergeData = (pre, next, needOld, merge = true) => {
       ...Object.keys(merge ? next : pre).reduce((a, b) => {
         return {
           ...a,
-          [b]: mergeData(pre[b] || '', next[b] || '', false, merge),
+          [b]: mergeData(pre[b] === undefined ?  '' : pre[b],
+              next[b] === undefined ? '' : next[b], false, merge),
         };
       }, {}),
       ...otherData,
     };
   }
+  //console.log(merge ? next : pre);
   return merge ? next : pre;
 };
 
@@ -1974,9 +1976,13 @@ export const resetHeader = (dataSource, e) => {
   const headers = [...dataSource?.profile?.headers || []];
   const fullColumns =  getFullColumns();
   const firstHeader = fullColumns[0];
-  headers.unshift({refKey: firstHeader.newCode})
+  headers.unshift({refKey: firstHeader.newCode, hideInGraph: true})
   return headers.map(c => {
-    return (e.headers || []).filter(h => h.refKey === c.refKey)[0] || {refKey: c.refKey, hideInGraph: true};
+    const current = (e.headers || []).filter(h => h.refKey === c.refKey)[0];
+    return {
+      ...current || {refKey: c.refKey},
+      hideInGraph: c.hideInGraph,
+    }
   })
 };
 
@@ -2011,7 +2017,7 @@ export const mergeDataSource = (oldDataSource, newDataSource, selectEntity) => {
     fields: (e.fields || []).map(f => ({
       ...f,
       extProps: f.extProps || oldDataSource?.profile?.extProps || {}
-    }))
+    })),
   }));
   const tempEntities = mergeData(entities, newEntities, true, true);
   // 合并视图
@@ -2097,6 +2103,8 @@ export const mergeDataSource = (oldDataSource, newDataSource, selectEntity) => {
     })))];
   }
   const refactor = (d, type) => {
+    const maxCount = parseInt(oldDataSource.profile?.relationFieldSize || 15, 10) - 1;
+    let showInGraphCount = 0;
     const calcField = (f, names, namesData) => {
       return Object.keys(f).reduce((p, n) => {
         const nameIndex = names.findIndex(name => name === n);
@@ -2153,11 +2161,13 @@ export const mergeDataSource = (oldDataSource, newDataSource, selectEntity) => {
           }).filter(f => !!f),
         }
       }) : indexes,
-      fields: (d.fields || []).map((f, i) => {
+      fields: (d.fields || []).map((f) => {
+        if (!f.hideInGraph) {
+          showInGraphCount += 1;
+        }
         return {
           ...calcField(f, ['uiHint', 'refDict', 'domain'], [tempUiHint, tempUiHint, tempDomains]),
-          hideInGraph: i >
-              (parseInt(oldDataSource.profile?.relationFieldSize || 15, 10) - 1)
+          hideInGraph: maxCount > showInGraphCount ? f.hideInGraph : true
         }
       })
     }
@@ -2196,7 +2206,6 @@ export const mergeDataSource = (oldDataSource, newDataSource, selectEntity) => {
       uiHint: tempUiHint.map(t => _.omit(t, 'old')),
     },
     entities: tempEntities.map(e => refactor(e, 'entity'))
-        .map(t => ({...t, headers: resetHeader(oldDataSource, t)}))
         .map(t => _.omit(t, ['old', 'group'])),
     // views: tempViews.map(v => refactor(v, 'view')).map(t => _.omit(t, 'old')),
     diagrams: tempDiagrams,

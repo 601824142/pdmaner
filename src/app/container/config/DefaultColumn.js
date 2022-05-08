@@ -1,5 +1,5 @@
 import React, {useState, useRef} from 'react';
-import { FormatMessage, IconTitle} from 'components';
+import { FormatMessage, IconTitle, Icon} from 'components';
 import { moveArrayPosition } from '../../../lib/array_util';
 import {getPrefix} from '../../../lib/prefixUtil';
 import {getFullColumns} from '../../../lib/datasource_util';
@@ -39,30 +39,48 @@ export default React.memo(({prefix, dataSource, columnsChange, className}) => {
         }
     };
     const currentPrefix = getPrefix(prefix);
+    const onClick = (p) => {
+        updateData((pre) => {
+            const temp = pre.map(d => {
+                if (d.refKey === p.refKey) {
+                    return {
+                        ...d,
+                        hideInGraph: !d.hideInGraph,
+                    }
+                }
+                return d;
+            })
+            propsChange(temp);
+            return temp;
+        });
+    }
     return <div className={`${currentPrefix}-entity-base-properties ${className}`}>
         <div className={`${currentPrefix}-entity-base-properties-list-opt`}>
            <IconTitle disable={!selected} title={FormatMessage.string({id: 'tableEdit.moveUp'})} onClick={() => optProperty('up')} type='fa-arrow-up'/>
             <IconTitle disable={!selected} title={FormatMessage.string({id: 'tableEdit.moveDown'})} onClick={() => optProperty('down')} type='fa-arrow-down'/>
         </div>
         <div className={`${currentPrefix}-entity-base-properties-list-container`}>
-            {data.map((p, index) => {
-                return (
-                    <div key={p.refKey}>
-                        <div
+            <table>
+                <thead>
+                    <th/>
+                    <th>列表</th>
+                    <th>关系图</th>
+                </thead>
+                <tbody>
+                {data.map((p, index) => {
+                    return (
+                        <tr key={p.refKey}
                             onClick={() => rowSelected(p.refKey)}
-                            className={`${currentPrefix}-entity-base-properties-list ${selected === p.refKey ? `${currentPrefix}-entity-base-properties-list-selected` : ''}`}
+                            className={`${selected === p.refKey ? `${currentPrefix}-entity-base-properties-list-selected` : ''}`}
                         >
-                            <span>{index + 1}</span>
-                            <span
-                                className={`${currentPrefix}-entity-base-properties-list-item`}
-                            >
-                <span>{p.value}</span>
-              </span>
-                        </div>
-                        <div className={`${currentPrefix}-entity-base-properties-list-border`}>{}</div>
-                    </div>
-                );
-            })}
+                                <td style={{width: '30px'}}>{index + 1}</td>
+                                <td>{p.value}</td>
+                                <td><Icon onClick={() => onClick(p)} style={{cursor: 'pointer'}} type={`fa-eye${p.hideInGraph ? '-slash' : ''}`}/>{p.hideInGraph}</td>
+                        </tr>
+                    );
+                })}
+                </tbody>
+            </table>
         </div>
     </div>;
 });

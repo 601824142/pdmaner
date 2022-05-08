@@ -464,7 +464,7 @@ export default {
         applyFor: '数据类型',
         len: '长度',
         scale: '小数位数',
-        type: '当前数据类型',
+        type: '(当前)',
         emptyType: '未匹配到数据类型(未配置默认数据库/未配置默认数据库数据类型)',
     },
     dataType: {
@@ -656,10 +656,10 @@ export default {
             defName: 'UI建议名',
         },
         title: '设置',
-        EntityInit: '新建表默认',
-        EntityInitFields: '默认字段',
-        EntityInitColumn: '列顺序设置',
-        EntityBasePropertiesList: '默认属性',
+        EntityInit: '表设置',
+        EntityInitFields: '缺省字段',
+        EntityInitColumn: '表头显示设置',
+        EntityBasePropertiesList: '缺省属性',
         FieldConfig: '字段设置',
         FieldInitProp: '新字段默认扩展属性',
         JavaHomeConfigResult: {

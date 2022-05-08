@@ -7,6 +7,7 @@ const Option = Select.Option;
 // 数据域详情组件
 export default React.memo(({prefix, dataSource, data, dataChange}) => {
   const db = dataSource.profile?.default?.db;
+  const dbName = (dataSource.profile?.dataTypeSupports || []).filter(d => d.id === db)[0]?.defKey || '';
   const [status, setStatus] = useState({len: data.len || data.len === 0,
     scale: data.scale || data.scale === 0});
   const [dataValue, setDataValue] = useState({len: data.len, scale: data.scale});
@@ -93,6 +94,7 @@ export default React.memo(({prefix, dataSource, data, dataChange}) => {
         className={`${currentPrefix}-form-item-label`}
         title={FormatMessage.string({id: 'domain.type'})}
       >
+        {dbName}
         <FormatMessage id='domain.type'/>
       </span>
       <span className={`${currentPrefix}-form-item-component`}>

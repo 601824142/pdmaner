@@ -904,6 +904,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
       valueSearch: search,
     };
   }, [searchValue]);
+  const isView = finalTempHeaders.some(h => h.refKey === 'refEntity');
   return (
     <div className={`${currentPrefix}-table-container ${className || ''}`}>
       {
@@ -920,7 +921,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
             </span>
             <span className={`${currentPrefix}-table-opt-header`}>
               {
-                  !disableHeaderSort && finalTempHeaders.some(h => h.refKey === 'refEntity') && <>
+                  !disableHeaderSort && isView && <>
                     <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveFieldLeft'})} type='fa-arrow-left' onClick={() => moveHeader('left')}/>
                     <Component.IconTitle disable={selectedColumns.length === 0} title={Component.FormatMessage.string({id: 'tableEdit.moveFieldRight'})} type='fa-arrow-right' onClick={() => moveHeader('right')}/>
                   </>
@@ -990,7 +991,7 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
                 >
                   <span style={{width: columnWidth[h?.refKey] ? columnWidth[h?.refKey] - 3 : 'auto'}}>
                     {h?.value}
-                    {!disableHeaderIcon && h?.refKey !== 'extProps' && <Component.Icon
+                    {!disableHeaderIcon && h?.refKey !== 'extProps' && isView && <Component.Icon
                       onClick={e => headerIconClick(e, h?.refKey, 'hideInGraph', !h.hideInGraph)}
                       type={type}
                       style={{ marginLeft: 5,cursor: 'pointer' }}

@@ -38,6 +38,13 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
   useEffect(() => () => {
     removeDataByTabId(tabKey);
   }, []);
+  useEffect(() => {
+    tabDataChange && tabDataChange({
+      type: 'entity',
+      key: entity,
+      data,
+    });
+  }, [data]);
   const dataChange = (value, name, optType) => {
     updateData((pre) => {
       const tempData = {
@@ -55,11 +62,6 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
           };
         });
       }
-      tabDataChange && tabDataChange({
-        type: 'entity',
-        key: entity,
-        data: tempData,
-      });
       return tempData;
     });
   };

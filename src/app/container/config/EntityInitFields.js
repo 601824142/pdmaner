@@ -26,14 +26,14 @@ export default React.memo(({ prefix, dataSource, dataChange, updateDataSource, g
         },
         {
           key: '2',
-          title: FormatMessage.string({id: 'config.EntityInitColumn'}),
-          content: <DefaultColumn className={`${currentPrefix}-setting-entity-init-columns`} dataSource={dataSource} columnsChange={value => dataChange(value, 'profile.headers')}/>
-        },
-        {
-          key: '3',
           title: FormatMessage.string({id: 'config.EntityBasePropertiesList'}),
           content: <EntityBasePropertiesList dataSource={dataSource} dataChange={dataChange}/>
-        }
+        },
+          {
+              key: '3',
+              title: FormatMessage.string({id: 'config.EntityInitColumn'}),
+              content: <DefaultColumn className={`${currentPrefix}-setting-entity-init-columns`} dataSource={dataSource} columnsChange={value => dataChange(value, 'profile.headers')}/>
+          },
       ]}
   /></div>;
 });

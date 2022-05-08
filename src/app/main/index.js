@@ -434,7 +434,6 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
                     ...f,
                     group: b.id,
                   }))), []);
-          updateGroupType('modalGroup');
           injectDataSource(mergeDataSource(dataSourceRef.current, newData, importData), modal);
         };
         const allRefEntities = newData.viewGroups.reduce((a, b) => a.concat(b.refEntities), []);

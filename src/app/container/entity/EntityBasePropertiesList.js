@@ -109,35 +109,42 @@ export default React.memo(({prefix, properties, propertiesChange, className}) =>
       <IconTitle disable={!selected} title={FormatMessage.string({id: 'tableEdit.moveDown'})} onClick={() => optProperty('down')} type='fa-arrow-down'/>
     </div>
     <div className={`${currentPrefix}-entity-base-properties-list-container`}>
-      {data.map((p, index) => {
-        return (
-          <div key={p.__key}>
-            <div
+      <table>
+        <thead>
+          <tr>
+            <th>{}</th>
+            <th>
+              <span>
+                <FormatMessage id='tableBase.propertyName'/>
+              </span>
+            </th>
+            <th>
+              <span>
+                <FormatMessage id='tableBase.propertyValue'/>
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((p, index) => {
+          return (
+            <tr
+              key={p.__key}
               onClick={() => rowSelected(p.__key)}
-              className={`${currentPrefix}-entity-base-properties-list ${selected === p.__key ? `${currentPrefix}-entity-base-properties-list-selected` : ''}`}
+              className={`${selected === p.__key ? `${currentPrefix}-entity-base-properties-list-selected` : ''}`}
               >
-              <span>{index + 1}</span>
-              <span
-                className={`${currentPrefix}-entity-base-properties-list-item`}
-                >
-                <span>
-                  <FormatMessage id='tableBase.propertyName'/>
-                </span>
+              <td>{index + 1}</td>
+              <td>
                 <Input value={p.data[0]} onChange={e => onChange(e, p.__key, 0)}/>
-              </span>
-              <span
-                className={`${currentPrefix}-entity-base-properties-list-item`}
-                >
-                <span>
-                  <FormatMessage id='tableBase.propertyValue'/>
-                </span>
+              </td>
+              <td>
                 <Input value={p.data[1]} onChange={e => onChange(e, p.__key, 1)}/>
-              </span>
-            </div>
-            <div className={`${currentPrefix}-entity-base-properties-list-border`}>{}</div>
-          </div>
+              </td>
+            </tr>
           );
-      })}
+        })}
+        </tbody>
+      </table>
     </div>
   </div>;
 });

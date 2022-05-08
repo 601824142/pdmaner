@@ -287,7 +287,7 @@ export default React.memo(({f, name, remarkChange, onKeyDown, currentPrefix,
     </Component.Select>;
   } else if (name === 'extProps') {
     return <a style={{textAlign: 'center', display: 'inline-block', width: '100%'}} onClick={() => openExtProps(f[name] || {})}>
-      <span><Component.FormatMessage id='tableHeaders.ext'/></span><span style={{marginLeft: 5}}>{Object.keys(f[name] || {}).length}</span>
+      <span><Component.FormatMessage id='tableHeaders.ext'/></span><span style={{marginLeft: 5}}>{Object.keys(f[name] || {}).length || ''}</span>
     </a>;
   }
   return <Component.Input

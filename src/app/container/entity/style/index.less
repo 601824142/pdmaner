@@ -71,6 +71,49 @@
         cursor: pointer;
         &-container {
           height: 100%;
+          & > table {
+            text-align: left;
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            input {
+              width: 100%;
+            }
+            tbody {
+              tr {
+                &:hover {
+                  td {
+                    background: @fourth-primary-color !important;
+                    input, select {
+                      background: transparent;
+                    }
+                  }
+                }
+              }
+            }
+            th:first-of-type, td:first-of-type {
+              border-left: 1px solid @primary-border-color;
+            }
+            th {
+              border-top: 1px solid @primary-border-color;
+            }
+             td, th {
+               background: @background-color;
+               border-right: 1px solid @primary-border-color;
+               border-bottom: 1px solid @primary-border-color;
+             }
+            td {
+              padding: 2px;
+              text-align: left;
+            }
+            th {
+              padding: 2px;
+              text-align: left;
+              background: @background-color;
+              position: sticky;
+              top: 0;
+            }
+          }
           //overflow: auto;
         }
         &-border {
@@ -119,8 +162,10 @@
           }
         }
         &-selected {
-          background: @third-primary-color;
-          color: @primary-color;
+          & > td {
+            background: @third-primary-color !important;
+            color: @primary-color;
+          }
         }
         &-item {
           span:first-of-type {
