@@ -731,6 +731,7 @@ export default {
             mysql: 'jdbc:mysql://ip:port/name?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC',
             oracle: 'jdbc:oracle:thin:@ip:port/name',
             sqlserver: 'jdbc:sqlserver://ip:port;DatabaseName=name',
+            sqlserverTitle: '(the official driver supports java8 by default. If you are a JDK of other versions, please customize the driver)',
             postgresql: 'jdbc:postgresql://ip:port/name',
             db2: 'jdbc:db2://ip:port/name:progressiveStreaming=2',
             dm: 'jdbc:dm://ip:port/name',

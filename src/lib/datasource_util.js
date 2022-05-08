@@ -348,7 +348,7 @@ export const getDemoDbConnect = () => {
       driverClass: 'oracle.jdbc.driver.OracleDriver',
     },
     sqlserver: {
-      defKey: 'SQLServer',
+      defKey:`SQLServer${FormatMessage.string({id: 'dbConnect.demoDbConnect.sqlserverTitle'})}`,
       url: FormatMessage.string({id: 'dbConnect.demoDbConnect.sqlserver'}),
       driverClass: 'com.microsoft.sqlserver.jdbc.SQLServerDriver',
     },

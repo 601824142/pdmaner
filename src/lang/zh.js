@@ -732,6 +732,7 @@ export default {
             mysql: 'jdbc:mysql://IP地址:端口号/数据库名?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC',
             oracle: 'jdbc:oracle:thin:@IP地址:端口号/数据库名',
             sqlserver: 'jdbc:sqlserver://IP地址:端口号;DatabaseName=数据库名',
+            sqlserverTitle: '（官方驱动默认支持java8，如果您是其他版本的JDK，请自定义驱动）',
             postgresql: 'jdbc:postgresql://IP地址:端口号/数据库名',
             db2: 'jdbc:db2://IP地址:端口号/数据库名:progressiveStreaming=2',
             dm: 'jdbc:dm://IP地址:端口号/数据库名',
