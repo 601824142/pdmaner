@@ -63,8 +63,8 @@ export default React.memo(({prefix, dataSource, columnsChange, className}) => {
             <table>
                 <thead>
                     <th/>
-                    <th>列表</th>
-                    <th>关系图</th>
+                    <th><FormatMessage id='config.columnName'/></th>
+                    <th><FormatMessage id='config.hideInGraph'/></th>
                 </thead>
                 <tbody>
                 {data.map((p, index) => {

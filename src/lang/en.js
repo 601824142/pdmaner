@@ -654,6 +654,8 @@ export default {
             defKey: 'UI code',
             defName: 'UI name',
         },
+        columnName: 'columnName',
+        hideInGraph: 'hideInGraph',
         title: 'setting',
         EntityInit: 'Entity Config',
         EntityInitFields: 'Init Fields',

@@ -9,6 +9,9 @@ export default React.memo(({prefix, properties, propertiesChange, className}) =>
     return Object.keys(properties)
       .reduce((a, b) => a.concat({data: [b || '' , properties[b] || ''], __key: Math.uuid()}) , []);
   });
+  const fieldsRef = useRef([]);
+  fieldsRef.current = data;
+  const inputRef = useRef([]);
   const [selected, updateSelected] = useState('');
   const dataRef = useRef(data);
   dataRef.current = data;
@@ -99,6 +102,88 @@ export default React.memo(({prefix, properties, propertiesChange, className}) =>
     updateData(tempData);
     propsChange(tempData);
   };
+  const cellRef = (ref, row, cell) => {
+    if(!inputRef.current[row]) {
+      inputRef.current[row] = {};
+    }
+    inputRef.current[row][cell] = ref;
+  };
+  const getRowAndCellIndex = (row, cell, type) => {
+    const headers = [{refKey: 'key'}, {refKey: 'value'}];
+    let currentRowIndex, currentCellIndex;
+    if (type === 'up') {
+      currentRowIndex = fieldsRef.current.findIndex(f => f.__key === row);
+      return {
+        rowKey: fieldsRef.current[currentRowIndex - 1]?.__key,
+        cellKey: cell,
+      };
+    } else if (type === 'down') {
+      currentRowIndex = fieldsRef.current.findIndex(f => f.__key === row);
+      return {
+        rowKey: fieldsRef.current[currentRowIndex + 1]?.__key,
+        cellKey: cell,
+      };
+    } else if (type === 'left') {
+      currentCellIndex = headers.findIndex(f => f.refKey === cell);
+      return {
+        rowKey: row,
+        cellKey: headers[currentCellIndex - 1]?.refKey,
+      };
+    }
+    currentCellIndex = headers.findIndex(f => f.refKey === cell);
+    return {
+      rowKey: row,
+      cellKey: headers[currentCellIndex + 1]?.refKey,
+    };
+  };
+  const onKeyDown = (e, row, cell) => {
+    if (e.keyCode === 38) {
+      // up
+      const { rowKey, cellKey } = getRowAndCellIndex(row, cell, 'up');
+      const cellDom = inputRef.current?.[rowKey]?.[cellKey];
+      if (cellDom) {
+        cellDom.focus();
+        cellDom.setSelectionRange(0, 0);
+        e.preventDefault();
+      }
+    } else if (e.keyCode === 40) {
+      // down
+      const { rowKey, cellKey } = getRowAndCellIndex(row, cell, 'down');
+      const cellDom = inputRef.current?.[rowKey]?.[cellKey];
+      if (cellDom) {
+        cellDom.focus();
+        cellDom.setSelectionRange(0, 0);
+        e.preventDefault();
+      }
+    } else if(e.keyCode === 37) {
+      const selectionStart = e.target.selectionStart;
+      if (selectionStart === 0) {
+        const { rowKey, cellKey } = getRowAndCellIndex(row, cell, 'left');
+        const cellDom = inputRef.current?.[rowKey]?.[cellKey];
+        if (cellDom) {
+          const length = cellDom.value.length;
+          cellDom.focus();
+          cellDom.setSelectionRange(length, length);
+          e.preventDefault();
+        }
+      }
+      // left
+    } else if (e.keyCode === 39) {
+      // right
+      const valueLength = e.target.value.length;
+      //console.log(e.target.selectionStart);
+      const selectionStart = e.target.selectionStart;
+      if (selectionStart === valueLength) {
+        const { rowKey, cellKey } = getRowAndCellIndex(row, cell, 'right');
+        const cellDom = inputRef.current?.[rowKey]?.[cellKey];
+        if (cellDom) {
+          cellDom.focus();
+          cellDom.setSelectionRange(0, 0);
+          e.preventDefault();
+        }
+      }
+    }
+  };
   return <div className={`${currentPrefix}-entity-base-properties ${className}`}>
     <div className={`${currentPrefix}-entity-base-properties-list-opt`}>
       <DropButton menuClick={menuClick} dropDownMenus={dropDownMenus} position='top'>
@@ -135,10 +220,20 @@ export default React.memo(({prefix, properties, propertiesChange, className}) =>
               >
               <td>{index + 1}</td>
               <td>
-                <Input value={p.data[0]} onChange={e => onChange(e, p.__key, 0)}/>
+                <Input
+                  onKeyDown={e => onKeyDown(e, p.__key, 'key')}
+                  ref={ref => cellRef(ref, p.__key, 'key')}
+                  value={p.data[0]}
+                  onChange={e => onChange(e, p.__key, 0)}
+                />
               </td>
               <td>
-                <Input value={p.data[1]} onChange={e => onChange(e, p.__key, 1)}/>
+                <Input
+                  onKeyDown={e => onKeyDown(e, p.__key, 'value')}
+                  ref={ref => cellRef(ref, p.__key, 'value')}
+                  value={p.data[1]}
+                  onChange={e => onChange(e, p.__key, 1)}
+                />
               </td>
             </tr>
           );

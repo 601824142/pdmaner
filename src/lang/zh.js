@@ -655,6 +655,8 @@ export default {
             defKey: 'UI建议值',
             defName: 'UI建议名',
         },
+        columnName: '列名',
+        hideInGraph: '显示与关系图',
         title: '设置',
         EntityInit: '表设置',
         EntityInitFields: '缺省字段',

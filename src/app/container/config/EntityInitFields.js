@@ -19,7 +19,11 @@ export default React.memo(({ prefix, dataSource, dataChange, updateDataSource, g
               updateDataSource={updateDataSource}
               disableHeaderSort
               disableHeaderReset
-              data={{fields: data}}
+              freeze
+              data={{
+                  fields: data,
+                  headers: (dataSource.profile?.headers)
+              }}
               dataSource={dataSource}
               tableDataChange={value => dataChange(value, 'profile.default.entityInitFields')}
           />

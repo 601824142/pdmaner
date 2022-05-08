@@ -672,13 +672,13 @@ const Table = React.memo(forwardRef(({ prefix, data = {}, disableHeaderSort, sea
       currentCellIndex = finalTempHeaders.findIndex(f => f.refKey === cell);
       return {
         rowKey: row,
-        cellKey: finalTempHeaders[currentCellIndex - 1],
+        cellKey: finalTempHeaders[currentCellIndex - 1]?.refKey,
       };
     }
     currentCellIndex = finalTempHeaders.findIndex(f => f.refKey === cell);
     return {
       rowKey: row,
-      cellKey: finalTempHeaders[currentCellIndex + 1],
+      cellKey: finalTempHeaders[currentCellIndex + 1]?.refKey,
     };
   };
   const onKeyDown = (e, row, cell) => {

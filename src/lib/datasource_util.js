@@ -1718,7 +1718,7 @@ export const reduceProject = (emptyProject, type) => {
       }): []).map(e => e.id),
     };
   });
-  return transformationData({
+  return {
     ...emptyProject,
     profile: {
       ...emptyProject.profile,
@@ -1773,7 +1773,7 @@ export const reduceProject = (emptyProject, type) => {
         }).map(f => _.omit(f, ['old', '__key']))
       };
     })
-  });
+  };
 };
 
 
