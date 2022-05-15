@@ -1,10 +1,10 @@
 {
-  "name": "教学管理系统",
+  "name": "教学管理系统-标准模板",
   "describe": "教学管理系统参考案例",
   "avatar": "",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "createdTime": "2022-5-9 06:43:39",
-  "updatedTime": "2022-5-9 07:50:01",
+  "updatedTime": "2022-5-15 21:10:11",
   "dbConns": [],
   "profile": {
     "default": {
@@ -261,7 +261,7 @@
       {
         "applyFor": "DFBEC1DD-AA84-456E-BBF3-C95DD0DB2022",
         "type": "dbDDL",
-        "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.autoIncrement ? ' AUTO_INCREMENT' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
+        "createTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};\nCREATE TABLE {{=it.entity.defKey}}(\n{{ pkList = [] ; }}\n{{~it.entity.fields:field:index}}\n    {{? field.primaryKey }}{{ pkList.push(field.defKey) }}{{?}}\n    {{=field.defKey}} {{? field.autoIncrement}}SERIAL{{??}}{{=field.type}}{{?field.len>0}}{{='('}}{{=field.len}}{{?field.scale>0}}{{=','}}{{=field.scale}}{{?}}{{=')'}}{{?}}{{?}}{{= field.notNull ? ' NOT NULL' : '' }}{{= field.defaultValue ? it.func.join(' DEFAULT ',field.defaultValue,' ') : '' }}{{= index < it.entity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n);\n$blankline\n{{? it.entity.defKey || it.entity.defName}}COMMENT ON TABLE {{=it.entity.defKey}} IS '{{=it.func.join(it.entity.defName,it.entity.comment,';')}}';{{?}}\n{{~it.entity.fields:field:index}}\n{{? field.defName || field.comment}}COMMENT ON COLUMN {{=it.entity.defKey}}.{{=field.defKey}} IS '{{=it.func.join(field.defName,field.comment,';')}}';{{?}}\n{{~}}",
         "createView": "CREATE VIEW {{=it.view.defKey}} AS\nSELECT \n{{~it.view.fields:field:index}}\n    {{=field.refEntity}}.{{=field.refEntityField}} AS {{=field.defKey}}{{= index < it.view.fields.length-1 ? ',' : ''}}\n{{~}}\nFROM {{~it.view.refEntities:refEntity:index}}{{=refEntity}}{{= index < it.view.refEntities.length-1 ? ',' : ''}}{{~}};\n$blankline\n",
         "deleteTable": "DROP TABLE IF EXISTS {{=it.entity.defKey}};",
         "createIndex": "{{~ it.entity.indexes:index}}\nCREATE {{? index.unique}}UNIQUE {{?}}INDEX {{=index.defKey}} ON {{=it.entity.defKey}}({{ fieldsKeys = index.fields.map(function(field){return field.fieldDefKey}) ; }}{{=it.func.join(...fieldsKeys,',')}});\n{{~}}",
@@ -474,161 +474,81 @@
         {
           "refKey": "hideInGraph",
           "hideInGraph": true,
-          "freeze": true,
-          "code": "relationNoShow",
-          "value": "关系图",
-          "newCode": "hideInGraph",
-          "com": "Icon",
-          "relationNoShow": true
+          "freeze": true
         },
         {
           "refKey": "defKey",
           "hideInGraph": false,
-          "freeze": false,
-          "code": "name",
-          "value": "字段代码",
-          "newCode": "defKey",
-          "com": "Input",
-          "relationNoShow": false
+          "freeze": false
         },
         {
           "refKey": "defName",
           "hideInGraph": true,
-          "freeze": false,
-          "code": "chnname",
-          "value": "显示名称",
-          "newCode": "defName",
-          "com": "Input",
-          "relationNoShow": false
+          "freeze": false
         },
         {
           "refKey": "primaryKey",
           "hideInGraph": false,
-          "freeze": false,
-          "code": "pk",
-          "value": "主键",
-          "newCode": "primaryKey",
-          "com": "Checkbox",
-          "relationNoShow": false
+          "freeze": false
         },
         {
           "refKey": "notNull",
           "hideInGraph": true,
-          "code": "notNull",
-          "value": "不为空",
-          "newCode": "notNull",
-          "com": "Checkbox",
-          "relationNoShow": true,
           "freeze": false
         },
         {
           "refKey": "autoIncrement",
           "hideInGraph": true,
-          "code": "autoIncrement",
-          "value": "自增",
-          "newCode": "autoIncrement",
-          "com": "Checkbox",
-          "relationNoShow": true,
           "freeze": false
         },
         {
           "refKey": "domain",
           "hideInGraph": true,
-          "code": "type",
-          "value": "数据域",
-          "newCode": "domain",
-          "com": "Select",
-          "relationNoShow": true,
           "freeze": false
         },
         {
           "refKey": "type",
           "hideInGraph": false,
-          "code": "dataType",
-          "value": "数据类型",
-          "newCode": "type",
-          "com": "Text",
-          "relationNoShow": false,
           "freeze": false
         },
         {
           "refKey": "len",
           "hideInGraph": false,
-          "code": "len",
-          "value": "长度",
-          "newCode": "len",
-          "com": "Input",
-          "relationNoShow": false,
           "freeze": false
         },
         {
           "refKey": "scale",
           "hideInGraph": true,
-          "code": "scale",
-          "value": "小数位数",
-          "newCode": "scale",
-          "com": "Input",
-          "relationNoShow": false,
           "freeze": false
         },
         {
           "refKey": "comment",
           "hideInGraph": true,
-          "code": "remark",
-          "value": "说明",
-          "newCode": "comment",
-          "com": "Input",
-          "relationNoShow": true,
           "freeze": false
         },
         {
           "refKey": "refDict",
           "hideInGraph": true,
-          "code": "refDict",
-          "value": "数据字典",
-          "newCode": "refDict",
-          "com": "SearchSelect",
-          "relationNoShow": true,
           "freeze": false
         },
         {
           "refKey": "defaultValue",
           "hideInGraph": true,
-          "code": "defaultValue",
-          "value": "默认值",
-          "newCode": "defaultValue",
-          "com": "Input",
-          "relationNoShow": true,
           "freeze": false
         },
         {
           "refKey": "isStandard",
           "hideInGraph": false,
-          "code": "isStandard",
-          "value": "标准字段",
-          "newCode": "isStandard",
-          "com": "label",
-          "relationNoShow": false,
           "freeze": false
         },
         {
           "freeze": false,
           "refKey": "uiHint",
-          "hideInGraph": true,
-          "code": "uiHint",
-          "value": "UI建议",
-          "newCode": "uiHint",
-          "com": "Select",
-          "relationNoShow": true
+          "hideInGraph": true
         },
         {
           "refKey": "extProps",
           "hideInGraph": true,
-          "code": "extProps",
-          "value": "拓展属性",
-          "newCode": "extProps",
-          "com": "linkButton",
-          "relationNoShow": true,
           "freeze": false
         }
       ],
@@ -1689,7 +1609,7 @@
           "scale": "",
           "primaryKey": true,
           "notNull": true,
-          "autoIncrement": false,
+          "autoIncrement": true,
           "defaultValue": "",
           "hideInGraph": false,
           "domain": "16120F75-6AA7-4483-868D-F07F511BB081",
@@ -2133,7 +2053,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoIncrement": false,
-          "defaultValue": "",
+          "defaultValue": "sysdate",
           "hideInGraph": true,
           "type": "DATETIME",
           "refDict": "",
