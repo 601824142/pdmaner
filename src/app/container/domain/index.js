@@ -24,6 +24,7 @@ export default React.memo(({prefix, dataSource, data, dataChange}) => {
       });
     }
     if (name === 'applyFor') {
+      dataChange && dataChange(value, name);
       setTypeValue(mapping.filter(m => m.id === value)[0]?.[db] || '');
     } else {
       dataChange && dataChange(value, name);

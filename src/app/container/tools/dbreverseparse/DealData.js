@@ -19,8 +19,8 @@ export default React.memo(forwardRef(({getData, dataSource, prefix}, ref) => {
     return FormatMessage.string({
       id: 'dbReverseParse.dealResult',
       data: {
-        data: data.length,
-        exists: exist.length,
+        data: data?.length || 0,
+        exists: exist?.length || 0,
       }});
   };
   const calcData = () => {

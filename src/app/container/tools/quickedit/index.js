@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {FormatMessage, Input} from 'components';
 
 import {getPrefix} from '../../../../lib/prefixUtil';
@@ -7,6 +7,7 @@ import SelectGroup from '../../group/SelectGroup';
 import './style/index.less';
 
 export default React.memo(({ prefix, dataSource, dataChange, dataType }) => {
+    const dataSourceRef = useRef({...dataSource});
     const name = allType.filter(t => t.type === dataType)[0]?.name || dataType;
     const currentPrefix = getPrefix(prefix);
     const refNames = `ref${name.replace(/\b(\w)(\w*)/g, ($0, $1, $2) => {
@@ -20,9 +21,9 @@ export default React.memo(({ prefix, dataSource, dataChange, dataType }) => {
     };
     const _dataChange = (value, fieldName, id) => {
       if (fieldName === 'group') {
-          dataChange && dataChange({
-              ...dataSource,
-              viewGroups: (dataSource.viewGroups || []).map((d) => {
+          dataSourceRef.current = {
+              ...dataSourceRef.current,
+              viewGroups: (dataSourceRef.current.viewGroups || []).map((d) => {
                   if (value.includes(d.id)) {
                       return {
                           ...d,
@@ -31,11 +32,12 @@ export default React.memo(({ prefix, dataSource, dataChange, dataType }) => {
                   }
                   return d;
               }),
-          });
+          };
+          dataChange && dataChange(dataSourceRef.current);
       } else {
-          dataChange && dataChange({
-              ...dataSource,
-              [name]: (dataSource[name] || []).map((d) => {
+          dataSourceRef.current = {
+              ...dataSourceRef.current,
+              [name]: (dataSourceRef.current[name] || []).map((d) => {
                   if (d.id === id) {
                       return {
                           ...d,
@@ -44,7 +46,8 @@ export default React.memo(({ prefix, dataSource, dataChange, dataType }) => {
                   }
                   return d;
               }),
-          });
+          };
+          dataChange && dataChange(dataSourceRef.current);
       }
     };
     return <div className={`${currentPrefix}-quick-edit`}>

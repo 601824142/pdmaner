@@ -1327,12 +1327,12 @@ const getHeaders = (d, type) => {
   }
   return type === 'entity' ? getEmptyEntity().headers : getEmptyView().headers;
 }
-export const updateHeaders = (d, type) => {
+export const updateHeaders = (d, type, useGroup) => {
   return _.omit({
     ...d,
     nameTemplate: d.nameTemplate || getEmptyEntity().nameTemplate,
     headers: getHeaders(d, type),
-  }, ['rowNo', 'group']);
+  }, ['rowNo'].concat(useGroup ? [] : 'group'));
 }
 
 
@@ -2092,18 +2092,43 @@ export const mergeDataSource = (oldDataSource, newDataSource, selectEntity) => {
     }
   }));
   // 合并分组
-  const viewGroups = oldDataSource.viewGroups || [];
-  const newViewGroups = newDataSource.viewGroups || [];
+  const removeGroupEntities = tempEntities.filter(e => e.old).map(e => e.id);
+  const viewGroups = (oldDataSource.viewGroups || []).map(g => {
+    const currentGroupEntities = newEntities.filter(e => e.group === g.id)
+        .map((newE) => {
+      const data = tempEntities.filter(e => e.old === newE.id)[0]
+      if (data) {
+        return data.id;
+      }
+      return newE.id;
+    });
+    const refEntities = (g.refEntities || [])
+        .filter(id => !removeGroupEntities.includes(id));
+    if (currentGroupEntities.length > 0) {
+      return {
+        ...g,
+        refEntities: [...new Set(refEntities.concat(currentGroupEntities))]
+      };
+    }
+    return {
+      ...g,
+      refEntities,
+    };
+  });
+  const newViewGroups = (newDataSource.viewGroups || []).map(g => ({...g, refEntities: []}));
   const tempViewGroups = mergeData(viewGroups, newViewGroups, false, false);
   const mergeGroupData = (v, name, data) => {
-    const newV = newViewGroups.filter(g => g.defKey === v.defKey)[0]?.[name] || [];
-    return [...new Set((v[name] || []).concat(newV.map(n => {
-      const oldIndex = data.findIndex(d => d.old === n);
-      if (oldIndex > -1) {
-        return data[oldIndex].id;
-      }
-      return n;
-    })))];
+    const newV = newViewGroups.filter(g => g.defKey === v.defKey)[0]?.[name];
+    if(newV) {
+      return [...new Set((v[name] || []).concat(newV.map(n => {
+        const oldIndex = data.findIndex(d => d.old === n);
+        if (oldIndex > -1) {
+          return data[oldIndex].id;
+        }
+        return n;
+      })))].filter(id => data.findIndex(d => d.id === id) > -1);
+    }
+    return v[name] || [];
   }
   const refactor = (d, type) => {
     const maxCount = parseInt(oldDataSource.profile?.relationFieldSize || 15, 10) - 1;
@@ -2217,7 +2242,7 @@ export const mergeDataSource = (oldDataSource, newDataSource, selectEntity) => {
         ...v,
         refDiagrams: mergeGroupData(v, 'refDiagrams', []),
         refDicts: mergeGroupData(v, 'refDicts', tempDicts),
-        refEntities: mergeGroupData(v, 'refEntities', tempEntities),
+        //refEntities: mergeGroupData(v, 'refEntities', tempEntities),
       }
     }),
   }

@@ -65,13 +65,22 @@ export const deleteFile = (filePath) => {
 export const saveNormalFile = (file, dataBuffer) => {
   // 通用的文件保方法
   return new Promise((res, rej) => {
-    fs.writeFile(file, dataBuffer, (err) => {
-      if(err){
-        rej(err);
-      }else{
-        res(dataBuffer);
-      }
+    // fs.writeFile(file, dataBuffer, (err) => {
+    //   if(err){
+    //     rej(err);
+    //   }else{
+    //     res(dataBuffer);
+    //   }
+    // });
+    const writer = fs.createWriteStream(file);
+    writer.on('error', (err) => {
+      rej(err);
     });
+    writer.on('close', () => {
+      res(dataBuffer);
+    })
+    writer.write(dataBuffer);
+    writer.end();
   });
 };
 

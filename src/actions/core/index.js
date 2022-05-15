@@ -249,6 +249,7 @@ export const closeProject = (type) => {
 export const readProject = (path, title, getState, type, isDemoProject) => {
   return (dispatch) => {
     dispatch(openLoading(title)); // 开启全局loading
+    // 判断项目文件是否为只读权限
     readJsonPromise(path)
       .then((data) => {
         if (!data.version) {

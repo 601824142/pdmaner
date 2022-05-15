@@ -118,23 +118,25 @@ export const imgAll = (dataSource, callBack) => {
         }).catch(err => rej(err));
     });
   }
-  return new Promise((res, rej) => {
-    Promise.all((dataSource.diagrams).map(d => {
-      return new Promise((res, rej) => {
-        const hiddenPort = {
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              strokeWidth: 1,
-              style: {
-                visibility: 'hidden',
-              },
+  return new Promise( async (res, rej) => {
+    const result = [];
+    for (let i = 0; i < dataSource.diagrams.length; i += 1){
+      const d = dataSource.diagrams[i];
+      const hiddenPort = {
+        attrs: {
+          circle: {
+            r: 4,
+            magnet: true,
+            strokeWidth: 1,
+            style: {
+              visibility: 'hidden',
             },
           },
-          position: { name: 'absolute' },
-          zIndex: 3,
-        };
+        },
+        position: { name: 'absolute' },
+        zIndex: 3,
+      };
+      await new Promise((resolve, reject) => {
         img(d.canvasData.cells, d.relationType, dataSource, true, {
           in: {
             ...hiddenPort,
@@ -143,7 +145,7 @@ export const imgAll = (dataSource, callBack) => {
             ...hiddenPort,
           },
           extend: {
-           ...hiddenPort,
+            ...hiddenPort,
           },
         }).then((dom) => {
           html2canvas(dom).then((canvas) => {
@@ -152,17 +154,18 @@ export const imgAll = (dataSource, callBack) => {
             const dataBuffer = Buffer.from(clippedCanvas.toDataURL('image/png')
                     .replace(/^data:image\/\w+;base64,/, ""),
                 'base64');
-            res({fileName: d.id, data: dataBuffer});
+            result.push({fileName: d.id, data: dataBuffer});
+            console.log(d.defName || d.defKey);
             callBack && callBack();
-          });
-        })
-      });
-    })).then((result) => {
-      saveTempImages(result)
-          .then((dir) => {
-        res(dir);
-      }).catch(err => rej(err));
-    }).catch(err => rej(err));
+            resolve();
+          }).catch(err => reject(err));
+        }).catch(err => reject(err))
+      })
+    }
+    saveTempImages(result)
+        .then((dir) => {
+          res(dir);
+        }).catch(err => rej(err));
   });
 }
 

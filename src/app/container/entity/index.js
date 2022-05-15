@@ -43,8 +43,9 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
       type: 'entity',
       key: entity,
       data,
+      isInit: true,
     });
-  }, [data]);
+  }, []);
   const dataChange = (value, name, optType) => {
     updateData((pre) => {
       const tempData = {
@@ -62,6 +63,12 @@ const Entity = React.memo(({prefix, dataSource, entity, tabDataChange, tabKey,
           };
         });
       }
+      tabDataChange && tabDataChange({
+        type: 'entity',
+        key: entity,
+        data: {...tempData},
+        isInit: false,
+      });
       return tempData;
     });
   };

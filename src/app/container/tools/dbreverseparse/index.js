@@ -50,7 +50,7 @@ export default React.memo(({prefix, dataSource, dataChange, config, onClose, onO
     updateStatus('loading');
     const selectedTable = dealDataRef.current.getData()
         .reduce((a, b) => a.concat(b.fields.map(f => ({...f, group: b.id}))), []);
-    if (selectedTable.length > 0) {
+    if (selectedTable?.length > 0) {
       const properties = (dbConn.filter(d => d.defKey === dbData.defKey)[0] || {})?.properties
         || {};
       parserRef.current = connectDB(dataSource, config, {

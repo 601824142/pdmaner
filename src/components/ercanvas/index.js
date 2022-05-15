@@ -693,11 +693,11 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
             const newKey = generatorTableKey(tempKey, {
               entities: (dataSourceRef.current.entities || []).concat(keys),
             });
-            keys.push({defKey: newKey});
             const entityId = Math.uuid();
+            keys.push({defKey: newKey});
             c.setProp('originKey', entityId, {ignoreHistory : true});
             c.setData({defKey: newKey}, {ignoreHistory : true, relation: true});
-            c.setData({id: newKey}, {ignoreHistory : true, relation: true});
+            c.setData({id: entityId}, {ignoreHistory : true, relation: true});
             return {
               data: c.data,
             };

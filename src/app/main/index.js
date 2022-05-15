@@ -155,7 +155,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
           callback && callback(false);
         } else {
           callback && callback(true);
-          Message.error({title: FormatMessage.string({id: 'saveFail'})});
+          Message.error({title: `${FormatMessage.string({id: 'saveFail'})}:${err?.message}`});
         }
       });
     } else {
@@ -228,7 +228,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
         return newActiveKey || pre;
       });
     };
-    if (!force && getDataByTabId(tabKey)) {
+    const tabData = getDataByTabId(tabKey);
+    if (!force && (tabData && !tabData?.isInit)) {
       Modal.confirm({
         title: FormatMessage.string({id: 'saveConfirmTitle'}),
         message: FormatMessage.string({id: 'saveConfirm'}),
@@ -370,7 +371,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
     const omitNames = ['autoIncrementName', 'notNullName', 'primaryKeyName', 'typeFullName', 'rowNo', 'typeFullName'];
     return data.map((d) => {
       return {
-        ...updateHeaders(d, 'entity'),
+        ...updateHeaders(d, 'entity', true),
         fields: (d.fields || []).map((f) => {
           const domainData = domains.map((domain) => {
             const mapping = mappings.filter(m => m.id === domain.applyFor)[0];
