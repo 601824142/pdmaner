@@ -39,3 +39,7 @@ https://gitee.com/robergroup/pdmaner/releases
 3. 安装文件都是基于当时master分支打包的，不存在编译不通过问题。
 4. 作者很忙，时间有限，作者不解答初级前端问题，还请多多理解支持。
 5. 非常欢迎提PR的同学
+
+# 五、操作手册地址
+1. [官网操作手册-语雀版](https://www.yuque.com/pdmaner/docs)
+2. [oschina pdman专栏](https://my.oschina.net/skymozn?tab=newest&catalogId=5775221&sortType=time)
