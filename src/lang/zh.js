@@ -37,6 +37,7 @@ export default {
         importConfig: '导入系统设置',
         importDDL: '导入DDL',
         exportImg: '导出当前画布为图片',
+        exportImgLoading: '正在导出当前画布为图片...',
         exportSql: '导出DDL',
         exportDict: '导出数据字典SQL',
         exportWord: '导出WORD',

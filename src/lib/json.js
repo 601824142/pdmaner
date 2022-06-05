@@ -329,7 +329,7 @@ export const getPathStep = () => {
 export const execFileCmd = (cmd, params, cb) => {
   execFile(cmd, params,
     {
-      maxBuffer: 100 * 1024 * 1024, // 100M
+      maxBuffer: 100 * 1024 * 1024 * 100, // 100M
     },
     (error, stdout, stderr) => {
       cb && cb(error, stdout, stderr);
@@ -393,7 +393,7 @@ export const connectDB = (dataSource, config, params = {}, cmd, cb) => {
   }
   return execFile(tempValue, commend,
     {
-      maxBuffer: 100 * 1024 * 1024, // 100M
+      maxBuffer: 100 * 1024 * 1024 * 100, // 100M
     },
     (error, stdout, stderr) => {
       if('sinerFile' in tempParams) {

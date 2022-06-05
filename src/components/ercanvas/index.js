@@ -1408,6 +1408,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
       getScaleNumber,
       updateColor,
       exportImg: () => {
+        restProps.openLoading(FormatMessage.string({id: 'toolbar.exportImgLoading'}));
         img(graphRef.current.toJSON().cells, relationType,null, false).then((dom) => {
           html2canvas(dom).then((canvas) => {
             document.body.removeChild(dom.parentElement.parentElement);
@@ -1415,7 +1416,7 @@ export default ({data, dataSource, renderReady, updateDataSource, validateTableS
                 .filter(d => d.id === diagramKey)[0] || {};
 
             const clippedCanvas = clipCanvasEmptyPadding(canvas, 30);
-
+            restProps.closeLoading();
             DataUri.downloadDataUri(clippedCanvas.toDataURL('image/png'),
                 `${dataSourceRef.current.name}-${diagram.defKey}[${diagram.defName || diagram.defKey}]-${moment().format('YYYYMDHHmmss')}.png`);
           });

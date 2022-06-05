@@ -37,6 +37,7 @@ export default {
         importConfig: 'import config data',
         importDDL: 'import DDL',
         exportImg: 'export the current canvas as a picture',
+        exportImgLoading: 'export the current canvas as a picture...',
         exportSql: 'export DDL',
         exportDict: 'exportDictSQL',
         exportWord: 'export WORD',

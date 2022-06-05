@@ -7,7 +7,6 @@ export default React.memo(({prefix, dataChange, config}) => {
   const autoBackup = _.get(config, 'autoBackup', 3);
   const Option = Select.Option;
   const onChange = (e) => {
-    console.log(parseInt(e.target.value));
     dataChange && dataChange(parseInt(e.target.value), 'autoBackup');
   };
   const currentPrefix = getPrefix(prefix);
@@ -20,7 +19,7 @@ export default React.memo(({prefix, dataChange, config}) => {
         <FormatMessage id='config.autoBackup.label'/>
       </span>
       <span className={`${currentPrefix}-form-item-component`}>
-        <Select allowClear={false} notAllowEmpty defaultValue={autoBackup} onChange={onChange} >
+        <Select allowClear={false} notAllowEmpty defaultValue={`${autoBackup}`} onChange={onChange} >
           <Option
             key={0}
             value={'0'}

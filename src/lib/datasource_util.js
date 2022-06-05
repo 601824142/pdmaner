@@ -1504,6 +1504,36 @@ export const transformationData = (oldDataSource) => {
       }
     }
   }
+
+  if (compareVersion('4.1.1', oldDataSource.version.split('.'))){
+    const resetField = (d) => {
+      return {
+        ...d,
+        fields: (d.fields || []).map(f => {
+          return {
+            ...f,
+            primaryKey: !!f.primaryKey,
+            notNull: !!f.notNull,
+          }
+        })
+      }
+    };
+    tempDataSource = {
+      ...tempDataSource,
+      entities: (tempDataSource.entities || []).map(e => resetField(e)),
+      views: (tempDataSource.views || []).map(v => resetField(v)),
+      profile: {
+        ...tempDataSource.profile,
+        headers: (tempDataSource.profile.headers || []).map(h => ({...h, freeze: false})),
+        codeTemplates: (tempDataSource.profile.codeTemplates || []).reverse().reduce((p, n) => {
+          if (p.findIndex(c => c.applyFor === n.applyFor) < 0) {
+            return p.concat(n);
+          }
+          return p;
+        }, []).reverse()
+      }
+    }
+  }
     return tempDataSource;
 };
 
@@ -1975,16 +2005,18 @@ export const mergeData = (pre, next, needOld, merge = true) => {
   return merge ? next : pre;
 };
 
-export const resetHeader = (dataSource, e) => {
+export const resetHeader = (dataSource, e, freeze) => {
   const headers = [...dataSource?.profile?.headers || []];
   const fullColumns =  getFullColumns();
   const firstHeader = fullColumns[0];
   headers.unshift({refKey: firstHeader.newCode, hideInGraph: true})
   return headers.map(c => {
     const current = (e.headers || []).filter(h => h.refKey === c.refKey)[0];
+    const temp = {refKey: c.refKey, freeze: c.freeze};
     return {
-      ...current || {refKey: c.refKey},
+      ...current || temp,
       hideInGraph: c.hideInGraph,
+      freeze: freeze ? c.freeze : (current || temp)?.freeze
     }
   })
 };
@@ -2271,13 +2303,15 @@ export const mergeDomains = (oldDataSource, newDataSource, updateAllVersion, typ
   const newDataTypeSupports = (newDataSource?.dataTypeSupports || []);
   const tempDataTypeSupports = mergeData(dataTypeSupports, newDataTypeSupports, true, true);
 
-  const tempCodeTemplates = mergeData(codeTemplates, newCodeTemplates, false, true).map(c => {
+  const tempCodeTemplates = mergeData(codeTemplates, newCodeTemplates.map(c => {
     const dIndex = tempDataTypeSupports.findIndex(t => t.old === c.id);
+    const key = tempDataTypeSupports[dIndex]?.id || c.id;
     return {
       ...c,
-      applyFor: tempDataTypeSupports[dIndex]?.id || c.id,
+      defKey: key,
+      applyFor: key,
     };
-  }).map(t => _.omit(t, ['defKey', 'id']));
+  }), false, true).map(t => _.omit(t, ['defKey', 'id']));
 
   const tempDataSource = {
     ...oldDataSource,

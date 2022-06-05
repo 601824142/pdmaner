@@ -670,7 +670,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
         domains: _.get(dataSourceRef.current, 'domains', []),
       }, null, 2)],
       'application/json',
-      `${dataSourceRef.current.name}-${FormatMessage.string({id: `project.${type}`})}-${moment().format('YYYYMDHHmmss')}.json`);
+      `${dataSourceRef.current.name}-${FormatMessage.string({id: `project.${type === 'dbDDL' ? 'domains' : type}`})}-${moment().format('YYYYMDHHmmss')}.json`);
   };
   const importDomains = (type) => {
     Upload('application/json', (d) => {
@@ -936,6 +936,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
       />;
     } else if (type === 'diagram') {
       return <Relation
+        openLoading={restProps.openLoading}
+        closeLoading={restProps.closeLoading}
         jumpEntity={jumpEntity}
         selectionChanged={selectionChanged}
         openDict={_onMenuClick}
@@ -1063,7 +1065,8 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
               return c;
             }));
         }
-        filterData.splice(0, 0, 'dictSQLTemplate');
+        const freeze = tempData.freeze;
+        filterData.splice(0, 0, 'dictSQLTemplate', 'freeze');
         Object.keys(tempData).filter(f => !filterData.includes(f)).forEach((f) => {
           tempDataSource = _.set(tempDataSource, f, tempData[f]);
         });
@@ -1072,7 +1075,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
             ...tempDataSource,
             entities: (tempDataSource.entities || []).map(e => ({
               ...e,
-              headers: resetHeader(tempDataSource, e),
+              headers: resetHeader(tempDataSource, e, freeze),
             })),
           };
           const allTab = getAllTabData();
@@ -1080,7 +1083,7 @@ const Index = React.memo(({getUserData, open, openTemplate, config, common, pref
             if (t.tabData.type === 'entity') {
               const data =  {
                 ...t.tabData.data,
-                headers: resetHeader(tempDataSource, t.tabData.data),
+                headers: resetHeader(tempDataSource, t.tabData.data, freeze),
               };
               replaceDataByTabId(t.tabKey, {
                 ...t.tabData,
