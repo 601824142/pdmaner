@@ -1019,6 +1019,8 @@ export const transform = (f, dataSource, code, type = 'id', codeType = 'dbDDL') 
       if (domain) {
         const mapping = mappings.filter(m => m.id === domain?.applyFor)[0];
         temp.domain = type === 'id' ? (domain.defName || domain.defKey) : f.domain;
+        temp.len = domain.len === undefined ? '' : domain.len;
+        temp.scale = domain.scale === undefined ? '' : domain.scale;
         temp.type = mapping?.[code] || '';
         temp.dbType = mapping?.[db] || f.type;
       }
@@ -1126,7 +1128,7 @@ export const transformTable = (data, dataSource, code, type = 'id', codeType = '
     fields: fields.map(field => {
       return {
         ...field,
-        ...transform(field, dataSource, code, 'id', type),
+        ...transform(field, dataSource, code, 'id', codeType),
       }
     }),
     indexes: (data.indexes || []).map(i => {

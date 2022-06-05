@@ -12,6 +12,10 @@ import {defaultTemplate, transformTable} from '../../../lib/datasource_util';
 const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplate,
                                     getConfig, saveUserData, dataChange, prefix,
                                     updateDataSource, getDataSource}) => {
+    const dataRef = useRef(data);
+    dataRef.current = data;
+    const dataSourceRef = useRef(dataSource);
+    dataSourceRef.current = dataSource;
   const currentPrefix = getPrefix(prefix);
   const template = codeTemplate.type === 'dbDDL' ? defaultTemplate.dbDDLTemplate.filter((t) => {
       if (codeType === 'view') {
@@ -138,7 +142,7 @@ const CodeContent = React.memo(({ data, dataSource, group, codeType, codeTemplat
           mode='json'
           width='100%'
           height='70vh'
-          value={JSON.stringify(transformTable(data, dataSource, codeTemplate.id, 'id', codeTemplate.type), null, 2)}
+          value={JSON.stringify(transformTable(dataRef.current, dataSourceRef.current, codeTemplate.id, 'id', codeTemplate.type), null, 2)}
         />, {
             bodyStyle: {width: '60%'},
             title: FormatMessage.string({id: 'tableBase.model'}),
